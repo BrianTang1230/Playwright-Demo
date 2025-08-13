@@ -1,0 +1,14 @@
+{
+  "InputPath": {
+    "CountrySetupPath": "txtCountryCode,txtDescription,chkActive",
+    "CountrySetupColumn": "Country Code,Description,Active Checkbox"
+  },
+
+  "CreateData": {
+    "CountrySetupData": "QTR,For Create Automation Testing,False"
+  },
+
+  "EditData": {
+    "CountrySetupData": "RTQ,For Edit Automation Testing,True"
+  }
+}

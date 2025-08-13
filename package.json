@@ -10,11 +10,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.54.2",
     "@types/node": "^24.2.1",
     "nodemon": "^3.1.10"
   },
   "dependencies": {
+    "@playwright/test": "^1.54.2",
     "mssql": "^11.0.1"
   }
 }

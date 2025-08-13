@@ -1,4 +1,4 @@
-export default async function selectTransaction(page, values, type) {
+export default async function selectRecord(page, values, type) {
   if (type == "search") {
     // Click Show Active Checkbox
     await page

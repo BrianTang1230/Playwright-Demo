@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import Login from "../data/loginData.json";
+import Login from "../../data/loginData.json";
 
 export default class LoginPage {
   constructor(page) {

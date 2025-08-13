@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("Create New Country Code", async ({ page }) => {
-  await navigateToForm(page, "Master File", "Country Setup", "General");
+  await navigateToForm(page, "Master File", "General", "Country Setup");
 
   const sideMenu = new SideMenuPage(page);
   await sideMenu.sideMenuBar.waitFor();
@@ -31,27 +31,55 @@ test("Create New Country Code", async ({ page }) => {
 
   // Save Create
   await sideMenu.btnSave.click();
+
+  // Get Ui values
+  await GetUiValues(page, values, "search");
 });
 
-// test("Edit New Country Code", async ({ page }) => {
-//   await navigateToForm(page, "Master File", "Country Setup", "General");
+test("Edit New Country Code", async ({ page }) => {
+  await navigateToForm(page, "Master File", "General", "Country Setup");
 
-//   const sideMenu = new SideMenuPage(page);
-//   await sideMenu.sideMenuBar.waitFor();
-//   await sideMenu.btnNew.click();
+  const sideMenu = new SideMenuPage(page);
+  await sideMenu.sideMenuBar.waitFor();
+  await GetUiValues(page, values, "search");
 
-//   // Define Elements and Values
-//   const paths = InputPath.CountrySetupPath.split(",");
-//   const columns = InputPath.CountrySetupColumn.split(",");
-//   const values = EditData.CountrySetupData.split(",");
+  // Define Elements and Values
+  const paths = InputPath.CountrySetupPath.split(",");
+  const columns = InputPath.CountrySetupColumn.split(",");
+  const values = CreateData.CountrySetupData.split(",");
+  const newValues = EditData.CountrySetupData.split(",");
 
-//   // Input Data
-//   if (paths.length == columns.length && columns.length == values.length) {
-//     for (let i = 0; i < paths.length; i++) {
-//       await InputValues(page, paths[i], columns[i], values[i]);
-//     }
-//   }
+  // Input Data
+  if (
+    paths.length == columns.length &&
+    columns.length == values.length &&
+    values.length == newValues.length
+  ) {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], newValues[i]);
+    }
+  }
 
-//   // Save Edit
-//   await sideMenu.btnSave.click();
-// });
+  // Save Create
+  await sideMenu.btnSave.click();
+
+  // Get Ui values
+  await GetUiValues(page, newValues, "search");
+});
+
+test("Delete Country Code", async ({ page }) => {
+  await navigateToForm(page, "Master File", "General", "Country Setup");
+
+  const sideMenu = new SideMenuPage(page);
+  await sideMenu.sideMenuBar.waitFor();
+
+  // Define Values
+  const values = EditData.CountrySetupData.split(",");
+
+  // Get Ui values
+  await GetUiValues(page, values, "search");
+
+  // Click to Delete
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
+});

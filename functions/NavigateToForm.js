@@ -1,8 +1,8 @@
 export default async function navigateToForm(
   page,
   module,
-  formName,
-  submodule
+  submodule,
+  formName
 ) {
   // Click to open Side Menu
   await page.click("a#moduleMenuToggleBtn-2");
@@ -12,8 +12,8 @@ export default async function navigateToForm(
 
   // Click to open Submodule (if exists)
   if (submodule !== null)
-    await page.locator(`#dropDown${module + submodule}`).click();
+    await page.locator(`//a[@id='dropDown${module + submodule}']`).click();
 
   // Click to open Form
-  await page.locator(`#side${formName}`).click();
+  await page.locator(`//a[@id='side${formName}']`).click();
 }

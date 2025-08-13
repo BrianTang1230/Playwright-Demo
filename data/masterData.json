@@ -1,7 +1,7 @@
 {
   "InputPath": {
-    "CountrySetupPath": "txtCountryCode,txtDescription,chkActive",
-    "CountrySetupColumn": "Country Code,Description,Active Checkbox"
+    "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
+    "CountrySetupColumn": "Country Code text,Description text,Active Checkbox"
   },
 
   "CreateData": {

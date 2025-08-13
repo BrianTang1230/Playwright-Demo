@@ -1,5 +1,3 @@
-import { test } from "@playwright/test";
-
 export default class SideMenuPage {
   constructor(page) {
     this.page = page;

@@ -2,22 +2,24 @@ export default async function InputValues(page, path, col, value) {
   col = col.toLowerCase();
 
   // Checkbox Input
-  if (col.contains("checkbox")) {
-    if (value) await page.check(path);
+  if (col.includes("checkbox")) {
+    if (value.toLowerCase() == "true") await page.check(path);
     else await page.uncheck(path);
   }
 
-  // Integer Input
-  if (col.contains("number")) {
-    await page.fill(path, value);
+  // Integer,Date,Text Input
+  if (col.includes("numeric")) {
+    await page.locator(path).fill(parseInt(value));
+  }
+  if (col.includes("date")) {
+    await page.locator(path).fill(value);
+  }
+  if (col.includes("text")) {
+    await page.locator(path).fill(value);
   }
 
-  // Date Input
-  if (col.contains("date")) {
-    await page.fill(path, value);
-  }
-
-  if (col.contains("textbox")) {
-    await page.fill(path, value);
+  // Dropdown Input
+  if (col.includes("dropdown")) {
+    await page.selectOption(path, value);
   }
 }

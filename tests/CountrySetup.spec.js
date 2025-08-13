@@ -4,15 +4,18 @@ import navigateToForm from "../functions/NavigateToForm";
 import SideMenuPage from "../pages/SideMenu";
 import { InputPath, CreateData, EditData } from "../data/masterData.json";
 import InputValues from "../functions/InputValues";
+import selectTransaction from "../functions/GetTransaction";
 
 test.beforeEach(async ({ page }) => {
+  // Login
   const loginPage = new LoginPage(page);
   await loginPage.login();
+
+  // Navigate to the Testing Form
+  await navigateToForm(page, "Master File", "General", "Country Setup");
 });
 
 test("Create New Country Code", async ({ page }) => {
-  await navigateToForm(page, "Master File", "General", "Country Setup");
-
   const sideMenu = new SideMenuPage(page);
   await sideMenu.sideMenuBar.waitFor();
   await sideMenu.btnNew.click();
@@ -32,24 +35,30 @@ test("Create New Country Code", async ({ page }) => {
   // Save Create
   await sideMenu.btnSave.click();
 
+  // Search and Select
+  await selectTransaction(page, values, "search");
+
   // Get Ui values
-  await GetUiValues(page, values, "search");
+  await sideMenu.btnEdit.click();
+
+  // Compare Input Values with Ui Values
 });
 
 test("Edit New Country Code", async ({ page }) => {
-  await navigateToForm(page, "Master File", "General", "Country Setup");
-
   const sideMenu = new SideMenuPage(page);
   await sideMenu.sideMenuBar.waitFor();
-  await GetUiValues(page, values, "search");
 
-  // Define Elements and Values
+  // Define Old Values to Find Created Transaction
+  const values = CreateData.CountrySetupData.split(",");
+  await selectTransaction(page, values, "search");
+  await sideMenu.btnEdit.click();
+
+  // Define Elements and New Values
   const paths = InputPath.CountrySetupPath.split(",");
   const columns = InputPath.CountrySetupColumn.split(",");
-  const values = CreateData.CountrySetupData.split(",");
   const newValues = EditData.CountrySetupData.split(",");
 
-  // Input Data
+  // Input New Data
   if (
     paths.length == columns.length &&
     columns.length == values.length &&
@@ -60,24 +69,27 @@ test("Edit New Country Code", async ({ page }) => {
     }
   }
 
-  // Save Create
+  // Save Edit
   await sideMenu.btnSave.click();
 
+  // Search and Select
+  await selectTransaction(page, newValues, "search");
+
   // Get Ui values
-  await GetUiValues(page, newValues, "search");
+  await sideMenu.btnEdit.click();
+
+  // Compare Input Values with Ui Values
 });
 
 test("Delete Country Code", async ({ page }) => {
-  await navigateToForm(page, "Master File", "General", "Country Setup");
-
   const sideMenu = new SideMenuPage(page);
   await sideMenu.sideMenuBar.waitFor();
 
-  // Define Values
+  // Define Lastest Values
   const values = EditData.CountrySetupData.split(",");
 
-  // Get Ui values
-  await GetUiValues(page, values, "search");
+  // Search and Select
+  await selectTransaction(page, values, "search");
 
   // Click to Delete
   await sideMenu.btnDelete.click();

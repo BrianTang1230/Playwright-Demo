@@ -13,7 +13,7 @@ export default async function navigateToForm(
   // Click to open Submodule (if exists)
   if (submodule !== null)
     await page.locator(`//a[@id='dropDown${module + submodule}']`).click();
-
+ 
   // Click to open Form
   await page.locator(`//a[@id='side${formName}']`).click();
 }

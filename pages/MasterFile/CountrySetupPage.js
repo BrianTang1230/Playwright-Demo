@@ -2,7 +2,8 @@ import { InputPath, CreateData, EditData } from "../../data/masterData.json";
 import InputValues from "../../functions/InputValues";
 import selectRecord from "../../functions/SelectRecord";
 
-async function countrySetupCreate(page, sideMenu) {
+// Create Function
+async function CountrySetupCreate(page, sideMenu) {
   // Click "New" button
   await sideMenu.btnNew.click();
 
@@ -30,7 +31,8 @@ async function countrySetupCreate(page, sideMenu) {
   // Compare Input Values with Ui Values
 }
 
-async function countrySetupEdit(page, sideMenu) {
+// Edit Function
+async function CountrySetupEdit(page, sideMenu) {
   // Search and select the created record
   const values = CreateData.CountrySetupData.split(",");
   await selectRecord(page, values, "search");
@@ -64,14 +66,15 @@ async function countrySetupEdit(page, sideMenu) {
   // Compare Input Values with Ui Values
 }
 
-async function countrySetupDelete(page, sideMenu) {
+// Delete Function
+async function CountrySetupDelete(page, sideMenu) {
   // Search and select the last edited record
   const values = EditData.CountrySetupData.split(",");
-  await selectRecord(page, values, "search");
+  await selectRecord(page, values, "search", true);
 
   // Delete record
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();
 }
 
-module.exports = { countrySetupCreate, countrySetupEdit, countrySetupDelete };
+module.exports = { CountrySetupCreate, CountrySetupEdit, CountrySetupDelete };

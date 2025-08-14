@@ -1,32 +1,33 @@
 import { test } from "@playwright/test";
 import LoginPage from "../pages/General/LoginPage";
-import navigateToForm from "../functions/NavigateToForm";
 import SideMenuPage from "../pages/General/SideMenuPage";
 
 // Global variable for SideMenuPage
 let sideMenu;
 
 test.beforeEach(async ({ page }) => {
-  // Login
+  // Login and Navigate to the testing form
   const loginPage = new LoginPage(page);
   await loginPage.login();
-
-  // Navigate to the testing form
-  await navigateToForm(page, "Master File", "General", "Country Setup");
+  await loginPage.navigateToForm(
+    "Master File",
+    "General",
+    "Additional Remuneration Setup"
+  );
 
   // Initialize sideMenu
   sideMenu = new SideMenuPage(page);
   await sideMenu.sideMenuBar.waitFor();
 });
 
-test("Create New Country Code", async ({ page }) => {
+test("Create New Additional Remuneration Code", async ({ page }) => {
+  await AddRemSetupCreate(page, sideMenu);
+});
+
+test("Edit Additional Remuneration Code", async ({ page }) => {
   // TODO()
 });
 
-test("Edit Country Code", async ({ page }) => {
-  // TODO()
-});
-
-test("Delete Country Code", async ({ page }) => {
+test("Delete Additional Remuneration Code", async ({ page }) => {
   // TODO()
 });

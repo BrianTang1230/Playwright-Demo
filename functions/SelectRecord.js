@@ -1,11 +1,12 @@
-export default async function selectRecord(page, values, type) {
+export default async function selectRecord(page, values, type, del) {
   if (type == "search") {
     // Click Show Active Checkbox
-    await page
-      .getByRole("checkbox", {
-        name: "Show Active Only",
-      })
-      .click();
+    !del &&
+      (await page
+        .getByRole("checkbox", {
+          name: "Show Active Only",
+        })
+        .click());
 
     // Search By Country Code
     await page.getByRole("textbox", { name: "Filter Item" }).fill(values[0]);

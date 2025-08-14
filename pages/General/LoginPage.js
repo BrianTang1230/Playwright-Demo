@@ -13,6 +13,7 @@ export default class LoginPage {
   async login(region = "MY") {
     const client = region === "IND" ? Login.ClientIND : Login.Client;
 
+    // Input Login Data
     await test.step("Navigate to login page", () =>
       this.page.goto(Login.LaunchUrl));
     await test.step("Enter email", () =>
@@ -23,5 +24,21 @@ export default class LoginPage {
     await test.step(`Select client: ${region}`, () =>
       this.clientOption.selectOption(client));
     await test.step("Click final login", () => this.loginButton.click());
+  }
+
+  async navigateToForm(module, submodule, formName) {
+    await test.step("Open Side Menu", () =>
+      this.page.click("a#moduleMenuToggleBtn-2"));
+
+    await test.step(`Navigate to ${formName}`, async () => {
+      await this.page.getByRole("link", { name: ` ${module}` }).click();
+      // If submodule exists, select it
+      if (submodule) {
+        await this.page
+          .locator(`//a[@id='dropDown${module + submodule}']`)
+          .click();
+      }
+      await this.page.locator(`//a[@id='side${formName}']`).click();
+    });
   }
 }

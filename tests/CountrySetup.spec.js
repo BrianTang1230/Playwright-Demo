@@ -1,23 +1,20 @@
 import { test } from "@playwright/test";
 import LoginPage from "../pages/General/LoginPage";
-import navigateToForm from "../functions/NavigateToForm";
 import SideMenuPage from "../pages/General/SideMenuPage";
 import {
-  countrySetupCreate,
-  countrySetupEdit,
-  countrySetupDelete,
+  CountrySetupCreate,
+  CountrySetupEdit,
+  CountrySetupDelete,
 } from "../pages/MasterFile/CountrySetupPage";
 
 // Global variable for SideMenuPage
 let sideMenu;
 
 test.beforeEach(async ({ page }) => {
-  // Login
+  // Login and Navigate to the testing form
   const loginPage = new LoginPage(page);
   await loginPage.login();
-
-  // Navigate to the testing form
-  await navigateToForm(page, "Master File", "General", "Country Setup");
+  await loginPage.navigateToForm("Master File", "General", "Country Setup");
 
   // Initialize sideMenu
   sideMenu = new SideMenuPage(page);
@@ -25,13 +22,13 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("Create New Country Code", async ({ page }) => {
-  await countrySetupCreate(page, sideMenu);
+  await CountrySetupCreate(page, sideMenu);
 });
 
 test("Edit Country Code", async ({ page }) => {
-  await countrySetupEdit(page, sideMenu);
+  await CountrySetupEdit(page, sideMenu);
 });
 
 test("Delete Country Code", async ({ page }) => {
-  await countrySetupDelete(page, sideMenu);
+  await CountrySetupDelete(page, sideMenu);
 });

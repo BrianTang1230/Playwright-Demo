@@ -16,6 +16,12 @@ export default async function InputValues(page, path, col, value) {
     return;
   }
 
+  // Button Input
+  if (col.includes("button")) {
+    await page.locator(path).click();
+    return;
+  }
+
   // Integer,Date,Text Input
   if (col.includes("numeric")) {
     await page.locator(path).fill(value);

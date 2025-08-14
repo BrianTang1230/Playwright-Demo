@@ -1,14 +1,29 @@
 {
   "InputPath": {
     "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
-    "CountrySetupColumn": "Country Code text,Description text,Active Checkbox"
+    "CountrySetupColumn": "Country Code text,Description text,Active checkbox",
+    "AdditionalRemunerationSetupPath": "#remCode,#remDesc,#addRemActive,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF,#btnNewItem",
+    "AdditionalRemunerationSetupColumn": "Remuneration Code text,Description text,Active checkbox,Remuneration Type dropdown,Previous Year checkbox,Tax checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox,New Item button"
+  },
+
+  "GridPath": {
+    "AdditionalRemunerationSetupGrid": "r*gridcell|0,r*gridcell|1,r*gridcell|2,r*gridcell|3"
   },
 
   "CreateData": {
-    "CountrySetupData": "QTR,For Create Automation Testing,False"
+    "CountrySetupData": "QTR,For Create Automation Testing,False",
+    "AdditionalRemunerationSetupData": "AUTO-C,For Create Automation Testing,False,Bonus/Incentive,True,True,True,True,True,True,NA"
+  },
+
+  "CreateGridData": {
+    "AdditionalRemunerationSetupGridData": "NA,ADM - ADMIN DEPARTMENT,12291010 - SUNDRY RECEIVABLES,COB0010 - BRILLIANT PURE RESOURCES"
   },
 
   "EditData": {
     "CountrySetupData": "RTQ,For Edit Automation Testing,True"
+  },
+
+  "EditGridData": {
+    "AdditionalRemunerationSetupGridData": "NA,AGT - AGATHIS ESTATE,12111010 - TRADE RECEIVABLES,HSE0011 - EAGA OCEAN SDN BHD"
   }
 }

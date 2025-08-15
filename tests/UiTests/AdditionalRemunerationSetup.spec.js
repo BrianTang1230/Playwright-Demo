@@ -1,6 +1,11 @@
 import { test } from "@playwright/test";
-import LoginPage from "../pages/General/LoginPage";
-import SideMenuPage from "../pages/General/SideMenuPage";
+import LoginPage from "../../UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../UiTestsFolder/pages/General/SideMenuPage";
+import {
+  AddRemSetupCreate,
+  AddRemSetupEdit,
+  AddRemSetupDelete,
+} from "../../UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
 
 // Global variable for SideMenuPage
 let sideMenu;
@@ -25,9 +30,9 @@ test("Create New Additional Remuneration Code", async ({ page }) => {
 });
 
 test("Edit Additional Remuneration Code", async ({ page }) => {
-  // TODO()
+  await AddRemSetupEdit(page, sideMenu);
 });
 
 test("Delete Additional Remuneration Code", async ({ page }) => {
-  // TODO()
+  await AddRemSetupDelete(page, sideMenu);
 });

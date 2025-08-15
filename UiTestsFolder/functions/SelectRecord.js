@@ -1,4 +1,4 @@
-export default async function selectRecord(page, values, type, del) {
+export default async function SelectRecord(page,sideMenu, values, type, del) {
   if (type == "search") {
     // Click Show Active Checkbox
     !del &&
@@ -13,6 +13,9 @@ export default async function selectRecord(page, values, type, del) {
 
     // Select The Transaction
     await page.getByRole("gridcell", { name: `${values[0]}` }).click();
+
+    // Verification
+    !del && (await sideMenu.btnEdit.click());
   }
 
   if (type == "filter") {

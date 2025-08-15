@@ -1,15 +1,9 @@
-import { InputPath, CreateData, EditData } from "../../data/masterData.json";
 import { InputValues } from "../../functions/InputValues";
 import SelectRecord from "../../functions/SelectRecord";
-import { ValidateValues } from "../../functions/ValidateValues";
-
-// Default elements and values for creation
-const paths = InputPath.CountrySetupPath.split(",");
-const columns = InputPath.CountrySetupColumn.split(",");
-let values = CreateData.CountrySetupData.split(",");
+import { getUiValues } from "../../functions/GetValues";
 
 // Create Function
-async function CountrySetupCreate(page, sideMenu) {
+async function CountrySetupCreate(page, sideMenu, paths, columns, values) {
   // Click "New" button
   await sideMenu.btnNew.click();
 
@@ -28,26 +22,26 @@ async function CountrySetupCreate(page, sideMenu) {
   // Search and select created record
   await SelectRecord(page, sideMenu, values, "search");
 
-  // Check Ui Values
-  await ValidateValues(page, values, paths).then((isMatch) => {
-    if (!isMatch) {
-      throw new Error("Validation failed after creating the record.");
-    }
-  });
+  // Get ui values
+  return await getUiValues(page, paths);
 }
 
 // Edit Function
-async function CountrySetupEdit(page, sideMenu) {
+async function CountrySetupEdit(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues
+) {
   // Search and select the created record
   await SelectRecord(page, sideMenu, values, "search");
 
-  // Change values for editing
-  values = EditData.CountrySetupData.split(",");
-
   // Input new data
-  if (paths.length == columns.length && columns.length == values.length) {
+  if (paths.length == columns.length && columns.length == newValues.length) {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputValues(page, paths[i], columns[i], newValues[i]);
     }
   } else {
     throw new Error("Paths, columns, and values do not match in length.");
@@ -57,20 +51,16 @@ async function CountrySetupEdit(page, sideMenu) {
   await sideMenu.btnSave.click();
 
   // Search and select edited record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, newValues, "search");
 
-  // Check Ui Values
-  await ValidateValues(page, values, paths).then((isMatch) => {
-    if (!isMatch) {
-      throw new Error("Validation failed after editing the record.");
-    }
-  });
+  // Get ui values
+  return await getUiValues(page, paths);
 }
 
 // Delete Function
-async function CountrySetupDelete(page, sideMenu) {
+async function CountrySetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, values, "search", true);
+  await SelectRecord(page, sideMenu, newValues, "search", true);
 
   // Delete record
   await sideMenu.btnDelete.click();

@@ -1,26 +1,31 @@
-import GetElementByPath from "./GetElementByPath";
+async function ValidateUiValues(inputValues, uiValues) {
+  for (let i = 0; i < inputValues.length; i++) {
+    if (inputValues[i] === "NA") continue;
+    if (inputValues[i] !== uiValues[i]) {
+      console.error(
+        `UI validation failed at index ${i}: ${inputValues[i]} !== ${uiValues[i]}`
+      );
+      return false;
+    }
+  }
+  return true;
+}
 
-async function ValidateValues(page, values, paths) {
-  for (let i = 0; i < paths.length; i++) {
-    const inputPath = await GetElementByPath(page, paths[i]);
+async function ValidateDBValues(dbData, inputCols, inputValues) {
+  for (let i = 0; i < inputCols.length; i++) {
+    // Columns split by space and get the first
+    const colName = inputCols[i].split(" ")[0];
 
-    // if checkbox
-    if ((await inputPath.getAttribute("type")) === "checkbox") {
-      const isChecked = await inputPath.isChecked();
-      if (
-        (values[i] === "True" && isChecked) ||
-        (values[i] === "False" && !isChecked)
-      ) {
-        console.debug(`Validating ${isChecked.toString()} === ${values[i]}`);
-        continue;
-      } else {
-        return false;
-      }
-    } else {
-      const inputValue = await inputPath.inputValue();
-      if (values[i] === "NA") continue;
-      console.debug(`Validating ${inputValue} === ${values[i]}`);
-      if (inputValue.toString().trim() !== values[i].trim()) return false;
+    if (inputValues[i] === "NA") continue;
+
+    if (dbData[colName] === false && inputValues[i] === "False") continue;
+    if (dbData[colName] === true && inputValues[i] === "True") continue;
+
+    if (dbData[colName] !== inputValues[i]) {
+      console.error(
+        `DB validation failed at index ${i}: ${dbData[colName]} !== ${inputValues[i]}`
+      );
+      return false;
     }
   }
   return true;
@@ -43,4 +48,4 @@ async function ValidateGridValues(page, gValue, gPath, gCells) {
   return true;
 }
 
-module.exports = { ValidateValues, ValidateGridValues };
+module.exports = { ValidateUiValues, ValidateDBValues, ValidateGridValues };

@@ -1,4 +1,4 @@
-const { test, expect } = require("@playwright/test");
+import { test, expect } from "@playwright/test";
 const token =
   "lyeIrunY-2149ghq7s0q19wNagrJpqqUp-DUIrrzGSVSTomYcGtM6U2wYrA5xG1yJuQnizxf4Zqs4m4A3XAQjLlY2cqvWk3CcQi7F-mYYDi6eV5WPLj8cDgm1wXwcWO7GRujzCsm0eb2Tn5tFYhnQyqrUjU3gjUoiWSXMDPlq_77SqIjVnFP3XgGGLDbH4D5iTpMyfbFt17kCNbOcngQL78i1QiDEpWdXnDvdWP8mQs7ligKFHk1w-gRhS6wvwLgZvKnhc-nJv1r-P6NADMIzOs0LAlhGMwfYCKSjo8bSDXaHCG1Nx0n4zexyMc3t5DcdQ4G6F8M6vN9uWpwxQ3n4w7Fqf5V4pncQoV7zHjEw6BDGRiTGsYwhfvYz0kafykDUtW-hi06ukf_Tq2rT1g54bz0KP0";
 

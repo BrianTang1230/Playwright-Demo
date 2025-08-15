@@ -5,11 +5,7 @@ export default async function GetElementByPath(page, path) {
     element = page.locator(path);
   }
   // If path does not start with # or // and includes *, use getByRole
-  else if (
-    !path.startsWith("#") &&
-    !path.startsWith("//") &&
-    path.includes("*")
-  ) {
+  else if (path.includes("*")) {
     let role = path.split("*");
     // If role[1] is not a number lets find the element by name; else find by index
     if (!role[1] || role[1].trim() === "") {

@@ -8,23 +8,9 @@ import {
 } from "../../data/masterData.json";
 import { InputValues, InputGridValues } from "../../functions/InputValues";
 import SelectRecord from "../../functions/SelectRecord";
-import {
-  ValidateValues,
-  ValidateGridValues,
-} from "../../functions/ValidateValues";
-
-// Default elements and values for creation
-const paths = InputPath.AddRemSetupPath.split(",");
-const columns = InputPath.AddRemSetupColumn.split(",");
-let values = CreateData.AddRemSetupData.split(",");
-
-// Default grid elements and values for creation
-const gridPaths = GridPath.AddRemSetupGrid.split(",");
-let gridValues = CreateGridData.AddRemSetupGridData.split(";");
-const cellsIndex = [1, 2, 3];
 
 // Create Function
-async function AddRemSetupCreate(page, sideMenu) {
+async function AddRemSetupCreate(page, sideMenu, paths, columns, values, gridPaths, gridValues, cellsIndex) {
   // Click 'New' button
   await sideMenu.btnNew.click();
 

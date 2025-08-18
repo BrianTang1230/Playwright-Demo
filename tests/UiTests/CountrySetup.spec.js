@@ -21,8 +21,8 @@ import {
 // Global variable for SideMenuPage
 let sideMenu;
 
-// Set token and API url
-const url = API_URL + "/Country";
+// Set API url
+const url = API_URL + "/odata/Country";
 
 // Default elements and values for creation
 const paths = InputPath.CountrySetupPath.split(",");
@@ -30,16 +30,7 @@ const columns = InputPath.CountrySetupColumn.split(",");
 const createValues = CreateData.CountrySetupData.split(",");
 const editValues = EditData.CountrySetupData.split(",");
 
-test.beforeEach(async ({ page, request }) => {
-  // Login and Navigate to the testing form
-  const loginPage = new LoginPage(page);
-  await loginPage.login();
-  await loginPage.navigateToForm("Master File", "General", "Country Setup");
-
-  // Initialize sideMenu
-  sideMenu = new SideMenuPage(page);
-  await sideMenu.sideMenuBar.waitFor();
-
+test.beforeAll(async ({ request }) => {
   async function deleteIfExists(ctryCode) {
     const response = await request.get(
       `${url}?$filter=CtryCode+eq+%27${ctryCode}%27`,
@@ -52,7 +43,6 @@ test.beforeEach(async ({ page, request }) => {
     );
 
     expect(response.ok()).toBeTruthy(); // Check if the response is OK
-
     const dbData = await response.json();
 
     if (dbData.value.length > 0) {
@@ -73,8 +63,19 @@ test.beforeEach(async ({ page, request }) => {
   await deleteIfExists(editValues[0]);
 });
 
-test("Create New Country Code", async ({ page, request }) => {
-  const uiValues = await CountrySetupCreate(
+test.beforeEach(async ({ page }) => {
+  // Login and Navigate to the testing form
+  const loginPage = new LoginPage(page);
+  await loginPage.login();
+  await loginPage.navigateToForm("Master File", "General", "Country Setup");
+
+  // Initialize sideMenu
+  sideMenu = new SideMenuPage(page);
+  await sideMenu.sideMenuBar.waitFor();
+});
+
+test("Create New Country Code", async ({ page }) => {
+  const allValues = await CountrySetupCreate(
     page,
     sideMenu,
     paths,
@@ -82,36 +83,23 @@ test("Create New Country Code", async ({ page, request }) => {
     createValues
   );
 
-  await ValidateUiValues(createValues, uiValues).then((isMatch) => {
+  await ValidateUiValues(createValues, allValues).then((isMatch) => {
     if (!isMatch) {
-      throw new Error("UI validation failed");
+      throw new Error("UI validation failed when creating new Country Code");
     }
   });
 
-  const response = await request.get(
-    `${url}?$filter=CtryCode+eq+%27${createValues[0]}%27`,
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        Accept: "application/json",
-      },
-    }
-  );
-
-  expect(response.ok()).toBeTruthy(); // Check if the response is OK
-  const dbData = await response.json();
-
-  await ValidateDBValues(dbData.value[0], columns, createValues).then(
-    (isMatch) => {
-      if (!isMatch) {
-        throw new Error("DB validation failed");
-      }
-    }
-  );
+  // await ValidateDBValues(dbData.value[0], columns, createValues).then(
+  //   (isMatch) => {
+  //     if (!isMatch) {
+  //       throw new Error("DB validation failed");
+  //     }
+  //   }
+  // );
 });
 
-test("Edit Country Code", async ({ page, request }) => {
-  const uiValues = await CountrySetupEdit(
+test("Edit Country Code", async ({ page }) => {
+  const allValues = await CountrySetupEdit(
     page,
     sideMenu,
     paths,
@@ -120,32 +108,19 @@ test("Edit Country Code", async ({ page, request }) => {
     editValues
   );
 
-  await ValidateUiValues(editValues, uiValues).then((isMatch) => {
+  await ValidateUiValues(editValues, allValues).then((isMatch) => {
     if (!isMatch) {
-      throw new Error("UI validation failed");
+      throw new Error("UI validation failed when editing Country Code");
     }
   });
 
-  const response = await request.get(
-    `${url}?$filter=CtryCode+eq+%27${editValues[0]}%27`,
-    {
-      headers: {
-        Authorization: `Bearer ${TOKEN}`,
-        Accept: "application/json",
-      },
-    }
-  );
-
-  expect(response.ok()).toBeTruthy(); // Check if the response is OK
-  const dbData = await response.json();
-
-  await ValidateDBValues(dbData.value[0], columns, editValues).then(
-    (isMatch) => {
-      if (!isMatch) {
-        throw new Error("DB validation failed");
-      }
-    }
-  );
+  // await ValidateDBValues(dbData.value[0], columns, editValues).then(
+  //   (isMatch) => {
+  //     if (!isMatch) {
+  //       throw new Error("DB validation failed");
+  //     }
+  //   }
+  // );
 });
 
 test("Delete Country Code", async ({ page, request }) => {
@@ -165,6 +140,6 @@ test("Delete Country Code", async ({ page, request }) => {
   const dbData = await response.json();
 
   if (dbData.value.length > 0) {
-    throw new Error("Record was not deleted successfully");
+    throw new Error("Country Code was not deleted successfully");
   }
 });

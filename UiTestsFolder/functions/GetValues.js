@@ -1,7 +1,13 @@
 import GetElementByPath from "./GetElementByPath";
 
-async function getUiValues(page, paths) {
+export default async function getValues(
+  page,
+  paths,
+  gridPaths = [],
+  cellsIndex = []
+) {
   const uiValues = [];
+  const gridValues = [];
   for (let i = 0; i < paths.length; i++) {
     const inputPath = await GetElementByPath(page, paths[i]);
 
@@ -18,7 +24,22 @@ async function getUiValues(page, paths) {
       }
     }
   }
-  return uiValues;
-}
+  if (gridPaths.length > 0 && cellsIndex.length > 0) {
+    for (let i = 0; i < gridPaths.length; i++) {
+      const table = page.locator(gridPaths[i]);
+      const row = table.locator("tr").first();
 
-module.exports = { getUiValues };
+      for (let j = 0; j < cellsIndex.length; j++) {
+        const cell = row.locator("td").nth(cellsIndex[j]);
+
+        const gridValue = await cell.innerText();
+        if (gridValue === "") {
+          gridValues.push("NA");
+        } else {
+          gridValues.push(gridValue.trim());
+        }
+      }
+    }
+  }
+  return [uiValues, gridValues];
+}

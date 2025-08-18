@@ -1,9 +1,9 @@
 async function ValidateUiValues(inputValues, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
-    if (inputValues[i] !== uiValues[i]) {
+    if (inputValues[i] !== uiValues[0][i]) {
       console.error(
-        `UI validation failed at index ${i}: ${inputValues[i]} !== ${uiValues[i]}`
+        `UI validation failed at index ${i}: ${inputValues[i]} !== ${uiValues[0][i]}`
       );
       return false;
     }
@@ -31,20 +31,26 @@ async function ValidateDBValues(dbData, inputCols, inputValues) {
   return true;
 }
 
-async function ValidateGridValues(page, gValue, gPath, gCells) {
-  const table = page.locator(gPath);
-  const row = table.locator("tr").first();
+async function ValidateGridValues(page, gValues, gPaths, gCells) {
+  for (let i = 0; i < gPaths.length; i++) {
+    const table = page.locator(gPaths[i]);
+    const row = table.locator("tr").first();
 
-  for (let j = 0; j < gCells.length; j++) {
-    const cell = row.locator("td").nth(gCells[j]);
-    const value = gValue.split(",")[j];
+    for (let j = 0; j < gCells.length; j++) {
+      const cell = row.locator("td").nth(gCells[j]);
+      const value = gValues[1][j];
 
-    const inputValue = await cell.innerText();
-    if (value === "NA") continue;
-    console.debug(`Validating ${inputValue} === ${value}`);
-    if (inputValue.toString().trim() !== value.trim()) return false;
+      const inputValue = await cell.innerText();
+      if (value === "NA") continue;
+      console.debug(`Validating ${inputValue} === ${value}`);
+      if (inputValue.toString().trim() !== value.trim()) {
+        console.error(
+          `Grid validation failed at cell ${gCells[j]}: ${inputValue} !== ${value}`
+        );
+        return false;
+      }
+    }
   }
-
   return true;
 }
 

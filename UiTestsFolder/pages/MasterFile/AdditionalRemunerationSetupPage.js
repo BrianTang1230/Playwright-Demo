@@ -1,16 +1,18 @@
-import {
-  InputPath,
-  GridPath,
-  CreateData,
-  CreateGridData,
-  EditData,
-  EditGridData,
-} from "../../data/masterData.json";
 import { InputValues, InputGridValues } from "../../functions/InputValues";
 import SelectRecord from "../../functions/SelectRecord";
+import getValues from "../../functions/GetValues";
 
 // Create Function
-async function AddRemSetupCreate(page, sideMenu, paths, columns, values, gridPaths, gridValues, cellsIndex) {
+async function AddRemSetupCreate(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  gridPaths,
+  gridValues,
+  cellsIndex
+) {
   // Click 'New' button
   await sideMenu.btnNew.click();
 
@@ -37,89 +39,59 @@ async function AddRemSetupCreate(page, sideMenu, paths, columns, values, gridPat
   // Search and select created record
   await SelectRecord(page, sideMenu, values, "search");
 
-  // Check Ui Values
-  await ValidateValues(page, values, paths).then((isMatch) => {
-    if (!isMatch) {
-      throw new Error("Ui validation failed after creating the record.");
-    }
-  });
-
-  // Check Grid Values
-  for (let i = 0; i < gridPaths.length; i++) {
-    await ValidateGridValues(
-      page,
-      gridValues[i],
-      gridPaths[i],
-      cellsIndex
-    ).then((isMatch) => {
-      if (!isMatch) {
-        throw new Error(
-          `Grid validation failed after creating the record.[Table${i}]`
-        );
-      }
-    });
-  }
+  // Get ui values
+  return await getValues(page, paths, gridPaths, cellsIndex);
 }
 
 // Edit Function
-async function AddRemSetupEdit(page, sideMenu) {
+async function AddRemSetupEdit(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridNewValues,
+  cellsIndex
+) {
   // Search and select created record
   await SelectRecord(page, sideMenu, values, "search");
 
-  // Change values for editing
-  values = EditData.AddRemSetupData.split(",");
-
   // Input new data
-  if (paths.length == columns.length && columns.length == values.length) {
+  if (paths.length == columns.length && columns.length == newValues.length) {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputValues(page, paths[i], columns[i], newValues[i]);
     }
   } else {
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
-  // Change grid values for editing
-  gridValues = EditGridData.AddRemSetupGridData.split(";");
-
   // Input new grid data
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex, true);
+    await InputGridValues(
+      page,
+      gridPaths[i],
+      gridNewValues[i],
+      cellsIndex,
+      true
+    );
   }
 
   // Save created data
   await sideMenu.btnSave.click();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, newValues, "search");
 
-  // Check Ui Values
-  await ValidateValues(page, values, paths).then((isMatch) => {
-    if (!isMatch) {
-      throw new Error("Ui validation failed after creating the record.");
-    }
-  });
-
-  // Check Grid Values
-  for (let i = 0; i < gridPaths.length; i++) {
-    await ValidateGridValues(
-      page,
-      gridValues[i],
-      gridPaths[i],
-      cellsIndex
-    ).then((isMatch) => {
-      if (!isMatch) {
-        throw new Error(
-          `Grid validation failed after creating the record.[Table${i}]`
-        );
-      }
-    });
-  }
+  // Get ui values
+  return await getValues(page, paths, gridPaths, cellsIndex);
 }
 
 // Delete Function
-async function AddRemSetupDelete(page, sideMenu) {
+async function AddRemSetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, values, "search", true);
+  await SelectRecord(page, sideMenu, newValues, "search", true);
 
   // Delete record
   await sideMenu.btnDelete.click();

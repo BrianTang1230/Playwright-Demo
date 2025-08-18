@@ -1,8 +1,9 @@
-import { test } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 import LoginPage from "../../UiTestsFolder/pages/General/LoginPage";
 import SideMenuPage from "../../UiTestsFolder/pages/General/SideMenuPage";
 import {
   API_URL,
+  TOKEN,
   InputPath,
   GridPath,
   CreateData,
@@ -16,13 +17,16 @@ import {
   AddRemSetupDelete,
 } from "../../UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
 import {
-  ValidateValues,
+  ValidateUiValues,
   ValidateGridValues,
   ValidateDBValues,
 } from "../../UiTestsFolder/functions/ValidateValues";
 
 // Global variable for SideMenuPage
 let sideMenu;
+
+// Set API url
+const url = API_URL + "/odata/AddRem";
 
 // Default elements and values for creation
 const paths = InputPath.AddRemSetupPath.split(",");
@@ -35,6 +39,39 @@ const gridPaths = GridPath.AddRemSetupGrid.split(",");
 const gridCreateValues = CreateGridData.AddRemSetupGridData.split(";");
 const gridEditValues = EditGridData.AddRemSetupGridData.split(";");
 const cellsIndex = [1, 2, 3];
+
+test.beforeAll(async ({ request }) => {
+  async function deleteIfExists(addRemCode) {
+    const response = await request.get(
+      `${url}?$filter=AddRemCode+eq+%27${addRemCode}%27`,
+      {
+        headers: {
+          Authorization: `Bearer ${TOKEN}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    expect(response.ok()).toBeTruthy(); // Check if the response is OK
+    const dbData = await response.json();
+
+    if (dbData.value.length > 0) {
+      const deleteResp = await request.delete(
+        `${url}(${dbData.value[0].AddRemKey})`,
+        {
+          headers: {
+            Authorization: `Bearer ${TOKEN}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      expect(deleteResp.ok()).toBeTruthy(); // Check if the delete response is OK
+    }
+  }
+  await deleteIfExists(createValues[0]);
+  await deleteIfExists(editValues[0]);
+});
 
 test.beforeEach(async ({ page }) => {
   // Login and Navigate to the testing form
@@ -51,8 +88,8 @@ test.beforeEach(async ({ page }) => {
   await sideMenu.sideMenuBar.waitFor();
 });
 
-test("Create New Additional Remuneration Code", async ({ page, request }) => {
-  const uIValues = await AddRemSetupCreate(
+test("Create New Additional Remuneration Code", async ({ page }) => {
+  const allValues = await AddRemSetupCreate(
     page,
     sideMenu,
     paths,
@@ -63,11 +100,26 @@ test("Create New Additional Remuneration Code", async ({ page, request }) => {
     cellsIndex
   );
 
-  await ValidateValues(page, uIValues, paths);
-  await ValidateGridValues(page, gridCreateValues, gridPaths, cellsIndex);
+  await ValidateUiValues(page, allValues).then((isMatch) => {
+    if (!isMatch) {
+      throw new Error(
+        "UI validation failed when creating new Additional Remuneration Code"
+      );
+    }
+  });
+
+  await ValidateGridValues(page, allValues, gridPaths, cellsIndex).then(
+    (isMatch) => {
+      if (!isMatch) {
+        throw new Error(
+          "Grid validation failed when creating new Additional Remuneration Code"
+        );
+      }
+    }
+  );
 });
 
-test("Edit Additional Remuneration Code", async ({ page, request }) => {
+test("Edit Additional Remuneration Code", async ({ page }) => {
   await AddRemSetupEdit(
     page,
     sideMenu,
@@ -82,5 +134,24 @@ test("Edit Additional Remuneration Code", async ({ page, request }) => {
 });
 
 test("Delete Additional Remuneration Code", async ({ page, request }) => {
-  await AddRemSetupDelete(page, sideMenu);
+  await AddRemSetupDelete(page, sideMenu, editValues);
+
+  const response = await request.get(
+    `${url}?$filter=AddRemCode+eq+%27${editValues[0]}%27`,
+    {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+        Accept: "application/json",
+      },
+    }
+  );
+
+  expect(response.ok()).toBeTruthy(); // Check if the response is OK
+  const dbData = await response.json();
+
+  if (dbData.value.length > 0) {
+    throw new Error(
+      "Additional Remuneration Code was not deleted successfully"
+    );
+  }
 });

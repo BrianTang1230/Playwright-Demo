@@ -31,6 +31,7 @@ export default class ConnectExcel {
 
     let docName;
 
+    // Check what is the test type and choose the file based on testType
     if (testType === "UI") {
       // default region to MY only when UI is selected
       const selectedRegion = region || "MY";
@@ -71,9 +72,7 @@ export default class ConnectExcel {
     if (colIndex === -1) throw new Error(`Column "${column}" not found`);
 
     // Find row index
-    // const firstCol = values.map((r) => r[1]);
-
-    const firstColIndex = testType === "UI" ? 1 : 0;
+    const firstColIndex = testType === "UI" ? 1 : 0; // Check what is the test type
     const firstCol = values.map((r) => r[firstColIndex]);
     const rowIndex = firstCol.indexOf(row);
     if (rowIndex === -1) throw new Error(`Row "${row}" not found`);

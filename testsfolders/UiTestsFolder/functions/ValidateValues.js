@@ -11,19 +11,16 @@ async function ValidateUiValues(inputValues, uiValues) {
   return true;
 }
 
-async function ValidateDBValues(dbData, inputCols, inputValues) {
+async function ValidateDBValues(inputValues, inputCols, dbValues) {
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first
     const colName = inputCols[i].split(" ")[0];
 
     if (inputValues[i] === "NA") continue;
-
-    if (dbData[colName] === false && inputValues[i] === "False") continue;
-    if (dbData[colName] === true && inputValues[i] === "True") continue;
-
-    if (dbData[colName] !== inputValues[i]) {
+    console.debug(colName);
+    if (dbValues[colName] !== inputValues[i]) {
       console.error(
-        `DB validation failed at index ${i}: ${dbData[colName]} !== ${inputValues[i]}`
+        `DB validation failed at index ${i}: ${dbValues[colName]} !== ${inputValues[i]}`
       );
       return false;
     }
@@ -42,7 +39,6 @@ async function ValidateGridValues(page, gValues, gPaths, gCells) {
 
       const inputValue = await cell.innerText();
       if (value === "NA") continue;
-      console.debug(`Validating ${inputValue} === ${value}`);
       if (inputValue.toString().trim() !== value.trim()) {
         console.error(
           `Grid validation failed at cell ${gCells[j]}: ${inputValue} !== ${value}`

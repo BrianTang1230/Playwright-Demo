@@ -15,8 +15,10 @@ import {
 import {
   ValidateUiValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
 import ConnectExcel from "../../utils/excel/ConnectExcel";
+import DBHelper from "../../UiTestsFolder/Utils/DBHelper";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -38,6 +40,9 @@ const columns = InputPath.AddRemSetupColumn.split(",");
 const gridPaths = GridPath.AddRemSetupGrid.split(",");
 const cellsIndex = [1, 2, 3];
 
+//
+let db;
+
 test.describe("Additional Remuneration Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll(async ({ request }) => {
@@ -58,6 +63,10 @@ test.describe("Additional Remuneration Setup Tests", () => {
     gridEditValues = (
       await connectExcel.readExcel(sheetName, formName, "GridDataEdit")
     ).split("|");
+
+    // Initialize database connection
+    db = new DBHelper("MY");
+    await db.connect();
 
     // Delete existing data if present
     async function deleteIfExists(addRemCode) {
@@ -133,10 +142,49 @@ test.describe("Additional Remuneration Setup Tests", () => {
           );
       }
     );
+
+    // Retrieve DB values(ui)
+    const dbValues = await db.retrieveData("Additional Remuneration Setup", {
+      Code: createValues[0],
+    });
+
+    // Validate DB values(ui)
+    await ValidateDBValues(createValues, columns, dbValues[0]).then(
+      (isMatch) => {
+        if (!isMatch)
+          throw new Error(
+            "DB validation failed when creating new Additional Remuneration Code"
+          );
+      }
+    );
+
+    // Retrieve DB values(grid)
+    const gridDbValues = await db.retrieveGridData(
+      "Additional Remuneration Setup",
+      {
+        Code: createValues[0],
+      }
+    );
+
+    for (let i = 0; i < gridDbValues.length; i++) {
+      // Get db values columns
+      const gridDbColumns = Object.keys(gridDbValues[i]);
+      // Validate DB values(grid)
+      await ValidateDBValues(
+        gridCreateValues[i].split(";"),
+        gridDbColumns,
+        gridDbValues[i]
+      ).then((isMatch) => {
+        if (!isMatch)
+          throw new Error(
+            "DB validation failed when creating new Additional Remuneration Code"
+          );
+      });
+    }
   });
 
   test("Edit Additional Remuneration Code", async ({ page }) => {
-    await AddRemSetupEdit(
+    const allValues = await AddRemSetupEdit(
       page,
       sideMenu,
       paths,
@@ -147,6 +195,61 @@ test.describe("Additional Remuneration Setup Tests", () => {
       gridEditValues,
       cellsIndex
     );
+
+    // Validate UI fields
+    await ValidateUiValues(page, allValues).then((isMatch) => {
+      if (!isMatch)
+        throw new Error(
+          "UI validation failed when creating new Additional Remuneration Code"
+        );
+    });
+
+    // Validate grid fields
+    await ValidateGridValues(page, allValues, gridPaths, cellsIndex).then(
+      (isMatch) => {
+        if (!isMatch)
+          throw new Error(
+            "Grid validation failed when creating new Additional Remuneration Code"
+          );
+      }
+    );
+
+    // Retrieve DB values(ui)
+    const dbValues = await db.retrieveData("Additional Remuneration Setup", {
+      Code: editValues[0],
+    });
+
+    // Validate DB values(ui)
+    await ValidateDBValues(editValues, columns, dbValues[0]).then((isMatch) => {
+      if (!isMatch)
+        throw new Error(
+          "DB validation failed when editing Additional Remuneration Code"
+        );
+    });
+
+    // Retrieve DB values(grid)
+    const gridDbValues = await db.retrieveGridData(
+      "Additional Remuneration Setup",
+      {
+        Code: editValues[0],
+      }
+    );
+
+    for (let i = 0; i < gridDbValues.length; i++) {
+      // Get db values columns
+      const gridDbColumns = Object.keys(gridDbValues[i]);
+      // Validate DB values(grid)
+      await ValidateDBValues(
+        gridEditValues[i].split(";"),
+        gridDbColumns,
+        gridDbValues[i]
+      ).then((isMatch) => {
+        if (!isMatch)
+          throw new Error(
+            "DB validation failed when editing Additional Remuneration Code"
+          );
+      });
+    }
   });
 
   test("Delete Additional Remuneration Code", async ({ page, request }) => {

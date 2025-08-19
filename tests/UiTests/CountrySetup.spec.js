@@ -6,7 +6,7 @@ import {
   TOKEN,
   InputPath,
 } from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
-import { ValidateUiValues } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
+import { ValidateUiValues,ValidateDBValues } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
 import {
   CountrySetupCreate,
   CountrySetupEdit,
@@ -30,6 +30,9 @@ const formName = "Country Setup";
 const paths = InputPath.CountrySetupPath.split(",");
 const columns = InputPath.CountrySetupColumn.split(",");
 
+// Initialize database connection
+let db;
+
 test.describe("Country Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll(async ({ request }) => {
@@ -44,6 +47,10 @@ test.describe("Country Setup Tests", () => {
     editValues = (
       await connectExcel.readExcel(sheetName, formName, "EditData")
     ).split(";");
+
+    // Connect to the database
+    db = new DBHelper("MY");
+    await db.connect();
 
     // Function to delete a country code if it exists
     async function deleteIfExists(ctryCode) {
@@ -103,9 +110,23 @@ test.describe("Country Setup Tests", () => {
       createValues
     );
 
-    const isMatch = await ValidateUiValues(createValues, allValues);
-    if (!isMatch)
-      throw new Error("UI validation failed when creating new Country Code");
+    await ValidateUiValues(createValues, allValues).then((isMatch) => {
+      if (!isMatch)
+        throw new Error("UI validation failed when creating new Country Code");
+    });
+
+    const dbValues = await db.retrieveData("Country Setup", {
+      Code: createValues[0],
+    });
+
+    await ValidateDBValues(createValues, columns, dbValues[0]).then(
+      (isMatch) => {
+        if (!isMatch)
+          throw new Error(
+            "DB validation failed when creating new Country Code"
+          );
+      }
+    );
   });
 
   test("Edit Country Code", async ({ page }) => {
@@ -118,9 +139,19 @@ test.describe("Country Setup Tests", () => {
       editValues
     );
 
-    const isMatch = await ValidateUiValues(editValues, allValues);
-    if (!isMatch)
-      throw new Error("UI validation failed when editing Country Code");
+    await ValidateUiValues(editValues, allValues).then((isMatch) => {
+      if (!isMatch)
+        throw new Error("UI validation failed when editing Country Code");
+    });
+
+    const dbValues = await db.retrieveData("Country Setup", {
+      Code: editValues[0],
+    });
+
+    await ValidateDBValues(editValues, columns, dbValues[0]).then((isMatch) => {
+      if (!isMatch)
+        throw new Error("DB validation failed when editing Country Code");
+    });
   });
 
   test("Delete Country Code", async ({ page, request }) => {
@@ -140,5 +171,9 @@ test.describe("Country Setup Tests", () => {
     const dbData = await response.json();
     if (dbData.value.length > 0)
       throw new Error("Country Code was not deleted successfully");
+  });
+
+  test.afterAll(async () => {
+    await db.closeAll();
   });
 });

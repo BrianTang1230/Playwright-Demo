@@ -7,7 +7,7 @@
     "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
     "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox",
     "AddRemSetupPath": "#remCode,#remDesc,#addRemActive,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF",
-    "AddRemSetupColumn": "Remuneration Code text,Description text,Active checkbox,Remuneration Type text,Previous Year checkbox,Tax checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox"
+    "AddRemSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RemType text,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox"
   },
 
   "GridPath": {

@@ -1,4 +1,5 @@
 import { test } from "@playwright/test";
+require("dotenv").config();
 import Login from "../../uidata/loginData.json";
 
 export default class LoginPage {
@@ -17,9 +18,9 @@ export default class LoginPage {
     await test.step("Navigate to login page", () =>
       this.page.goto(Login.LaunchUrl));
     await test.step("Enter email", () =>
-      this.emailInput.fill(Login.LoginEmail));
+      this.emailInput.fill(process.env.TEST_USERNAME));
     await test.step("Enter password", () =>
-      this.passwordInput.fill(Login.LoginPassword));
+      this.passwordInput.fill(process.env.TEST_PASSWORD));
     await test.step("Click first login", () => this.loginButton.click());
     await test.step(`Select client: ${region}`, () =>
       this.clientOption.selectOption(client));

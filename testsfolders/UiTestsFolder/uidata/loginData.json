@@ -1,9 +1,18 @@
 {
-  "LoginEmail": "lmsupport@lintramax.com",
-  "LoginPassword": "H@ngyOdon85",
   "Client": "QTAUTO - QUARTO AUTOMATION",
   "ClientIND": "QTAUTOIND - QUARTO IND AUTOMATION",
   "LaunchUrl": "https://qa.quarto.cloud/",
-  "DataSource": "Data Source=quarto-vm2.southeastasia.cloudapp.azure.com,14337;Initial Catalog=LONE_QTAUTO;User ID=QT_Auto;Password=QATest123;",
-  "DataSourceIND": "Data Source=quarto-vm2.southeastasia.cloudapp.azure.com,14336;Initial Catalog=LONE_QTAUTOIND;User ID=QT_Auto;Password=QATest123;"
+
+  "UserID": "QT_Auto",
+  "Password": "QATest123",
+  "DataSourceMY": {
+    "DataSource": "quartovm-qa.quarto.cloud",
+    "Port": 14337,
+    "Database": "LONE_QTAUTO"
+  },
+  "DataSourceIND": {
+    "DataSource": "quartovm-qa.quarto.cloud",
+    "Port": 14336,
+    "Database": "LONE_QTAUTOIND"
+  }
 }

@@ -1,6 +1,6 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
-import { ClientCredentials } from "../../data/clientCredentials.json";
+import { ClientCredentials } from "../data/clientCredentials.json";
 
 export default class ConnectExcel {
   constructor() {

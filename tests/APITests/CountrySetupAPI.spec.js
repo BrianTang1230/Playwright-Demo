@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { test } from "../fixtures/fixtures";
+import { test } from "../../testsfolders/ApiTestsFolder/fixtures/Fixtures";
 
 test.describe.serial("Country API", () => {
   let ctryKey;

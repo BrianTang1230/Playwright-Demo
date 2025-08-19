@@ -1,18 +1,18 @@
 import { expect, test } from "@playwright/test";
-import LoginPage from "../../UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../UiTestsFolder/pages/General/SideMenuPage";
+import LoginPage from "../../testsfolders/UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
 import {
   API_URL,
   TOKEN,
   InputPath,
-} from "../../UiTestsFolder/data/masterData.json";
-import { ValidateUiValues } from "../../UiTestsFolder/functions/ValidateValues";
+} from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
+import { ValidateUiValues } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
 import {
   CountrySetupCreate,
   CountrySetupEdit,
   CountrySetupDelete,
-} from "../../UiTestsFolder/pages/MasterFile/CountrySetupPage";
-import ConnectExcel from "../../UiTestsFolder/pages/General/ConnectExcel";
+} from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
+import ConnectExcel from "../../utils/excel/ConnectExcel";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

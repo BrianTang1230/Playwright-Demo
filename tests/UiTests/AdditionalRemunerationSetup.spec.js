@@ -1,22 +1,22 @@
 import { test, expect } from "@playwright/test";
-import LoginPage from "../../UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../UiTestsFolder/pages/General/SideMenuPage";
+import LoginPage from "../../testsfolders/UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
 import {
   API_URL,
   TOKEN,
   InputPath,
   GridPath,
-} from "../../UiTestsFolder/data/masterData.json";
+} from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
 import {
   AddRemSetupCreate,
   AddRemSetupEdit,
   AddRemSetupDelete,
-} from "../../UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
+} from "../../testsfolders/UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
 import {
   ValidateUiValues,
   ValidateGridValues,
-} from "../../UiTestsFolder/functions/ValidateValues";
-import ConnectExcel from "../../UiTestsFolder/pages/General/ConnectExcel";
+} from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
+import ConnectExcel from "../../utils/excel/ConnectExcel";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

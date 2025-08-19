@@ -49,20 +49,19 @@ export default class ConnectExcel {
       .api(`/sites/${this.site.id}/drive/root/search(q='${docName}')`)
       .get();
 
-    console.log("✅ Found file:", files.value[0]);
-
     this.driveId = files.value[0].parentReference.driveId;
     this.itemId = files.value[0].id;
   }
 
   // Read Excel data function
-  async readExcel(sheet, row, column) {
+  async readExcel(sheet, row, column, testType = "UI") {
     const sheetRes = await this.graphClient
       .api(
         `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheet}')/usedRange()`
       )
       .get();
 
+    console.log("✅ Sheet response:", JSON.stringify(sheetRes, null, 2));
     const values = sheetRes.values;
     if (!values || values.length == 0) return [];
 
@@ -72,7 +71,10 @@ export default class ConnectExcel {
     if (colIndex === -1) throw new Error(`Column "${column}" not found`);
 
     // Find row index
-    const firstCol = values.map((r) => r[1]);
+    // const firstCol = values.map((r) => r[1]);
+
+    const firstColIndex = testType === "UI" ? 1 : 0;
+    const firstCol = values.map((r) => r[firstColIndex]);
     const rowIndex = firstCol.indexOf(row);
     if (rowIndex === -1) throw new Error(`Row "${row}" not found`);
 

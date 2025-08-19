@@ -5,21 +5,25 @@ import { MAS_API_URL } from "../../testsfolders/ApiTestsFolder/ApiUrl.json";
 
 test.describe.serial("Country API", () => {
   let ctryKey;
-  let excel;
+  let connectExcel;
+  let createValues;
+  let editValues;
 
   const url = MAS_API_URL;
   const sheetName = "MASAPI_Data";
   const formName = "Country Setup";
 
   test.beforeAll(async () => {
-    excel = new ConnectExcel();
-    await excel.init("API");
+    // Initialize Excel connection
+    connectExcel = new ConnectExcel();
+    await connectExcel.init("API");
 
+    // Read Excel data once
     createValues = (
-      await excel.readExcel(sheetName, formName, "CreateAPIData")
+      await connectExcel.readExcel(sheetName, formName, "CreateAPIData", "API")
     ).split(";");
     editValues = (
-      await excel.readExcel(sheetName, formName, "EditAPIData")
+      await connectExcel.readExcel(sheetName, formName, "EditAPIData", "API")
     ).split(";");
   });
 
@@ -78,10 +82,10 @@ test.describe.serial("Country API", () => {
           "https://qalmonemasterapi-qa.azurewebsites.net/odata/$metadata#Country/@Element",
         ClientKey: 0,
         CtryKey: `${ctryKey}`,
-        CtryCode: "TEST234",
-        CtryDesc: "Country Edit",
+        CtryCode: editValues[0],
+        CtryDesc: editValues[1],
         CtryCodeCtryDesc: "TEST234 - Country Edit",
-        Active: true,
+        Active: editValues[2] === "true",
         RcdType: 0,
         RcdTypeDesc: "User",
         CreatedBy: 6,

@@ -1,5 +1,5 @@
 import { test } from "@playwright/test";
-import DBHelper from "../../UiTestsFolder/Utils/DBHelper";
+import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
 
 let db;
 

@@ -17,8 +17,8 @@ import {
   ValidateGridValues,
   ValidateDBValues,
 } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
-import ConnectExcel from "../../utils/excel/ConnectExcel";
-import DBHelper from "../../UiTestsFolder/Utils/DBHelper";
+import ConnectExcel from "../../Utils/excel/ConnectExcel";
+import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

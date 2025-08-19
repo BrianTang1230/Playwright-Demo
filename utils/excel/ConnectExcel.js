@@ -23,20 +23,33 @@ export default class ConnectExcel {
   }
 
   // async initialize function
-  async init(region = "MY") {
+  async init(testType = "UI", region) {
     // Get site
     this.site = await this.graphClient
       .api("/sites/lintramaxmy.sharepoint.com:/sites/SQA-Team")
       .get();
 
-    // Determine document name based on region
-    const docName =
-      region == "MY" ? "SeleniumTestData_MY.xlsx" : "SeleniumTestData_IND.xlsx";
+    let docName;
+
+    if (testType === "UI") {
+      // default region to MY only when UI is selected
+      const selectedRegion = region || "MY";
+      docName =
+        selectedRegion === "MY"
+          ? "SeleniumTestData_MY.xlsx"
+          : "SeleniumTestData_IND.xlsx";
+    } else if (testType === "API") {
+      docName = "Playwright_API.xlsx";
+    } else {
+      throw new Error("Invalid TEST_TYPE. Use 'UI' or 'API'.");
+    }
 
     // Find files
     const files = await this.graphClient
       .api(`/sites/${this.site.id}/drive/root/search(q='${docName}')`)
       .get();
+
+    console.log("✅ Found file:", files.value[0]);
 
     this.driveId = files.value[0].parentReference.driveId;
     this.itemId = files.value[0].id;

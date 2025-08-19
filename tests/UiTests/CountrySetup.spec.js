@@ -12,7 +12,7 @@ import {
   CountrySetupEdit,
   CountrySetupDelete,
 } from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
-import ConnectExcel from "../../utils/excel/ConnectExcel";
+import ConnectExcel from "../../Utils/excel/ConnectExcel";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

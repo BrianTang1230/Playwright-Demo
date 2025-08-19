@@ -1,6 +1,9 @@
 import sql from "mssql";
-import { masterGridSqlCommand, masterSQLCommand } from "./MasterQuery";
-import DB from "../data/loginData.json";
+import {
+  masterGridSqlCommand,
+  masterSQLCommand,
+} from "./MasterQuery";
+import DB from "../uidata/loginData.json";
 
 const configs = {
   dbMY: {

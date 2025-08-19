@@ -31,9 +31,7 @@ export default class ConnectExcel {
 
     // Determine document name based on region
     const docName =
-      region === "MY"
-        ? "SeleniumTestData_MY.xlsx"
-        : "SeleniumTestData_IND.xlsx";
+      region == "MY" ? "SeleniumTestData_MY.xlsx" : "SeleniumTestData_IND.xlsx";
 
     // Find files
     const files = await this.graphClient
@@ -53,7 +51,7 @@ export default class ConnectExcel {
       .get();
 
     const values = sheetRes.values;
-    if (!values || values.length === 0) return [];
+    if (!values || values.length == 0) return [];
 
     // Find column index
     const headerRow = values[0];

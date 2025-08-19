@@ -1,5 +1,5 @@
 // fixtures.js
-const { test: base, request } = require("@playwright/test");
+import { test as base, request } from "@playwright/test";
 require("dotenv").config();
 
 exports.test = base.extend({

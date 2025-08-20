@@ -1,3 +1,4 @@
 {
-  "MAS_API_URL": "https://qa.quarto.cloud/zmasterapi"
+  "MAS_API_URL": "https://qa.quarto.cloud/zmasterapi",
+  "NUR_API_URL": "https://qa.quarto.cloud/nurseryapi"
 }

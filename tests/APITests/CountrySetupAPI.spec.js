@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { test } from "../../testsfolders/ApiTestsFolder/Fixtures/fixtures";
+import { test } from "../../testsfolders/apiUtils/Fixtures";
 import ConnectExcel from "../../Utils/excel/ConnectExcel";
 import { MAS_API_URL } from "../../testsfolders/ApiTestsFolder/ApiUrl.json";
 

@@ -16,14 +16,14 @@ test.describe.serial("Country API", () => {
   test.beforeAll(async () => {
     // Initialize Excel connection
     connectExcel = new ConnectExcel();
-    await connectExcel.init("API");
+    await connectExcel.init(false);
 
     // Read Excel data once
     createValues = (
-      await connectExcel.readExcel(sheetName, formName, "CreateAPIData", "API")
+      await connectExcel.readExcel(sheetName, formName, "CreateAPIData", false)
     ).split(";");
     editValues = (
-      await connectExcel.readExcel(sheetName, formName, "EditAPIData", "API")
+      await connectExcel.readExcel(sheetName, formName, "EditAPIData", false)
     ).split(";");
   });
 
@@ -102,11 +102,12 @@ test.describe.serial("Country API", () => {
       },
     });
 
-    if (response.status() === 204) {
-      console.log("Update successful (no content returned)");
-    } else {
-      console.log(await response.json());
-    }
+    console.log(
+      response.status() === 204
+        ? "Update successful (no content returned)"
+        : await response.json()
+    );
+
     expect([200, 204]).toContain(response.status());
   });
 
@@ -118,11 +119,12 @@ test.describe.serial("Country API", () => {
       },
     });
 
-    if (response.status() === 204) {
-      console.log("Delete successful (no content returned)");
-    } else {
-      console.log(await response.json());
-    }
+    console.log(
+      response.status() === 204
+        ? "Delete successful (no content returned)"
+        : await response.json()
+    );
+
     expect([200, 204]).toContain(response.status());
   });
 });

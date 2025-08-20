@@ -23,7 +23,7 @@ export default class ConnectExcel {
   }
 
   // async initialize function
-  async init(testType = "UI", region) {
+  async init(isUI = true, region) {
     // Get site
     this.site = await this.graphClient
       .api("/sites/lintramaxmy.sharepoint.com:/sites/SQA-Team")
@@ -32,17 +32,16 @@ export default class ConnectExcel {
     let docName;
 
     // Check what is the test type and choose the file based on testType
-    if (testType === "UI") {
-      // default region to MY only when UI is selected
+    if (isUI) {
+      // MY is default region for UI testing, but if selectedRegion is IND then use IND
       const selectedRegion = region || "MY";
       docName =
         selectedRegion === "MY"
           ? "SeleniumTestData_MY.xlsx"
           : "SeleniumTestData_IND.xlsx";
-    } else if (testType === "API") {
-      docName = "Playwright_API.xlsx";
     } else {
-      throw new Error("Invalid TEST_TYPE. Use 'UI' or 'API'.");
+      // if its API testing it will run Playwright_API.xlsx
+      docName = "Playwright_API.xlsx";
     }
 
     // Find files
@@ -55,7 +54,8 @@ export default class ConnectExcel {
   }
 
   // Read Excel data function
-  async readExcel(sheet, row, column, testType = "UI") {
+  async readExcel(sheet, row, column, isUI = true) {
+    // Check if sheetName exist
     const sheetRes = await this.graphClient
       .api(
         `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheet}')/usedRange()`
@@ -72,7 +72,7 @@ export default class ConnectExcel {
     if (colIndex === -1) throw new Error(`Column "${column}" not found`);
 
     // Find row index
-    const firstColIndex = testType === "UI" ? 1 : 0; // Check what is the test type
+    const firstColIndex = isUI ? 1 : 0; // Check what is the test type
     const firstCol = values.map((r) => r[firstColIndex]);
     const rowIndex = firstCol.indexOf(row);
     if (rowIndex === -1) throw new Error(`Row "${row}" not found`);

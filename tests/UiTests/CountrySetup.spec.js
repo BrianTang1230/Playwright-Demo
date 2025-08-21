@@ -6,7 +6,10 @@ import {
   TOKEN,
   InputPath,
 } from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
-import { ValidateUiValues,ValidateDBValues } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
+import {
+  ValidateUiValues,
+  ValidateDBValues,
+} from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
 import {
   CountrySetupCreate,
   CountrySetupEdit,
@@ -14,7 +17,6 @@ import {
 } from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
 import ConnectExcel from "../../Utils/excel/ConnectExcel";
 import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
-
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -37,57 +39,22 @@ let db;
 
 test.describe("Country Setup Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll(async ({ request }) => {
+  test.beforeAll(async () => {
     // Initialize Excel connection
-    connectExcel = new ConnectExcel();
+    connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
 
     // Read Excel data once
-    createValues = (
-      await connectExcel.readExcel(sheetName, formName, "CreateData")
-    ).split(";");
-    editValues = (
-      await connectExcel.readExcel(sheetName, formName, "EditData")
-    ).split(";");
+    createValues = (await connectExcel.readExcel("CreateData")).split(";");
+    editValues = (await connectExcel.readExcel("EditData")).split(";");
 
-    // Connect to the database
+    // Initialize database connection
     db = new DBHelper("MY");
     await db.connect();
 
-    // Function to delete a country code if it exists
-    async function deleteIfExists(ctryCode) {
-      const response = await request.get(
-        `${url}?$filter=CtryCode+eq+%27${ctryCode}%27`,
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-            Accept: "application/json",
-          },
-        }
-      );
-
-      expect(response.ok()).toBeTruthy();
-      const dbData = await response.json();
-
-      if (dbData.value.length > 0) {
-        const deleteResp = await request.delete(
-          `${url}(${dbData.value[0].CtryKey})`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-              Accept: "application/json",
-            },
-          }
-        );
-        expect(deleteResp.ok()).toBeTruthy();
-      }
-    }
-
-    // Delete any existing entries in parallel
-    await Promise.all([
-      deleteIfExists(createValues[0]),
-      deleteIfExists(editValues[0]),
-    ]);
+    // Delete a country code if it exists
+    const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+    await db.deleteData(deleteSQL);
   });
 
   // ---------------- Before Each ----------------
@@ -117,7 +84,7 @@ test.describe("Country Setup Tests", () => {
         throw new Error("UI validation failed when creating new Country Code");
     });
 
-    const dbValues = await db.retrieveData("Country Setup", {
+    const dbValues = await db.retrieveData(formName, {
       Code: createValues[0],
     });
 
@@ -146,7 +113,7 @@ test.describe("Country Setup Tests", () => {
         throw new Error("UI validation failed when editing Country Code");
     });
 
-    const dbValues = await db.retrieveData("Country Setup", {
+    const dbValues = await db.retrieveData(formName, {
       Code: editValues[0],
     });
 
@@ -156,26 +123,21 @@ test.describe("Country Setup Tests", () => {
     });
   });
 
-  test("Delete Country Code", async ({ page, request }) => {
+  test("Delete Country Code", async ({ page }) => {
     await CountrySetupDelete(page, sideMenu, editValues);
 
-    const response = await request.get(
-      `${url}?$filter=CtryCode+eq+%27${editValues[0]}%27`,
-      {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          Accept: "application/json",
-        },
-      }
-    );
+    // Check if the country code is deleted
+    const dbValues = await db.retrieveData(formName, {
+      Code: editValues[0],
+    });
 
-    expect(response.ok()).toBeTruthy();
-    const dbData = await response.json();
-    if (dbData.value.length > 0)
-      throw new Error("Country Code was not deleted successfully");
+    if (dbValues.length > 0) {
+      throw new Error("DB validation failed when deleting Country Code");
+    }
   });
 
   test.afterAll(async () => {
-    await db.closeAll();
+    // Close database connection
+    await db.close();
   });
 });

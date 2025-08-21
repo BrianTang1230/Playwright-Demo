@@ -15,16 +15,16 @@ test.describe.serial("Country API", () => {
 
   test.beforeAll(async () => {
     // Initialize Excel connection
-    connectExcel = new ConnectExcel();
+    connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init(false);
 
     // Read Excel data once
-    createValues = (
-      await connectExcel.readExcel(sheetName, formName, "CreateAPIData", false)
-    ).split(";");
-    editValues = (
-      await connectExcel.readExcel(sheetName, formName, "EditAPIData", false)
-    ).split(";");
+    createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
+      ";"
+    );
+    editValues = (await connectExcel.readExcel("EditAPIData", false)).split(
+      ";"
+    );
   });
 
   test("Add new Country", async ({ request, authToken }) => {
@@ -127,4 +127,5 @@ test.describe.serial("Country API", () => {
 
     expect([200, 204]).toContain(response.status());
   });
+  
 });

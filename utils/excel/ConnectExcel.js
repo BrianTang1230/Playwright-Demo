@@ -3,7 +3,9 @@ import { ClientSecretCredential } from "@azure/identity";
 import { ClientCredentials } from "../data/clientCredentials.json";
 
 export default class ConnectExcel {
-  constructor() {
+  constructor(sheetName, formName) {
+    this.sheetName = sheetName;
+    this.formName = formName;
     // initialize GraphClient
     this.graphClient = Client.initWithMiddleware({
       authProvider: {
@@ -54,11 +56,11 @@ export default class ConnectExcel {
   }
 
   // Read Excel data function
-  async readExcel(sheet, row, column, isUI = true) {
+  async readExcel(column, isUI = true) {
     // Check if sheetName exist
     const sheetRes = await this.graphClient
       .api(
-        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheet}')/usedRange()`
+        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${this.sheetName}')/usedRange()`
       )
       .get();
 
@@ -73,8 +75,8 @@ export default class ConnectExcel {
     // Find row index
     const firstColIndex = isUI ? 1 : 0; // Check what is the test type
     const firstCol = values.map((r) => r[firstColIndex]);
-    const rowIndex = firstCol.indexOf(row);
-    if (rowIndex === -1) throw new Error(`Row "${row}" not found`);
+    const rowIndex = firstCol.indexOf(this.formName);
+    if (rowIndex === -1) throw new Error(`Row "${this.formName}" not found`);
 
     return values[rowIndex][colIndex];
   }

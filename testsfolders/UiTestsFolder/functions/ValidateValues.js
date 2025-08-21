@@ -7,23 +7,28 @@ async function ValidateUiValues(inputValues, uiValues) {
       );
       return false;
     }
+    console.log(
+      `UI validation succeeded at index ${i}: ${inputValues[i]} === ${uiValues[0][i]}`
+    );
   }
   return true;
 }
 
 async function ValidateDBValues(inputValues, inputCols, dbValues) {
   for (let i = 0; i < inputCols.length; i++) {
-    // Columns split by space and get the first
+    // Columns split by space and get the first element to be colName
     const colName = inputCols[i].split(" ")[0];
 
     if (inputValues[i] === "NA") continue;
-    console.debug(colName);
     if (dbValues[colName] !== inputValues[i]) {
       console.error(
         `DB validation failed at index ${i}: ${dbValues[colName]} !== ${inputValues[i]}`
       );
       return false;
     }
+    console.log(
+      `DB validation succeeded at index ${i}: ${dbValues[colName]} === ${inputValues[i]}`
+    );
   }
   return true;
 }
@@ -45,6 +50,9 @@ async function ValidateGridValues(page, gValues, gPaths, gCells) {
         );
         return false;
       }
+      console.log(
+        `Grid validation succeeded at cell ${gCells[j]}: ${inputValue} === ${value}`
+      );
     }
   }
   return true;

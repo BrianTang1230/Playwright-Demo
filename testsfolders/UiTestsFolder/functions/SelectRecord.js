@@ -1,4 +1,4 @@
-export default async function SelectRecord(page,sideMenu, values, type, del) {
+export default async function SelectRecord(page, sideMenu, values, type, del) {
   if (type == "search") {
     // Click Show Active Checkbox
     !del &&

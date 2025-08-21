@@ -33,6 +33,7 @@ const url = API_URL + "/odata/AddRem";
 
 // Excel info
 const sheetName = "MAS_DATA";
+const module = "Master File";
 const submodule = "General";
 const formName = "Additional Remuneration Setup";
 const paths = InputPath.AddRemSetupPath.split(",");
@@ -45,59 +46,26 @@ let db;
 
 test.describe("Additional Remuneration Setup Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll(async ({ request }) => {
+  test.beforeAll(async () => {
     // Initialize Excel helper
-    connectExcel = new ConnectExcel();
+    connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
 
     // Read Excel data once
-    createValues = (
-      await connectExcel.readExcel(sheetName, formName, "CreateData")
-    ).split(";");
-    editValues = (
-      await connectExcel.readExcel(sheetName, formName, "EditData")
-    ).split(";");
-    gridCreateValues = (
-      await connectExcel.readExcel(sheetName, formName, "GridDataCreate")
-    ).split("|");
-    gridEditValues = (
-      await connectExcel.readExcel(sheetName, formName, "GridDataEdit")
-    ).split("|");
+    createValues = (await connectExcel.readExcel("CreateData")).split(";");
+    editValues = (await connectExcel.readExcel("EditData")).split(";");
+    gridCreateValues = (await connectExcel.readExcel("GridDataCreate")).split(
+      "|"
+    );
+    gridEditValues = (await connectExcel.readExcel("GridDataEdit")).split("|");
 
     // Initialize database connection
     db = new DBHelper("MY");
     await db.connect();
 
     // Delete existing data if present
-    async function deleteIfExists(addRemCode) {
-      const response = await request.get(
-        `${url}?$filter=AddRemCode+eq+%27${addRemCode}%27`,
-        {
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-            Accept: "application/json",
-          },
-        }
-      );
-      expect(response.ok()).toBeTruthy();
-
-      const dbData = await response.json();
-      if (dbData.value.length > 0) {
-        const deleteResp = await request.delete(
-          `${url}(${dbData.value[0].AddRemKey})`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-              Accept: "application/json",
-            },
-          }
-        );
-        expect(deleteResp.ok()).toBeTruthy();
-      }
-    }
-
-    await deleteIfExists(createValues[0]);
-    await deleteIfExists(editValues[0]);
+    const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+    await db.deleteData(deleteSQL);
   });
 
   // ---------------- Before Each ----------------
@@ -105,7 +73,7 @@ test.describe("Additional Remuneration Setup Tests", () => {
     // Login and navigate to form
     const loginPage = new LoginPage(page);
     await loginPage.login();
-    await loginPage.navigateToForm("Master File", submodule, formName);
+    await loginPage.navigateToForm(module, submodule, formName);
 
     // Initialize side menu
     sideMenu = new SideMenuPage(page);
@@ -144,7 +112,7 @@ test.describe("Additional Remuneration Setup Tests", () => {
     );
 
     // Retrieve DB values(ui)
-    const dbValues = await db.retrieveData("Additional Remuneration Setup", {
+    const dbValues = await db.retrieveData(formName, {
       Code: createValues[0],
     });
 
@@ -159,12 +127,9 @@ test.describe("Additional Remuneration Setup Tests", () => {
     );
 
     // Retrieve DB values(grid)
-    const gridDbValues = await db.retrieveGridData(
-      "Additional Remuneration Setup",
-      {
-        Code: createValues[0],
-      }
-    );
+    const gridDbValues = await db.retrieveGridData(formName, {
+      Code: createValues[0],
+    });
 
     for (let i = 0; i < gridDbValues.length; i++) {
       // Get db values columns
@@ -215,7 +180,7 @@ test.describe("Additional Remuneration Setup Tests", () => {
     );
 
     // Retrieve DB values(ui)
-    const dbValues = await db.retrieveData("Additional Remuneration Setup", {
+    const dbValues = await db.retrieveData(formName, {
       Code: editValues[0],
     });
 
@@ -227,49 +192,46 @@ test.describe("Additional Remuneration Setup Tests", () => {
         );
     });
 
-    // Retrieve DB values(grid)
-    const gridDbValues = await db.retrieveGridData(
-      "Additional Remuneration Setup",
-      {
+    test.step("Validate Grid DB Values", async () => {
+      // Retrieve DB values(grid)
+      const gridDbValues = await db.retrieveGridData(formName, {
         Code: editValues[0],
-      }
-    );
-
-    for (let i = 0; i < gridDbValues.length; i++) {
-      // Get db values columns
-      const gridDbColumns = Object.keys(gridDbValues[i]);
-      // Validate DB values(grid)
-      await ValidateDBValues(
-        gridEditValues[i].split(";"),
-        gridDbColumns,
-        gridDbValues[i]
-      ).then((isMatch) => {
-        if (!isMatch)
-          throw new Error(
-            "DB validation failed when editing Additional Remuneration Code"
-          );
       });
+
+      for (let i = 0; i < gridDbValues.length; i++) {
+        // Get db values columns
+        const gridDbColumns = Object.keys(gridDbValues[i]);
+        // Validate DB values(grid)
+        await ValidateDBValues(
+          gridEditValues[i].split(";"),
+          gridDbColumns,
+          gridDbValues[i]
+        ).then((isMatch) => {
+          if (!isMatch)
+            throw new Error(
+              "DB validation failed when editing Additional Remuneration Code"
+            );
+        });
+      }
+    });
+  });
+
+  test("Delete Additional Remuneration Code", async ({ page }) => {
+    await AddRemSetupDelete(page, sideMenu, editValues);
+
+    const dbValues = await db.retrieveData(formName, {
+      Code: editValues[0],
+    });
+
+    if (dbValues.length > 0) {
+      throw new Error(
+        "DB validation failed when deleting Additional Remuneration Code"
+      );
     }
   });
 
-  test("Delete Additional Remuneration Code", async ({ page, request }) => {
-    await AddRemSetupDelete(page, sideMenu, editValues);
-
-    const response = await request.get(
-      `${url}?$filter=AddRemCode+eq+%27${editValues[0]}%27`,
-      {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-          Accept: "application/json",
-        },
-      }
-    );
-    expect(response.ok()).toBeTruthy();
-
-    const dbData = await response.json();
-    if (dbData.value.length > 0)
-      throw new Error(
-        "Additional Remuneration Code was not deleted successfully"
-      );
+  test.afterAll(async () => {
+    // Close database connection
+    await db.closeAll();
   });
 });

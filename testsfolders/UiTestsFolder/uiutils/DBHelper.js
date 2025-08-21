@@ -1,8 +1,5 @@
 import sql from "mssql";
-import {
-  masterGridSqlCommand,
-  masterSQLCommand,
-} from "./MasterQuery";
+import { masterGridSqlCommand, masterSQLCommand } from "./MasterQuery";
 import DB from "../uidata/loginData.json";
 
 const configs = {
@@ -80,6 +77,14 @@ export default class DBHelper {
     const query = masterGridSqlCommand(formName);
     const result = await request.query(query);
     return result.recordset;
+  }
+
+  async deleteData(query, params = {}) {
+    const pool = await this.connect();
+    const request = pool.request();
+    this.setParams(request, params);
+
+    await request.query(query);
   }
 
   async closeAll() {

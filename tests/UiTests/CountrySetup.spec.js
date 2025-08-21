@@ -11,7 +11,7 @@ import {
   CountrySetupEdit,
   CountrySetupDelete,
 } from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
-import ConnectExcel from "../../Utils/excel/ConnectExcel";
+import ConnectExcel from "../../utils/excel/ConnectExcel";
 import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
 import { masterSQLCommand } from "../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
 
@@ -65,7 +65,7 @@ test.describe("Country Setup Tests", () => {
   });
 
   // ---------------- Tests ----------------
-  test("Create New Country Code", async ({ page }) => {
+  test("@ui Create New Country Code", async ({ page }) => {
     const allValues = await CountrySetupCreate(
       page,
       sideMenu,
@@ -83,7 +83,7 @@ test.describe("Country Setup Tests", () => {
     await ValidateDBValues(createValues, columns, dbValues[0]);
   });
 
-  test("Edit Country Code", async ({ page }) => {
+  test("@ui Edit Country Code", async ({ page }) => {
     const allValues = await CountrySetupEdit(
       page,
       sideMenu,
@@ -102,7 +102,7 @@ test.describe("Country Setup Tests", () => {
     await ValidateDBValues(editValues, columns, dbValues[0]);
   });
 
-  test("Delete Country Code", async ({ page }) => {
+  test("@ui Delete Country Code", async ({ page }) => {
     await CountrySetupDelete(page, sideMenu, editValues);
 
     // Check if the country code is deleted

@@ -26,6 +26,11 @@ export default class ConnectExcel {
 
   // async initialize function
   async init(isUI = true, region) {
+    // if (driveId && itemId) {
+    //   this.driveId = driveId;
+    //   this.itemId = itemId;
+    //   return; // skip file search , driveId = null, itemId = null
+    // }
     // Get site
     this.site = await this.graphClient
       .api("/sites/lintramaxmy.sharepoint.com:/sites/SQA-Team")
@@ -81,13 +86,14 @@ export default class ConnectExcel {
     return values[rowIndex][colIndex];
   }
 
-  async writeExcel(sheet, row, column, newValue) {
+  async writeExcel(driveId, itemId, sheet, row, column, newValue) {
     // Get the sheet data
-    const sheetRes = await this.graphClient
+    const sheetRes = await graphClient
       .api(
-        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheet}')/usedRange()`
+        `/drives/${driveId}/items/${itemId}/workbook/worksheets('${sheet}')/usedRange()`
       )
       .get();
+    console.log(sheetRes.value.map((s) => s.name));
 
     const values = sheetRes.values;
     if (!values || values.length === 0)
@@ -104,13 +110,13 @@ export default class ConnectExcel {
     if (rowIndex === -1) throw new Error(`Row "${row}" not found`);
 
     // Convert column index to Excel letter
-    const colLetter = String.fromCharCode(65 + colIndex); // 65 = 'A'
+    const colLetter = String.fromCharCode(65 + colIndex);
     const cellAddress = `${colLetter}${rowIndex + 1}`;
 
     // Update the cell
-    await this.graphClient
+    await graphClient
       .api(
-        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheet}')/range(address='${cellAddress}')`
+        `/drives/${driveId}/items/${itemId}/workbook/worksheets('${sheet}')/range(address='${cellAddress}')`
       )
       .patch({
         values: [[newValue]],

@@ -15,7 +15,7 @@ import {
   ValidateGridValues,
   ValidateDBValues,
 } from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
-import ConnectExcel from "../../Utils/excel/ConnectExcel";
+import ConnectExcel from "../../utils/excel/ConnectExcel";
 import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
 import {
   masterGridSqlCommand,

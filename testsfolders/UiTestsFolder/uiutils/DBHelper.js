@@ -38,17 +38,7 @@ export default class DBHelper {
       this.pools[this.dbName] = await new sql.ConnectionPool(
         configs[this.dbName]
       ).connect();
-      console.log(`✅ Connected to ${this.dbName}`);
-
-      const result = await this.pools[this.dbName].request().query(`
-      SELECT DB_NAME() AS CurrentDB, SERVERPROPERTY('MachineName') AS ServerName, USER_NAME() AS CurrentUser
-    `);
-      console.table(result.recordset);
-
-      const schemaResult = await this.pools[this.dbName].request().query(`
-      SELECT SCHEMA_NAME() AS DefaultSchema
-    `);
-      console.table(schemaResult.recordset);
+      console.log(`✅ Connected to ${this.dbName.database}`);
     }
     return this.pools[this.dbName];
   }
@@ -59,22 +49,20 @@ export default class DBHelper {
     }
   }
 
-  async retrieveData(formName, params = {}) {
+  async retrieveData(query, params = {}) {
     const pool = await this.connect();
     const request = pool.request();
     this.setParams(request, params);
 
-    const query = masterSQLCommand(formName);
     const result = await request.query(query);
     return result.recordset;
   }
 
-  async retrieveGridData(formName, params = {}) {
+  async retrieveGridData(query, params = {}) {
     const pool = await this.connect();
     const request = pool.request();
     this.setParams(request, params);
 
-    const query = masterGridSqlCommand(formName);
     const result = await request.query(query);
     return result.recordset;
   }

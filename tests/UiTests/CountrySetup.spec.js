@@ -1,11 +1,7 @@
-import { expect, test } from "@playwright/test";
+import { test } from "@playwright/test";
 import LoginPage from "../../testsfolders/UiTestsFolder/pages/General/LoginPage";
 import SideMenuPage from "../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
-import {
-  API_URL,
-  TOKEN,
-  InputPath,
-} from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
+import { InputPath } from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
 import {
   ValidateUiValues,
   ValidateDBValues,
@@ -17,6 +13,7 @@ import {
 } from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
 import ConnectExcel from "../../Utils/excel/ConnectExcel";
 import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
+import { masterSQLCommand } from "../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -24,11 +21,9 @@ let connectExcel;
 let createValues;
 let editValues;
 
-// API URL
-const url = API_URL + "/odata/Country";
-
 // Excel info
 const sheetName = "MAS_DATA";
+const module = "Master File";
 const submodule = "General";
 const formName = "Country Setup";
 const paths = InputPath.CountrySetupPath.split(",");
@@ -62,7 +57,7 @@ test.describe("Country Setup Tests", () => {
     // Login and navigate to the form
     const loginPage = new LoginPage(page);
     await loginPage.login();
-    await loginPage.navigateToForm("Master File", submodule, formName);
+    await loginPage.navigateToForm(module, submodule, formName);
 
     // Initialize side menu
     sideMenu = new SideMenuPage(page);
@@ -79,23 +74,13 @@ test.describe("Country Setup Tests", () => {
       createValues
     );
 
-    await ValidateUiValues(createValues, allValues).then((isMatch) => {
-      if (!isMatch)
-        throw new Error("UI validation failed when creating new Country Code");
-    });
+    await ValidateUiValues(createValues, allValues);
 
-    const dbValues = await db.retrieveData(formName, {
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
     });
 
-    await ValidateDBValues(createValues, columns, dbValues[0]).then(
-      (isMatch) => {
-        if (!isMatch)
-          throw new Error(
-            "DB validation failed when creating new Country Code"
-          );
-      }
-    );
+    await ValidateDBValues(createValues, columns, dbValues[0]);
   });
 
   test("Edit Country Code", async ({ page }) => {
@@ -108,26 +93,20 @@ test.describe("Country Setup Tests", () => {
       editValues
     );
 
-    await ValidateUiValues(editValues, allValues).then((isMatch) => {
-      if (!isMatch)
-        throw new Error("UI validation failed when editing Country Code");
-    });
+    await ValidateUiValues(editValues, allValues);
 
-    const dbValues = await db.retrieveData(formName, {
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
 
-    await ValidateDBValues(editValues, columns, dbValues[0]).then((isMatch) => {
-      if (!isMatch)
-        throw new Error("DB validation failed when editing Country Code");
-    });
+    await ValidateDBValues(editValues, columns, dbValues[0]);
   });
 
   test("Delete Country Code", async ({ page }) => {
     await CountrySetupDelete(page, sideMenu, editValues);
 
     // Check if the country code is deleted
-    const dbValues = await db.retrieveData(formName, {
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
 
@@ -138,6 +117,6 @@ test.describe("Country Setup Tests", () => {
 
   test.afterAll(async () => {
     // Close database connection
-    await db.close();
+    await db.closeAll();
   });
 });

@@ -2,16 +2,11 @@ async function ValidateUiValues(inputValues, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
     if (inputValues[i] !== uiValues[0][i]) {
-      console.error(
-        `UI validation failed at index ${i}: ${inputValues[i]} !== ${uiValues[0][i]}`
+      throw new Error(
+        `Mismatch UI values: ${inputValues[i]} !== ${uiValues[0][i]}`
       );
-      return false;
     }
-    console.log(
-      `UI validation succeeded at index ${i}: ${inputValues[i]} === ${uiValues[0][i]}`
-    );
   }
-  return true;
 }
 
 async function ValidateDBValues(inputValues, inputCols, dbValues) {
@@ -21,16 +16,11 @@ async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
     if (inputValues[i] === "NA") continue;
     if (dbValues[colName] !== inputValues[i]) {
-      console.error(
-        `DB validation failed at index ${i}: ${dbValues[colName]} !== ${inputValues[i]}`
+      throw new Error(
+        `Mismatch DB values: ${inputValues[i]} !== ${dbValues[colName]}`
       );
-      return false;
     }
-    console.log(
-      `DB validation succeeded at index ${i}: ${dbValues[colName]} === ${inputValues[i]}`
-    );
   }
-  return true;
 }
 
 async function ValidateGridValues(page, gValues, gPaths, gCells) {
@@ -45,17 +35,10 @@ async function ValidateGridValues(page, gValues, gPaths, gCells) {
       const inputValue = await cell.innerText();
       if (value === "NA") continue;
       if (inputValue.toString().trim() !== value.trim()) {
-        console.error(
-          `Grid validation failed at cell ${gCells[j]}: ${inputValue} !== ${value}`
-        );
-        return false;
+        throw new Error(`Mismatch Grid values: ${inputValue} !== ${value}`);
       }
-      console.log(
-        `Grid validation succeeded at cell ${gCells[j]}: ${inputValue} === ${value}`
-      );
     }
   }
-  return true;
 }
 
 module.exports = { ValidateUiValues, ValidateDBValues, ValidateGridValues };

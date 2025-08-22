@@ -1,0 +1,120 @@
+import { test } from "@playwright/test";
+import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
+import {
+  InputPath,
+  JsonPath,
+  ID,
+} from "../../../utils/data/uidata/nurseryData.json";
+import {
+  ValidateUiValues,
+  ValidateDBValues,
+} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
+import {
+  PreNurserySeedReceivedCreate,
+  PreNurserySeedReceivedEdit,
+  //   PreNurserySeedReceivedDelete,
+} from "../../../testsfolders/UiTestsFolder/pages/Nursery/PreNurserySeedReceived";
+import ConnectExcel from "../../../utils/excel/ConnectExcel";
+import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
+import editJson from "../../../utils/commonFunctions/EditJson";
+
+// ---------------- Global Variables ----------------
+let sideMenu;
+let connectExcel;
+let createValues;
+let editValues;
+let db;
+let ou;
+let docNo;
+
+// Excel info
+const sheetName = "NUR_DATA";
+const module = "Nursery";
+const submodule = "Pre Nursery";
+const formName = "Pre Nursery Seed Received";
+const paths = InputPath.PreNurserySeedReceivedPath.split(",");
+const columns = InputPath.PreNurserySeedReceivedColumn.split(",");
+
+test.describe("Pre-Nursery Seed Received Tests", () => {
+  test.beforeAll(async () => {
+    // Initialize Excel connection
+    connectExcel = new ConnectExcel(sheetName, formName);
+    await connectExcel.init();
+
+    // Read Excel data once
+    createValues = (await connectExcel.readExcel("CreateData")).split(";");
+    editValues = (await connectExcel.readExcel("EditData")).split(";");
+
+    // Initialize database connection
+    db = new DBHelper("MY");
+    await db.connect();
+
+    // Delete a country code if it exists
+    docNo = ID.PreNurserySeedReceivedID;
+    if (!docNo) {
+      const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+      await db.deleteData(deleteSQL, { DocNum: docNo });
+    }
+    ou = await connectExcel.readExcel("OperatingUnit");
+  });
+
+  // ---------------- Before Each ----------------
+  test.beforeEach(async ({ page }) => {
+    // Login and navigate to the form
+    const loginPage = new LoginPage(page);
+    await loginPage.login();
+    await loginPage.navigateToForm(module, submodule, formName);
+
+    // Initialize side menu
+    sideMenu = new SideMenuPage(page);
+    await sideMenu.sideMenuBar.waitFor();
+  });
+
+  test("Create Pre-Nursery Seed Received", async ({ page }) => {
+    const allValues = await PreNurserySeedReceivedCreate(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      ou
+    );
+
+    // Saved DocNo
+    const docNo = await page.locator("#txtPSRNum").innerText();
+    docNo = await editJson(JsonPath, formName, docNo);
+
+    await ValidateUiValues(createValues, allValues);
+
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
+      Code: createValues[0],
+    });
+
+    await ValidateDBValues(createValues, columns, dbValues[0]);
+  });
+
+  test("Edit Pre-Nursery Seed Received", async ({ page }) => {
+    const allValues = await PreNurserySeedReceivedEdit(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou
+    );
+
+    await ValidateUiValues(editValues, allValues);
+
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
+      Code: editValues[0],
+    });
+
+    await ValidateDBValues(editValues, columns, dbValues[0]);
+  });
+
+  // test("Delete Pre-Nursery Seed Received", async ({ page }) => {
+  //   await PreNurserySeedReceivedDelete(page);
+  // });
+});

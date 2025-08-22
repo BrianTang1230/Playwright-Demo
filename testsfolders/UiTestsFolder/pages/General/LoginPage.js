@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 require("dotenv").config();
-import Login from "../../uidata/loginData.json";
+import Login from "../../../../utils/data/uidata/loginData.json";
 
 export default class LoginPage {
   constructor(page) {
@@ -32,7 +32,11 @@ export default class LoginPage {
       this.page.click("a#moduleMenuToggleBtn-2"));
 
     await test.step(`Navigate to ${formName}`, async () => {
-      await this.page.getByRole("link", { name: ` ${module}` }).click();
+      if (module.includes(" ")) {
+        await this.page.getByRole("link", { name: ` ${module}` }).click();
+      } else {
+        await this.page.getByRole("link", { name: module }).click();
+      }
       // If submodule exists, select it
       if (submodule) {
         await this.page

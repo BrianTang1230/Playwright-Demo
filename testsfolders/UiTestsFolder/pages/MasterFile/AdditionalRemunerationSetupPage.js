@@ -82,7 +82,7 @@ async function AddRemSetupEdit(
   await sideMenu.btnSave.click();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, newValues, "search");
+   await SelectRecord(page, sideMenu, newValues, "search", null, true);
 
   // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);

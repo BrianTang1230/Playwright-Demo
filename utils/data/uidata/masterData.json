@@ -1,8 +1,4 @@
 {
-  "API_URL": "https://qa.quarto.cloud/zmasterapi",
-
-  "TOKEN": "eIP83aJ1BV2hU7orZHdFTO45C4DwCjx5_7_r_9-u-pLAcY-MFzJtObiy0r7YYlbTIKTBnfasEvRo-v21olVxRrgTbs9UO-kxVRdCKTQ-mLQdmekpbozgEQurcgnb_mkOp6Dmrt_sXRM-fmNH2CtKYhQLrWrGcxvcBA54Viq3WT9BxIjS1dv0DGkNuEGDGyKidY_V7Cr-Py9fMyo5Cj2JgV2qEDDRavXyMkTe3dKJlWOg3e_eY2r9vnPAY2gaP_ZMbHGWDdQLDTxkKuD-ZB0B4Sgis5bnV1-OSC3WtSaRFLe-d8MhgHAiymB3Mzoh7Z2sn9AavY5z2UFb_HDIvh3locwEV7pLoGhO5jo8VuokErBHzXhDw6YqSlTKRD0S4WYtuxfPQPn8LdyIB3upW3RoANWSKvc",
-
   "InputPath": {
     "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
     "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox",

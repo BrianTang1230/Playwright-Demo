@@ -1,6 +1,5 @@
 import sql from "mssql";
-import { masterGridSqlCommand, masterSQLCommand } from "./MasterQuery";
-import DB from "../uidata/loginData.json";
+import DB from "../../../utils/data/uidata/loginData.json";
 
 const configs = {
   dbMY: {
@@ -38,7 +37,7 @@ export default class DBHelper {
       this.pools[this.dbName] = await new sql.ConnectionPool(
         configs[this.dbName]
       ).connect();
-      console.log(`✅ Connected to ${this.dbName.database}`);
+      console.log(`✅ Connected to ${configs[this.dbName].database}`);
     }
     return this.pools[this.dbName];
   }

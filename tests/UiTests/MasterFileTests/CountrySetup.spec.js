@@ -1,25 +1,26 @@
 import { test } from "@playwright/test";
-import LoginPage from "../../testsfolders/UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
-import { InputPath } from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
+import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
+import { InputPath } from "../../../utils/data/uidata/masterData.json";
 import {
   ValidateUiValues,
   ValidateDBValues,
-} from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
+} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
 import {
   CountrySetupCreate,
   CountrySetupEdit,
   CountrySetupDelete,
-} from "../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
-import ConnectExcel from "../../Utils/excel/ConnectExcel";
-import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
-import { masterSQLCommand } from "../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
+} from "../../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
+import ConnectExcel from "../../../utils/excel/ConnectExcel";
+import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
+import { masterSQLCommand } from "../../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
 let connectExcel;
 let createValues;
 let editValues;
+let db;
 
 // Excel info
 const sheetName = "MAS_DATA";
@@ -28,9 +29,6 @@ const submodule = "General";
 const formName = "Country Setup";
 const paths = InputPath.CountrySetupPath.split(",");
 const columns = InputPath.CountrySetupColumn.split(",");
-
-// Initialize database connection
-let db;
 
 test.describe("Country Setup Tests", () => {
   // ---------------- Before All ----------------

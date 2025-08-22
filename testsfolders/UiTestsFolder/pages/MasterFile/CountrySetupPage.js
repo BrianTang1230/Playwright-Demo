@@ -60,7 +60,7 @@ async function CountrySetupEdit(
 // Delete Function
 async function CountrySetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, "search", true);
+  await SelectRecord(page, sideMenu, newValues, "search", null, true);
 
   // Delete record
   await sideMenu.btnDelete.click();

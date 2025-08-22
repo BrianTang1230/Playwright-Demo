@@ -29,7 +29,8 @@ async function InputValues(page, path, col, value) {
 
   // Dropdown Input (only used for <select> element)
   if (col.includes("dropdown")) {
-    await element.selectOption(value);
+    await element.type(value);
+    await element.press("Enter");
     return;
   }
 }

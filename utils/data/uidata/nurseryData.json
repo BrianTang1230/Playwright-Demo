@@ -1,0 +1,14 @@
+{
+  "JsonPath": "nursery.json",
+
+  "InputPath": {
+    "PreNurserySeedReceivedPath": "#PreNurRcvDate,cboNurseryBatch_input,#remarkTextPRcv,cboPlantSource_input,spinbutton*0,spinbutton*1,spinbutton*2,spinbutton*3",
+    "PreNurserySeedReceivedColumn": "RcvDate date,NurBatch dropdown,Remarks text,PlantSource dropdown,OrdQty numeric,DelQty numeric,DamQty numeric,FocQty numeric"
+  },
+
+  "GridPath": {},
+
+  "ID": {
+    "PreNurserySeedReceivedID": ""
+  }
+}

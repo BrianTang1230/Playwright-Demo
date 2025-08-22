@@ -1,26 +1,26 @@
 import { test } from "@playwright/test";
-import LoginPage from "../../testsfolders/UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
+import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
+import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
 import {
   InputPath,
   GridPath,
-} from "../../testsfolders/UiTestsFolder/uidata/masterData.json";
+} from "../../../utils/data/uidata/masterData.json";
 import {
   AddRemSetupCreate,
   AddRemSetupEdit,
   AddRemSetupDelete,
-} from "../../testsfolders/UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
+} from "../../../testsfolders/UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
 import {
   ValidateUiValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "../../testsfolders/UiTestsFolder/functions/ValidateValues";
-import ConnectExcel from "../../Utils/excel/ConnectExcel";
-import DBHelper from "../../testsfolders/UiTestsFolder/uiutils/DBHelper";
+} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
+import ConnectExcel from "../../../utils/excel/ConnectExcel";
+import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
 import {
   masterGridSqlCommand,
   masterSQLCommand,
-} from "../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
+} from "../../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -29,6 +29,7 @@ let createValues;
 let editValues;
 let gridCreateValues;
 let gridEditValues;
+let db;
 
 // Excel info
 const sheetName = "MAS_DATA";
@@ -39,9 +40,6 @@ const paths = InputPath.AddRemSetupPath.split(",");
 const columns = InputPath.AddRemSetupColumn.split(",");
 const gridPaths = GridPath.AddRemSetupGrid.split(",");
 const cellsIndex = [1, 2, 3];
-
-//
-let db;
 
 test.describe("Additional Remuneration Setup Tests", () => {
   // ---------------- Before All ----------------

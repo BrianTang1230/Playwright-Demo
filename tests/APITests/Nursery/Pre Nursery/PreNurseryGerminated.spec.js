@@ -1,6 +1,6 @@
 import { expect } from "@playwright/test";
-import { test } from "@ApiFolder/apiUtils/Fixtures.js";
-import ConnectExcel from "@utils/excel/ConnectExcel";
+import { test } from "../../../../testsfolders/ApiTestsFolder/apiUtils/Fixtures.js";
+import ConnectExcel from "../../../../utils/excel/ConnectExcel";
 import { NUR_API_URL } from "../../../../testsfolders/ApiTestsFolder/ApiUrl.json";
 import { handleApiResponse } from "../../../../testsfolders/ApiTestsFolder/apiUtils/apiHelpers.js";
 
@@ -12,7 +12,7 @@ test.describe.serial("Pre Nursery API", () => {
 
   const url = NUR_API_URL;
   const sheetName = "NURAPI_Data";
-  const formName = "Pre Nursery Seed Received";
+  const formName = "Pre Nursery Germinated";
 
   test.beforeAll(async () => {
     // Initialize Excel connection with the selected file
@@ -28,11 +28,11 @@ test.describe.serial("Pre Nursery API", () => {
     );
   });
 
-  test("@api Add new Pre Nursery Seed Received transaction", async ({
+  test("Add new Pre Nursery Germinated transaction", async ({
     request,
     authToken,
   }) => {
-    const response = await request.post(`${url}/nur/api/NurPRcvPost`, {
+    const response = await request.post(`${url}/nur/api/NurPDbtPost`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
         Accept: "application/json",
@@ -84,18 +84,10 @@ test.describe.serial("Pre Nursery API", () => {
     expect([200, 201]).toContain(status);
     if (json && json.PRcvKey) {
       prcvKey = parseInt(json.PRcvKey);
-
-      // // 🔥 Save PRcvKey back into Excel (e.g., into "Key" column for this formName)
-      // await connectExcel.writeExcel(
-      //   sheetName, // Sheet name
-      //   formName, // Row identifier (TestCaseName column)
-      //   "Key", // Column to update
-      //   prcvKey // Value to write
-      // );
     }
   });
 
-  test("@api Get Nursery Seed Received transaction by HdrKey", async ({
+  test("Get Nursery Seed Received transaction by HdrKey", async ({
     request,
     authToken,
   }) => {
@@ -112,7 +104,7 @@ test.describe.serial("Pre Nursery API", () => {
     expect(response.status()).toBe(200);
   });
 
-  test("@api Get all Nursery Seed Received transaction", async ({
+  test("Get all Nursery Seed Received transaction", async ({
     request,
     authToken,
   }) => {
@@ -129,7 +121,7 @@ test.describe.serial("Pre Nursery API", () => {
     expect(response.status()).toBe(200);
   });
 
-  test("@api Update Pre Nursery Seed Received transaction", async ({
+  test("Update Pre Nursery Germinated transaction", async ({
     request,
     authToken,
   }) => {
@@ -189,7 +181,7 @@ test.describe.serial("Pre Nursery API", () => {
     expect([200, 204]).toContain(response.status());
   });
 
-  test("@api Delete Pre Nursery Seed Received transaction", async ({
+  test("Delete Pre Nursery Germinated transaction", async ({
     request,
     authToken,
   }) => {

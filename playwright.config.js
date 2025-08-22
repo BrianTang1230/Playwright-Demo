@@ -26,8 +26,9 @@ module.exports = defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  reporter: [
+    ["html", { outputFolder: "playwright-report", open: "never" }],
+  ] /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */,
 
   timeout: 120000,
   expect: { timeout: 10000 },
@@ -36,7 +37,10 @@ module.exports = defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
     headless: false,
-    video: "on",
+    video: {
+      mode: "on",         // or "retain-on-failure"
+      size: { width: 1920, height: 1080 },  // video resolution
+    },
     screenshot: "on",
     actionTimeout: 60000,
     launchOptions: {
@@ -50,7 +54,8 @@ module.exports = defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: "chromium",
+      name: "API Tests",
+      testDir: "tests/APITests",
       use: {
         ...device,
         viewport: null,
@@ -61,7 +66,31 @@ module.exports = defineConfig({
         headless: false,
       },
     },
-
+    {
+      name: "UI Tests",
+      testDir: "tests/UiTests",
+      use: {
+        ...device,
+        viewport: null,
+        launchOptions: {
+          args: ["--start-maximized"],
+          slowMo: 1000,
+        },
+        headless: false,
+      },
+    },
+    // {
+    //   name: "chromium",
+    //   use: {
+    //     ...device,
+    //     viewport: null,
+    //     launchOptions: {
+    //       args: ["--start-maximized"],
+    //       slowMo: 1000,
+    //     },
+    //     headless: false,
+    //   },
+    // },
     // {
     //   name: 'firefox',
     //   use: { ...devices['Desktop Firefox'] },

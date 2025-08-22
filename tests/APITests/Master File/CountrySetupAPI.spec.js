@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import { test } from "../../testsfolders/apiUtils/Fixtures";
-import ConnectExcel from "../../Utils/excel/ConnectExcel";
-import { MAS_API_URL } from "../../testsfolders/ApiTestsFolder/ApiUrl.json";
+import { test } from "../../../testsfolders/ApiTestsFolder/apiUtils/Fixtures";
+import ConnectExcel from "../../../utils/excel/ConnectExcel";
+import { MAS_API_URL } from "../../../testsfolders/ApiTestsFolder/ApiUrl.json";
 
 test.describe.serial("Country API", () => {
   let ctryKey;
@@ -127,5 +127,4 @@ test.describe.serial("Country API", () => {
 
     expect([200, 204]).toContain(response.status());
   });
-  
 });

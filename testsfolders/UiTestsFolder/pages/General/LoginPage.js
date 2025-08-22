@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 require("dotenv").config();
-import Login from "../../../../utils/data/uidata/loginData.json";
+import Login from "@utils/data/uidata/loginData.json";
 
 export default class LoginPage {
   constructor(page) {

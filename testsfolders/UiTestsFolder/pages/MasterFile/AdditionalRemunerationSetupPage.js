@@ -1,6 +1,6 @@
-import { InputValues, InputGridValues } from "../../functions/InputValues";
-import SelectRecord from "../../functions/SelectRecord";
-import getValues from "../../functions/GetValues";
+import { InputValues, InputGridValues } from "@UiFolder/functions/InputValues";
+import SelectRecord from "@UiFolder/functions/SelectRecord";
+import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
 async function AddRemSetupCreate(
@@ -82,7 +82,7 @@ async function AddRemSetupEdit(
   await sideMenu.btnSave.click();
 
   // Search and select created record
-   await SelectRecord(page, sideMenu, newValues, "search", null, true);
+  await SelectRecord(page, sideMenu, newValues, "search");
 
   // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);

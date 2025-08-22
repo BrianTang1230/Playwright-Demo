@@ -1,26 +1,23 @@
 import { test } from "@playwright/test";
-import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
-import {
-  InputPath,
-  GridPath,
-} from "../../../utils/data/uidata/masterData.json";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
+import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import { InputPath, GridPath } from "@utils/data/uidata/masterData.json";
 import {
   AddRemSetupCreate,
   AddRemSetupEdit,
   AddRemSetupDelete,
-} from "../../../testsfolders/UiTestsFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
+} from "@UiFolder/pages/MasterFile/AdditionalRemunerationSetupPage";
 import {
   ValidateUiValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
-import ConnectExcel from "../../../utils/excel/ConnectExcel";
-import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
+} from "@UiFolder/functions/ValidateValues";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/uiutils/DBHelper";
 import {
   masterGridSqlCommand,
   masterSQLCommand,
-} from "../../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
+} from "@UiFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

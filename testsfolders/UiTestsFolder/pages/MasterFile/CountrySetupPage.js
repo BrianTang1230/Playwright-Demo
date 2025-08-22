@@ -1,6 +1,6 @@
-import { InputValues } from "../../functions/InputValues";
-import SelectRecord from "../../functions/SelectRecord";
-import getValues from "../../functions/GetValues";
+import { InputValues } from "@UiFolder/functions/InputValues";
+import SelectRecord from "@UiFolder/functions/SelectRecord";
+import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
 async function CountrySetupCreate(page, sideMenu, paths, columns, values) {
@@ -60,7 +60,7 @@ async function CountrySetupEdit(
 // Delete Function
 async function CountrySetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, "search", null, true);
+  await SelectRecord(page, sideMenu, newValues, "search", true);
 
   // Delete record
   await sideMenu.btnDelete.click();

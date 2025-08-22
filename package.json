@@ -18,6 +18,12 @@
     "@microsoft/microsoft-graph-client": "^3.0.7",
     "@playwright/test": "^1.54.2",
     "dotenv": "^17.2.1",
+    "module-alias": "^2.2.3",
     "mssql": "^11.0.1"
+  },
+  "_moduleAliases": {
+    "@utils": "./utils",
+    "@UiFolder": "./testsfolders/UiTestsFolder",
+    "@ApiFolder": "./testsfolders/ApiTestsFolder"
   }
 }

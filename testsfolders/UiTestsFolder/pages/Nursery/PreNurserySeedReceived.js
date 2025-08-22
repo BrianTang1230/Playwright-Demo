@@ -1,6 +1,6 @@
-import { InputValues } from "../../functions/InputValues";
-import SelectRecord from "../../functions/SelectRecord";
-import getValues from "../../functions/GetValues";
+import { InputValues } from "@UiFolder/functions/InputValues";
+import SelectRecord from "@UiFolder/functions/SelectRecord";
+import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
 async function PreNurserySeedReceivedCreate(
@@ -15,13 +15,8 @@ async function PreNurserySeedReceivedCreate(
   await sideMenu.btnCreateNewForm.click();
 
   // Select OU
-  await page.locator("#divComboOU span.k-widget").click();
-  await page
-    .locator("#comboBoxOU_listbox li", {
-      hasText: "BNG - BINUANG ESTATE",
-    })
-    .first()
-    .click();
+  await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
+  await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
 
   // Input data
   if (paths.length == columns.length && columns.length == values.length) {
@@ -29,6 +24,7 @@ async function PreNurserySeedReceivedCreate(
       await InputValues(page, paths[i], columns[i], values[i]);
     }
   } else {
+    console.log(paths.length, columns.length, values.length);
     throw new Error("Paths, columns, and values do not match in length.");
   }
 

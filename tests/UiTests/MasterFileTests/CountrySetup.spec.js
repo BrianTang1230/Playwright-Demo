@@ -1,19 +1,19 @@
 import { test } from "@playwright/test";
-import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
-import { InputPath } from "../../../utils/data/uidata/masterData.json";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
+import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import { InputPath } from "@utils/data/uidata/masterData.json";
 import {
   ValidateUiValues,
   ValidateDBValues,
-} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
+} from "@UiFolder/functions/ValidateValues";
 import {
   CountrySetupCreate,
   CountrySetupEdit,
   CountrySetupDelete,
-} from "../../../testsfolders/UiTestsFolder/pages/MasterFile/CountrySetupPage";
-import ConnectExcel from "../../../utils/excel/ConnectExcel";
-import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
-import { masterSQLCommand } from "../../../testsfolders/UiTestsFolder/uiutils/MasterQuery";
+} from "@UiFolder/pages/MasterFile/CountrySetupPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/uiutils/DBHelper";
+import { masterSQLCommand } from "@UiFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

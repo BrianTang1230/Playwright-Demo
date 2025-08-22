@@ -1,5 +1,5 @@
 import sql from "mssql";
-import DB from "../../../utils/data/uidata/loginData.json";
+import DB from "@utils/data/uidata/loginData.json";
 
 const configs = {
   dbMY: {

@@ -1,4 +1,5 @@
 // @ts-check
+require("module-alias/register");
 import { defineConfig, devices } from "@playwright/test";
 /**
  * Read environment variables from file.
@@ -14,7 +15,7 @@ delete device.deviceScaleFactor;
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
-export default defineConfig({
+module.exports = defineConfig({
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,

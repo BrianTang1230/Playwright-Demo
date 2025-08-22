@@ -1,23 +1,19 @@
 import { test } from "@playwright/test";
-import LoginPage from "../../../testsfolders/UiTestsFolder/pages/General/LoginPage";
-import SideMenuPage from "../../../testsfolders/UiTestsFolder/pages/General/SideMenuPage";
-import {
-  InputPath,
-  JsonPath,
-  ID,
-} from "../../../utils/data/uidata/nurseryData.json";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
+import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import { InputPath, JsonPath, ID } from "@utils/data/uidata/nurseryData.json";
 import {
   ValidateUiValues,
   ValidateDBValues,
-} from "../../../testsfolders/UiTestsFolder/functions/ValidateValues";
+} from "@UiFolder/functions/ValidateValues";
 import {
   PreNurserySeedReceivedCreate,
   PreNurserySeedReceivedEdit,
   //   PreNurserySeedReceivedDelete,
-} from "../../../testsfolders/UiTestsFolder/pages/Nursery/PreNurserySeedReceived";
-import ConnectExcel from "../../../utils/excel/ConnectExcel";
-import DBHelper from "../../../testsfolders/UiTestsFolder/uiutils/DBHelper";
-import editJson from "../../../utils/commonFunctions/EditJson";
+} from "@UiFolder/pages/Nursery/PreNurserySeedReceived";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/uiutils/DBHelper";
+import editJson from "@utils/commonFunctions/EditJson";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

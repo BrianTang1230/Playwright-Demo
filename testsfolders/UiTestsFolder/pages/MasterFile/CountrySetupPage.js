@@ -1,9 +1,15 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
-import SelectRecord from "@UiFolder/functions/SelectRecord";
+import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
-async function CountrySetupCreate(page, sideMenu, paths, columns, values) {
+export async function CountrySetupCreate(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values
+) {
   // Click "New" button
   await sideMenu.btnNew.click();
 
@@ -20,14 +26,14 @@ async function CountrySetupCreate(page, sideMenu, paths, columns, values) {
   await sideMenu.btnSave.click();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, values);
 
   // Get ui values
   return await getValues(page, paths);
 }
 
 // Edit Function
-async function CountrySetupEdit(
+export async function CountrySetupEdit(
   page,
   sideMenu,
   paths,
@@ -36,7 +42,7 @@ async function CountrySetupEdit(
   newValues
 ) {
   // Search and select the created record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, values);
 
   // Input new data
   if (paths.length == columns.length && columns.length == newValues.length) {
@@ -51,20 +57,18 @@ async function CountrySetupEdit(
   await sideMenu.btnSave.click();
 
   // Search and select edited record
-  await SelectRecord(page, sideMenu, newValues, "search");
+  await SelectRecord(page, sideMenu, newValues);
 
   // Get ui values
   return await getValues(page, paths);
 }
 
 // Delete Function
-async function CountrySetupDelete(page, sideMenu, newValues) {
+export async function CountrySetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, "search", true);
+  await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();
 }
-
-module.exports = { CountrySetupCreate, CountrySetupEdit, CountrySetupDelete };

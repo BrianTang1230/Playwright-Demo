@@ -14,6 +14,8 @@ import {
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
+import { nurserySQLCommand } from "../../../testsfolders/UiTestsFolder/uiutils/NurseryQuery";
+import { SelectRecord, FilterRecord } from "@UiFolder/functions/OpenRecord";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -47,7 +49,7 @@ test.describe("Pre-Nursery Seed Received Tests", () => {
     await db.connect();
 
     // Delete a country code if it exists
-    docNo = ID.PreNurserySeedReceivedID;
+    docNo = ID.PreNurserySeedReceived;
     if (!docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNum: docNo });
@@ -78,19 +80,22 @@ test.describe("Pre-Nursery Seed Received Tests", () => {
     );
 
     // Saved DocNo
-    const docNo = await page.locator("#txtPSRNum").innerText();
-    docNo = await editJson(JsonPath, formName, docNo);
+    docNo = await page.locator("#txtPSRNum").inputValue();
+    await editJson(JsonPath, formName, docNo);
 
     await ValidateUiValues(createValues, allValues);
 
-    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
-      Code: createValues[0],
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
     });
 
-    await ValidateDBValues(createValues, columns, dbValues[0]);
+    await ValidateDBValues([...createValues, ou], columns, dbValues[0]);
   });
 
   test("Edit Pre-Nursery Seed Received", async ({ page }) => {
+    // Select the created record
+    await FilterRecord(page, createValues, ou, docNo);
+
     const allValues = await PreNurserySeedReceivedEdit(
       page,
       sideMenu,
@@ -103,7 +108,7 @@ test.describe("Pre-Nursery Seed Received Tests", () => {
 
     await ValidateUiValues(editValues, allValues);
 
-    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       Code: editValues[0],
     });
 

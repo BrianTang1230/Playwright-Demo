@@ -1,6 +1,6 @@
 import GetElementByPath from "./GetElementByPath";
 
-async function InputValues(page, path, col, value) {
+export async function InputValues(page, path, col, value) {
   if (value == "NA") {
     return;
   }
@@ -22,20 +22,27 @@ async function InputValues(page, path, col, value) {
   }
 
   // Integer,Date,Text Input
-  if (col.includes("numeric") || col.includes("text") || col.includes("date")) {
+  if (col.includes("text") || col.includes("date")) {
     await element.fill(value);
     return;
   }
 
-  // Dropdown Input (only used for <select> element)
+  // Numeric Input
+  if (col.includes("numeric")) {
+    await element.fill("");
+    await element.type(value);
+    return;
+  }
+
   if (col.includes("dropdown")) {
+    // Dropdown Input (only used for <select> element)
     await element.type(value);
     await element.press("Enter");
     return;
   }
 }
 
-async function InputGridValues(
+export async function InputGridValues(
   page,
   path,
   values,
@@ -57,5 +64,3 @@ async function InputGridValues(
     await input.press("Enter");
   }
 }
-
-module.exports = { InputValues, InputGridValues };

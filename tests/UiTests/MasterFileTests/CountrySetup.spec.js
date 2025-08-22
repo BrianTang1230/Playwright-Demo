@@ -63,7 +63,7 @@ test.describe("Country Setup Tests", () => {
   });
 
   // ---------------- Tests ----------------
-  test("@ui Create New Country Code", async ({ page }) => {
+  test("Create New Country Code", async ({ page }) => {
     const allValues = await CountrySetupCreate(
       page,
       sideMenu,
@@ -81,7 +81,7 @@ test.describe("Country Setup Tests", () => {
     await ValidateDBValues(createValues, columns, dbValues[0]);
   });
 
-  test("@ui Edit Country Code", async ({ page }) => {
+  test("Edit Country Code", async ({ page }) => {
     const allValues = await CountrySetupEdit(
       page,
       sideMenu,
@@ -100,7 +100,7 @@ test.describe("Country Setup Tests", () => {
     await ValidateDBValues(editValues, columns, dbValues[0]);
   });
 
-  test("@ui Delete Country Code", async ({ page }) => {
+  test("Delete Country Code", async ({ page }) => {
     await CountrySetupDelete(page, sideMenu, editValues);
 
     // Check if the country code is deleted

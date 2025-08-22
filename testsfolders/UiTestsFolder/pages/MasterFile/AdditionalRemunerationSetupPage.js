@@ -1,9 +1,9 @@
 import { InputValues, InputGridValues } from "@UiFolder/functions/InputValues";
-import SelectRecord from "@UiFolder/functions/SelectRecord";
+import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
-async function AddRemSetupCreate(
+export async function AddRemSetupCreate(
   page,
   sideMenu,
   paths,
@@ -37,14 +37,14 @@ async function AddRemSetupCreate(
   await sideMenu.btnSave.click();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, values);
 
   // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);
 }
 
 // Edit Function
-async function AddRemSetupEdit(
+export async function AddRemSetupEdit(
   page,
   sideMenu,
   paths,
@@ -56,7 +56,7 @@ async function AddRemSetupEdit(
   cellsIndex
 ) {
   // Search and select created record
-  await SelectRecord(page, sideMenu, values, "search");
+  await SelectRecord(page, sideMenu, values);
 
   // Input new data
   if (paths.length == columns.length && columns.length == newValues.length) {
@@ -82,24 +82,18 @@ async function AddRemSetupEdit(
   await sideMenu.btnSave.click();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, newValues, "search");
+  await SelectRecord(page, sideMenu, newValues);
 
   // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);
 }
 
 // Delete Function
-async function AddRemSetupDelete(page, sideMenu, newValues) {
+export async function AddRemSetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, "search", true);
+  await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();
 }
-
-module.exports = {
-  AddRemSetupCreate,
-  AddRemSetupEdit,
-  AddRemSetupDelete,
-};

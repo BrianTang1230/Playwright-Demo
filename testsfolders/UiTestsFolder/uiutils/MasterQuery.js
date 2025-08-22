@@ -7,7 +7,7 @@ function masterSQLCommand(formName) {
         SELECT CtryCode, 
         CtryDesc, 
         CASE WHEN Active = 1 THEN 'True' WHEN Active = 0 THEN 'False' END AS Active
-        FROM "GMS_CountryStp" 
+        FROM GMS_CountryStp 
         WHERE CtryCode = @Code`;
       break;
 

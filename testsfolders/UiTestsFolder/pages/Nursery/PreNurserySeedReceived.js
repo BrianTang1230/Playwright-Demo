@@ -1,9 +1,9 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
-import SelectRecord from "@UiFolder/functions/SelectRecord";
+import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
-async function PreNurserySeedReceivedCreate(
+export async function PreNurserySeedReceivedCreate(
   page,
   sideMenu,
   paths,
@@ -24,7 +24,7 @@ async function PreNurserySeedReceivedCreate(
       await InputValues(page, paths[i], columns[i], values[i]);
     }
   } else {
-    console.log(paths.length, columns.length, values.length);
+    console.log(paths, columns, values);
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
@@ -36,7 +36,7 @@ async function PreNurserySeedReceivedCreate(
 }
 
 // Edit Function
-async function PreNurserySeedReceivedEdit(
+export async function PreNurserySeedReceivedEdit(
   page,
   sideMenu,
   paths,
@@ -63,11 +63,8 @@ async function PreNurserySeedReceivedEdit(
   // Saved created data
   await sideMenu.btnSave.click();
 
+  
+
   // Get ui values
   return await getValues(page, paths);
 }
-
-module.exports = {
-  PreNurserySeedReceivedCreate,
-  PreNurserySeedReceivedEdit,
-};

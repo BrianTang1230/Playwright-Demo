@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "paths": {
+      "@utils/*": ["utils/*"],
+      "@UiFolder/*": ["testsfolders/UiTestsFolder/*"],
+      "@ApiFolder/*": ["tests/ApiTestsFolder/*"]
+    },
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["**/*.js", "**/*.json"]
+}

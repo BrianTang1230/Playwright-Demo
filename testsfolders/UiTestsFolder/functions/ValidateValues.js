@@ -1,4 +1,4 @@
-async function ValidateUiValues(inputValues, uiValues) {
+export async function ValidateUiValues(inputValues, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
     if (inputValues[i] !== uiValues[0][i]) {
@@ -9,12 +9,19 @@ async function ValidateUiValues(inputValues, uiValues) {
   }
 }
 
-async function ValidateDBValues(inputValues, inputCols, dbValues) {
+export async function ValidateDBValues(inputValues, inputCols, dbValues) {
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element to be colName
     const colName = inputCols[i].split(" ")[0];
 
     if (inputValues[i] === "NA") continue;
+    if (inputCols[i].includes("numeric")) {
+      if (inputValues[i].includes(",")) {
+        inputValues[i] = inputValues[i].replace(/,/g, "");
+      }
+      inputValues[i] = parseInt(inputValues[i]);
+    }
+
     if (dbValues[colName] !== inputValues[i]) {
       throw new Error(
         `Mismatch DB values: ${inputValues[i]} !== ${dbValues[colName]}`
@@ -23,7 +30,7 @@ async function ValidateDBValues(inputValues, inputCols, dbValues) {
   }
 }
 
-async function ValidateGridValues(page, gValues, gPaths, gCells) {
+export async function ValidateGridValues(page, gValues, gPaths, gCells) {
   for (let i = 0; i < gPaths.length; i++) {
     const table = page.locator(gPaths[i]);
     const row = table.locator("tr").first();
@@ -40,5 +47,3 @@ async function ValidateGridValues(page, gValues, gPaths, gCells) {
     }
   }
 }
-
-module.exports = { ValidateUiValues, ValidateDBValues, ValidateGridValues };

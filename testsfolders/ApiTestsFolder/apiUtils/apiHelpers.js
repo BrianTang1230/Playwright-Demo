@@ -1,5 +1,3 @@
-import { ClientCredentials } from "../../../utils/data/clientCredentials.json";
-
 export async function handleApiResponse(response, expectedStatus = null) {
   const status = response.status();
 
@@ -35,29 +33,25 @@ export async function handleApiResponse(response, expectedStatus = null) {
   return { status, rawBody, json: res };
 }
 
-export async function pickExcelFile() {
-  return new Promise((resolve, reject) => {
-    OneDrive.open({
-      clientId: ClientCredentials.clientId,
-      action: "query", // Query metadata only
-      multiSelect: false,
-      advanced: {
-        filter: ".xlsx",
-        scopes: "Files.ReadWrite.Selected",
-      },
-      success: function (files) {
-        const file = files.value[0];
-        resolve({
-          driveId: file.parentReference.driveId,
-          itemId: file.id,
-        });
-      },
-      cancel: function () {
-        reject(new Error("User cancelled the picker"));
-      },
-      error: function (err) {
-        reject(err);
-      },
-    });
-  });
+export async function setGlobal(globalName, json, propMappings) {
+  // propMappings is an object like { key: "PRcvKey", num: "PRcvNum", other: "OtherField" }
+
+  const globalObj = {};
+
+  for (const [alias, propName] of Object.entries(propMappings)) {
+    const value = json[propName];
+
+    // Apply parseInt only if value looks like a number (optional, up to you)
+    globalObj[alias] =
+      value !== undefined && value !== null
+        ? typeof value === "string" && /^\d+$/.test(value)
+          ? parseInt(value)
+          : value
+        : undefined;
+  }
+
+  globalThis[globalName] = globalObj;
+
+  // return destructured for local use
+  return globalObj;
 }

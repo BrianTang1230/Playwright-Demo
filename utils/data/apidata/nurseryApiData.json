@@ -1,0 +1,22 @@
+{
+  "JsonPath": "utils/data/apidata/nurseryApiData.json",
+  "NUR_API_URL": "https://qa.quarto.cloud/nurseryapi",
+  "ID": {
+    "PreNurserySeedReceived": {
+      "key": 121,
+      "num": "PSR0000076"
+    },
+    "PreNurseryCulling": {
+      "key": 151,
+      "num": "PC00000007"
+    },
+    "PreNurseryDoubletonSplitting": {
+      "key": 10,
+      "num": "PDS0000010"
+    },
+    "PreNurseryGerminated": {
+      "key": 59,
+      "num": "PG00000021"
+    }
+  }
+}

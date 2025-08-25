@@ -1,6 +1,5 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
-import { ClientCredentials } from "../data/clientCredentials.json";
 
 export default class ConnectExcel {
   constructor(sheetName, formName) {
@@ -11,9 +10,9 @@ export default class ConnectExcel {
       authProvider: {
         getAccessToken: async () => {
           const credential = new ClientSecretCredential(
-            ClientCredentials.tenantId,
-            ClientCredentials.clientId,
-            ClientCredentials.clientSecret
+            process.env.TENANT_ID,
+            process.env.CLIENT_ID,
+            process.env.CLIENT_SECRET
           );
           const token = await credential.getToken(
             "https://graph.microsoft.com/.default"

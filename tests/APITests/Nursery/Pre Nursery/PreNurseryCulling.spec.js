@@ -4,7 +4,7 @@ import ConnectExcel from "@utils/excel/ConnectExcel";
 import {
   JsonPath,
   NUR_API_URL,
-  ID
+  ID,
 } from "@utils/data/apidata/nurseryApiData.json";
 import {
   handleApiResponse,
@@ -12,8 +12,8 @@ import {
 } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 
-let prcvKey;
-let prcvNum;
+let pCullKey;
+let pCullNum;
 let connectExcel;
 let createValues;
 let editValues;
@@ -21,9 +21,9 @@ const currentDate = new Date().toISOString();
 
 const url = NUR_API_URL;
 const sheetName = "NURAPI_Data";
-const formName = "Pre Nursery Seed Received";
-const savedKey = ID.PreNurserySeedReceived.key;
-const savedDocNo = ID.PreNurserySeedReceived.num;
+const formName = "Pre Nursery Culling";
+const savedKey = ID.PreNurseryCulling.key;
+const savedDocNo = ID.PreNurseryCulling.num;
 
 test.beforeAll(async () => {
   // Initialize Excel connection with the selected file
@@ -37,53 +37,50 @@ test.beforeAll(async () => {
   editValues = (await connectExcel.readExcel("EditAPIData", false)).split(";");
 });
 
-test("@api Add new Pre Nursery Seed Received transaction", async ({
+test("@api Add new Pre Nursery Culling transaction", async ({
   request,
   authToken,
 }) => {
-  const response = await request.post(`${url}/nur/api/NurPRcvPost`, {
+  const response = await request.post(`${url}/nur/api/NurPCullPost`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
     data: {
-      PRcvKey: 59,
-      PRcvNum: "",
-      RcvDate: currentDate,
-      RefNo: createValues[0],
-      PlantSourceKey: 3,
-      PlantSourceCode: "",
-      PlantSourceDesc: "",
-      PlantSourceCodeDesc: "",
-      RcvQty: 12.0,
-      Remarks: createValues[1],
-      NurBatchKey: 138,
-      NurBatchCode: "",
-      NurBatchDesc: "",
-      NurBatchCodeDesc: "",
-      Status: "O",
-      StatusDesc: "OPEN",
-      OrdQty: createValues[2],
-      DelQty: createValues[3],
-      DamQty: createValues[4],
-      FocQty: createValues[5],
+      PCullKey: 146,
       ClientKey: 0,
       OUKey: 16,
       OUCode: "",
       OUDesc: "",
       OUCodeOUDesc: "",
       CompKey: 0,
-      PInterOUTrnKey: 0,
-      IsTransferFromInterPre: false,
+      PCullNum: "",
+      NurBatchKey: 138,
+      NurBatchCode: "",
+      NurBatchDesc: "",
+      NurBatchCodeDesc: "PA001 - PA BATCH 1",
+      PCReasonKey: -1,
+      PCReasonCode: "",
+      PCReasonDesc: "",
+      PCReasonCodeDesc: "",
+      CullDate: currentDate,
+      PCullDate: "0001-01-01T00:00:00",
+      PCullQty: createValues[0],
+      PCullSTQty: createValues[1],
+      PCullDTQty: createValues[2],
+      Remarks: createValues[3],
+      Status: "O",
+      StatusDesc: "OPEN",
+      Stage: "After Germinated",
       CreatedBy: 6,
       CreatedByCode: "LMSUPPORT",
       CreatedByDesc: "lmsupport",
-      CreatedDate: "2025-08-20T13:20:39.2148344",
-      LastUpdatedBy: 6,
-      LastUpdatedDate: "2025-08-20T05:20:39.2148344Z",
-      LastUpdatedByCode: "LMSUPPORT",
-      LastUpdatedByDesc: "lmsupport",
+      CreatedDate: "2025-08-22T15:21:45.2224647",
+      UpdatedBy: 6,
+      UpdatedDate: "2025-08-22T07:21:45.2224647Z",
+      UpdatedByCode: "LMSUPPORT",
+      UpdatedByDesc: "lmsupport",
       RowState: 1,
     },
   });
@@ -95,24 +92,23 @@ test("@api Add new Pre Nursery Seed Received transaction", async ({
   if (json) {
     // Call your dynamic setter
     const { key, num } = await setGlobal("preNursery", json, {
-      key: "PRcvKey",
-      num: "PRcvNum",
+      key: "PCullKey",
+      num: "PCullNum",
     });
 
-    // Now you can use key & num directly too
-    prcvKey = key;
-    prcvNum = num;
+    pCullKey = key;
+    pCullNum = num;
 
-    editJson(JsonPath, formName, { key: prcvKey, num: prcvNum }, false);
+    editJson(JsonPath, formName, { key: pCullKey, num: pCullNum }, false);
   }
 });
 
-test("@api Get Nursery Seed Received transaction by HdrKey", async ({
+test("@api Get Pre Nursery Culling transaction by HdrKey", async ({
   request,
   authToken,
 }) => {
   const response = await request.get(
-    `${url}/nur/odata/NurPRcv?HdrKey=${savedKey}&$format=json`,
+    `${url}/nur/odata/NurPCull?HdrKey=${savedKey}&$format=json`,
     {
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -124,12 +120,12 @@ test("@api Get Nursery Seed Received transaction by HdrKey", async ({
   expect(response.status()).toBe(200);
 });
 
-test("@api Get all Nursery Seed Received transaction", async ({
+test("@api Get all Pre Nursery Culling transaction", async ({
   request,
   authToken,
 }) => {
   const response = await request.get(
-    `${url}/nur/odata/NurPRcv?$format=json&$orderby=RcvDate%20desc,PRcvKey&$select=PRcvKey,RefNo,PlantSourceDesc,StatusDesc,OUCode,NurBatchCodeDesc,OrdQty,DelQty,DamQty,RcvQty,FocQty,Remarks,RcvDate,PRcvNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(RcvDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20RcvDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
+    `${url}/nur/odata/NurPCull?$format=json&$orderby=PCullDate%20desc,PCullKey&$select=PCullKey,PCullNum,StatusDesc,OUCode,NurBatchCodeDesc,PCullQty,PCullSTQty,PCullDTQty,PCullDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(PCullDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20PCullDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
     {
       headers: {
         Authorization: `Bearer ${authToken}`,
@@ -141,53 +137,50 @@ test("@api Get all Nursery Seed Received transaction", async ({
   expect(response.status()).toBe(200);
 });
 
-test("@api Update Pre Nursery Seed Received transaction", async ({
+test("@api Update Pre Nursery Culling transaction", async ({
   request,
   authToken,
 }) => {
-  const response = await request.post(`${url}/nur/api/NurPRcvPost`, {
+  const response = await request.post(`${url}/nur/api/NurPCullPost`, {
     headers: {
       Authorization: `Bearer ${authToken}`,
       Accept: "application/json",
       "Content-Type": "application/json",
     },
     data: {
-      PRcvKey: `${savedKey}`,
-      PRcvNum: `${savedDocNo}`,
-      RcvDate: currentDate,
-      RefNo: editValues[0],
-      PlantSourceKey: 3,
-      PlantSourceCode: "",
-      PlantSourceDesc: "",
-      PlantSourceCodeDesc: "",
-      RcvQty: 12.0,
-      Remarks: editValues[1],
-      NurBatchKey: 138,
-      NurBatchCode: "",
-      NurBatchDesc: "",
-      NurBatchCodeDesc: "",
-      Status: "O",
-      StatusDesc: "OPEN",
-      OrdQty: editValues[2],
-      DelQty: editValues[3],
-      DamQty: editValues[4],
-      FocQty: editValues[5],
+      PCullKey: `${savedKey}`,
       ClientKey: 0,
       OUKey: 16,
       OUCode: "",
       OUDesc: "",
       OUCodeOUDesc: "",
       CompKey: 0,
-      PInterOUTrnKey: 0,
-      IsTransferFromInterPre: false,
+      PCullNum: `${savedDocNo}`,
+      NurBatchKey: 138,
+      NurBatchCode: "",
+      NurBatchDesc: "",
+      NurBatchCodeDesc: "PA001 - PA BATCH 1",
+      PCReasonKey: -1,
+      PCReasonCode: "",
+      PCReasonDesc: "",
+      PCReasonCodeDesc: "",
+      CullDate: currentDate,
+      PCullDate: "0001-01-01T00:00:00",
+      PCullQty: editValues[0],
+      PCullSTQty: editValues[1],
+      PCullDTQty: editValues[2],
+      Remarks: editValues[3],
+      Status: "O",
+      StatusDesc: "OPEN",
+      Stage: "After Germinated",
       CreatedBy: 6,
       CreatedByCode: "LMSUPPORT",
       CreatedByDesc: "lmsupport",
-      CreatedDate: "2025-08-20T13:20:39.2148344",
-      LastUpdatedBy: 6,
-      LastUpdatedDate: "2025-08-20T05:20:39.2148344Z",
-      LastUpdatedByCode: "LMSUPPORT",
-      LastUpdatedByDesc: "lmsupport",
+      CreatedDate: "2025-08-22T15:21:45.2224647",
+      UpdatedBy: 6,
+      UpdatedDate: "2025-08-22T07:21:45.2224647Z",
+      UpdatedByCode: "LMSUPPORT",
+      UpdatedByDesc: "lmsupport",
       RowState: 2,
     },
   });
@@ -201,12 +194,12 @@ test("@api Update Pre Nursery Seed Received transaction", async ({
   expect([200, 204]).toContain(response.status());
 });
 
-test("@api Delete Pre Nursery Seed Received transaction", async ({
+test("@api Delete Pre Nursery Culling transaction", async ({
   request,
   authToken,
 }) => {
   const response = await request.delete(
-    `${url}/nur/api/nurPRcvPost?key=${savedKey}`,
+    `${url}/nur/api/NurPCullPost?key=${savedKey}`,
     {
       headers: {
         Authorization: `Bearer ${authToken}`,

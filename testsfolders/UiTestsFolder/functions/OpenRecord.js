@@ -18,8 +18,25 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 }
 
 export async function FilterRecord(page, values, ou, keyword) {
+
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
     .fill(ou);
+  await page.getByRole("button", { name: "+", exact: true }).click();
+  await page.getByRole("combobox").nth(3).fill(values[0]);
+  await page.getByRole("combobox").nth(4).fill(values[0]);
+
+  const seletor = await page
+    .locator("#tabstrip-2")
+    .getByText("Choose a Column to Filter")
+    .nth(2);
+  await seletor.click();
+  await seletor.press("ArrowDown");
+  await seletor.press("Enter");
+
+  await page.getByRole("textbox").fill(keyword);
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page.getByRole("gridcell", { name: keyword }).click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
 }

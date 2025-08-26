@@ -11,10 +11,10 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 import {
-  PreNurseryGerminatedCreate,
-  PreNurseryGerminatedEdit,
-  PreNurseryGerminatedDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryGerminated";
+  PreNurseryCullingCreate,
+  PreNurseryCullingEdit,
+  PreNurseryCullingDelete,
+} from "@UiFolder/pages/Nursery/PreNurseryCulling";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -34,11 +34,11 @@ let docNo;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
-const formName = "Pre Nursery Germinated";
-const paths = InputPath.PreNurseryGerminatedPath.split(",");
-const columns = InputPath.PreNurseryGerminatedColumn.split(",");
+const formName = "Pre Nursery Culling";
+const paths = InputPath.PreNurseryCullingPath.split(",");
+const columns = InputPath.PreNurseryCullingColumn.split(",");
 
-test.describe.serial("Pre Nursery Germinated Tests", () => {
+test.describe.serial("Pre Nursery Culling Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -66,8 +66,8 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Pre Nursery Germinated", async ({ page }) => {
-    const allValues = await PreNurseryGerminatedCreate(
+  test("Create Pre Nursery Culling", async ({ page }) => {
+    const allValues = await PreNurseryCullingCreate(
       page,
       sideMenu,
       paths,
@@ -77,7 +77,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
 
     // Saved DocNo
-    docNo = await page.locator("#txtPGNum").inputValue();
+    docNo = await page.locator("#txtPCNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     await ValidateUiValues(createValues, allValues);
@@ -93,8 +93,8 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
   });
 
-  test("Edit Pre Nursery Germinated", async ({ page }) => {
-    const allValues = await PreNurseryGerminatedEdit(
+  test("Edit Pre Nursery Culling", async ({ page }) => {
+    const allValues = await PreNurseryCullingEdit(
       page,
       sideMenu,
       paths,
@@ -118,15 +118,15 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
   });
 
-  test("Delete Pre Nursery Germinated", async ({ page }) => {
-    await PreNurseryGerminatedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Pre Nursery Culling", async ({ page }) => {
+    await PreNurseryCullingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Germinated failed");
+      throw new Error("Deleting Pre Nursery Culling failed");
     }
   });
 

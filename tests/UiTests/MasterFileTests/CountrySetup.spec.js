@@ -30,7 +30,7 @@ const formName = "Country Setup";
 const paths = InputPath.CountrySetupPath.split(",");
 const columns = InputPath.CountrySetupColumn.split(",");
 
-test.describe("Country Setup Tests", () => {
+test.describe.serial("Country Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll(async () => {
     // Initialize Excel connection

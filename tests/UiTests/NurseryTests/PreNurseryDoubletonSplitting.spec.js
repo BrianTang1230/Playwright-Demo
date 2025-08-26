@@ -38,7 +38,7 @@ const formName = "Pre Nursery Doubleton Splitting";
 const paths = InputPath.PreNurseryDoubletonSplittingPath.split(",");
 const columns = InputPath.PreNurseryDoubletonSplittingColumn.split(",");
 
-test.describe("Pre Nursery Doubleton Splitting", () => {
+test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -133,9 +133,7 @@ test.describe("Pre Nursery Doubleton Splitting", () => {
     });
 
     if (dbValues.length > 0) {
-      throw new Error(
-        "DB validation failed when deleting Pre Nursery Germinated"
-      );
+      throw new Error("Deleting Pre Nursery Doubleton Splitting failed");
     }
   });
 

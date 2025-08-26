@@ -38,8 +38,8 @@ module.exports = defineConfig({
     // baseURL: 'http://localhost:3000',
     headless: false,
     video: {
-      mode: "on",         // or "retain-on-failure"
-      size: { width: 1920, height: 1080 },  // video resolution
+      mode: "on", // or "retain-on-failure"
+      size: { width: 1920, height: 1080 }, // video resolution
     },
     screenshot: "on",
     actionTimeout: 60000,
@@ -74,7 +74,7 @@ module.exports = defineConfig({
         viewport: null,
         launchOptions: {
           args: ["--start-maximized"],
-          slowMo: 1000,
+          slowMo: 1200,
         },
         headless: false,
       },

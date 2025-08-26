@@ -6,15 +6,18 @@
     "PreNurseryGerminatedPath": "#PreNurGmtDate,cboNurseryBatch_input,#remarkTextPDbt,cboPlantMate_input,spinbutton*1,spinbutton*2",
     "PreNurseryGerminatedColumn": "DbtDate date,NurBatch dropdown,Remarks text,PlantMaterial dropdown,SgtQty numeric,DbtQty numeric",
     "PreNurseryDoubletonSplittingPath": "#MainNurDbtSplitDate,cboNurseryBatch_input,#remarkTextPSplit,spinbutton*1",
-    "PreNurseryDoubletonSplittingColumn": "PDbtSplitDate date,NurBatch dropdown,Remarks text,SplitQty numeric"
+    "PreNurseryDoubletonSplittingColumn": "PDbtSplitDate date,NurBatch dropdown,Remarks text,SplitQty numeric",
+    "PreNurseryCullingPath": "#PreNurCullDate,cboNurseryBatch_input,remarkTextPCull,spinbutton*1,spinbutton*3,spinbutton*5",
+    "PreNurseryCullingColumn": "CullDate date,NurBatch dropdown,Remarks text,PCullQty numeric,PCullSTQty numeric,PCullDTQty numeric"
   },
   "GridPath": {},
   "ID": {
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "",
-    "PreNurseryGerminated": "",
-    "PreNurseryDoubletonSplitting": "PDS0000021"
+    "PreNurserySeedReceived": "PSR0000050",
+    "PreNurseryGerminated": "PG00000013",
+    "PreNurseryDoubletonSplitting": "PDS0000024",
+    "PreNurseryCulling": "PC00000006"
   }
 }

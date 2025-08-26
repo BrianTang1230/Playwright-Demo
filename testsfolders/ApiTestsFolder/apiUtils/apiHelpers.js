@@ -1,3 +1,5 @@
+import { expect } from "@playwright/test";
+
 export async function handleApiResponse(response, expectedStatus = null) {
   const status = response.status();
 
@@ -13,10 +15,12 @@ export async function handleApiResponse(response, expectedStatus = null) {
   }
 
   // Log in a nicer format
-  if (res) {
-    console.log("📩 JSON response:", JSON.stringify(res, null, 2)); // pretty JSON
+  if (status === 204 || !rawBody || rawBody.trim() === "") {
+    console.log("📩 No content (success)");
+  } else if (res) {
+    console.log("📩 JSON response:", res);
   } else {
-    console.log("📩 Raw response:", rawBody); // fallback if not JSON
+    console.log("📩 Raw response:", rawBody);
   }
 
   // Determine what counts as success
@@ -54,4 +58,34 @@ export async function setGlobal(globalName, json, propMappings) {
 
   // return destructured for local use
   return globalObj;
+}
+
+const authHeaders = (token) => ({
+  Authorization: `Bearer ${token}`,
+  Accept: "application/json",
+  "Content-Type": "application/json",
+});
+
+export async function apiCall(
+  request,
+  method,
+  url,
+  token,
+  options = {},
+  expectedStatus = [200]
+) {
+  const response = await request[method.toLowerCase()](url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    ...options,
+  });
+
+  const { status, json, rawBody } = await handleApiResponse(response);
+
+  expect(expectedStatus).toContain(status);
+
+  return { status, json, rawBody };
 }

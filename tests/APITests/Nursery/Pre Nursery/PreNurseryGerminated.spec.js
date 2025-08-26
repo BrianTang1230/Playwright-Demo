@@ -9,6 +9,7 @@ import {
 import {
   handleApiResponse,
   setGlobal,
+  authHeaders,
 } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 
@@ -25,191 +26,185 @@ const formName = "Pre Nursery Germinated";
 const savedKey = ID.PreNurseryGerminated.key;
 const savedDocNo = ID.PreNurseryGerminated.num;
 
-test.beforeAll(async () => {
-  // Initialize Excel connection with the selected file
-  connectExcel = new ConnectExcel(sheetName, formName);
-  await connectExcel.init(false);
+test.describe.serial("Pre Nursery Germinated", () => {
+  test.beforeAll(async () => {
+    // Initialize Excel connection with the selected file
+    connectExcel = new ConnectExcel(sheetName, formName);
+    await connectExcel.init(false);
 
-  // Read Excel data once
-  createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
-    ";"
-  );
-  editValues = (await connectExcel.readExcel("EditAPIData", false)).split(";");
-});
-
-test("@api Add new Pre Nursery Germinated transaction", async ({
-  request,
-  authToken,
-}) => {
-  const response = await request.post(`${url}/nur/api/NurPDbtPost`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    data: {
-      DbtKey: 45,
-      PDoubletonNum: "",
-      DbtDate: currentDate,
-      PlantMateKey: 37,
-      PlantMateCode: "",
-      PlantMateDesc: "",
-      PlantMateCodeDesc: "",
-      DbtQty: createValues[0],
-      Remarks: createValues[1],
-      NurBatchKey: 138,
-      NurBatchCode: "",
-      NurBatchDesc: "",
-      NurBatchCodeDesc: "PA001 - PA BATCH 1",
-      Status: "O",
-      StatusDesc: "OPEN",
-      SgtQty: createValues[2],
-      ClientKey: 0,
-      OUKey: 16,
-      OUCode: "",
-      OUDesc: "",
-      OUCodeOUDesc: "",
-      CompKey: 0,
-      CreatedBy: 6,
-      CreatedByCode: "LMSUPPORT",
-      CreatedByDesc: "lmsupport",
-      CreatedDate: "2025-08-21T16:22:57.4103475",
-      LastUpdatedBy: 6,
-      LastUpdatedDate: "2025-08-21T08:22:57.4103475Z",
-      LastUpdatedByCode: "LMSUPPORT",
-      LastUpdatedByDesc: "lmsupport",
-      PInterOUTrnKey: -1,
-      IsTransferFromInterPre: false,
-      RowState: 1,
-    },
+    // Read Excel data once
+    createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
+      ";"
+    );
+    editValues = (await connectExcel.readExcel("EditAPIData", false)).split(
+      ";"
+    );
   });
 
-  const { status, json } = await handleApiResponse(response);
-
-  expect([200, 201]).toContain(status);
-  if (json) {
-    // Call your dynamic setter
-    const { key, num } = await setGlobal("preNursery", json, {
-      key: "DbtKey",
-      num: "PDoubletonNum",
+  test("Add new Pre Nursery Germinated transaction", async ({
+    request,
+    authToken,
+  }) => {
+    const response = await request.post(`${url}/nur/api/NurPDbtPost`, {
+      headers: authHeaders(authToken),
+      data: {
+        DbtKey: 45,
+        PDoubletonNum: "",
+        DbtDate: currentDate,
+        PlantMateKey: 37,
+        PlantMateCode: "",
+        PlantMateDesc: "",
+        PlantMateCodeDesc: "",
+        DbtQty: createValues[0],
+        Remarks: createValues[1],
+        NurBatchKey: 138,
+        NurBatchCode: "",
+        NurBatchDesc: "",
+        NurBatchCodeDesc: "PA001 - PA BATCH 1",
+        Status: "O",
+        StatusDesc: "OPEN",
+        SgtQty: createValues[2],
+        ClientKey: 0,
+        OUKey: 16,
+        OUCode: "",
+        OUDesc: "",
+        OUCodeOUDesc: "",
+        CompKey: 0,
+        CreatedBy: 6,
+        CreatedByCode: "LMSUPPORT",
+        CreatedByDesc: "lmsupport",
+        CreatedDate: "2025-08-21T16:22:57.4103475",
+        LastUpdatedBy: 6,
+        LastUpdatedDate: "2025-08-21T08:22:57.4103475Z",
+        LastUpdatedByCode: "LMSUPPORT",
+        LastUpdatedByDesc: "lmsupport",
+        PInterOUTrnKey: -1,
+        IsTransferFromInterPre: false,
+        RowState: 1,
+      },
     });
 
-    dbtKey = key;
-    dbtNum = num;
+    const { status, json } = await handleApiResponse(response);
 
-    editJson(JsonPath, formName, { key: dbtKey, num: dbtNum }, false);
-  }
-});
+    expect([200, 201]).toContain(status);
+    if (json) {
+      // Call your dynamic setter
+      const { key, num } = await setGlobal("preNursery", json, {
+        key: "DbtKey",
+        num: "PDoubletonNum",
+      });
 
-test("@api Get Pre Nursery Germinated transaction by HdrKey", async ({
-  request,
-  authToken,
-}) => {
-  const response = await request.get(
-    `${url}/nur/odata/NurPDbt?HdrKey=${savedKey}&$format=json`,
-    {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        Accept: "application/json",
-      },
+      dbtKey = key;
+      dbtNum = num;
+
+      editJson(JsonPath, formName, { key: dbtKey, num: dbtNum }, false);
     }
-  );
-  console.log(await response.json());
-  expect(response.status()).toBe(200);
-});
-
-test("@api Get all Pre Nursery Germinated transaction", async ({
-  request,
-  authToken,
-}) => {
-  const response = await request.get(
-    `${url}/nur/odata/NurPDbt?$format=json&$orderby=DbtDate%20desc,DbtKey&$select=DbtKey,StatusDesc,OUCode,NurBatchCodeDesc,PlantMateDesc,SgtQty,DbtQty,Remarks,DbtDate,PDoubletonNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(DbtDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20DbtDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
-    {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        Accept: "application/json",
-      },
-    }
-  );
-  console.log(await response.json());
-  expect(response.status()).toBe(200);
-});
-
-test("@api Update Pre Nursery Germinated transaction", async ({
-  request,
-  authToken,
-}) => {
-  const response = await request.post(`${url}/nur/api/NurPDbtPost`, {
-    headers: {
-      Authorization: `Bearer ${authToken}`,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    data: {
-      DbtKey: `${savedKey}`,
-      PDoubletonNum: `${savedDocNo}`,
-      DbtDate: currentDate,
-      PlantMateKey: 37,
-      PlantMateCode: "",
-      PlantMateDesc: "",
-      PlantMateCodeDesc: "",
-      DbtQty: createValues[0],
-      Remarks: createValues[1],
-      NurBatchKey: 138,
-      NurBatchCode: "",
-      NurBatchDesc: "",
-      NurBatchCodeDesc: "PA001 - PA BATCH 1",
-      Status: "O",
-      StatusDesc: "OPEN",
-      SgtQty: createValues[2],
-      ClientKey: 0,
-      OUKey: 16,
-      OUCode: "",
-      OUDesc: "",
-      OUCodeOUDesc: "",
-      CompKey: 0,
-      CreatedBy: 6,
-      CreatedByCode: "LMSUPPORT",
-      CreatedByDesc: "lmsupport",
-      CreatedDate: "2025-08-21T16:22:57.4103475",
-      LastUpdatedBy: 6,
-      LastUpdatedDate: "2025-08-21T08:22:57.4103475Z",
-      LastUpdatedByCode: "LMSUPPORT",
-      LastUpdatedByDesc: "lmsupport",
-      PInterOUTrnKey: -1,
-      IsTransferFromInterPre: false,
-      RowState: 2,
-    },
   });
 
-  console.log(
-    response.status() === 204
-      ? "Update successful (no content returned)"
-      : await response.json()
-  );
+  test("Get Pre Nursery Germinated transaction by HdrKey", async ({
+    request,
+    authToken,
+  }) => {
+    const keyToUse = dbtKey || savedKey;
 
-  expect([200, 204]).toContain(response.status());
-});
+    const response = await request.get(
+      `${url}/nur/odata/NurPDbt?HdrKey=${keyToUse}&$format=json`,
+      {
+        headers: authHeaders(authToken),
+      }
+    );
+    console.log(await response.json());
+    expect(response.status()).toBe(200);
+  });
 
-test("@api Delete Pre Nursery Germinated transaction", async ({
-  request,
-  authToken,
-}) => {
-  const response = await request.delete(
-    `${url}/nur/api/nurPDbtPost?key=${savedKey}`,
-    {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        Accept: "application/json",
+  test("Get all Pre Nursery Germinated transaction", async ({
+    request,
+    authToken,
+  }) => {
+    const response = await request.get(
+      `${url}/nur/odata/NurPDbt?$format=json&$orderby=DbtDate%20desc,DbtKey&$select=DbtKey,StatusDesc,OUCode,NurBatchCodeDesc,PlantMateDesc,SgtQty,DbtQty,Remarks,DbtDate,PDoubletonNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(DbtDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20DbtDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
+      {
+        headers: authHeaders(authToken),
+      }
+    );
+    console.log(await response.json());
+    expect(response.status()).toBe(200);
+  });
+
+  test("Update Pre Nursery Germinated transaction", async ({
+    request,
+    authToken,
+  }) => {
+    const keyToUse = dbtKey || savedKey;
+    const docNoToUse = dbtNum || savedDocNo;
+
+    const response = await request.post(`${url}/nur/api/NurPDbtPost`, {
+      headers: authHeaders(authToken),
+      data: {
+        DbtKey: `${keyToUse}`,
+        PDoubletonNum: `${docNoToUse}`,
+        DbtDate: currentDate,
+        PlantMateKey: 37,
+        PlantMateCode: "",
+        PlantMateDesc: "",
+        PlantMateCodeDesc: "",
+        DbtQty: createValues[0],
+        Remarks: createValues[1],
+        NurBatchKey: 138,
+        NurBatchCode: "",
+        NurBatchDesc: "",
+        NurBatchCodeDesc: "PA001 - PA BATCH 1",
+        Status: "O",
+        StatusDesc: "OPEN",
+        SgtQty: createValues[2],
+        ClientKey: 0,
+        OUKey: 16,
+        OUCode: "",
+        OUDesc: "",
+        OUCodeOUDesc: "",
+        CompKey: 0,
+        CreatedBy: 6,
+        CreatedByCode: "LMSUPPORT",
+        CreatedByDesc: "lmsupport",
+        CreatedDate: "2025-08-21T16:22:57.4103475",
+        LastUpdatedBy: 6,
+        LastUpdatedDate: "2025-08-21T08:22:57.4103475Z",
+        LastUpdatedByCode: "LMSUPPORT",
+        LastUpdatedByDesc: "lmsupport",
+        PInterOUTrnKey: -1,
+        IsTransferFromInterPre: false,
+        RowState: 2,
       },
-    }
-  );
+    });
 
-  console.log(
-    response.status() === 204
-      ? "Delete successful (no content returned)"
-      : await response.json()
-  );
+    console.log(
+      response.status() === 204
+        ? "Update successful (no content returned)"
+        : await response.json()
+    );
 
-  expect([200, 204]).toContain(response.status());
+    expect([200, 204]).toContain(response.status());
+  });
+
+  test("Delete Pre Nursery Germinated transaction", async ({
+    request,
+    authToken,
+  }) => {
+    const keyToUse = dbtKey || savedKey;
+
+    const response = await request.delete(
+      `${url}/nur/api/nurPDbtPost?key=${keyToUse}`,
+      {
+        headers: authHeaders(authToken),
+      }
+    );
+
+    console.log(
+      response.status() === 204
+        ? "Delete successful (no content returned)"
+        : await response.json()
+    );
+
+    expect([200, 204]).toContain(response.status());
+  });
 });

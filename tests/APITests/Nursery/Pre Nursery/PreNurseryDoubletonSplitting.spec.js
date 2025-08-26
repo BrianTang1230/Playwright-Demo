@@ -9,10 +9,11 @@ import {
 import {
   handleApiResponse,
   setGlobal,
+  authHeaders,
 } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 
-test.describe.serial("Pre Nursery API", () => {
+test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   let pdbtSplitKey;
   let pdbtSplitNum;
   let connectExcel;
@@ -40,16 +41,12 @@ test.describe.serial("Pre Nursery API", () => {
     );
   });
 
-  test("@api Add new Pre Nursery Doubleton Splitting transaction", async ({
+  test("Add new Pre Nursery Doubleton Splitting transaction", async ({
     request,
     authToken,
   }) => {
     const response = await request.post(`${url}/nur/api/NurPDbtSplitPost`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+      headers: authHeaders(authToken),
       data: {
         PDbtSplitKey: 1,
         ClientKey: -1,
@@ -104,59 +101,54 @@ test.describe.serial("Pre Nursery API", () => {
     }
   });
 
-  test("@api Get Pre Nursery Doubleton Splitting transaction by HdrKey", async ({
+  test("Get Pre Nursery Doubleton Splitting transaction by HdrKey", async ({
     request,
     authToken,
   }) => {
+    const keyToUse = pdbtSplitKey || savedKey;
+
     const response = await request.get(
-      `${url}/nur/odata/NurPDbtSplit?HdrKey=${savedKey}&$format=json`,
+      `${url}/nur/odata/NurPDbtSplit?HdrKey=${keyToUse}&$format=json`,
       {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          Accept: "application/json",
-        },
+        headers: authHeaders(authToken),
       }
     );
     console.log(await response.json());
     expect(response.status()).toBe(200);
   });
 
-  test("@api Get all Pre Nursery Doubleton Splitting transaction", async ({
+  test("Get all Pre Nursery Doubleton Splitting transaction", async ({
     request,
     authToken,
   }) => {
     const response = await request.get(
       `${url}/nur/odata/NurPDbtSplit?$format=json&$orderby=PDbtSplitDate%20desc,PDbtSplitKey&$select=PDbtSplitKey,PDbtSplitNum,StatusDesc,OUCode,NurBatchCodeDesc,SplitQty,PDbtSplitDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(PDbtSplitDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20PDbtSplitDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
       {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          Accept: "application/json",
-        },
+        headers: authHeaders(authToken),
       }
     );
     console.log(await response.json());
     expect(response.status()).toBe(200);
   });
 
-  test("@api Update Pre Nursery Doubleton Splitting transaction", async ({
+  test("Update Pre Nursery Doubleton Splitting transaction", async ({
     request,
     authToken,
   }) => {
+    const keyToUse = pdbtSplitKey || savedKey;
+    const docNoToUse = pdbtSplitNum || savedDocNo;
+
     const response = await request.post(`${url}/nur/api/NurPDbtSplitPost`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
+      headers: authHeaders(authToken),
       data: {
-        PDbtSplitKey: `${savedKey}`,
+        PDbtSplitKey: `${keyToUse}`,
         ClientKey: -1,
         OUKey: 16,
         OUCode: "",
         OUDesc: "",
         OUCodeOUDesc: "",
         CompKey: -1,
-        PDbtSplitNum: `${savedDocNo}`,
+        PDbtSplitNum: `${docNoToUse}`,
         NurBatchKey: 138,
         NurBatchCode: "",
         NurBatchDesc: "",
@@ -189,17 +181,16 @@ test.describe.serial("Pre Nursery API", () => {
     expect([200, 204]).toContain(response.status());
   });
 
-  test("@api Delete Pre Nursery Doubleton Splitting transaction", async ({
+  test("Delete Pre Nursery Doubleton Splitting transaction", async ({
     request,
     authToken,
   }) => {
+    const keyToUse = pdbtSplitKey || savedKey;
+
     const response = await request.delete(
-      `${url}/nur/api/NurPDbtSplitPost?key=${savedKey}`,
+      `${url}/nur/api/NurPDbtSplitPost?key=${keyToUse}`,
       {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-          Accept: "application/json",
-        },
+        headers: authHeaders(authToken),
       }
     );
 

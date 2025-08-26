@@ -24,7 +24,8 @@ module.exports = defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 1 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  // workers: process.env.CI ? 1 : undefined,
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
@@ -38,8 +39,8 @@ module.exports = defineConfig({
     // baseURL: 'http://localhost:3000',
     headless: false,
     video: {
-      mode: "on",         // or "retain-on-failure"
-      size: { width: 1920, height: 1080 },  // video resolution
+      mode: "on", // or "retain-on-failure"
+      size: { width: 1920, height: 1080 }, // video resolution
     },
     screenshot: "on",
     actionTimeout: 60000,

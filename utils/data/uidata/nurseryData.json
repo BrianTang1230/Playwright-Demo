@@ -8,16 +8,19 @@
     "PreNurseryDoubletonSplittingPath": "#MainNurDbtSplitDate,cboNurseryBatch_input,#remarkTextPSplit,spinbutton*1",
     "PreNurseryDoubletonSplittingColumn": "PDbtSplitDate date,NurBatch dropdown,Remarks text,SplitQty numeric",
     "PreNurseryCullingPath": "#PreNurCullDate,cboNurseryBatch_input,remarkTextPCull,spinbutton*1,spinbutton*3,spinbutton*5",
-    "PreNurseryCullingColumn": "CullDate date,NurBatch dropdown,Remarks text,PCullQty numeric,PCullSTQty numeric,PCullDTQty numeric"
+    "PreNurseryCullingColumn": "CullDate date,NurBatch dropdown,Remarks text,PCullQty numeric,PCullSTQty numeric,PCullDTQty numeric",
+    "PreNurseryTransfer/Sold/LossPath": "#PreNurTransOutDate,cboNurseryBatch_input,cboPlantSource_input,cboTransType_input,cboTrnToBatch_input,cboAcc_input,cboCCID_input,#remarkTextPTrn,spinbutton*2,spinbutton*3",
+    "PreNurseryTransfer/Sold/LossColumn": "PreNurTransDate date,NurBatch dropdown,PlantSource dropdown,TransType dropdown,TrnToBatch dropdown,TrnOut dropdown,CCID dropdown,Remarks text,TrnQty numeric,DbtQty numeric"
   },
   "GridPath": {},
   "ID": {
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000050",
-    "PreNurseryGerminated": "PG00000013",
-    "PreNurseryDoubletonSplitting": "PDS0000024",
-    "PreNurseryCulling": "PC00000006"
+    "PreNurserySeedReceived": "PSR0000051",
+    "PreNurseryGerminated": "PG00000018",
+    "PreNurseryDoubletonSplitting": "PDS0000026",
+    "PreNurseryCulling": "PC00000007",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000011"
   }
 }

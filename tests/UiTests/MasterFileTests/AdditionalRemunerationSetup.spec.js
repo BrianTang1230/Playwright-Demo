@@ -38,7 +38,7 @@ const columns = InputPath.AddRemSetupColumn.split(",");
 const gridPaths = GridPath.AddRemSetupGrid.split(",");
 const cellsIndex = [1, 2, 3];
 
-test.describe("Additional Remuneration Setup Tests", () => {
+test.describe.serial("Additional Remuneration Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll(async () => {
     // Initialize Excel helper

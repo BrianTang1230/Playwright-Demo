@@ -38,7 +38,7 @@ const formName = "Pre Nursery Germinated";
 const paths = InputPath.PreNurseryGerminatedPath.split(",");
 const columns = InputPath.PreNurseryGerminatedColumn.split(",");
 
-test.describe("Pre Nursery Germinated", () => {
+test.describe.serial("Pre Nursery Germinated Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -126,9 +126,7 @@ test.describe("Pre Nursery Germinated", () => {
     });
 
     if (dbValues.length > 0) {
-      throw new Error(
-        "DB validation failed when deleting Pre Nursery Germinated"
-      );
+      throw new Error("Deleting Pre Nursery Germinated failed");
     }
   });
 

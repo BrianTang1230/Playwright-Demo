@@ -15,6 +15,9 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 
   // Verification
   !del && (await sideMenu.btnEdit.click());
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 }
 
 export async function FilterRecord(page, values, ou, keyword) {
@@ -38,4 +41,7 @@ export async function FilterRecord(page, values, ou, keyword) {
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page.getByRole("gridcell", { name: keyword }).click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 }

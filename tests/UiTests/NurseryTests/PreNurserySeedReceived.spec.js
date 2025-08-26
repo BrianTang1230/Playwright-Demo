@@ -38,7 +38,7 @@ const formName = "Pre Nursery Seed Received";
 const paths = InputPath.PreNurserySeedReceivedPath.split(",");
 const columns = InputPath.PreNurserySeedReceivedColumn.split(",");
 
-test.describe("Pre Nursery Seed Received Tests", () => {
+test.describe.serial("Pre Nursery Seed Received Tests", () => {
   test.beforeAll(async () => {
     // Initialize Excel connection
     connectExcel = new ConnectExcel(sheetName, formName);
@@ -133,9 +133,7 @@ test.describe("Pre Nursery Seed Received Tests", () => {
     });
 
     if (dbValues.length > 0) {
-      throw new Error(
-        "DB validation failed when deleting Pre Nursery Seed Received"
-      );
+      throw new Error("Deleting Pre Nursery Seed Received failed");
     }
   });
 

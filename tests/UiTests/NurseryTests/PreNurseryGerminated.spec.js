@@ -11,10 +11,10 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 import {
-  PreNurserySeedReceivedCreate,
-  PreNurserySeedReceivedEdit,
-  PreNurserySeedReceivedDelete,
-} from "@UiFolder/pages/Nursery/PreNurserySeedReceived";
+  PreNurseryGerminatedCreate,
+  PreNurseryGerminatedEdit,
+  PreNurseryGerminatedDelete,
+} from "@UiFolder/pages/Nursery/PreNurseryGerminated";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -34,25 +34,21 @@ let docNo;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
-const formName = "Pre Nursery Seed Received";
-const paths = InputPath.PreNurserySeedReceivedPath.split(",");
-const columns = InputPath.PreNurserySeedReceivedColumn.split(",");
+const formName = "Pre Nursery Germinated";
+const paths = InputPath.PreNurseryGerminatedPath.split(",");
+const columns = InputPath.PreNurseryGerminatedColumn.split(",");
 
-test.describe("Pre Nursery Seed Received Tests", () => {
+test.describe("Pre Nursery Germinated", () => {
   test.beforeAll(async () => {
-    // Initialize Excel connection
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
 
-    // Read Excel data once
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
-    // Initialize database connection
     db = new DBHelper("MY");
     await db.connect();
 
-    // Delete a country code if it exists
     docNo = DocNo[formName.split(" ").join("")];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
@@ -61,20 +57,17 @@ test.describe("Pre Nursery Seed Received Tests", () => {
     ou = await connectExcel.readExcel("OperatingUnit");
   });
 
-  // ---------------- Before Each ----------------
   test.beforeEach(async ({ page }) => {
-    // Login and navigate to the form
     const loginPage = new LoginPage(page);
     await loginPage.login();
     await loginPage.navigateToForm(module, submodule, formName);
 
-    // Initialize side menu
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Pre Nursery Seed Received", async ({ page }) => {
-    const allValues = await PreNurserySeedReceivedCreate(
+  test("Create Pre Nursery Germinated", async ({ page }) => {
+    const allValues = await PreNurseryGerminatedCreate(
       page,
       sideMenu,
       paths,
@@ -84,7 +77,7 @@ test.describe("Pre Nursery Seed Received Tests", () => {
     );
 
     // Saved DocNo
-    docNo = await page.locator("#txtPSRNum").inputValue();
+    docNo = await page.locator("#txtPGNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     await ValidateUiValues(createValues, allValues);
@@ -100,8 +93,8 @@ test.describe("Pre Nursery Seed Received Tests", () => {
     );
   });
 
-  test("Edit Pre Nursery Seed Received", async ({ page }) => {
-    const allValues = await PreNurserySeedReceivedEdit(
+  test("Edit Pre Nursery Germinated", async ({ page }) => {
+    const allValues = await PreNurseryGerminatedEdit(
       page,
       sideMenu,
       paths,
@@ -125,8 +118,8 @@ test.describe("Pre Nursery Seed Received Tests", () => {
     );
   });
 
-  test("Delete Pre Nursery Seed Received", async ({ page }) => {
-    await PreNurserySeedReceivedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Pre Nursery Germinated", async ({ page }) => {
+    await PreNurseryGerminatedDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -134,7 +127,7 @@ test.describe("Pre Nursery Seed Received Tests", () => {
 
     if (dbValues.length > 0) {
       throw new Error(
-        "DB validation failed when deleting Pre Nursery Seed Received"
+        "DB validation failed when deleting Pre Nursery Germinated"
       );
     }
   });

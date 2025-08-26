@@ -18,7 +18,6 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 }
 
 export async function FilterRecord(page, values, ou, keyword) {
-
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()

@@ -148,26 +148,24 @@ test.describe("Additional Remuneration Setup Tests", () => {
     // Validate DB values(ui)
     await ValidateDBValues(editValues, columns, dbValues[0]);
 
-    test.step("Validate Grid DB Values", async () => {
-      // Retrieve DB values(grid)
-      const gridDbValues = await db.retrieveGridData(
-        masterGridSqlCommand(formName),
-        {
-          Code: editValues[0],
-        }
-      );
-
-      for (let i = 0; i < gridDbValues.length; i++) {
-        // Get db values columns
-        const gridDbColumns = Object.keys(gridDbValues[i]);
-        // Validate DB values(grid)
-        await ValidateDBValues(
-          gridEditValues[i].split(";"),
-          gridDbColumns,
-          gridDbValues[i]
-        );
+    // Retrieve DB values(grid)
+    const gridDbValues = await db.retrieveGridData(
+      masterGridSqlCommand(formName),
+      {
+        Code: editValues[0],
       }
-    });
+    );
+
+    for (let i = 0; i < gridDbValues.length; i++) {
+      // Get db values columns
+      const gridDbColumns = Object.keys(gridDbValues[i]);
+      // Validate DB values(grid)
+      await ValidateDBValues(
+        gridEditValues[i].split(";"),
+        gridDbColumns,
+        gridDbValues[i]
+      );
+    }
   });
 
   test("Delete Additional Remuneration Code", async ({ page }) => {

@@ -3,7 +3,7 @@ import { FilterRecord, SelectRecord } from "@UiFolder/functions/OpenRecord";
 import getValues from "@UiFolder/functions/GetValues";
 
 // Create Function
-export async function PreNurserySeedReceivedCreate(
+export async function PreNurseryDoubletonSplittingCreate(
   page,
   sideMenu,
   paths,
@@ -16,7 +16,10 @@ export async function PreNurserySeedReceivedCreate(
 
   // Select OU
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
-  await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
+  await page
+    .locator("#cboNurseryBatch-list li", { hasText: ou })
+    .first()
+    .click();
 
   // Input data
   if (paths.length == columns.length && columns.length == values.length) {
@@ -36,7 +39,7 @@ export async function PreNurserySeedReceivedCreate(
 }
 
 // Edit Function
-export async function PreNurserySeedReceivedEdit(
+export async function PreNurseryDoubletonSplittingEdit(
   page,
   sideMenu,
   paths,
@@ -66,7 +69,7 @@ export async function PreNurserySeedReceivedEdit(
   return await getValues(page, paths);
 }
 
-export async function PreNurserySeedReceivedDelete(
+export async function PreNurseryDoubletonSplittingDelete(
   page,
   sideMenu,
   values,

@@ -2,13 +2,19 @@
   "JsonPath": "utils/data/uidata/nurseryData.json",
   "InputPath": {
     "PreNurserySeedReceivedPath": "#PreNurRcvDate,cboNurseryBatch_input,#remarkTextPRcv,cboPlantSource_input,#txtRefNo,spinbutton*0,spinbutton*1,spinbutton*2,spinbutton*3",
-    "PreNurserySeedReceivedColumn": "RcvDate date,NurBatch dropdown,Remarks text,PlantSource dropdown,RefNo text,OrdQty numeric,DelQty numeric,DamQty numeric,FocQty numeric"
+    "PreNurserySeedReceivedColumn": "RcvDate date,NurBatch dropdown,Remarks text,PlantSource dropdown,RefNo text,OrdQty numeric,DelQty numeric,DamQty numeric,FocQty numeric",
+    "PreNurseryGerminatedPath": "#PreNurGmtDate,cboNurseryBatch_input,#remarkTextPDbt,cboPlantMate_input,spinbutton*1,spinbutton*2",
+    "PreNurseryGerminatedColumn": "DbtDate date,NurBatch dropdown,Remarks text,PlantMaterial dropdown,SgtQty numeric,DbtQty numeric",
+    "PreNurseryDoubletonSplittingPath": "#MainNurDbtSplitDate,cboNurseryBatch_input,#remarkTextPSplit,spinbutton*1",
+    "PreNurseryDoubletonSplittingColumn": "PDbtSplitDate date,NurBatch dropdown,Remarks text,SplitQty numeric"
   },
   "GridPath": {},
   "ID": {
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000040"
+    "PreNurserySeedReceived": "",
+    "PreNurseryGerminated": "",
+    "PreNurseryDoubletonSplitting": "PDS0000021"
   }
 }

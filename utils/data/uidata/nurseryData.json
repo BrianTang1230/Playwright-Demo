@@ -19,8 +19,8 @@
   "DocNo": {
     "PreNurserySeedReceived": "PSR0000051",
     "PreNurseryGerminated": "PG00000018",
-    "PreNurseryDoubletonSplitting": "PDS0000026",
-    "PreNurseryCulling": "PC00000007",
+    "PreNurseryDoubletonSplitting": "PDS0000027",
+    "PreNurseryCulling": "",
     "PreNurseryTransfer/Sold/Loss": "PTO0000011"
   }
 }

@@ -45,43 +45,46 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
     request,
     authToken,
   }) => {
-    const response = await request.post(`${url}/nur/api/NurPDbtSplitPost`, {
-      headers: authHeaders(authToken),
-      data: {
-        PDbtSplitKey: 1,
-        ClientKey: -1,
-        OUKey: 16,
-        OUCode: "",
-        OUDesc: "",
-        OUCodeOUDesc: "",
-        CompKey: -1,
-        PDbtSplitNum: "",
-        NurBatchKey: 138,
-        NurBatchCode: "",
-        NurBatchDesc: "",
-        NurBatchCodeDesc: "PA001 - PA BATCH 1",
-        PDbtSplitDate: currentDate,
-        SplitQty: createValues[0],
-        AvlbQty: 0.0, // Get from Pre-Nursery Germinated
-        PSeedling: 0.0,
-        Remarks: createValues[1],
-        Status: "O",
-        StatusDesc: "OPEN",
-        CreatedBy: 6,
-        CreatedByCode: "LMSUPPORT",
-        CreatedByDesc: "lmsupport",
-        CreatedDate: "2025-08-22T14:54:30.7401024",
-        UpdatedBy: 6,
-        UpdatedDate: "2025-08-22T06:54:30.7401024Z",
-        UpdatedByCode: "LMSUPPORT",
-        UpdatedByDesc: "lmsupport",
-        RowState: 1,
+    const { json, status } = await apiCall(
+      request,
+      "POST",
+      `${url}/nur/api/NurPDbtSplitPost`,
+      authToken,
+      {
+        data: {
+          PDbtSplitKey: 1,
+          ClientKey: -1,
+          OUKey: 16,
+          OUCode: "",
+          OUDesc: "",
+          OUCodeOUDesc: "",
+          CompKey: -1,
+          PDbtSplitNum: "",
+          NurBatchKey: 138,
+          NurBatchCode: "",
+          NurBatchDesc: "",
+          NurBatchCodeDesc: "PA001 - PA BATCH 1",
+          PDbtSplitDate: currentDate,
+          SplitQty: createValues[0],
+          AvlbQty: 0.0, // Get from Pre-Nursery Germinated
+          PSeedling: 0.0,
+          Remarks: createValues[1],
+          Status: "O",
+          StatusDesc: "OPEN",
+          CreatedBy: 6,
+          CreatedByCode: "LMSUPPORT",
+          CreatedByDesc: "lmsupport",
+          CreatedDate: "2025-08-22T14:54:30.7401024",
+          UpdatedBy: 6,
+          UpdatedDate: "2025-08-22T06:54:30.7401024Z",
+          UpdatedByCode: "LMSUPPORT",
+          UpdatedByDesc: "lmsupport",
+          RowState: 1,
+        },
       },
-    });
+      [200, 201]
+    );
 
-    const { status, json } = await handleApiResponse(response);
-
-    expect([200, 201]).toContain(status);
     if (json) {
       // Call your dynamic setter
       const { key, num } = await setGlobal("preNursery", json, {
@@ -107,28 +110,28 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   }) => {
     const keyToUse = pdbtSplitKey || savedKey;
 
-    const response = await request.get(
+    await apiCall(
+      request,
+      "GET",
       `${url}/nur/odata/NurPDbtSplit?HdrKey=${keyToUse}&$format=json`,
-      {
-        headers: authHeaders(authToken),
-      }
+      authToken,
+      {},
+      [200]
     );
-    console.log(await response.json());
-    expect(response.status()).toBe(200);
   });
 
   test("Get all Pre Nursery Doubleton Splitting transaction", async ({
     request,
     authToken,
   }) => {
-    const response = await request.get(
+    await apiCall(
+      request,
+      "GET",
       `${url}/nur/odata/NurPDbtSplit?$format=json&$orderby=PDbtSplitDate%20desc,PDbtSplitKey&$select=PDbtSplitKey,PDbtSplitNum,StatusDesc,OUCode,NurBatchCodeDesc,SplitQty,PDbtSplitDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(PDbtSplitDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20PDbtSplitDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
-      {
-        headers: authHeaders(authToken),
-      }
+      authToken,
+      {},
+      [200]
     );
-    console.log(await response.json());
-    expect(response.status()).toBe(200);
   });
 
   test("Update Pre Nursery Doubleton Splitting transaction", async ({
@@ -138,47 +141,45 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
     const keyToUse = pdbtSplitKey || savedKey;
     const docNoToUse = pdbtSplitNum || savedDocNo;
 
-    const response = await request.post(`${url}/nur/api/NurPDbtSplitPost`, {
-      headers: authHeaders(authToken),
-      data: {
-        PDbtSplitKey: `${keyToUse}`,
-        ClientKey: -1,
-        OUKey: 16,
-        OUCode: "",
-        OUDesc: "",
-        OUCodeOUDesc: "",
-        CompKey: -1,
-        PDbtSplitNum: `${docNoToUse}`,
-        NurBatchKey: 138,
-        NurBatchCode: "",
-        NurBatchDesc: "",
-        NurBatchCodeDesc: "PA001 - PA BATCH 1",
-        PDbtSplitDate: currentDate,
-        SplitQty: editValues[0],
-        AvlbQty: 0.0, // Get from Pre-Nursery Germinated
-        PSeedling: 0.0,
-        Remarks: editValues[1],
-        Status: "O",
-        StatusDesc: "OPEN",
-        CreatedBy: 6,
-        CreatedByCode: "LMSUPPORT",
-        CreatedByDesc: "lmsupport",
-        CreatedDate: "2025-08-22T14:54:30.7401024",
-        UpdatedBy: 6,
-        UpdatedDate: "2025-08-22T06:54:30.7401024Z",
-        UpdatedByCode: "LMSUPPORT",
-        UpdatedByDesc: "lmsupport",
-        RowState: 2,
+    await apiCall(
+      request,
+      "POST",
+      `${url}/nur/api/NurPDbtSplitPost`,
+      authToken,
+      {
+        data: {
+          PDbtSplitKey: `${keyToUse}`,
+          ClientKey: -1,
+          OUKey: 16,
+          OUCode: "",
+          OUDesc: "",
+          OUCodeOUDesc: "",
+          CompKey: -1,
+          PDbtSplitNum: `${docNoToUse}`,
+          NurBatchKey: 138,
+          NurBatchCode: "",
+          NurBatchDesc: "",
+          NurBatchCodeDesc: "PA001 - PA BATCH 1",
+          PDbtSplitDate: currentDate,
+          SplitQty: editValues[0],
+          AvlbQty: 0.0, // Get from Pre-Nursery Germinated
+          PSeedling: 0.0,
+          Remarks: editValues[1],
+          Status: "O",
+          StatusDesc: "OPEN",
+          CreatedBy: 6,
+          CreatedByCode: "LMSUPPORT",
+          CreatedByDesc: "lmsupport",
+          CreatedDate: "2025-08-22T14:54:30.7401024",
+          UpdatedBy: 6,
+          UpdatedDate: "2025-08-22T06:54:30.7401024Z",
+          UpdatedByCode: "LMSUPPORT",
+          UpdatedByDesc: "lmsupport",
+          RowState: 2,
+        },
       },
-    });
-
-    console.log(
-      response.status() === 204
-        ? "Update successful (no content returned)"
-        : await response.json()
+      [200, 204]
     );
-
-    expect([200, 204]).toContain(response.status());
   });
 
   test("Delete Pre Nursery Doubleton Splitting transaction", async ({
@@ -187,19 +188,13 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   }) => {
     const keyToUse = pdbtSplitKey || savedKey;
 
-    const response = await request.delete(
+    await apiCall(
+      request,
+      "DELETE",
       `${url}/nur/api/NurPDbtSplitPost?key=${keyToUse}`,
-      {
-        headers: authHeaders(authToken),
-      }
+      authToken,
+      {},
+      [204]
     );
-
-    console.log(
-      response.status() === 204
-        ? "Delete successful (no content returned)"
-        : await response.json()
-    );
-
-    expect([200, 204]).toContain(response.status());
   });
 });

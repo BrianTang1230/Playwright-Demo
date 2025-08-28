@@ -14,5 +14,6 @@
     "DataSource": "quartovm-qa.quarto.cloud",
     "Port": 14336,
     "Database": "LONE_QTAUTOIND"
-  }
+  },
+  "Region": "MY"
 }

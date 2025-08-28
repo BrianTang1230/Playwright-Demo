@@ -8,6 +8,14 @@ export async function InputValues(page, path, col, value) {
   col = col.toLowerCase();
   const element = await GetElementByPath(page, path);
 
+  if (col.includes("k-drop")) {
+    await element.first().click();
+    await page
+      .locator(`${path}_listbox li`, { hasText: value })
+      .first()
+      .click();
+  }
+
   // Checkbox Input
   if (col.includes("checkbox")) {
     if (value.toLowerCase() == "true") await element.check();

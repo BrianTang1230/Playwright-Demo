@@ -11,10 +11,10 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 import {
-  PreNurserySeedReceivedCreate,
-  PreNurserySeedReceivedEdit,
-  PreNurserySeedReceivedDelete,
-} from "@UiFolder/pages/Nursery/PreNurserySeedReceived";
+  PreNurseryTransferToCreate,
+  PreNurseryTransferToEdit,
+  PreNurseryTransferToDelete,
+} from "@UiFolder/pages/Nursery/PreNurseryTransferTo";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -33,12 +33,12 @@ let docNo;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
-const formName = "Pre Nursery Seed Received";
+const formName = "Inter-OU Pre Nursery Transfer To";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Pre Nursery Seed Received Tests", () => {
+test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   test.beforeAll(async () => {
     // Initialize Excel connection
     connectExcel = new ConnectExcel(sheetName, formName);
@@ -58,23 +58,20 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
-    ou = await connectExcel.readExcel("OperatingUnit");
+    ou = (await connectExcel.readExcel("OperatingUnit")).split(";");
   });
 
-  // ---------------- Before Each ----------------
   test.beforeEach(async ({ page }) => {
-    // Login and navigate to the form
     const loginPage = new LoginPage(page);
     await loginPage.login();
     await loginPage.navigateToForm(module, submodule, formName);
 
-    // Initialize side menu
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Pre Nursery Seed Received", async ({ page }) => {
-    const allValues = await PreNurserySeedReceivedCreate(
+  test("Create Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+    const allValues = await PreNurseryTransferToCreate(
       page,
       sideMenu,
       paths,
@@ -83,25 +80,26 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
       ou
     );
 
-    // Saved DocNo
-    docNo = await page.locator("#txtPSRNum").inputValue();
+    docNo = await page.locator("#txtPTONum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     await ValidateUiValues(createValues, columns, allValues);
 
+    console.log("DocNo:", docNo);
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
+    console.log("DB Values:", dbValues);
     await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
+      [...createValues, ou[0], ou[1]],
+      [...columns, "FromOU", "ToOU"],
       dbValues[0]
     );
   });
 
-  test("Edit Pre Nursery Seed Received", async ({ page }) => {
-    const allValues = await PreNurserySeedReceivedEdit(
+  test("Edit Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+    const allValues = await PreNurseryTransferToEdit(
       page,
       sideMenu,
       paths,
@@ -119,21 +117,21 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
     });
 
     await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
+      [...editValues, ou[0], ou[1]],
+      [...columns, "FromOU", "ToOU"],
       dbValues[0]
     );
   });
 
-  test("Delete Pre Nursery Seed Received", async ({ page }) => {
-    await PreNurserySeedReceivedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+    await PreNurseryTransferToDelete(page, sideMenu, editValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Seed Received failed");
+      throw new Error("Deleting Inter-OU Pre Nursery Transfer To failed");
     }
   });
 

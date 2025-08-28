@@ -93,6 +93,64 @@ function nurserySQLCommand(formName) {
         WHERE A.PTrnNum = @DocNo`;
       break;
 
+    case "Inter-OU Pre Nursery Transfer To":
+      sqlCommand = `
+        SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE 
+          WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
+          WHEN A.TransTypeKey = 2 THEN 'Transfer Out'
+          END AS TransType,
+        CASE
+          WHEN A.IsToPre = 0 THEN 'Main Nursery'
+          WHEN A.IsToPre = 1 THEN 'Pre Nursery'
+          END AS NurType,
+        C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
+        I.PlantMateCode + ' - ' + I.PlantMateDesc AS PlantMaterial,
+        F.AccNum + ' - ' + F.AccDesc AS Account,
+        D.CCIDCode + ' - ' + D.CCIDDesc AS CCID,
+        E.NurBatchCode + ' - ' + E.NurBatchDesc AS TrnToBatch,
+        A.UnitPrice,
+        A.Remarks,
+        A.STQty,
+        A.DTQty,
+        G.OUCode + ' - ' + G.OUDesc AS FromOU,
+        H.OUCode + ' - ' + H.OUDesc AS ToOU
+        FROM NUR_PInterOUTrn A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
+        LEFT JOIN V_SYC_CCIDMapping D ON A.CCIDKey = D.CCIDKey
+        LEFT JOIN GMS_NurBatchStp E ON A.ToNurBatchKey = E.NurBatchKey
+        LEFT JOIN GMS_AccMas F ON A.AccKey = F.AccKey
+        LEFT JOIN GMS_OUStp G ON A.FromOUKey = G.OUKey
+        LEFT JOIN GMS_OUStp H ON A.ToOUKey = H.OUKey
+        LEFT JOIN GMS_PlantMateStp I ON A.PlantMateKey = I.PlantMateKey
+        WHERE A.IPTrnNum = @DocNo`;
+      break;
+
+    case "Main Nursery Received":
+      sqlCommand = `
+        SELECT FORMAT(A.MRcvDate, 'dd/MM/yyyy') AS MRcvDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        CASE
+          WHEN A.MRcvInd = 'SUP' THEN 'Supplier'
+          WHEN A.MRcvInd = 'OTH' THEN 'Other Batches/Parties'
+          ELSE 'Pre-Nursery'
+          END AS RcvFrm,
+        C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
+        A.RefNo,
+        A.PreNTrnNo,
+        A.SgtQty,
+        A.DbtQty,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM NUR_MRcv A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.MRcvNum = @DocNo`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

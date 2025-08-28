@@ -2,6 +2,7 @@ import { test } from "@playwright/test";
 require("dotenv").config();
 import Login from "@utils/data/uidata/loginData.json";
 
+const region = Login.Region;
 export default class LoginPage {
   constructor(page) {
     this.page = page;
@@ -11,7 +12,7 @@ export default class LoginPage {
     this.loginButton = page.locator("#login");
   }
 
-  async login(region = "MY") {
+  async login() {
     const client = region === "IND" ? Login.ClientIND : Login.Client;
 
     // Input Login Data
@@ -44,6 +45,11 @@ export default class LoginPage {
           .click();
       }
       await this.page.locator(`//a[@id='side${formName}']`).click();
+
+      // Wait for loading
+      await this.page
+        .locator(".k-loading-image")
+        .waitFor({ state: "detached" });
     });
   }
 }

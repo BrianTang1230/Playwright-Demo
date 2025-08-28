@@ -19,8 +19,6 @@ import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
-import { SelectRecord, FilterRecord } from "@UiFolder/functions/OpenRecord";
-import { describe } from "node:test";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -36,8 +34,9 @@ const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
 const formName = "Pre Nursery Transfer/Sold/Loss";
-const paths = InputPath[formName.split(" ").join("") + "Path"].split(",");
-const columns = InputPath[formName.split(" ").join("") + "Column"].split(",");
+const keyName = formName.split(" ").join("");
+const paths = InputPath[keyName + "Path"].split(",");
+const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
   test.beforeAll(async () => {
@@ -50,11 +49,11 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
     // Initialize database connection
-    db = new DBHelper("MY");
+    db = new DBHelper();
     await db.connect();
 
     // Delete a country code if it exists
-    docNo = DocNo[formName.split(" ").join("")];
+    docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
@@ -84,7 +83,7 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
     docNo = await page.locator("#txtPTONum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, allValues);
+    await ValidateUiValues(createValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -109,7 +108,7 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
       docNo
     );
 
-    await ValidateUiValues(editValues, allValues);
+    await ValidateUiValues(editValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

@@ -54,7 +54,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
     gridEditValues = (await connectExcel.readExcel("GridDataEdit")).split("|");
 
     // Initialize database connection
-    db = new DBHelper("MY");
+    db = new DBHelper();
     await db.connect();
 
     // Delete existing data if present
@@ -88,7 +88,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
     );
 
     // Validate UI fields
-    await ValidateUiValues(page, allValues);
+    await ValidateUiValues(createValues, columns, allValues);
 
     // Validate grid fields
     await ValidateGridValues(page, allValues, gridPaths, cellsIndex);
@@ -135,7 +135,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
     );
 
     // Validate UI fields
-    await ValidateUiValues(page, allValues);
+    await ValidateUiValues(editValues, columns, allValues);
 
     // Validate grid fields
     await ValidateGridValues(page, allValues, gridPaths, cellsIndex);

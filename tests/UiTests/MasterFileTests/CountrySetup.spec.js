@@ -42,7 +42,7 @@ test.describe.serial("Country Setup Tests", () => {
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
     // Initialize database connection
-    db = new DBHelper("MY");
+    db = new DBHelper();
     await db.connect();
 
     // Delete a country code if it exists
@@ -72,7 +72,7 @@ test.describe.serial("Country Setup Tests", () => {
       createValues
     );
 
-    await ValidateUiValues(createValues, allValues);
+    await ValidateUiValues(createValues, columns, allValues);
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
@@ -91,7 +91,7 @@ test.describe.serial("Country Setup Tests", () => {
       editValues
     );
 
-    await ValidateUiValues(editValues, allValues);
+    await ValidateUiValues(editValues, columns, allValues);
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],

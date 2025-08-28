@@ -2,7 +2,7 @@ export default async function GetElementByPath(page, path) {
   let element;
   // If path starts with # or //, use locator directly
   if (path.startsWith("#") || path.startsWith("//")) {
-    element = page.locator(path);
+    element = page.locator(path).first();
   }
   // If path does not start with # or // and includes *, use getByRole
   else if (path.includes("*")) {

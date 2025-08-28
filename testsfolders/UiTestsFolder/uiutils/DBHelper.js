@@ -1,6 +1,8 @@
 import sql from "mssql";
 import DB from "@utils/data/uidata/loginData.json";
 
+const region = DB.Region;
+
 const configs = {
   dbMY: {
     user: DB.UserID,
@@ -27,7 +29,7 @@ const configs = {
 };
 
 export default class DBHelper {
-  constructor(region = "MY") {
+  constructor() {
     this.pools = {};
     this.dbName = `db${region}`;
   }

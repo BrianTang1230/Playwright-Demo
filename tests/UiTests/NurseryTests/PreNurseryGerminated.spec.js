@@ -19,7 +19,6 @@ import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
-import { SelectRecord, FilterRecord } from "@UiFolder/functions/OpenRecord";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -35,8 +34,9 @@ const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
 const formName = "Pre Nursery Germinated";
-const paths = InputPath.PreNurseryGerminatedPath.split(",");
-const columns = InputPath.PreNurseryGerminatedColumn.split(",");
+const keyName = formName.split(" ").join("");
+const paths = InputPath[keyName + "Path"].split(",");
+const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Pre Nursery Germinated Tests", () => {
   test.beforeAll(async () => {
@@ -46,10 +46,10 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
-    db = new DBHelper("MY");
+    db = new DBHelper();
     await db.connect();
 
-    docNo = DocNo[formName.split(" ").join("")];
+    docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
@@ -80,11 +80,13 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     docNo = await page.locator("#txtPGNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, allValues);
+    await ValidateUiValues(createValues, columns, allValues);
 
+    console.log(`Created DocNo: ${docNo}`);
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    console.log(dbValues);
 
     await ValidateDBValues(
       [...createValues, ou],
@@ -105,7 +107,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
       docNo
     );
 
-    await ValidateUiValues(editValues, allValues);
+    await ValidateUiValues(editValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

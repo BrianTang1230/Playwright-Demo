@@ -1,6 +1,9 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
 import { ClientCredentials } from "../data/clientCredentials.json";
+import Region from "@utils/data/uidata/loginData.json";
+
+const region = Region.Region;
 
 export default class ConnectExcel {
   constructor(sheetName, formName) {
@@ -25,7 +28,7 @@ export default class ConnectExcel {
   }
 
   // async initialize function
-  async init(isUI = true, region) {
+  async init(isUI = true) {
     // if (driveId && itemId) {
     //   this.driveId = driveId;
     //   this.itemId = itemId;
@@ -84,44 +87,5 @@ export default class ConnectExcel {
     if (rowIndex === -1) throw new Error(`Row "${this.formName}" not found`);
 
     return values[rowIndex][colIndex];
-  }
-
-  async writeExcel(driveId, itemId, sheet, row, column, newValue) {
-    // Get the sheet data
-    const sheetRes = await graphClient
-      .api(
-        `/drives/${driveId}/items/${itemId}/workbook/worksheets('${sheet}')/usedRange()`
-      )
-      .get();
-    console.log(sheetRes.value.map((s) => s.name));
-
-    const values = sheetRes.values;
-    if (!values || values.length === 0)
-      throw new Error(`Sheet "${sheet}" is empty`);
-
-    // Find column index
-    const headerRow = values[0];
-    const colIndex = headerRow.indexOf(column);
-    if (colIndex === -1) throw new Error(`Column "${column}" not found`);
-
-    // Always use first column (API case)
-    const firstCol = values.map((r) => r[0]);
-    const rowIndex = firstCol.indexOf(row);
-    if (rowIndex === -1) throw new Error(`Row "${row}" not found`);
-
-    // Convert column index to Excel letter
-    const colLetter = String.fromCharCode(65 + colIndex);
-    const cellAddress = `${colLetter}${rowIndex + 1}`;
-
-    // Update the cell
-    await graphClient
-      .api(
-        `/drives/${driveId}/items/${itemId}/workbook/worksheets('${sheet}')/range(address='${cellAddress}')`
-      )
-      .patch({
-        values: [[newValue]],
-      });
-
-    return `Updated ${column} at row ${row} with value: ${newValue}`;
   }
 }

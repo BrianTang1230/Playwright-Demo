@@ -10,17 +10,23 @@
     "PreNurseryCullingPath": "#PreNurCullDate,cboNurseryBatch_input,remarkTextPCull,spinbutton*1,spinbutton*3,spinbutton*5",
     "PreNurseryCullingColumn": "CullDate date,NurBatch dropdown,Remarks text,PCullQty numeric,PCullSTQty numeric,PCullDTQty numeric",
     "PreNurseryTransfer/Sold/LossPath": "#PreNurTransOutDate,cboNurseryBatch_input,cboPlantSource_input,cboTransType_input,cboTrnToBatch_input,cboAcc_input,cboCCID_input,#remarkTextPTrn,spinbutton*2,spinbutton*3",
-    "PreNurseryTransfer/Sold/LossColumn": "PreNurTransDate date,NurBatch dropdown,PlantSource dropdown,TransType dropdown,TrnToBatch dropdown,TrnOut dropdown,CCID dropdown,Remarks text,TrnQty numeric,DbtQty numeric"
+    "PreNurseryTransfer/Sold/LossColumn": "PreNurTransDate date,NurBatch dropdown,PlantSource dropdown,TransType dropdown,TrnToBatch dropdown,TrnOut dropdown,CCID dropdown,Remarks text,TrnQty numeric,DbtQty numeric",
+    "Inter-OUPreNurseryTransferToPath": "#PreNurTransOutDate,cboNurseryBatch_input,cboTransType_input,cboNurInterTrnType_input,cboPlantSource_input,cboPlantMate_input,cboAcc_input,cboCCID_input,cboTrnToBatch_input,spinbutton*0,#remarkTextInterPTrn,spinbutton*3,spinbutton*4",
+    "Inter-OUPreNurseryTransferToColumn": "InterTrnDate date,NurBatch dropdown,TransType dropdown,NurType dropdown,PlantSource dropdown,PlantMaterial dropdown,Account dropdown,CCID dropdown,TrnToBatch dropdown,UnitPrice numeric,Remarks text,STQty numeric,DTQty numeric",
+    "MainNurseryReceivedPath": "#MainNurRcvDate,cboNurseryBatch_input,#remarkTextMRcv,#comboReceivedFrom,cboPlantSource_input,#txtRefNo,#txtPreNurTransferNo,spinbutton*0,spinbutton*1",
+    "MainNurseryReceivedColumn": "MRcvDate date,NurBatch dropdown,Remarks text,RcvFrm k-drop,PlantSource dropdown,RefNo text,PreNTrnNo text,SgtQty numeric,DbtQty numeric"
   },
   "GridPath": {},
   "ID": {
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000051",
-    "PreNurseryGerminated": "PG00000018",
-    "PreNurseryDoubletonSplitting": "PDS0000026",
-    "PreNurseryCulling": "PC00000007",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000011"
+    "PreNurserySeedReceived": "PSR0000070",
+    "PreNurseryGerminated": "PG00000027",
+    "PreNurseryDoubletonSplitting": "PDS0000030",
+    "PreNurseryCulling": "PC00000009",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000014",
+    "Inter-OUPreNurseryTransferTo": "IPT0000013",
+    "MainNurseryReceived": "NR00000022"
   }
 }

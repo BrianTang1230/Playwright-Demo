@@ -19,7 +19,6 @@ import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
-import { SelectRecord, FilterRecord } from "@UiFolder/functions/OpenRecord";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
@@ -46,7 +45,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
-    db = new DBHelper("MY");
+    db = new DBHelper();
     await db.connect();
 
     docNo = DocNo[formName.split(" ").join("")];
@@ -80,7 +79,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
     docNo = await page.locator("#txtPCNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, allValues);
+    await ValidateUiValues(createValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -105,7 +104,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
       docNo
     );
 
-    await ValidateUiValues(editValues, allValues);
+    await ValidateUiValues(editValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

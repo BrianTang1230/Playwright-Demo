@@ -10,18 +10,21 @@ export default async function getValues(
   const gridValues = [];
   for (let i = 0; i < paths.length; i++) {
     const inputPath = await GetElementByPath(page, paths[i]);
+    const tagName = (
+      await inputPath.evaluate((el) => el.tagName)
+    ).toLowerCase();
+    const typeAttr = (await inputPath.getAttribute("type")) || "";
 
     // if checkbox
-    if ((await inputPath.getAttribute("type")) === "checkbox") {
+    if (typeAttr === "checkbox") {
       const isChecked = await inputPath.isChecked();
       isChecked ? uiValues.push("True") : uiValues.push("False");
+    } else if (["input", "textarea", "select"].includes(tagName)) {
+      const value = await inputPath.inputValue();
+      uiValues.push(value && value.trim() !== "" ? value.trim() : "NA");
     } else {
-      const inputValue = await inputPath.inputValue();
-      if (inputValue === "") {
-        uiValues.push("NA");
-      } else {
-        uiValues.push(inputValue.trim());
-      }
+      const text = await inputPath.innerText();
+      uiValues.push(text && text.trim() !== "" ? text.trim() : "NA");
     }
   }
   if (gridPaths.length > 0 && cellsIndex.length > 0) {

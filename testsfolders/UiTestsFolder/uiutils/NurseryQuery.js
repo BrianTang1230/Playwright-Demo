@@ -151,6 +151,54 @@ function nurserySQLCommand(formName) {
         WHERE A.MRcvNum = @DocNo`;
       break;
 
+    case "Main Nursery Doubleton Splitting":
+      sqlCommand = `
+        SELECT FORMAT(A.MDbtSplitDate, 'dd/MM/yyyy') AS MDbtSplitDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        A.SplitQty,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM NUR_MDbtSplit A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.MDbtSplitNum = @DocNo`;
+      break;
+
+    case "Main Nursery Culling":
+      sqlCommand = `
+        SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS MCullDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        A.CullQty AS SgtQty,
+        A.MCullDTQty AS DbtQty,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM NUR_MainCull A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.NCNum = @DocNo`;
+      break;
+
+    case "Main Nursery Transfer/Loss":
+      sqlCommand = `
+        SELECT FORMAT(A.MTrnDate,'dd/MM/yyyy') AS MTDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        CASE
+          WHEN A.TransTypeKey = 1 THEN 'Transfer'
+          ELSE 'Loss'
+          END AS TransType,
+        C.BlockCode + ' - ' + C.BlockDesc AS Block,
+        E.AccNum + ' - ' + E.AccDesc AS Account,
+        A.TrnQty,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM NUR_MTrn A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_BlockStp C ON A.BlockKey = C.BlockKey
+        LEFT JOIN GMS_AccMas E ON A.AccKey = E.AccKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.MTrnNum = @DocNo`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

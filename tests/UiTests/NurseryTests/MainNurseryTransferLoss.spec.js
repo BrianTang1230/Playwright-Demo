@@ -10,15 +10,16 @@ import {
   ValidateUiValues,
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
-import {
-  MainNurseryReceivedCreate,
-  MainNurseryReceivedEdit,
-  MainNurseryReceivedDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryReceived";
+
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
+import {
+  MainNurseryTransferLossCreate,
+  MainNurseryTransferLossDelete,
+  MainNurseryTransferLossEdit,
+} from "@UiFolder/pages/Nursery/MainNurseryTransferLoss";
 
 let sideMenu;
 let connectExcel;
@@ -31,12 +32,12 @@ let docNo;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
-const formName = "Main Nursery Received";
+const formName = "Main Nursery Transfer/Loss";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Main Nursery Received Tests", () => {
+test.describe.serial("Main Nursery Transfer/Loss Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -64,8 +65,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Main Nursery Received", async ({ page }) => {
-    const allValues = await MainNurseryReceivedCreate(
+  test("Create Main Nursery Transfer/Loss", async ({ page }) => {
+    const result = await MainNurseryTransferLossCreate(
       page,
       sideMenu,
       paths,
@@ -74,10 +75,11 @@ test.describe.serial("Main Nursery Received Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtNRNum").inputValue();
+    docNo = await page.locator("#txtNTNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, columns, allValues);
+    // Validate UI values
+    await ValidateUiValues(page, paths, result);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -90,8 +92,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
     );
   });
 
-  test("Edit Main Nursery Received", async ({ page }) => {
-    const allValues = await MainNurseryReceivedEdit(
+  test("Edit Main Nursery Transfer/Loss", async ({ page }) => {
+    const allValues = await MainNurseryTransferLossEdit(
       page,
       sideMenu,
       paths,
@@ -115,15 +117,21 @@ test.describe.serial("Main Nursery Received Tests", () => {
     );
   });
 
-  test("Delete Main Nursery Received", async ({ page }) => {
-    await MainNurseryReceivedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Main Nursery Transfer/Loss", async ({ page }) => {
+    await MainNurseryTransferLossDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error(`Deleting Main Nursery Received failed`);
+      throw new Error(`Deleting Main Nursery Transfer/Loss failed`);
     }
   });
 

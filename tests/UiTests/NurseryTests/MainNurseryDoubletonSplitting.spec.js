@@ -11,10 +11,10 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 import {
-  MainNurseryReceivedCreate,
-  MainNurseryReceivedEdit,
-  MainNurseryReceivedDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryReceived";
+  MainNurseryDoubletonSplittingCreate,
+  MainNurseryDoubletonSplittingEdit,
+  MainNurseryDoubletonSplittingDelete,
+} from "@UiFolder/pages/Nursery/MainNurseryDoubletonSplitting";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -31,12 +31,12 @@ let docNo;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
-const formName = "Main Nursery Received";
+const formName = "Main Nursery Doubleton Splitting";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Main Nursery Received Tests", () => {
+test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -64,8 +64,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Main Nursery Received", async ({ page }) => {
-    const allValues = await MainNurseryReceivedCreate(
+  test("Create Main Nursery Doubleton Splitting", async ({ page }) => {
+    const result = await MainNurseryDoubletonSplittingCreate(
       page,
       sideMenu,
       paths,
@@ -74,10 +74,11 @@ test.describe.serial("Main Nursery Received Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtNRNum").inputValue();
+    docNo = await page.locator("#txtDSNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, columns, allValues);
+    // Validate UI values
+    await ValidateUiValues(page, paths, result);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -90,8 +91,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
     );
   });
 
-  test("Edit Main Nursery Received", async ({ page }) => {
-    const allValues = await MainNurseryReceivedEdit(
+  test("Edit Main Nursery Doubleton Splitting", async ({ page }) => {
+    const allValues = await MainNurseryDoubletonSplittingEdit(
       page,
       sideMenu,
       paths,
@@ -115,15 +116,21 @@ test.describe.serial("Main Nursery Received Tests", () => {
     );
   });
 
-  test("Delete Main Nursery Received", async ({ page }) => {
-    await MainNurseryReceivedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Main Nursery Doubleton Splitting", async ({ page }) => {
+    await MainNurseryDoubletonSplittingDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error(`Deleting Main Nursery Received failed`);
+      throw new Error(`Deleting Main Nursery Doubleton Splitting failed`);
     }
   });
 

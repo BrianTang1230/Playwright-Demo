@@ -1,6 +1,5 @@
 import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
-import { ClientCredentials } from "../data/clientCredentials.json";
 import Region from "@utils/data/uidata/loginData.json";
 
 const region = Region.Region;

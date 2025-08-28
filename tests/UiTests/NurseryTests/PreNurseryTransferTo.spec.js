@@ -124,7 +124,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   });
 
   test("Delete Inter-OU Pre Nursery Transfer To", async ({ page }) => {
-    await PreNurseryTransferToDelete(page, sideMenu, editValues, ou, docNo);
+    await PreNurseryTransferToDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

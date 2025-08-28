@@ -1,0 +1,9 @@
+{
+  "JsonPath": "utils/data/apidata/masterApiData.json",
+  "MAS_API_URL": "https://qa.quarto.cloud/zmasterapi",
+  "ID": {
+    "CountrySetup": {
+      "key": 1391
+    }
+  }
+}

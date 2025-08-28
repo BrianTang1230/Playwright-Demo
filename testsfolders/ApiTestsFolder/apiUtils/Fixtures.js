@@ -1,5 +1,6 @@
 // fixtures.js
 import { test as base, request } from "@playwright/test";
+import { handleApiResponse } from "./apiHelpers";
 require("dotenv").config();
 
 exports.test = base.extend({
@@ -28,7 +29,9 @@ exports.test = base.extend({
     });
 
     if (!body.access_token) {
-      throw new Error("❌ Failed to get token. Response: " + JSON.stringify(body, null, 2));
+      throw new Error(
+        "❌ Failed to get token. Response: " + JSON.stringify(body, null, 2)
+      );
     }
 
     await use(body.access_token);

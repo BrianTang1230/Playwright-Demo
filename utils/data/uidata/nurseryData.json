@@ -21,12 +21,12 @@
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000070",
-    "PreNurseryGerminated": "PG00000027",
-    "PreNurseryDoubletonSplitting": "PDS0000030",
-    "PreNurseryCulling": "PC00000009",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000014",
-    "Inter-OUPreNurseryTransferTo": "IPT0000013",
-    "MainNurseryReceived": "NR00000022"
+    "PreNurserySeedReceived": "",
+    "PreNurseryGerminated": "",
+    "PreNurseryDoubletonSplitting": "",
+    "PreNurseryCulling": "",
+    "PreNurseryTransfer/Sold/Loss": "",
+    "Inter-OUPreNurseryTransferTo": "",
+    "MainNurseryReceived": ""
   }
 }

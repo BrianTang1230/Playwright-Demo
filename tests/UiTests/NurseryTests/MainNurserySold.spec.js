@@ -11,16 +11,16 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 import {
-  PreNurseryGerminatedCreate,
-  PreNurseryGerminatedEdit,
-  PreNurseryGerminatedDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryGerminated";
+  MainNurserySoldCreate,
+  MainNurserySoldEdit,
+  MainNurserySoldDelete,
+} from "@UiFolder/pages/Nursery/MainNurserySold";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
+import { create } from "domain";
 
-// ---------------- Global Variables ----------------
 let sideMenu;
 let connectExcel;
 let createValues;
@@ -29,16 +29,15 @@ let db;
 let ou;
 let docNo;
 
-// Excel info
 const sheetName = "NUR_DATA";
 const module = "Nursery";
-const submodule = "Pre Nursery";
-const formName = "Pre Nursery Germinated";
+const submodule = "Main Nursery";
+const formName = "Main Nursery Sold";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Pre Nursery Germinated Tests", () => {
+test.describe.serial("Main Nursery Sold Tests", () => {
   test.beforeAll(async () => {
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
@@ -66,8 +65,8 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  test("Create Pre Nursery Germinated", async ({ page }) => {
-    const allValues = await PreNurseryGerminatedCreate(
+  test("Create Main Nursery Sold", async ({ page }) => {
+    const allValues = await MainNurserySoldCreate(
       page,
       sideMenu,
       paths,
@@ -76,8 +75,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
       ou
     );
 
-    // Saved DocNo
-    docNo = await page.locator("#txtPGNum").inputValue();
+    docNo = await page.locator("#txtMSNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     await ValidateUiValues(createValues, columns, allValues);
@@ -93,8 +91,8 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
   });
 
-  test("Edit Pre Nursery Germinated", async ({ page }) => {
-    const allValues = await PreNurseryGerminatedEdit(
+  test("Edit Main Nursery Sold", async ({ page }) => {
+    const allValues = await MainNurserySoldEdit(
       page,
       sideMenu,
       paths,
@@ -118,15 +116,15 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
   });
 
-  test("Delete Pre Nursery Germinated", async ({ page }) => {
-    await PreNurseryGerminatedDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Main Nursery Sold", async ({ page }) => {
+    await MainNurserySoldDelete(page, sideMenu, editValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Germinated failed");
+      throw new Error("Deleting Main Nursery Sold failed.");
     }
   });
 

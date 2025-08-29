@@ -20,22 +20,25 @@
     "MainNurseryCullingPath": "#MainNurCullDate,cboNurseryBatch_input,#remarkTextMCull,spinbutton*1,spinbutton*3",
     "MainNurseryCullingColumn": "MCullDate date,NurBatch dropdown,Remarks text,SgtQty numeric,DbtQty numeric",
     "MainNurseryTransfer/LossPath": "#MainNurTransDate,cboNurseryBatch_input,#remarkTextMTrn,cboMainTransType_input,cboBlock_input,comboBoxAcc_input,spinbutton*1",
-    "MainNurseryTransfer/LossColumn": "MTDate date,NurBatch dropdown,Remarks text,TransType dropdown,Block dropdown,Account dropdown,TrnQty numeric"
+    "MainNurseryTransfer/LossColumn": "MTDate date,NurBatch dropdown,Remarks text,TransType dropdown,Block dropdown,Account dropdown,TrnQty numeric",
+    "MainNurserySoldPath": "#MainNurSoldDate,cboNurseryBatch_input,#remarkTextMSold,cboAcc_input,cboCCID_input,cboContactMSold_input,spinbutton*1",
+    "MainNurserySoldColumn": "SoldDate date,NurBatch dropdown,Remarks text,SoldToAccount dropdown,CCID dropdown,RefContact dropdown,SoldQty numeric"
   },
   "GridPath": {},
   "ID": {
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "",
-    "PreNurseryGerminated": "",
-    "PreNurseryDoubletonSplitting": "",
-    "PreNurseryCulling": "",
-    "PreNurseryTransfer/Sold/Loss": "",
-    "Inter-OUPreNurseryTransferTo": "",
-    "MainNurseryReceived": "NR00000023",
-    "MainNurseryDoubletonSplitting": "NDS0000004",
-    "MainNurseryCulling": "NC00000003",
-    "MainNurseryTransfer/Loss": "NT00000006"
+    "PreNurserySeedReceived": "PSR0000071",
+    "PreNurseryGerminated": "PG00000028",
+    "PreNurseryDoubletonSplitting": "PDS0000031",
+    "PreNurseryCulling": "PC00000010",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000015",
+    "Inter-OUPreNurseryTransferTo": "IPT0000014",
+    "MainNurseryReceived": "NR00000025",
+    "MainNurseryDoubletonSplitting": "NDS0000005",
+    "MainNurseryCulling": "NC00000004",
+    "MainNurseryTransfer/Loss": "NT00000007",
+    "MainNurserySold": "MS00000003"
   }
 }

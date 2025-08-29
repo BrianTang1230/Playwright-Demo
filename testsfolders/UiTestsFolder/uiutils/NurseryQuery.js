@@ -199,6 +199,25 @@ function nurserySQLCommand(formName) {
         WHERE A.MTrnNum = @DocNo`;
       break;
 
+    case "Main Nursery Sold":
+      sqlCommand = `
+        SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        E.AccNum + ' - ' + E.AccDesc AS SoldToAccount,
+        F.CCIDCode + ' - ' + F.CCIDDesc AS CCID,
+        G.ContactCode + ' - ' + G.ContactDesc AS RefContact,
+        A.SoldQty,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM NUR_MSold A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        LEFT JOIN GMS_AccMas E ON A.SoldToAccKey = E.AccKey
+        LEFT JOIN V_SYC_CCIDMapping F ON A.CCIDKey = F.CCIDKey
+        LEFT JOIN GMS_ContactStp G ON A.ContactKey = G.ContactKey
+        WHERE A.MSoldNum = @DocNo`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

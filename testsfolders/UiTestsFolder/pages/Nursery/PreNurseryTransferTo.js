@@ -32,6 +32,9 @@ export async function PreNurseryTransferToCreate(
 
   await sideMenu.btnSave.click();
 
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   return await getValues(page, paths);
 }
 
@@ -57,6 +60,9 @@ export async function PreNurseryTransferToEdit(
   }
 
   await sideMenu.btnSave.click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }

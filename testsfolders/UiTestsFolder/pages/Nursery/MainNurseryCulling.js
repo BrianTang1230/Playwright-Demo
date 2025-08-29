@@ -28,6 +28,9 @@ export async function MainNurseryCullingCreate(
 
   await sideMenu.btnSave.click();
 
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   return await getValues(page, paths);
 }
 
@@ -53,6 +56,9 @@ export async function MainNurseryCullingEdit(
   }
 
   await sideMenu.btnSave.click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }

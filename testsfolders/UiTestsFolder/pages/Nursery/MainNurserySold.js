@@ -2,7 +2,7 @@ import { InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecord, SelectRecord } from "@UiFolder/functions/OpenRecord";
 import getValues from "@UiFolder/functions/GetValues";
 
-export async function MainNurseryReceivedCreate(
+export async function MainNurserySoldCreate(
   page,
   sideMenu,
   paths,
@@ -15,8 +15,6 @@ export async function MainNurseryReceivedCreate(
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
 
-  await page.locator("#btnMsgBoxYes").click();
-
   if (paths.length == columns.length && columns.length == values.length) {
     for (let i = 0; i < paths.length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);
@@ -28,13 +26,12 @@ export async function MainNurseryReceivedCreate(
 
   await sideMenu.btnSave.click();
 
-  // Wait for loading
   await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }
 
-export async function MainNurseryReceivedEdit(
+export async function MainNurserySoldEdit(
   page,
   sideMenu,
   paths,
@@ -57,24 +54,14 @@ export async function MainNurseryReceivedEdit(
 
   await sideMenu.btnSave.click();
 
-  // Wait for loading
   await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
-  // Get ui values
   return await getValues(page, paths);
 }
 
-export async function MainNurseryReceivedDelete(
-  page,
-  sideMenu,
-  values,
-  ou,
-  docNo
-) {
-  // Select the created record
+export async function MainNurserySoldDelete(page, sideMenu, values, ou, docNo) {
   await FilterRecord(page, values, ou, docNo);
 
-  // Delete record
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();
 }

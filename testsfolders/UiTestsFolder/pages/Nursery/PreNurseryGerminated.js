@@ -31,6 +31,9 @@ export async function PreNurseryGerminatedCreate(
   // Saved created data
   await sideMenu.btnSave.click();
 
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   // Get ui values
   return await getValues(page, paths);
 }
@@ -60,6 +63,9 @@ export async function PreNurseryGerminatedEdit(
 
   // Save edited data
   await sideMenu.btnSave.click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   // Get ui values
   return await getValues(page, paths);

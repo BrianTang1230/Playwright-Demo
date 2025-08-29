@@ -36,6 +36,9 @@ export async function AddRemSetupCreate(
   // Save created data
   await sideMenu.btnSave.click();
 
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
 
@@ -80,6 +83,9 @@ export async function AddRemSetupEdit(
 
   // Save created data
   await sideMenu.btnSave.click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   // Search and select created record
   await SelectRecord(page, sideMenu, newValues);

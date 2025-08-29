@@ -31,6 +31,9 @@ export async function PreNurseryDoubletonSplittingCreate(
   // Saved created data
   await sideMenu.btnSave.click();
 
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   // Get ui values
   return await getValues(page, paths);
 }
@@ -61,6 +64,9 @@ export async function PreNurseryDoubletonSplittingEdit(
 
   // Saved created data
   await sideMenu.btnSave.click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
 
   // Get ui values
   return await getValues(page, paths);

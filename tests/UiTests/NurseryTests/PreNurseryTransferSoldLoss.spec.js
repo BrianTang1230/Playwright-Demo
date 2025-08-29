@@ -52,7 +52,6 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
     db = new DBHelper();
     await db.connect();
 
-    // Delete a country code if it exists
     docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");

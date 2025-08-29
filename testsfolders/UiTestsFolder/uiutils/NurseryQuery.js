@@ -218,6 +218,34 @@ function nurserySQLCommand(formName) {
         WHERE A.MSoldNum = @DocNo`;
       break;
 
+    case "Inter-OU Main Nursery Transfer To":
+      sqlCommand = `
+        SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        CASE 
+          WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
+          WHEN A.TransTypeKey = 2 THEN 'Transfer Out'
+          END AS TransType,
+        C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
+        D.AccNum + ' - ' + D.AccDesc AS Account,
+        E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
+        F.NurBatchCode + ' - ' + F.NurBatchDesc AS TrnToBatch,
+        A.UnitPrice,
+        A.STQty,
+        G.OUCode + ' - ' + G.OUDesc AS FromOU,
+        H.OUCode + ' - ' + H.OUDesc AS ToOU
+        FROM NUR_MInterOUTrn A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
+        LEFT JOIN GMS_AccMas D ON A.AccKey = D.AccKey
+        LEFT JOIN V_SYC_CCIDMapping E ON A.CCIDKey = E.CCIDKey
+        LEFT JOIN GMS_NurBatchStp F ON A.ToNurBatchKey = F.NurBatchKey
+        LEFT JOIN GMS_OUStp G ON A.FromOUKey = G.OUKey
+        LEFT JOIN GMS_OUStp H ON A.ToOUKey = H.OUKey
+        WHERE A.IMTrnNum = @DocNo`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

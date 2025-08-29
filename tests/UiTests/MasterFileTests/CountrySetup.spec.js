@@ -45,7 +45,6 @@ test.describe.serial("Country Setup Tests", () => {
     db = new DBHelper();
     await db.connect();
 
-    // Delete a country code if it exists
     const deleteSQL = await connectExcel.readExcel("DeleteSQL");
     await db.deleteData(deleteSQL);
   });

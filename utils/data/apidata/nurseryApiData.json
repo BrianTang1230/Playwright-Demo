@@ -29,6 +29,32 @@
       "num": "IPT0000006",
       "ou": 16,
       "transType": 2
+    },
+    "MainNurseryReceived": {
+      "key": 532,
+      "num": "NR00000074"
+    },
+    "MainNurseryDoubletonSplitting": {
+      "key": 38,
+      "num": "NDS0000002"
+    },
+    "MainNurseryCulling": {
+      "key": 343,
+      "num": "NC00000006"
+    },
+    "MainNurseryTransferLoss": {
+      "key": 257,
+      "num": "NT00000026"
+    },
+    "MainNurserySold": {
+      "key": 255,
+      "num": "MS00000007"
+    },
+    "InterOUMainNurseryTransferTo": {
+      "key": 3,
+      "num": "IMT0000003",
+      "ou": 16,
+      "transType": 1
     }
   }
 }

@@ -37,7 +37,7 @@
     "Inter-OUPreNurseryTransferTo": "IPT0000014",
     "MainNurseryReceived": "NR00000025",
     "MainNurseryDoubletonSplitting": "NDS0000005",
-    "MainNurseryCulling": "NC00000004",
+    "MainNurseryCulling": "",
     "MainNurseryTransfer/Loss": "NT00000007",
     "MainNurserySold": "MS00000003"
   }

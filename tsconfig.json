@@ -9,7 +9,8 @@
       "@ApiFolder/*": ["tests/ApiTestsFolder/*"]
     },
     "allowJs": true,
-    "checkJs": false
+    "checkJs": false,
+    "outDir": "dist"
   },
   "include": ["**/*.js", "**/*.json"]
 }

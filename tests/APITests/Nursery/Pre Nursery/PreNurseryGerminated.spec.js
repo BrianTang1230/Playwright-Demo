@@ -6,20 +6,15 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import {
-  handleApiResponse,
-  setGlobal,
-  authHeaders,
-} from "@ApiFolder/apiUtils/apiHelpers.js";
+import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
-import { apiCall } from "testsfolders/ApiTestsFolder/apiUtils/apiHelpers";
 
 let dbtKey;
 let dbtNum;
 let connectExcel;
 let createValues;
 let editValues;
-const currentDate = new Date().toISOString();
+const currentDate = new Date().toISOString().split("T")[0];
 
 const url = NUR_API_URL;
 const sheetName = "NURAPI_Data";
@@ -128,7 +123,7 @@ test.describe.serial("Pre Nursery Germinated", () => {
     await apiCall(
       request,
       "GET",
-      `${url}/nur/odata/NurPDbt?$format=json&$orderby=DbtDate%20desc,DbtKey&$select=DbtKey,StatusDesc,OUCode,NurBatchCodeDesc,PlantMateDesc,SgtQty,DbtQty,Remarks,DbtDate,PDoubletonNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(DbtDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20DbtDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
+      `${url}/nur/odata/NurPDbt?$format=json&$orderby=DbtDate%20desc,DbtKey&$select=DbtKey,StatusDesc,OUCode,NurBatchCodeDesc,PlantMateDesc,SgtQty,DbtQty,Remarks,DbtDate,PDoubletonNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(DbtDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20DbtDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
       authToken,
       {},
       [200]

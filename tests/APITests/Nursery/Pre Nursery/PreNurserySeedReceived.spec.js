@@ -14,7 +14,7 @@ let prcvNum;
 let connectExcel;
 let createValues;
 let editValues;
-const currentDate = new Date().toISOString();
+const currentDate = new Date().toISOString().split("T")[0];
 
 const url = NUR_API_URL;
 const sheetName = "NURAPI_Data";
@@ -126,7 +126,7 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
     await apiCall(
       request,
       "GET",
-      `${url}/nur/odata/NurPRcv?$format=json&$orderby=RcvDate%20desc,PRcvKey&$select=PRcvKey,RefNo,PlantSourceDesc,StatusDesc,OUCode,NurBatchCodeDesc,OrdQty,DelQty,DamQty,RcvQty,FocQty,Remarks,RcvDate,PRcvNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(RcvDate%20ge%20datetime%272025-08-01T00%3A00%3A00%27%20and%20RcvDate%20le%20datetime%272025-08-31T00%3A00%3A00%27))`,
+      `${url}/nur/odata/NurPRcv?$format=json&$orderby=RcvDate%20desc,PRcvKey&$select=PRcvKey,RefNo,PlantSourceDesc,StatusDesc,OUCode,NurBatchCodeDesc,OrdQty,DelQty,DamQty,RcvQty,FocQty,Remarks,RcvDate,PRcvNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(RcvDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20RcvDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
       authToken,
       {},
       [200]

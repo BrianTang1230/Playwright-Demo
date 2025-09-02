@@ -27,6 +27,7 @@ export default async function getValues(
       uiValues.push(text && text.trim() !== "" ? text.trim() : "NA");
     }
   }
+  
   if (gridPaths.length > 0 && cellsIndex.length > 0) {
     for (let i = 0; i < gridPaths.length; i++) {
       const table = page.locator(gridPaths[i]);

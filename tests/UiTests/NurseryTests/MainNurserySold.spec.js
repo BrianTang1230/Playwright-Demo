@@ -117,7 +117,7 @@ test.describe.serial("Main Nursery Sold Tests", () => {
   });
 
   test("Delete Main Nursery Sold", async ({ page }) => {
-    await MainNurserySoldDelete(page, sideMenu, editValues, ou, docNo);
+    await MainNurserySoldDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

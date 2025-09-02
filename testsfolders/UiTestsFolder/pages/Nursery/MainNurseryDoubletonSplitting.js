@@ -15,8 +15,6 @@ export async function MainNurseryDoubletonSplittingCreate(
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
 
-  await page.locator("#btnMsgBoxYes").click();
-
   if (paths.length == columns.length && columns.length == values.length) {
     for (let i = 0; i < paths.length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);

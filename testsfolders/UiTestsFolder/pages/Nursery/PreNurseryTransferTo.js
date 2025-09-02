@@ -74,7 +74,7 @@ export async function PreNurseryTransferToDelete(
   ou,
   docNo
 ) {
-  await FilterRecord(page, values, ou[0], docNo);
+  await FilterRecord(page, values, ou, docNo);
 
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();

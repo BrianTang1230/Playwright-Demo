@@ -33,10 +33,11 @@ const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
 const formName = "Additional Remuneration Setup";
-const paths = InputPath.AddRemSetupPath.split(",");
-const columns = InputPath.AddRemSetupColumn.split(",");
-const gridPaths = GridPath.AddRemSetupGrid.split(",");
-const cellsIndex = [1, 2, 3];
+const keyName = formName.split(" ").join("");
+const paths = InputPath[keyName + "Path"].split(",");
+const columns = InputPath[keyName + "Column"].split(",");
+const gridPaths = GridPath[keyName + "Grid"].split(",");
+const cellsIndex = [[1, 2, 3]];
 
 test.describe.serial("Additional Remuneration Setup Tests", () => {
   // ---------------- Before All ----------------
@@ -88,10 +89,10 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
     );
 
     // Validate UI fields
-    await ValidateUiValues(createValues, columns, allValues);
+    await ValidateUiValues(createValues, columns, allValues[0]);
 
     // Validate grid fields
-    await ValidateGridValues(page, allValues, gridPaths, cellsIndex);
+    await ValidateGridValues(page, allValues[1], gridPaths, cellsIndex);
 
     // Retrieve DB values(ui)
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -135,10 +136,10 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
     );
 
     // Validate UI fields
-    await ValidateUiValues(editValues, columns, allValues);
+    await ValidateUiValues(editValues, columns, allValues[0]);
 
     // Validate grid fields
-    await ValidateGridValues(page, allValues, gridPaths, cellsIndex);
+    await ValidateGridValues(page, allValues[1], gridPaths, cellsIndex);
 
     // Retrieve DB values(ui)
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {

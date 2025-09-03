@@ -12,6 +12,8 @@ export async function PreNurseryTransferToCreate(
 ) {
   await sideMenu.btnCreateNewForm.click();
 
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   await page.locator("#comboFromOU .k-dropdown-wrap .k-select").click();
   await page
     .locator("#comboBoxInterNurFromOU-list li", { hasText: ou[0] })

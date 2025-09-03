@@ -14,6 +14,8 @@ export async function PreNurseryDoubletonSplittingCreate(
   // Click "Create New Form" button
   await sideMenu.btnCreateNewForm.click();
 
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   // Select OU
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();

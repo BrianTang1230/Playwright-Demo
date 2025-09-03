@@ -22,6 +22,7 @@ export async function AddRemSetupCreate(
       await InputValues(page, paths[i], columns[i], values[i]);
     }
   } else {
+    console.error(paths, columns, values);
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
@@ -30,7 +31,7 @@ export async function AddRemSetupCreate(
 
   // Input grid data
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex);
+    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   // Save created data

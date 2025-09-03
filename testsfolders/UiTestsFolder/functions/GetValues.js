@@ -33,9 +33,9 @@ export default async function getValues(
       const table = page.locator(gridPaths[i]);
       const row = table.locator("tr").first();
 
-      for (let j = 0; j < cellsIndex.length; j++) {
-        const cell = row.locator("td").nth(cellsIndex[j]);
-
+      for (let j = 0; j < cellsIndex[i].length; j++) {
+        const cell = row.locator("td").nth(cellsIndex[i][j]);
+      
         const gridValue = await cell.innerText();
         if (gridValue === "") {
           gridValues.push("NA");

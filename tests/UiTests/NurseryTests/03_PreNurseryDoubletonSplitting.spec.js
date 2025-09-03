@@ -1,35 +1,35 @@
 import { test } from "@playwright/test";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/uiutils/DBHelper";
+import editJson from "@utils/commonFunctions/EditJson";
+import {
+  ValidateUiValues,
+  ValidateDBValues,
+} from "@UiFolder/functions/ValidateValues";
+
+import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
 } from "@utils/data/uidata/nurseryData.json";
-import {
-  ValidateUiValues,
-  ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+
 import {
   PreNurseryDoubletonSplittingCreate,
   PreNurseryDoubletonSplittingEdit,
   PreNurseryDoubletonSplittingDelete,
 } from "@UiFolder/pages/Nursery/PreNurseryDoubletonSplitting";
-import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
-import editJson from "@utils/commonFunctions/EditJson";
-import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
 
 // ---------------- Global Variables ----------------
+let db;
+let ou;
+let docNo;
 let sideMenu;
 let connectExcel;
 let createValues;
 let editValues;
-let db;
-let ou;
-let docNo;
-
-// Excel info
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
@@ -39,33 +39,36 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
-  test.beforeAll(async () => {
+  // ---------------- Before All ----------------
+  test.beforeAll("Setup Excel, DB, and initial data", async () => {
+    // Init Excel + DB
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
-
-    createValues = (await connectExcel.readExcel("CreateData")).split(";");
-    editValues = (await connectExcel.readExcel("EditData")).split(";");
-
     db = new DBHelper();
     await db.connect();
 
+    // Read Excel values
+    createValues = (await connectExcel.readExcel("CreateData")).split(";");
+    editValues = (await connectExcel.readExcel("EditData")).split(";");
+    ou = await connectExcel.readExcel("OperatingUnit");
+
+    // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
-    ou = await connectExcel.readExcel("OperatingUnit");
   });
 
-  test.beforeEach(async ({ page }) => {
+  // ---------------- Before Each ----------------
+  test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
-    await loginPage.login();
-    await loginPage.navigateToForm(module, submodule, formName);
-
+    await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
   });
 
+  // ---------------- Create Test ----------------
   test("Create Pre Nursery Doubleton Splitting", async ({ page }) => {
     const allValues = await PreNurseryDoubletonSplittingCreate(
       page,
@@ -76,16 +79,15 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
       ou
     );
 
-    // Saved DocNo
+    // Save document number to json file
     docNo = await page.locator("#txtDSNum").inputValue();
     await editJson(JsonPath, formName, docNo);
-
-    await ValidateUiValues(createValues, columns, allValues);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
+    await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
@@ -93,6 +95,7 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
     );
   });
 
+  // ---------------- Edit Test ----------------
   test("Edit Pre Nursery Doubleton Splitting", async ({ page }) => {
     const allValues = await PreNurseryDoubletonSplittingEdit(
       page,
@@ -105,12 +108,11 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
       docNo
     );
 
-    await ValidateUiValues(editValues, columns, allValues);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
+    await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
@@ -118,6 +120,7 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
     );
   });
 
+  // ---------------- Delete Test ----------------
   test("Delete Pre Nursery Doubleton Splitting", async ({ page }) => {
     await PreNurseryDoubletonSplittingDelete(
       page,
@@ -136,8 +139,8 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
     }
   });
 
+  // ---------------- After All ----------------
   test.afterAll(async () => {
-    // Close database connection
     await db.closeAll();
   });
 });

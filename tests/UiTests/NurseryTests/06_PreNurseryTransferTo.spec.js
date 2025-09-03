@@ -1,35 +1,35 @@
 import { test } from "@playwright/test";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/uiutils/DBHelper";
+import editJson from "@utils/commonFunctions/EditJson";
+import {
+  ValidateUiValues,
+  ValidateDBValues,
+} from "@UiFolder/functions/ValidateValues";
+
+import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
 } from "@utils/data/uidata/nurseryData.json";
-import {
-  ValidateUiValues,
-  ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+
 import {
   PreNurseryTransferToCreate,
   PreNurseryTransferToEdit,
   PreNurseryTransferToDelete,
 } from "@UiFolder/pages/Nursery/PreNurseryTransferTo";
-import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
-import editJson from "@utils/commonFunctions/EditJson";
-import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
 
 // ---------------- Global Variables ----------------
+let db;
+let ou;
+let docNo;
 let sideMenu;
 let connectExcel;
 let createValues;
 let editValues;
-let db;
-let ou;
-let docNo;
-
-// Excel info
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
@@ -39,36 +39,36 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
-  test.beforeAll(async () => {
-    // Initialize Excel connection
+  // ---------------- Before All ----------------
+  test.beforeAll("Setup Excel, DB, and initial data", async () => {
+    // Init Excel + DB
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
-
-    // Read Excel data once
-    createValues = (await connectExcel.readExcel("CreateData")).split(";");
-    editValues = (await connectExcel.readExcel("EditData")).split(";");
-
-    // Initialize database connection
     db = new DBHelper();
     await db.connect();
 
+    // Read Excel values
+    createValues = (await connectExcel.readExcel("CreateData")).split(";");
+    editValues = (await connectExcel.readExcel("EditData")).split(";");
+    ou = (await connectExcel.readExcel("OperatingUnit")).split(";");
+
+    // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
-    ou = (await connectExcel.readExcel("OperatingUnit")).split(";");
   });
 
-  test.beforeEach(async ({ page }) => {
+  // ---------------- Before Each ----------------
+  test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
-    await loginPage.login();
-    await loginPage.navigateToForm(module, submodule, formName);
-
+    await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
   });
 
+  // ---------------- Create Test ----------------
   test("Create Inter-OU Pre Nursery Transfer To", async ({ page }) => {
     const allValues = await PreNurseryTransferToCreate(
       page,
@@ -82,14 +82,11 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     docNo = await page.locator("#txtPTONum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    await ValidateUiValues(createValues, columns, allValues);
-
-    console.log("DocNo:", docNo);
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    console.log("DB Values:", dbValues);
+    await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
       [...createValues, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
@@ -97,6 +94,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     );
   });
 
+  // ---------------- Edit Test ----------------
   test("Edit Inter-OU Pre Nursery Transfer To", async ({ page }) => {
     const allValues = await PreNurseryTransferToEdit(
       page,
@@ -109,12 +107,11 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
       docNo
     );
 
-    await ValidateUiValues(editValues, columns, allValues);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
+    await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
       [...editValues, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
@@ -122,6 +119,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     );
   });
 
+  // ---------------- Delete Test ----------------
   test("Delete Inter-OU Pre Nursery Transfer To", async ({ page }) => {
     await PreNurseryTransferToDelete(
       page,
@@ -140,8 +138,8 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     }
   });
 
+  // ---------------- After All ----------------
   test.afterAll(async () => {
-    // Close database connection
     await db.closeAll();
   });
 });

@@ -12,7 +12,7 @@ export default class LoginPage {
     this.loginButton = page.locator("#login");
   }
 
-  async login() {
+  async login(module, submodule = null, formName) {
     const client = region === "IND" ? Login.ClientIND : Login.Client;
 
     // Input Login Data
@@ -26,6 +26,7 @@ export default class LoginPage {
     await test.step(`Select client: ${region}`, () =>
       this.clientOption.selectOption(client));
     await test.step("Click final login", () => this.loginButton.click());
+    await this.navigateToForm(module, submodule, formName);
   }
 
   async navigateToForm(module, submodule, formName) {

@@ -12,6 +12,8 @@ export async function MainNurseryDoubletonSplittingCreate(
 ) {
   await sideMenu.btnCreateNewForm.click();
 
+  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
 

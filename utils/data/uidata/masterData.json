@@ -2,11 +2,11 @@
   "InputPath": {
     "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
     "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox",
-    "AddRemSetupPath": "#remCode,#remDesc,#addRemActive,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF",
-    "AddRemSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RemType text,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox"
+    "AdditionalRemunerationSetupPath": "#remCode,#remDesc,#addRemActive,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF",
+    "AdditionalRemunerationSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RemType text,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox"
   },
 
   "GridPath": {
-    "AddRemSetupGrid": "#addRemOUGrid > .k-grid-content"
+    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content"
   }
 }

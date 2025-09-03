@@ -5,17 +5,17 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
     if (columns[i].includes("numeric")) {
-      console.log(uiValues[0][i]);
-      const uiVal = normalizeNumber(uiValues[0][i]);
+      console.log(uiValues[i]);
+      const uiVal = normalizeNumber(uiValues[i]);
       console.log(uiVal);
-      uiValues[0][i] = uiVal;
+      uiValues[i] = uiVal;
     }
-    if (inputValues[i] !== uiValues[0][i]) {
+    if (inputValues[i] !== uiValues[i]) {
       throw new Error(
-        `Mismatch UI values: ${inputValues[i]} !== ${uiValues[0][i]}`
+        `Mismatch UI values: ${inputValues[i]} !== ${uiValues[i]}`
       );
     } else {
-      console.log(`Matched UI values: ${inputValues[i]} === ${uiValues[0][i]}`);
+      console.log(`Matched UI values: ${inputValues[i]} === ${uiValues[i]}`);
     }
   }
 }
@@ -46,10 +46,10 @@ export async function ValidateGridValues(page, gValues, gPaths, gCells) {
   for (let i = 0; i < gPaths.length; i++) {
     const table = page.locator(gPaths[i]);
     const row = table.locator("tr").first();
+    const value = gValues[i];
 
     for (let j = 0; j < gCells.length; j++) {
-      const cell = row.locator("td").nth(gCells[j]);
-      const value = gValues[1][j];
+      const cell = row.locator("td").nth(gCells[i][j]);
 
       const inputValue = await cell.innerText();
       if (value === "NA") continue;

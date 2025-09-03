@@ -71,7 +71,7 @@ test.describe.serial("Country Setup Tests", () => {
       createValues
     );
 
-    await ValidateUiValues(createValues, columns, allValues);
+    await ValidateUiValues(createValues, columns, allValues[0]);
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
@@ -90,7 +90,7 @@ test.describe.serial("Country Setup Tests", () => {
       editValues
     );
 
-    await ValidateUiValues(editValues, columns, allValues);
+    await ValidateUiValues(editValues, columns, allValues[0]);
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],

@@ -1,0 +1,14 @@
+name: UI Automation Test (IND)
+
+on:
+  schedule: 
+   - cron: "30 1 * * 2,4"
+  workflow_dispatch: # trigger manually or by schedule
+
+jobs:
+  run-ui-ind:
+    uses: LintraMax/Playwright-Automation/.github/workflows/playwright_auto.yml@main # 👈 calls your Playwright workflow
+    with:
+      testType: "UI Tests"
+      region: IND
+    secrets: inherit 

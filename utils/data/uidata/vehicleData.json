@@ -1,0 +1,10 @@
+{
+  "InputPath": {
+    "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks",
+    "VehicleRunningDistributionColumn": "VehRunDistDate date,VehicleId dropdown,Remarks text"
+  },
+
+  "GridPath": {
+    "VehicleRunningDistributionGrid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
+  }
+}

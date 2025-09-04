@@ -27,6 +27,7 @@ jobs:
           color: "info"
           timezone: "Asia/Kuala_Lumpur"
   test:
+    needs: notify-job-triggered
     timeout-minutes: 60
     runs-on: self-hosted
 
@@ -55,12 +56,19 @@ jobs:
       - name: Run Playwright tests
         continue-on-error: true
         run: npx playwright test --project="${{ inputs.testType }}"
-        
-      - uses: actions/upload-artifact@v4
+
+      - name: Prepare Playwright Report Bundle
+        run: |
+         mkdir -p report-bundle
+         cp -r playwright-report report-bundle/
+         cp -r test-results report-bundle/
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ inputs.testType }}-${{ github.run_number }}
-          path: playwright-report/
+          path: report-bundle/
           retention-days: 30
           
       - name: Send failure Microsoft Teams Notification

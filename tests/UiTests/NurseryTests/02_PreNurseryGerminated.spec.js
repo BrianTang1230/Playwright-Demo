@@ -58,6 +58,8 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
       const deleteSQL = await connectExcel.readExcel("DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
+
+    console.log(`Start Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------
@@ -136,5 +138,6 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
   // ---------------- After All ----------------
   test.afterAll(async () => {
     await db.closeAll();
+    console.log(`End Running: ${formName}`);
   });
 });

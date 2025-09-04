@@ -51,6 +51,8 @@ export default class LoginPage {
       await this.page
         .locator(".k-loading-image")
         .waitFor({ state: "detached" });
+
+      await this.page.waitForTimeout(1500);
     });
   }
 }

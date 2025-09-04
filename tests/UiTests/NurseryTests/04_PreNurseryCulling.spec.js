@@ -34,6 +34,7 @@ const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
 const formName = "Pre Nursery Culling";
+const keyName = formName.split(" ").join("");
 const paths = InputPath.PreNurseryCullingPath.split(",");
 const columns = InputPath.PreNurseryCullingColumn.split(",");
 

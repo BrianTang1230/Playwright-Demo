@@ -5,9 +5,7 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
     if (columns[i].includes("numeric")) {
-      console.log(uiValues[i]);
       const uiVal = normalizeNumber(uiValues[i]);
-      console.log(uiVal);
       uiValues[i] = uiVal;
     }
     if (inputValues[i] !== uiValues[i]) {
@@ -42,29 +40,28 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
   }
 }
 
-export async function ValidateGridValues(page, gValues, gPaths, gCells) {
-  for (let i = 0; i < gPaths.length; i++) {
-    const table = page.locator(gPaths[i]);
-    const row = table.locator("tr").first();
-    const value = gValues[i];
+export async function ValidateGridValues(eValues, gValues) {
+  console.log(eValues, gValues);
+  if (eValues.length !== gValues.length) {
+    throw new Error("Mismatch length in grid values.");
+  }
 
-    for (let j = 0; j < gCells.length; j++) {
-      const cell = row.locator("td").nth(gCells[i][j]);
-
-      const inputValue = await cell.innerText();
-      if (value === "NA") continue;
-      if (inputValue.toString().trim() !== value.trim()) {
-        throw new Error(`Mismatch Grid values: ${inputValue} !== ${value}`);
-      } else {
-        console.log(`Matched Grid values: ${inputValue} === ${value}`);
-      }
+  for (let i = 0; i < gValues.length; i++) {
+    if (!isNaN(Number(gValues[i]))) {
+      gValues[i] = Number(gValues[i]).toString();
+    }
+    if (gValues[i] === eValues[i]) {
+      console.log(`Matched grid values: ${gValues[i]} === ${eValues[i]}`);
+    } else {
+      throw new Error(
+        `Mismatch grid values:  ${gValues[i]} === ${eValues[i]}.`
+      );
     }
   }
 }
 
 function normalizeNumber(raw) {
   let cleaned = raw;
-
   if (Data.Region === "MY") {
     cleaned = cleaned.replace(",", "");
     return parseFloat(cleaned).toString();

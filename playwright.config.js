@@ -75,7 +75,7 @@ module.exports = defineConfig({
         viewport: null,
         launchOptions: {
           args: ["--start-maximized"],
-          slowMo: 1350,
+          slowMo: 1200,
         },
         headless: false,
       },

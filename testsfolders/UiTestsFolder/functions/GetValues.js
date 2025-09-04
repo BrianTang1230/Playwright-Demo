@@ -27,7 +27,7 @@ export default async function getValues(
       uiValues.push(text && text.trim() !== "" ? text.trim() : "NA");
     }
   }
-  
+
   if (gridPaths.length > 0 && cellsIndex.length > 0) {
     for (let i = 0; i < gridPaths.length; i++) {
       const table = page.locator(gridPaths[i]);
@@ -35,12 +35,19 @@ export default async function getValues(
 
       for (let j = 0; j < cellsIndex[i].length; j++) {
         const cell = row.locator("td").nth(cellsIndex[i][j]);
-      
-        const gridValue = await cell.innerText();
-        if (gridValue === "") {
-          gridValues.push("NA");
+
+        const checkbox = cell.locator('input[type="checkbox"]');
+
+        if ((await checkbox.count()) > 0) {
+          const isChecked = await checkbox.isChecked();
+          gridValues.push(isChecked ? "True" : "False");
         } else {
-          gridValues.push(gridValue.trim());
+          const gridValue = await cell.innerText();
+          if (gridValue === "") {
+            gridValues.push("NA");
+          } else {
+            gridValues.push(gridValue.trim());
+          }
         }
       }
     }

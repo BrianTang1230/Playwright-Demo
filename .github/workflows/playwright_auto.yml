@@ -1,0 +1,92 @@
+name: Playwright Automation Tests
+on:
+  workflow_call:
+    inputs:
+      testType:
+        description: "Type of test to run (ui or api)"
+        required: true
+        type: string
+      region:
+        description: "Region to run tests for (MY or IND)"
+        required: false
+        default: "MY"
+        type: string  
+    
+jobs:
+  notify-job-triggered:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Microsoft Teams Notification
+        uses: mikesprague/teams-incoming-webhook-action@v1
+        with:
+          github-token: ${{ github.token }}
+          webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          deploy-card: true
+          title: "${{ github.workflow }} started on ${{ github.ref_name }}"
+          color: "info"
+          timezone: "Asia/Kuala_Lumpur"
+  test:
+    timeout-minutes: 60
+    runs-on: self-hosted
+
+    env: # 👈 inject secrets here
+      TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      TEST_USERNAME: ${{ secrets.TEST_USERNAME }}
+      TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
+      TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
+      REGION: ${{ inputs.testType == 'UI Tests' && inputs.region || '' }}
+      
+    steps:
+      - uses: actions/checkout@v5.0.0
+      
+      - uses: actions/setup-node@v3.9.1
+        with:
+          node-version: lts/*
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+        
+      - name: Run Playwright tests
+        continue-on-error: true
+        run: npx playwright test --project="${{ inputs.testType }}"
+        
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report-${{ inputs.testType }}
+          path: playwright-report/
+          retention-days: 30
+          
+      - name: Send failure Microsoft Teams Notification
+        uses: mikesprague/teams-incoming-webhook-action@v1
+        if: failure()
+        with:
+          github-token: ${{ github.token }}
+          webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          deploy-card: true
+          title: " Error ${{ github.job }} on ${{ github.ref_name }}"
+          color: "failure"
+          timezone: "Asia/Kuala_Lumpur"
+          
+      - name: Send Microsoft Teams Notification
+        uses: mikesprague/teams-incoming-webhook-action@v1
+        with:
+          github-token: ${{ github.token }}
+          webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          deploy-card: false
+          title: "GitHub Workflow Test Summary [${{ env.REGION }}] - Run #${{ github.run_number }}"
+          color: "00FF00"
+          timezone: "Asia/Kuala_Lumpur"
+          message: |
+            **GitHub Actions Test Summary [${{ env.REGION }}]**
+            - **Workflow**: ${{ github.workflow }}
+            - **Branch**: ${{ github.ref_name }}
+            - **Status**: ${{ job.status }}
+            - 🔗 **Workflow Run**: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - 📄 **Report Artifact**: Check "playwright-report-${{ inputs.testType }}" in the workflow artifacts

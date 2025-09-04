@@ -37,7 +37,7 @@ module.exports = defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
-    headless: false,
+    headless: !!process.env.CI, // true in CI, false locally
     video: {
       mode: "on", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
@@ -45,9 +45,9 @@ module.exports = defineConfig({
     screenshot: "on",
     actionTimeout: 60000,
     launchOptions: {
-      args: ["--start-maximized"],
+      args: process.env.CI ? [] : ["--start-maximized"], // skip maximize on CI
     },
-    viewport: null,
+    viewport: process.env.CI ? { width: 1920, height: 1080 } : null, // fixed size in CI
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
   },
@@ -59,12 +59,14 @@ module.exports = defineConfig({
       testDir: "tests/APITests",
       use: {
         ...device,
-        viewport: null,
+        viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
+        video: { mode: "on", size: { width: 1920, height: 1080 } },
+        screenshot: "on",
+        headless: !!process.env.CI,
         launchOptions: {
-          args: ["--start-maximized"],
-          slowMo: 1000,
+          args: process.env.CI ? [] : ["--start-maximized"],
+          slowMo: 1300,
         },
-        headless: false,
       },
     },
     {
@@ -72,12 +74,14 @@ module.exports = defineConfig({
       testDir: "tests/UiTests",
       use: {
         ...device,
-        viewport: null,
+        viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
+        video: { mode: "on", size: { width: 1920, height: 1080 } },
+        screenshot: "on",
+        headless: !!process.env.CI,
         launchOptions: {
-          args: ["--start-maximized"],
-          slowMo: 1200,
+          args: process.env.CI ? [] : ["--start-maximized"],
+          slowMo: 1300,
         },
-        headless: false,
       },
     },
     // {

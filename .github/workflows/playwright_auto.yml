@@ -10,7 +10,12 @@ on:
         description: "Region to run tests for (MY or IND)"
         required: false
         default: "MY"
-        type: string  
+        type: string
+      browser:   # 👈 add browser as an input
+        description: "Browser to run tests on"
+        required: false
+        default: "chromium"
+        type: string
     
 jobs:
   notify-job-triggered:
@@ -55,7 +60,7 @@ jobs:
         
       - name: Run Playwright tests
         continue-on-error: true
-        run: npx playwright test --project="${{ inputs.testType }}"
+        run: npx playwright test --project="${{ inputs.testType }}" --browser="${{ inputs.browser }}"
 
       - name: Prepare Playwright Report Bundle
         run: |

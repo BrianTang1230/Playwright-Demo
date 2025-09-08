@@ -20,7 +20,7 @@ export default class SideMenuPage {
   }
 
   get btnDelete() {
-    return this.page.locator("#btnDelete");
+    return this.page.locator("#btnDelete").first();
   }
 
   get confirmDelete() {
@@ -34,7 +34,7 @@ export default class SideMenuPage {
   }
 
   get btnAddNewItem() {
-    return this.page.locator("#btnNewItem");
+    return this.page.locator("#btnNewItem").first();
   }
 
   get successMessage() {

@@ -14,7 +14,7 @@ export async function PreNurseryDoubletonSplittingCreate(
   // Click "Create New Form" button
   await sideMenu.btnCreateNewForm.click();
 
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Select OU
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
@@ -30,13 +30,11 @@ export async function PreNurseryDoubletonSplittingCreate(
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
-  // Saved created data
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  // Get ui values
   return await getValues(page, paths);
 }
 
@@ -64,13 +62,11 @@ export async function PreNurseryDoubletonSplittingEdit(
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
-  // Saved created data
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  // Get ui values
   return await getValues(page, paths);
 }
 

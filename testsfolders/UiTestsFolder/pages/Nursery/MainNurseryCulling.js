@@ -12,7 +12,7 @@ export async function MainNurseryCullingCreate(
 ) {
   await sideMenu.btnCreateNewForm.click();
 
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
@@ -29,7 +29,7 @@ export async function MainNurseryCullingCreate(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }
@@ -58,7 +58,7 @@ export async function MainNurseryCullingEdit(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }

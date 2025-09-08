@@ -14,7 +14,7 @@ export async function PreNurseryGerminatedCreate(
   // Click "Create New Form" button
   await sideMenu.btnCreateNewForm.click();
 
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Select OU
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
@@ -30,13 +30,11 @@ export async function PreNurseryGerminatedCreate(
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
-  // Saved created data
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  // Get ui values
   return await getValues(page, paths);
 }
 
@@ -67,9 +65,8 @@ export async function PreNurseryGerminatedEdit(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  // Get ui values
   return await getValues(page, paths);
 }
 

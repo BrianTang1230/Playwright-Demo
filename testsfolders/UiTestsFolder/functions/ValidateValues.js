@@ -5,7 +5,7 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA") continue;
     if (columns[i].includes("numeric")) {
-      const uiVal = normalizeNumber(uiValues[i]);
+      const uiVal = normalizeNumber(uiValues[i]).toString();
       uiValues[i] = uiVal;
     }
     if (inputValues[i] !== uiValues[i]) {
@@ -23,9 +23,11 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
+    console.log(inputValues[i], dbValues[colName]);
     if (inputValues[i] === "NA") continue;
     if (inputCols[i].includes("numeric")) {
-      inputValues[i] = parseInt(inputValues[i]);
+      inputValues[i] = Number(inputValues[i]);
+      dbValues[i] = Number(dbValues[i]);
     }
 
     if (dbValues[colName] !== inputValues[i]) {
@@ -41,21 +43,25 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 }
 
 export async function ValidateGridValues(eValues, gValues) {
-  console.log(eValues, gValues);
   if (eValues.length !== gValues.length) {
-    throw new Error("Mismatch length in grid values.");
+    throw new Error("Mismatch length in Grid values.");
   }
 
   for (let i = 0; i < gValues.length; i++) {
-    if (!isNaN(Number(gValues[i]))) {
-      gValues[i] = Number(gValues[i]).toString();
+    let expected = eValues[i];
+    let actual = gValues[i];
+
+    if (expected === "NA") continue;
+
+    if (!isNaN(normalizeNumber(actual)) && !isNaN(normalizeNumber(expected))) {
+      actual = normalizeNumber(actual).toString();
+      expected = normalizeNumber(expected).toString();
     }
-    if (gValues[i] === eValues[i]) {
-      console.log(`Matched grid values: ${gValues[i]} === ${eValues[i]}`);
+
+    if (actual === expected) {
+      console.log(`Matched Grid values: ${actual} === ${expected}`);
     } else {
-      throw new Error(
-        `Mismatch grid values:  ${gValues[i]} === ${eValues[i]}.`
-      );
+      throw new Error(`Mismatch Grid values： ${actual} !== ${expected}.`);
     }
   }
 }
@@ -64,9 +70,9 @@ function normalizeNumber(raw) {
   let cleaned = raw;
   if (Data.Region === "MY") {
     cleaned = cleaned.replace(",", "");
-    return parseFloat(cleaned).toString();
+    return parseFloat(cleaned);
   } else {
     cleaned = cleaned.replace(".", "").replace(",", ".");
-    return parseFloat(cleaned).toString();
+    return parseFloat(cleaned);
   }
 }

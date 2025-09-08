@@ -12,7 +12,7 @@ export async function PreNurseryTransferToCreate(
 ) {
   await sideMenu.btnCreateNewForm.click();
 
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   await page.locator("#comboFromOU .k-dropdown-wrap .k-select").click();
   await page
@@ -35,7 +35,7 @@ export async function PreNurseryTransferToCreate(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }
@@ -64,7 +64,7 @@ export async function PreNurseryTransferToEdit(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   return await getValues(page, paths);
 }

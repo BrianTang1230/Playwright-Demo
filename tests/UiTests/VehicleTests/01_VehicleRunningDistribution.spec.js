@@ -3,23 +3,34 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/uiutils/DBHelper";
+import editJson from "@utils/commonFunctions/EditJson";
 import {
   ValidateUiValues,
   ValidateGridValues,
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { InputPath, GridPath } from "@utils/data/uidata/vehicleData.json";
 import {
   vehicleGridSQLCommand,
   vehicleSQLCommand,
 } from "@UiFolder/uiutils/VehicleQuery";
+import {
+  JsonPath,
+  InputPath,
+  GridPath,
+  DocNo,
+} from "@utils/data/uidata/vehicleData.json";
 
-import { VehicleRunningDistributionCreate } from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+import {
+  VehicleRunningDistributionCreate,
+  VehicleRunningDistributionDelete,
+  VehicleRunningDistributionEdit,
+} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
 
 // ---------------- Set Global Variables ----------------
 let db;
 let ou;
+let docNo;
 let sideMenu;
 let connectExcel;
 let createValues;
@@ -58,8 +69,13 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     ou = await connectExcel.readExcel("OperatingUnit");
 
     // Clean up existing record if any
-    const deleteSQL = await connectExcel.readExcel("DeleteSQL");
-    await db.deleteData(deleteSQL);
+    docNo = DocNo[keyName];
+    if (docNo) {
+      const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou });
+    }
+
+    console.log(`Start Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -84,37 +100,100 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
+    docNo = await page.locator("#txtVEHNum").inputValue();
+    await editJson(JsonPath, formName, docNo);
+
+    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou,
+    });
+
+    const gridDbValues = await db.retrieveGridData(
+      vehicleGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+        OU: ou,
+      }
+    );
+
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
     await ValidateUiValues(createValues, columns, allValues[0]);
+    await ValidateDBValues(createValues, columns, dbValues[0]);
     await ValidateGridValues(
       gridCreateValues.join(";").split(";"),
       allValues[1]
     );
+    await ValidateDBValues(
+      gridCreateValues.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0]
+    );
+  });
 
-    // // Retrieve DB values(ui)
-    // const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
-    //   Code: createValues[0],
-    // });
+  // ---------------- Edit Test ----------------
+  test("Edit Vehicle Running Distribution", async ({ page }) => {
+    const allValues = await VehicleRunningDistributionEdit(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo
+    );
 
-    // // Validate DB values(ui)
-    // await ValidateDBValues(createValues, columns, dbValues[0]);
+    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou,
+    });
 
-    //   // Retrieve DB values(grid)
-    //   const gridDbValues = await db.retrieveGridData(
-    //     vehicleGridSQLCommand(formName),
-    //     {
-    //       Code: createValues[0],
-    //     }
-    //   );
+    const gridDbValues = await db.retrieveGridData(
+      vehicleGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+        OU: ou,
+      }
+    );
 
-    //   for (let i = 0; i < gridDbValues.length; i++) {
-    //     // Get db values columns
-    //     const gridDbColumns = Object.keys(gridDbValues[i]);
-    //     // Validate DB values(grid)
-    //     await ValidateDBValues(
-    //       gridCreateValues[i].split(";"),
-    //       gridDbColumns,
-    //       gridDbValues[i]
-    //     );
-    //   }
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await ValidateUiValues(editValues, columns, allValues[0]);
+    await ValidateDBValues(editValues, columns, dbValues[0]);
+    await ValidateGridValues(gridEditValues.join(";").split(";"), allValues[1]);
+    await ValidateDBValues(
+      gridEditValues.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0]
+    );
+  });
+
+  // ---------------- Delete Test ----------------
+  test("Delete Vehicle Running Distribution", async ({ page }) => {
+    await VehicleRunningDistributionDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
+
+    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou,
+    });
+
+    if (dbValues.length > 0)
+      throw new Error("Deleting Vehicle Running Distribution failed");
+  });
+
+  // ---------------- After All ----------------
+  test.afterAll(async () => {
+    await db.closeAll();
+    console.log(`End Running: ${formName}`);
   });
 });

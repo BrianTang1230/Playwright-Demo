@@ -15,7 +15,7 @@ export async function VehicleRunningDistributionCreate(
 ) {
   await sideMenu.btnCreateNewForm.click();
 
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page
@@ -41,4 +41,50 @@ export async function VehicleRunningDistributionCreate(
   await sideMenu.btnSave.click();
 
   return getValues(page, paths, gridPaths, cellsIndex);
+}
+
+export async function VehicleRunningDistributionEdit(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo
+) {
+  await FilterRecord(page, values, ou, docNo, 2);
+
+  if (paths.length == columns.length && columns.length == newValues.length) {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], newValues[i]);
+    }
+  } else {
+    console.error(paths, columns, newValues);
+    throw new Error("Paths, columns, and values do not match in length.");
+  }
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+  }
+
+  await sideMenu.btnSave.click();
+
+  return getValues(page, paths, gridPaths, cellsIndex);
+}
+
+export async function VehicleRunningDistributionDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecord(page, values, ou, docNo, 2);
+
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
 }

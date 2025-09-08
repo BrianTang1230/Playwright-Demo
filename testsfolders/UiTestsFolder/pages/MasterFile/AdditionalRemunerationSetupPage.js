@@ -38,12 +38,11 @@ export async function AddRemSetupCreate(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
 
-  // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);
 }
 
@@ -86,12 +85,11 @@ export async function AddRemSetupEdit(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Search and select created record
   await SelectRecord(page, sideMenu, newValues);
 
-  // Get ui values
   return await getValues(page, paths, gridPaths, cellsIndex);
 }
 

@@ -26,12 +26,11 @@ export async function CountrySetupCreate(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
 
-  // Get ui values
   return await getValues(page, paths);
 }
 
@@ -60,12 +59,11 @@ export async function CountrySetupEdit(
   await sideMenu.btnSave.click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Search and select edited record
   await SelectRecord(page, sideMenu, newValues);
 
-  // Get ui values
   return await getValues(page, paths);
 }
 

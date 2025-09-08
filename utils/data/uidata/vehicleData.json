@@ -1,10 +1,13 @@
 {
+  "JsonPath": "utils/data/uidata/vehicleData.json",
   "InputPath": {
     "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks",
-    "VehicleRunningDistributionColumn": "VehRunDistDate date,VehicleId dropdown,Remarks text"
+    "VehicleRunningDistributionColumn": "RunDistDate date,VehicleId dropdown,Remarks text"
   },
-
   "GridPath": {
     "VehicleRunningDistributionGrid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
+  },
+  "DocNo": {
+    "VehicleRunningDistribution": "VEH0002927"
   }
 }

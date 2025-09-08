@@ -83,8 +83,8 @@ module.exports = defineConfig({
         browserName: "chromium",
         channel: process.env.BROWSER,
         launchOptions: {
-          args: process.env.CI ? [] : ["--start-maximized"],
-          slowMo: 1300,
+          args: ["--start-maximized"],
+          slowMo: 1100,
         },
       },
     },

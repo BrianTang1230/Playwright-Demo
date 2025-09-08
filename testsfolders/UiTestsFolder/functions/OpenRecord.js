@@ -17,10 +17,10 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
   !del && (await sideMenu.btnEdit.click());
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function FilterRecord(page, values, ou, keyword) {
+export async function FilterRecord(page, values, ou, keyword, times = 1) {
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
@@ -34,7 +34,9 @@ export async function FilterRecord(page, values, ou, keyword) {
     .getByText("Choose a Column to Filter")
     .nth(2);
   await seletor.click();
-  await seletor.press("ArrowDown");
+  for (let i = 0; i < times; i++) {
+    await seletor.press("ArrowDown");
+  }
   await seletor.press("Enter");
 
   await page.getByRole("textbox").fill(keyword);
@@ -43,5 +45,5 @@ export async function FilterRecord(page, values, ou, keyword) {
   await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading
-  await page.locator(".k-loading-image").waitFor({ state: "detached" });
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }

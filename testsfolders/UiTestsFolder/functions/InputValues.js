@@ -63,9 +63,10 @@ export async function InputGridValues(
 
   for (let j = 0; j < cellsIndex.length; j++) {
     const cell = row.locator("td").nth(cellsIndex[j]);
-    
+
     await cell.click();
     const value = values.split(";")[j];
+    if (value === "NA") return;
 
     const input = cell.locator("input").first();
     editing && (await input.fill(""));

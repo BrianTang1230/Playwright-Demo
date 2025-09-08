@@ -1,4 +1,4 @@
-import { test } from "@playwright/test";
+import { test } from "@UiFolder/functions/GlobalDB";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import { InputPath } from "@utils/data/uidata/masterData.json";
@@ -12,7 +12,7 @@ import {
   CountrySetupDelete,
 } from "@UiFolder/pages/MasterFile/CountrySetupPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import { masterSQLCommand } from "@UiFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
@@ -42,15 +42,13 @@ test.describe.serial("Country Setup Tests", () => {
     editValues = (await connectExcel.readExcel("EditData")).split(";");
 
     // Initialize database connection
-    db = new DBHelper();
-    await db.connect();
 
     const deleteSQL = await connectExcel.readExcel("DeleteSQL");
     await db.deleteData(deleteSQL);
   });
 
   // ---------------- Before Each ----------------
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, db }) => {
     // Login and navigate to the form
     const loginPage = new LoginPage(page);
     await loginPage.login();
@@ -62,7 +60,7 @@ test.describe.serial("Country Setup Tests", () => {
   });
 
   // ---------------- Tests ----------------
-  test("Create New Country Code", async ({ page }) => {
+  test("Create New Country Code", async ({ page, db }) => {
     const allValues = await CountrySetupCreate(
       page,
       sideMenu,
@@ -80,7 +78,7 @@ test.describe.serial("Country Setup Tests", () => {
     await ValidateDBValues(createValues, columns, dbValues[0]);
   });
 
-  test("Edit Country Code", async ({ page }) => {
+  test("Edit Country Code", async ({ page, db }) => {
     const allValues = await CountrySetupEdit(
       page,
       sideMenu,
@@ -99,7 +97,7 @@ test.describe.serial("Country Setup Tests", () => {
     await ValidateDBValues(editValues, columns, dbValues[0]);
   });
 
-  test("Delete Country Code", async ({ page }) => {
+  test("Delete Country Code", async ({ page, db }) => {
     await CountrySetupDelete(page, sideMenu, editValues);
 
     // Check if the country code is deleted

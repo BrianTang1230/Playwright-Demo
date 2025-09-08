@@ -1,8 +1,8 @@
-import { test } from "@playwright/test";
+import { test } from "@UiFolder/functions/GlobalDB";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import {
   ValidateUiValues,
@@ -40,12 +40,10 @@ const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async () => {
-    // Init Excel + DB
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db }) => {
+    // Init Excel
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
-    db = new DBHelper();
-    await db.connect();
 
     // Read Excel values
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
@@ -71,7 +69,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+  test("Create Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
     const allValues = await PreNurseryTransferToCreate(
       page,
       sideMenu,
@@ -97,7 +95,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+  test("Edit Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
     const allValues = await PreNurseryTransferToEdit(
       page,
       sideMenu,
@@ -122,7 +120,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Pre Nursery Transfer To", async ({ page }) => {
+  test("Delete Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
     await PreNurseryTransferToDelete(
       page,
       sideMenu,
@@ -142,7 +140,6 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async () => {
-    await db.closeAll();
     console.log(`End Running: ${formName}`);
   });
 });

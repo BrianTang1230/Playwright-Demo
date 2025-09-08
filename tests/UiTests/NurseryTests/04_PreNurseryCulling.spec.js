@@ -1,8 +1,8 @@
-import { test } from "@playwright/test";
+import { test } from "@UiFolder/functions/GlobalDB";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import {
   ValidateUiValues,
@@ -40,12 +40,10 @@ const columns = InputPath.PreNurseryCullingColumn.split(",");
 
 test.describe.serial("Pre Nursery Culling Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async () => {
-    // Init Excel + DB
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db }) => {
+    // Init Excel
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
-    db = new DBHelper();
-    await db.connect();
 
     // Read Excel values
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
@@ -69,7 +67,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Pre Nursery Culling", async ({ page }) => {
+  test("Create Pre Nursery Culling", async ({ page, db }) => {
     const allValues = await PreNurseryCullingCreate(
       page,
       sideMenu,
@@ -96,7 +94,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Pre Nursery Culling", async ({ page }) => {
+  test("Edit Pre Nursery Culling", async ({ page, db }) => {
     const allValues = await PreNurseryCullingEdit(
       page,
       sideMenu,
@@ -121,7 +119,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Pre Nursery Culling", async ({ page }) => {
+  test("Delete Pre Nursery Culling", async ({ page, db }) => {
     await PreNurseryCullingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
@@ -134,7 +132,5 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async () => {
-    await db.closeAll();
-  });
+  test.afterAll(async () => {});
 });

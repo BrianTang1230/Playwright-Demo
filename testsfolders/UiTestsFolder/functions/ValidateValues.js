@@ -23,7 +23,6 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
-    console.log(inputValues[i], dbValues[colName]);
     if (inputValues[i] === "NA") continue;
     if (inputCols[i].includes("numeric")) {
       inputValues[i] = Number(inputValues[i]);

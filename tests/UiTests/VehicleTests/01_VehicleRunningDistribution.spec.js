@@ -1,8 +1,8 @@
-import { test } from "@playwright/test";
+import { test } from "@UiFolder/functions/GlobalDB";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/uiutils/DBHelper";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
 import {
   ValidateUiValues,
@@ -52,12 +52,10 @@ const cellsIndex = [
 
 test.describe.serial("Vehicle Running Distribution Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async () => {
-    // Init Excel + DB
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db }) => {
+    // Init Excel
     connectExcel = new ConnectExcel(sheetName, formName);
     await connectExcel.init();
-    db = new DBHelper();
-    await db.connect();
 
     // Read Excel values
     createValues = (await connectExcel.readExcel("CreateData")).split(";");
@@ -87,7 +85,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page }) => {
+  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
     const allValues = await VehicleRunningDistributionCreate(
       page,
       sideMenu,
@@ -132,7 +130,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page }) => {
+  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
     const allValues = await VehicleRunningDistributionEdit(
       page,
       sideMenu,
@@ -173,7 +171,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page }) => {
+  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
     await VehicleRunningDistributionDelete(
       page,
       sideMenu,
@@ -193,7 +191,6 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async () => {
-    await db.closeAll();
     console.log(`End Running: ${formName}`);
   });
 });

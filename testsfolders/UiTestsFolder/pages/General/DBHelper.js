@@ -50,30 +50,25 @@ export default class DBHelper {
     }
   }
 
-  async retrieveData(query, params = {}) {
+  async execute(query, params = {}) {
     const pool = await this.connect();
     const request = pool.request();
     this.setParams(request, params);
+    return await request.query(query);
+  }
 
-    const result = await request.query(query);
+  async retrieveData(query, params = {}) {
+    const result = await this.execute(query, params);
     return result.recordset;
   }
 
   async retrieveGridData(query, params = {}) {
-    const pool = await this.connect();
-    const request = pool.request();
-    this.setParams(request, params);
-
-    const result = await request.query(query);
+    const result = await this.execute(query, params);
     return result.recordset;
   }
 
   async deleteData(query, params = {}) {
-    const pool = await this.connect();
-    const request = pool.request();
-    this.setParams(request, params);
-
-    await request.query(query);
+    await this.execute(query, params);
   }
 
   async closeAll() {
@@ -81,5 +76,6 @@ export default class DBHelper {
       await this.pools[key].close();
       delete this.pools[key];
     }
+    console.log(`Closed ${configs[this.dbName].database}`);
   }
 }

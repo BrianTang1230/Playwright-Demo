@@ -14,7 +14,7 @@ on:
       browser:   # 👈 add browser as an input
         description: "Browser to run tests on"
         required: false
-        default: "chromium"
+        default: "chrome"
         type: string
     
 jobs:
@@ -44,6 +44,8 @@ jobs:
       TEST_PASSWORD: ${{ secrets.TEST_PASSWORD }}
       TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
       REGION: ${{ inputs.testType == 'UI Tests' && inputs.region || '' }}
+      BROWSER: ${{ inputs.browser }}
+
       
     steps:
       - uses: actions/checkout@v5.0.0
@@ -60,7 +62,7 @@ jobs:
         
       - name: Run Playwright tests
         continue-on-error: true
-        run: npx playwright test --project="${{ inputs.testType }}" --browser="${{ inputs.browser }}"
+        run: npx playwright test --project="${{ inputs.testType }}"
 
       - name: Prepare Playwright Report Bundle
         run: |

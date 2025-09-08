@@ -1,11 +1,28 @@
 name: UI Automation Test (MY)
 
 on:
-  # schedule: 
-  #  - cron: "30 1 * * 1,3"
+  schedule: 
+   - cron: "30 1 * * 1,3"
   workflow_dispatch: # trigger manually or by schedule
 
 jobs:
+  set-browser:
+    runs-on: self-hosted
+    outputs:
+      browser: ${{ steps.set-browser.outputs.browser }}
+    steps:
+      - name: Set browser by day
+        id: set-browser
+        run: |
+          $day = (Get-Date).DayOfWeek.value__
+          if ($day -eq 1) {
+            echo "browser=chrome" >> $env:GITHUB_OUTPUT
+          } elseif ($day -eq 3) {
+            echo "browser=msedge" >> $env:GITHUB_OUTPUT
+          } else {
+            echo "browser=chromium" >> $env:GITHUB_OUTPUT
+          }
+
   run-ui-my:
     uses: LintraMax/Playwright-Automation/.github/workflows/playwright_auto.yml@main # 👈 calls your Playwright workflow
     with:

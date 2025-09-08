@@ -131,7 +131,9 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Seed Received failed");
+      throw new Error(`Deleting ${formName} failed`);
+    } else {
+      console.log(`Deleting ${formName} succeeded`);
     }
   });
 

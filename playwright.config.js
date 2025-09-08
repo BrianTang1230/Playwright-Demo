@@ -63,6 +63,8 @@ module.exports = defineConfig({
         video: { mode: "on", size: { width: 1920, height: 1080 } },
         screenshot: "on",
         headless: !!process.env.CI,
+        browserName: "chromium", // must always be chromium
+        channel: process.env.BROWSER, // use BROWSER env var to specify the channel, e.g., "chrome", "msedge"
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
           slowMo: 1300,
@@ -78,6 +80,8 @@ module.exports = defineConfig({
         video: { mode: "on", size: { width: 1920, height: 1080 } },
         screenshot: "on",
         headless: !!process.env.CI,
+        browserName: "chromium",
+        channel: process.env.BROWSER,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
           slowMo: 1300,

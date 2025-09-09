@@ -132,4 +132,4 @@ jobs:
              - **Branch**: ${{ github.ref_name }}
              - **Status**: ${{ job.status }}
              - 📄 **Report**: [Click here to view report](${{ steps.deployment.outputs.page_url }})
-             - 🔗 **Workflow Run**: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+             - 🔗 **Workflow Run**: [Click here to download report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

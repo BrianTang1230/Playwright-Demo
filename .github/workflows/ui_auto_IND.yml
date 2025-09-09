@@ -23,6 +23,7 @@ jobs:
             echo "browser=chromium" >> $env:GITHUB_OUTPUT
           }
 
+          
   run-ui-ind:
     needs: set-browser  # 👈 wait for set-browser
     uses: LintraMax/Playwright-Automation/.github/workflows/playwright_auto.yml@main # 👈 calls your Playwright workflow

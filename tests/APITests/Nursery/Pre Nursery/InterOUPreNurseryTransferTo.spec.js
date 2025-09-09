@@ -1,5 +1,5 @@
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
-import { test } from "@ApiFolder/apiUtils/Fixtures.js";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import {
   JsonPath,
@@ -55,11 +55,8 @@ async function handleSetAndEditJson(json) {
 }
 
 test.describe.serial("Inter-OU Pre Nursery Transfer To API Test", () => {
-  test.beforeAll(async () => {
-    // Initialize Excel connection with the selected file
-    connectExcel = new ConnectExcel(sheetName, formName);
-    await connectExcel.init(false);
-
+  test.beforeAll(async ({ excel }) => {
+    await excel.init(false); // force API mode
     // Read Excel data once
     createValues = (
       await excel.readExcel(sheetName, formName, "CreateAPIData", false)

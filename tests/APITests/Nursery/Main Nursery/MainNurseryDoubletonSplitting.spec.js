@@ -1,5 +1,5 @@
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
-import { test } from "@ApiFolder/apiUtils/Fixtures.js";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import {
   JsonPath,
@@ -9,7 +9,6 @@ import {
 import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 
-test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   let mdbtSplitKey;
   let mdbtSplitNum;
   let createValues;
@@ -22,11 +21,9 @@ test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   const savedKey = ID.MainNurseryDoubletonSplitting.key;
   const savedDocNo = ID.MainNurseryDoubletonSplitting.num;
 
-  test.beforeAll(async () => {
-    // Initialize Excel connection with the selected file
-    connectExcel = new ConnectExcel(sheetName, formName);
-    await connectExcel.init(false);
-
+test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
+  test.beforeAll(async ({ excel }) => {
+    await excel.init(false); // force API mode
     // Read Excel data once
     createValues = (
       await excel.readExcel(sheetName, formName, "CreateAPIData", false)

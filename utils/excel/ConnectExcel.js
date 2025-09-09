@@ -26,11 +26,6 @@ export default class ConnectExcel {
 
   // async initialize function
   async init(isUI = true) {
-    // if (driveId && itemId) {
-    //   this.driveId = driveId;
-    //   this.itemId = itemId;
-    //   return; // skip file search , driveId = null, itemId = null
-    // }
     // Get site
     this.site = await this.graphClient
       .api("/sites/lintramaxmy.sharepoint.com:/sites/SQA-Team")

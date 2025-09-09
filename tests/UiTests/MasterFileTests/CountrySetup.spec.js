@@ -1,4 +1,4 @@
-import { test } from "@UiFolder/functions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import { InputPath } from "@utils/data/uidata/masterData.json";

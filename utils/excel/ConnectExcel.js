@@ -2,7 +2,7 @@ import { Client } from "@microsoft/microsoft-graph-client";
 import { ClientSecretCredential } from "@azure/identity";
 import Region from "@utils/data/uidata/loginData.json";
 
-const region = Region.Region;
+const region = process.env.REGION || Region.Region;
 
 export default class ConnectExcel {
   constructor() {

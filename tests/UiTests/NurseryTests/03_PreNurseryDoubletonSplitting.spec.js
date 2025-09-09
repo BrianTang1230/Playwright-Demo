@@ -1,4 +1,4 @@
-import { test } from "@UiFolder/functions/GlobalDB";
+import { test } from "@UiFolder/functions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
@@ -27,7 +27,6 @@ let db;
 let ou;
 let docNo;
 let sideMenu;
-let connectExcel;
 let createValues;
 let editValues;
 const sheetName = "NUR_DATA";
@@ -40,20 +39,20 @@ const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db }) => {
-    // Init Excel
-    connectExcel = new ConnectExcel(sheetName, formName);
-    await connectExcel.init();
-
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Read Excel values
-    createValues = (await connectExcel.readExcel("CreateData")).split(";");
-    editValues = (await connectExcel.readExcel("EditData")).split(";");
-    ou = await connectExcel.readExcel("OperatingUnit");
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
+    );
+    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
-      const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
 

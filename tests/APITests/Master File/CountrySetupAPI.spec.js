@@ -13,7 +13,6 @@ import {
 import editJson from "@utils/commonFunctions/EditJson";
 
 let ctryKey;
-let connectExcel;
 let createValues;
 let editValues;
 
@@ -28,10 +27,12 @@ test.beforeAll(async () => {
   await connectExcel.init(false);
 
   // Read Excel data once
-  createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
-    ";"
-  );
-  editValues = (await connectExcel.readExcel("EditAPIData", false)).split(";");
+  createValues = (
+    await excel.readExcel(sheetName, formName, "CreateAPIData", false)
+  ).split(";");
+  editValues = (
+    await excel.readExcel(sheetName, formName, "EditAPIData", false)
+  ).split(";");
 });
 
 test("Add new Country", async ({ request, authToken }) => {

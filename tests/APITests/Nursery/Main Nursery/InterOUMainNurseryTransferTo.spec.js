@@ -14,7 +14,6 @@ let mInterOUTrnKey;
 let imTrnNum;
 let ouKey;
 let transTypeKey;
-let connectExcel;
 let createValues;
 let editValues;
 const currentDate = new Date().toISOString().split("T")[0];
@@ -63,12 +62,12 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To API Test", () => {
     await connectExcel.init(false);
 
     // Read Excel data once
-    createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
-      ";"
-    );
-    editValues = (await connectExcel.readExcel("EditAPIData", false)).split(
-      ";"
-    );
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateAPIData", false)
+    ).split(";");
+    editValues = (
+      await excel.readExcel(sheetName, formName, "EditAPIData", false)
+    ).split(";");
   });
 
   test("Add new Inter OU Pre Nursery Transfer To transaction", async ({

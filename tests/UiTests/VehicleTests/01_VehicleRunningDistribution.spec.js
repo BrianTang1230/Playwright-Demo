@@ -1,4 +1,4 @@
-import { test } from "@UiFolder/functions/GlobalDB";
+import { test } from "@UiFolder/functions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
@@ -32,7 +32,6 @@ let db;
 let ou;
 let docNo;
 let sideMenu;
-let connectExcel;
 let createValues;
 let editValues;
 let gridCreateValues;
@@ -52,24 +51,26 @@ const cellsIndex = [
 
 test.describe.serial("Vehicle Running Distribution Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db }) => {
-    // Init Excel
-    connectExcel = new ConnectExcel(sheetName, formName);
-    await connectExcel.init();
-
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Read Excel values
-    createValues = (await connectExcel.readExcel("CreateData")).split(";");
-    editValues = (await connectExcel.readExcel("EditData")).split(";");
-    gridCreateValues = (await connectExcel.readExcel("GridDataCreate")).split(
-      "|"
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
     );
-    gridEditValues = (await connectExcel.readExcel("GridDataEdit")).split("|");
-    ou = await connectExcel.readExcel("OperatingUnit");
+    gridCreateValues = (
+      await excel.readExcel(sheetName, formName, "GridDataCreate")
+    ).split("|");
+    gridEditValues = (
+      await excel.readExcel(sheetName, formName, "GridDataEdit")
+    ).split("|");
+    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
-      const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou });
     }
 

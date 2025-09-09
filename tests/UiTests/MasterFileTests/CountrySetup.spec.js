@@ -1,4 +1,4 @@
-import { test } from "@UiFolder/functions/GlobalDB";
+import { test } from "@UiFolder/functions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import { InputPath } from "@utils/data/uidata/masterData.json";
@@ -17,7 +17,6 @@ import { masterSQLCommand } from "@UiFolder/uiutils/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;
-let connectExcel;
 let createValues;
 let editValues;
 let db;
@@ -38,12 +37,16 @@ test.describe.serial("Country Setup Tests", () => {
     await connectExcel.init();
 
     // Read Excel data once
-    createValues = (await connectExcel.readExcel("CreateData")).split(";");
-    editValues = (await connectExcel.readExcel("EditData")).split(";");
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
+    );
 
     // Initialize database connection
 
-    const deleteSQL = await connectExcel.readExcel("DeleteSQL");
+    const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
     await db.deleteData(deleteSQL);
   });
 

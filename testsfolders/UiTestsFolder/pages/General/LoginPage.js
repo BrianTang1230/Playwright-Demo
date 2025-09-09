@@ -1,4 +1,4 @@
-import { test } from "@UiFolder/functions/GlobalDB";
+import { test } from "@UiFolder/functions/GlobalSetup";
 require("dotenv").config();
 import Login from "@utils/data/uidata/loginData.json";
 

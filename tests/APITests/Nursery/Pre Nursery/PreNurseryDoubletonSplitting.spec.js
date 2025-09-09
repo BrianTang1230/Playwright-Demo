@@ -12,7 +12,6 @@ import editJson from "@utils/commonFunctions/EditJson";
 test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   let pdbtSplitKey;
   let pdbtSplitNum;
-  let connectExcel;
   let createValues;
   let editValues;
   const currentDate = new Date().toISOString().split("T")[0];
@@ -29,12 +28,12 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
     await connectExcel.init(false);
 
     // Read Excel data once
-    createValues = (await connectExcel.readExcel("CreateAPIData", false)).split(
-      ";"
-    );
-    editValues = (await connectExcel.readExcel("EditAPIData", false)).split(
-      ";"
-    );
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateAPIData", false)
+    ).split(";");
+    editValues = (
+      await excel.readExcel(sheetName, formName, "EditAPIData", false)
+    ).split(";");
   });
 
   test("Add new Pre Nursery Doubleton Splitting transaction", async ({

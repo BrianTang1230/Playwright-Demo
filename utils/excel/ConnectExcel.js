@@ -5,9 +5,7 @@ import Region from "@utils/data/uidata/loginData.json";
 const region = Region.Region;
 
 export default class ConnectExcel {
-  constructor(sheetName, formName) {
-    this.sheetName = sheetName;
-    this.formName = formName;
+  constructor() {
     // initialize GraphClient
     this.graphClient = Client.initWithMiddleware({
       authProvider: {
@@ -60,14 +58,15 @@ export default class ConnectExcel {
 
     this.driveId = files.value[0].parentReference.driveId;
     this.itemId = files.value[0].id;
+    console.log(`Excel: ${docName} setup done`);
   }
 
   // Read Excel data function
-  async readExcel(column, isUI = true) {
+  async readExcel(sheetName, formName, column, isUI = true) {
     // Check if sheetName exist
     const sheetRes = await this.graphClient
       .api(
-        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${this.sheetName}')/usedRange()`
+        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheetName}')/usedRange()`
       )
       .get();
 
@@ -82,8 +81,8 @@ export default class ConnectExcel {
     // Find row index
     const firstColIndex = isUI ? 1 : 0; // Check what is the test type
     const firstCol = values.map((r) => r[firstColIndex]);
-    const rowIndex = firstCol.indexOf(this.formName);
-    if (rowIndex === -1) throw new Error(`Row "${this.formName}" not found`);
+    const rowIndex = firstCol.indexOf(formName);
+    if (rowIndex === -1) throw new Error(`Row "${formName}" not found`);
 
     return values[rowIndex][colIndex];
   }

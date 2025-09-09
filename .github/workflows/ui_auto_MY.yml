@@ -24,8 +24,10 @@ jobs:
           }
 
   run-ui-my:
+    needs: set-browser  # 👈 wait for set-browser
     uses: LintraMax/Playwright-Automation/.github/workflows/playwright_auto.yml@main # 👈 calls your Playwright workflow
     with:
       testType: "UI Tests"
       region: MY
+      browser: ${{ needs.set-browser.outputs.browser }}
     secrets: inherit 

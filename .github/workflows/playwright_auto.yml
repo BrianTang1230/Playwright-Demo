@@ -67,8 +67,8 @@ jobs:
       - name: Prepare Playwright Report Bundle
         run: |
          mkdir -p report-bundle
-         cp -r playwright-report report-bundle/
-         cp -r test-results report-bundle/
+          cp -r playwright-report/* report-bundle/
+          cp -r test-results/* report-bundle/
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
@@ -78,30 +78,58 @@ jobs:
           path: report-bundle/
           retention-days: 30
           
-      - name: Send failure Microsoft Teams Notification
-        uses: mikesprague/teams-incoming-webhook-action@v1
-        if: failure()
-        with:
-          github-token: ${{ github.token }}
-          webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          deploy-card: true
-          title: " Error ${{ github.job }} on ${{ github.ref_name }}"
-          color: "failure"
-          timezone: "Asia/Kuala_Lumpur"
+  deploy-report:
+    needs: test 
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    env:
+      REGION: ${{ inputs.region }}
+      
+    steps:
+       - name: Download report bundle
+         uses: actions/download-artifact@v4
+         with:
+           name: playwright-report-${{ inputs.testType }}-${{ github.run_number }}
+           path: report-bundle
+           
+       - name: Setup Pages
+         uses: actions/configure-pages@v5.0.0
+    
+       - name: Upload Playwright report to GitHub Pages
+         uses: actions/upload-pages-artifact@v4.0.0
+         with:
+           path: report-bundle
+
+       - name: Deploy to GitHub Pages
+         id: deployment
+         uses: actions/deploy-pages@v4.0.5
           
-      - name: Send Microsoft Teams Notification
-        uses: mikesprague/teams-incoming-webhook-action@v1
-        with:
-          github-token: ${{ github.token }}
-          webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
-          deploy-card: false
-          title: "GitHub Workflow Test Summary [${{ env.REGION }}] - Run #${{ github.run_number }}"
-          color: "00FF00"
-          timezone: "Asia/Kuala_Lumpur"
-          message: |
-            **GitHub Actions Test Summary [${{ env.REGION }}]**
-            - **Workflow**: ${{ github.workflow }}
-            - **Branch**: ${{ github.ref_name }}
-            - **Status**: ${{ job.status }}
-            - **Browser**: ${{ inputs.browser }}
-            - 🔗📄 **Workflow Run and Report Artifact**: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+       - name: Send failure Microsoft Teams Notification
+         uses: mikesprague/teams-incoming-webhook-action@v1
+         if: failure()
+         with:
+           github-token: ${{ github.token }}
+           webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+           deploy-card: true
+           title: " Error ${{ github.job }} on ${{ github.ref_name }}"
+           color: "failure"
+           timezone: "Asia/Kuala_Lumpur"
+          
+       - name: Send Microsoft Teams Notification
+         uses: mikesprague/teams-incoming-webhook-action@v1
+         with:
+           github-token: ${{ github.token }}
+           webhook-url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+           deploy-card: false
+           title: "GitHub Workflow Test Summary [${{ env.REGION }}] - Run #${{ github.run_number }}"
+           color: "00FF00"
+           timezone: "Asia/Kuala_Lumpur"
+           message: |
+             **GitHub Actions Test Summary [${{ env.REGION }}]**
+             - **Workflow**: ${{ github.workflow }}
+             - **Branch**: ${{ github.ref_name }}
+             - **Status**: ${{ job.status }}
+             - 📄 **Report**: [Click here to view report](${{ steps.deployment.outputs.page_url }})
+             - 🔗 **Workflow Run**: [View on GitHub](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

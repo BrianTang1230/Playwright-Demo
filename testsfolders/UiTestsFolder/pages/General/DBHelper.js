@@ -1,7 +1,7 @@
 import sql from "mssql";
 import DB from "@utils/data/uidata/loginData.json";
 
-const region = DB.Region;
+const region = process.env.REGION || DB.Region;
 
 const configs = {
   dbMY: {

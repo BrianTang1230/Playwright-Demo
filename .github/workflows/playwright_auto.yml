@@ -10,11 +10,11 @@ on:
         description: "Region to run tests for (MY or IND)"
         required: false
         default: "MY"
-        type: string
+        type: string 
       browser:   # 👈 add browser as an input
         description: "Browser to run tests on"
         required: false
-        default: "chrome"
+        default: "msedge"
         type: string
     
 jobs:
@@ -45,7 +45,6 @@ jobs:
       TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
       REGION: ${{ inputs.testType == 'UI Tests' && inputs.region || '' }}
       BROWSER: ${{ inputs.browser }}
-
       
     steps:
       - uses: actions/checkout@v5.0.0
@@ -77,10 +76,11 @@ jobs:
           name: playwright-report-${{ inputs.testType }}-${{ github.run_number }}
           path: report-bundle/
           retention-days: 30
-          
+
+
   deploy-report:
     needs: test 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # 👈 instead of windows-latest
     permissions:
       pages: write
       id-token: write
@@ -131,5 +131,5 @@ jobs:
              - **Workflow**: ${{ github.workflow }}
              - **Branch**: ${{ github.ref_name }}
              - **Status**: ${{ job.status }}
-             - 📄 **Report**: [Click here to view report](${{ steps.deployment.outputs.page_url }})
+             - 📄 **Report**: [Click here to view live report](${{ steps.deployment.outputs.page_url }})
              - 🔗 **Workflow Run**: [Click here to download report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

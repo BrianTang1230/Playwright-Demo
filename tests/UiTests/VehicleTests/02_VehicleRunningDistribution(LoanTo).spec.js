@@ -9,7 +9,6 @@ import {
   ValidateGridValues,
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
-
 import {
   vehicleGridSQLCommand,
   vehicleSQLCommand,

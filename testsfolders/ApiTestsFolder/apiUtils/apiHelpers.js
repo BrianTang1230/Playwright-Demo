@@ -60,12 +60,6 @@ export async function setGlobal(globalName, json, propMappings) {
   return globalObj;
 }
 
-const authHeaders = (token) => ({
-  Authorization: `Bearer ${token}`,
-  Accept: "application/json",
-  "Content-Type": "application/json",
-});
-
 export async function apiCall(
   request,
   method,
@@ -89,3 +83,4 @@ export async function apiCall(
 
   return { status, json, rawBody };
 }
+

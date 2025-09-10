@@ -77,6 +77,8 @@ export default class ConnectExcel {
     const firstColIndex = isUI ? 1 : 0; // Check what is the test type
     const firstCol = values.map((r) => r[firstColIndex]);
     const rowIndex = firstCol.indexOf(formName);
+    console.log("Looking for:", formName);
+    console.log("Available rows in first column:", firstCol);
     if (rowIndex === -1) throw new Error(`Row "${formName}" not found`);
 
     return values[rowIndex][colIndex];

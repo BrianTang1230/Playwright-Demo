@@ -6,31 +6,38 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
+import {
+  setGlobal,
+  apiCall,
+} from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
+import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
-  let mdbtSplitKey;
-  let mdbtSplitNum;
-  let createValues;
-  let editValues;
-  const currentDate = new Date().toISOString().split("T")[0];
+let mdbtSplitKey;
+let mdbtSplitNum;
+let createValues;
+let editValues;
+const currentDate = new Date().toISOString().split("T")[0];
 
-  const url = NUR_API_URL;
-  const sheetName = "NURAPI_Data";
-  const formName = "Main Nursery Doubleton Splitting";
-  const savedKey = ID.MainNurseryDoubletonSplitting.key;
-  const savedDocNo = ID.MainNurseryDoubletonSplitting.num;
+const url = NUR_API_URL;
+const sheetName = "NURAPI_Data";
+const formName = "Main Nursery Doubleton Splitting";
+const savedKey = ID.MainNurseryDoubletonSplitting.key;
+const savedDocNo = ID.MainNurseryDoubletonSplitting.num;
 
 test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   test.beforeAll(async ({ excel }) => {
     await excel.init(false); // force API mode
     // Read Excel data once
-    createValues = (
-      await excel.readExcel(sheetName, formName, "CreateAPIData", false)
-    ).split(";");
-    editValues = (
-      await excel.readExcel(sheetName, formName, "EditAPIData", false)
-    ).split(";");
+    const { create, edit } = await loadExcelData(
+      excel,
+      sheetName,
+      formName,
+      false
+    );
+
+    createValues = create;
+    editValues = edit;
   });
 
   test("Add new Main Nursery Doubleton Splitting transaction", async ({

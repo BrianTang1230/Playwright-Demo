@@ -13,7 +13,7 @@ import {
 } from "@UiFolder/pages/MasterFile/CountrySetupPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import DBHelper from "@UiFolder/pages/General/DBHelper";
-import { masterSQLCommand } from "@UiFolder/uiutils/MasterQuery";
+import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 
 // ---------------- Global Variables ----------------
 let sideMenu;

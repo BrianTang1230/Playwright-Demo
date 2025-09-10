@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@UiFolder/functions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import ConnectExcel from "@utils/excel/ConnectExcel";
@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/vehicleData.json";
 
 import {
-  VehicleRunningDistributionCreate,
-  VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+  VehicleRunningDistributionLoanToCreate,
+  VehicleRunningDistributionLoanToEdit,
+  VehicleRunningDistributionLoanToDelete,
+} from "@UiFolder/pages/Vehicle/VehicleRunningDistributionLoanTo";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,7 +38,7 @@ let gridEditValues;
 const sheetName = "VEH_DATA";
 const module = "Vehicle";
 const submodule = null;
-const formName = "Vehicle Running Distribution";
+const formName = "Inter-OU Vehicle Running Distribution (Loan To)";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -48,7 +48,8 @@ const cellsIndex = [
   [0, 1, 2, 3, 4],
 ];
 
-test.describe.serial("Vehicle Running Distribution Tests", async () => {
+test.describe
+  .serial("Inter-OU Vehicle Running Distribution (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Read Excel values
@@ -64,13 +65,15 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     gridEditValues = (
       await excel.readExcel(sheetName, formName, "GridDataEdit")
     ).split("|");
-    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
+    ou = (await excel.readExcel(sheetName, formName, "OperatingUnit")).split(
+      ";"
+    );
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
       const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
-      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou });
+      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     }
 
     console.log(`Start Running: ${formName}`);
@@ -85,8 +88,11 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    const allValues = await VehicleRunningDistributionCreate(
+  test("Create New Inter-OU Vehicle Running Distribution (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    const allValues = await VehicleRunningDistributionLoanToCreate(
       page,
       sideMenu,
       paths,
@@ -98,19 +104,19 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#txtVEHNum").inputValue();
+    docNo = await page.locator("#txtVehNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou,
+      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou,
+        OU: ou[0],
       }
     );
 
@@ -118,8 +124,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
+      [...createValues, ou[0], ou[1]],
+      [...columns, "OU", "ToOU"],
       dbValues[0]
     );
     await ValidateGridValues(
@@ -134,8 +140,11 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    const allValues = await VehicleRunningDistributionEdit(
+  test("Edit Inter-OU Vehicle Running Distribution (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    const allValues = await VehicleRunningDistributionLoanToEdit(
       page,
       sideMenu,
       paths,
@@ -151,14 +160,14 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou,
+      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou,
+        OU: ou[0],
       }
     );
 
@@ -166,8 +175,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
+      [...editValues, ou[0], ou[1]],
+      [...columns, "OU", "ToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), allValues[1]);
@@ -179,8 +188,11 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionDelete(
+  test("Delete Inter-OU Vehicle Running Distribution (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await VehicleRunningDistributionLoanToDelete(
       page,
       sideMenu,
       createValues,
@@ -190,11 +202,13 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou,
+      OU: ou[0],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+      throw new Error(
+        "Deleting Inter-OU Vehicle Running Distribution (Loan To) failed"
+      );
   });
 
   // ---------------- After All ----------------

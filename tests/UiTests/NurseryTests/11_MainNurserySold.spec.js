@@ -9,7 +9,7 @@ import {
   ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
+import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
 import {
   InputPath,
   JsonPath,

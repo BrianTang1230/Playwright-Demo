@@ -14,7 +14,7 @@ import {
   JsonPath,
   DocNo,
 } from "@utils/data/uidata/nurseryData.json";
-import { nurserySQLCommand } from "@UiFolder/uiutils/NurseryQuery";
+import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
 
 import {
   MainNurseryCullingCreate,

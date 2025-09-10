@@ -30,17 +30,17 @@
     "PreNurserySeedReceived": ""
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000125",
-    "PreNurseryGerminated": "PG00000056",
-    "PreNurseryDoubletonSplitting": "PDS0000044",
-    "PreNurseryCulling": "PC00000021",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000027",
-    "Inter-OUPreNurseryTransferTo": "IPT0000032",
-    "MainNurseryReceived": "NR00000050",
-    "MainNurseryDoubletonSplitting": "NDS0000016",
-    "MainNurseryCulling": "NC00000014",
-    "MainNurseryTransfer/Loss": "NT00000018",
-    "MainNurserySold": "MS00000014",
-    "Inter-OUMainNurseryTransferTo": "IMT0000024"
+    "PreNurserySeedReceived": "",
+    "PreNurseryGerminated": "",
+    "PreNurseryDoubletonSplitting": "",
+    "PreNurseryCulling": "",
+    "PreNurseryTransfer/Sold/Loss": "",
+    "Inter-OUPreNurseryTransferTo": "",
+    "MainNurseryReceived": "",
+    "MainNurseryDoubletonSplitting": "",
+    "MainNurseryCulling": "",
+    "MainNurseryTransfer/Loss": "",
+    "MainNurserySold": "",
+    "Inter-OUMainNurseryTransferTo": ""
   }
 }

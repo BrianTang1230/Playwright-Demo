@@ -52,7 +52,7 @@ export async function ValidateGridValues(eValues, gValues) {
 
     if (expected === "NA") continue;
 
-    if (!isNaN(normalizeNumber(actual)) && !isNaN(normalizeNumber(expected))) {
+    if (!isNaN(normalizeNumber(expected))) {
       actual = normalizeNumber(actual).toString();
       expected = normalizeNumber(expected).toString();
     }

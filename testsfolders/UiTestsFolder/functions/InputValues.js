@@ -42,8 +42,8 @@ export async function InputValues(page, path, col, value) {
     return;
   }
 
+  // All elements which have dropdown menu
   if (col.includes("dropdown")) {
-    // Dropdown Input (only used for <select> element)
     await element.fill("");
     await element.type(value);
     await element.press("Enter");

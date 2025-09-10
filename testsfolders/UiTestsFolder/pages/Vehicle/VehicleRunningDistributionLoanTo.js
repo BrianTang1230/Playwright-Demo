@@ -17,6 +17,8 @@ export async function VehicleRunningDistributionLoanToCreate(
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
+  await page.waitForTimeout(2000);
+
   await page.locator("#comboOU .k-dropdown-wrap .k-select").first().click();
   await page
     .locator("#comboBoxOU_listbox li span", { hasText: ou[0] })

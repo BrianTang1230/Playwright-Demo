@@ -32,20 +32,16 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
       formName,
       false
     );
-    
+
     createValues = create;
     editValues = edit;
   });
 
-  test("Add new Pre Nursery Seed Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Add new Pre Nursery Seed Received transaction", async ({ api }) => {
     const { status, json } = await apiCall(
-      request,
+      api,
       "POST", // <-- method
       `${url}/nur/api/NurPRcvPost`, // <-- URL
-      authToken,
       {
         data: {
           PRcvKey: 59,
@@ -104,47 +100,36 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
     }
   });
 
-  test("Get Pre Nursery Seed Received by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Pre Nursery Seed Received by HdrKey", async ({ api }) => {
     const keyToUse = prcvKey || savedKey;
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPRcv?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Get all Pre Nursery Seed Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get all Pre Nursery Seed Received transaction", async ({ api }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPRcv?$format=json&$orderby=RcvDate%20desc,PRcvKey&$select=PRcvKey,RefNo,PlantSourceDesc,StatusDesc,OUCode,NurBatchCodeDesc,OrdQty,DelQty,DamQty,RcvQty,FocQty,Remarks,RcvDate,PRcvNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(RcvDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20RcvDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Pre Nursery Seed Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Pre Nursery Seed Received transaction", async ({ api }) => {
     const keyToUse = prcvKey || savedKey;
     const docNoToUse = prcvNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurPRcvPost`,
-      authToken,
+
       {
         data: {
           PRcvKey: `${keyToUse}`,
@@ -190,17 +175,13 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
     );
   });
 
-  test("Delete Pre Nursery Seed Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Pre Nursery Seed Received transaction", async ({ api }) => {
     const keyToUse = prcvKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/nurPRcvPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

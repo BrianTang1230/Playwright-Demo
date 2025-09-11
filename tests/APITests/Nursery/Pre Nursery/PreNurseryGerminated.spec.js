@@ -37,15 +37,11 @@ test.describe.serial("Pre Nursery Germinated", () => {
     editValues = edit;
   });
 
-  test("Add new Pre Nursery Germinated transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Add new Pre Nursery Germinated transaction", async ({ api }) => {
     const { json, status } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurPDbtPost`,
-      authToken,
       {
         data: {
           DbtKey: 45,
@@ -100,48 +96,36 @@ test.describe.serial("Pre Nursery Germinated", () => {
     }
   });
 
-  test("Get Pre Nursery Germinated transaction by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Pre Nursery Germinated transaction by HdrKey", async ({ api }) => {
     const keyToUse = dbtKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPDbt?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Get all Pre Nursery Germinated transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get all Pre Nursery Germinated transaction", async ({ api }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPDbt?$format=json&$orderby=DbtDate%20desc,DbtKey&$select=DbtKey,StatusDesc,OUCode,NurBatchCodeDesc,PlantMateDesc,SgtQty,DbtQty,Remarks,DbtDate,PDoubletonNum,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(DbtDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20DbtDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Pre Nursery Germinated transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Pre Nursery Germinated transaction", async ({ api }) => {
     const keyToUse = dbtKey || savedKey;
     const docNoToUse = dbtNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurPDbtPost`,
-      authToken,
       {
         data: {
           DbtKey: `${keyToUse}`,
@@ -183,17 +167,13 @@ test.describe.serial("Pre Nursery Germinated", () => {
     );
   });
 
-  test("Delete Pre Nursery Germinated transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Pre Nursery Germinated transaction", async ({ api }) => {
     const keyToUse = dbtKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/nurPDbtPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

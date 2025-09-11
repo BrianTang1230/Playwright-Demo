@@ -37,15 +37,11 @@ test.describe.serial("Main Nursery Sold", () => {
     editValues = edit;
   });
 
-  test("Add new Main Nursery Sold transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Add new Main Nursery Sold transaction", async ({ api }) => {
     const { json, status } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurMainSoldPost`,
-      authToken,
       {
         data: {
           MSoldKey: 253,
@@ -104,48 +100,36 @@ test.describe.serial("Main Nursery Sold", () => {
     }
   });
 
-  test("Get Main Nursery Sold transaction by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Main Nursery Sold transaction by HdrKey", async ({ api }) => {
     const keyToUse = mSoldKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurMainSold?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Get all Main Nursery Sold transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get all Main Nursery Sold transaction", async ({ api }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurMainSold?$format=json&$orderby=SoldDate%20desc,MSoldKey&$select=MSoldKey,StatusDesc,OUCode,NurBatchCodeDesc,SoldToAccNum,SoldToAccNumAccDesc,CCIDCodeCCIDDesc,SoldQty,Remarks,SoldDate,MSoldNum,BuyerCodeDesc,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(SoldDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20SoldDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Main Nursery Sold transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Main Nursery Sold transaction", async ({ api }) => {
     const keyToUse = mSoldKey || savedKey;
     const docNoToUse = mSoldNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurMainSoldPost`,
-      authToken,
       {
         data: {
           MSoldKey: `${keyToUse}`,
@@ -191,17 +175,13 @@ test.describe.serial("Main Nursery Sold", () => {
     );
   });
 
-  test("Delete Main Nursery Sold transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Main Nursery Sold transaction", async ({ api }) => {
     const keyToUse = mSoldKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurMainSoldPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

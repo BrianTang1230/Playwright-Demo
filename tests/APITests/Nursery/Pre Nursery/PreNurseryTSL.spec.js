@@ -6,10 +6,7 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import {
-  setGlobal,
-  apiCall,
-} from "@ApiFolder/apiUtils/apiHelpers.js";
+import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
@@ -70,14 +67,12 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss API Test", () => {
   });
 
   test("Add new Pre Nursery Transfer/Sold/Loss transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const { status, json } = await apiCall(
-      request,
+      api,
       "POST", // <-- method
       `${url}/nur/api/NurPTrnPost`, // <-- URL
-      authToken,
       {
         data: {
           PTrnKey: 64,
@@ -133,48 +128,38 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss API Test", () => {
     }
   });
 
-  test("Get Pre Nursery Transfer/Sold/Loss by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Pre Nursery Transfer/Sold/Loss by HdrKey", async ({ api }) => {
     const keyToUse = ptrnKey || savedKey;
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPTrn?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
   test("Get all Pre Nursery Transfer/Sold/Loss transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurPTrn?$format=json&$orderby=TrnDate%20desc,PTrnKey&$select=PTrnKey,PTrnNum,StatusDesc,OUCode,NurBatchCodeDesc,SoldToAccNum,CCIDCode,TrnQty,DbtQty,Remarks,TrnDate,BuyerCodeDesc,TransTypeDesc,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(TrnDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20TrnDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Pre Nursery Transfer/Sold/Loss transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Pre Nursery Transfer/Sold/Loss transaction", async ({ api }) => {
     const keyToUse = ptrnKey || savedKey;
     const docNoToUse = ptrnNum || savedDocNo;
     const ouToUse = ouKey || savedOUKey;
 
     const { status, json } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurPTrnPost`,
-      authToken,
       {
         data: {
           PTrnKey: `${keyToUse}`,
@@ -229,20 +214,16 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss API Test", () => {
     }
   });
 
-  test("Delete Pre Nursery Transfer/Sold/Loss transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Pre Nursery Transfer/Sold/Loss transaction", async ({ api }) => {
     const keyToUse = ptrnKey || savedKey;
     const docNoToUse = ptrnNum || savedDocNo;
     const ouToUse = ouKey || savedOUKey;
     const transTypeToUse = transTypeKey || savedTransTypeKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurPTrnPost?OUKey=${ouToUse}&PTrnNum=${docNoToUse}&TransTypeKey=${transTypeToUse}&key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

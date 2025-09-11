@@ -6,10 +6,7 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import {
-  setGlobal,
-  apiCall,
-} from "@ApiFolder/apiUtils/apiHelpers.js";
+import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
@@ -41,14 +38,12 @@ test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   });
 
   test("Add new Main Nursery Doubleton Splitting transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const { json, status } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurDbtSplitPost`,
-      authToken,
       {
         data: {
           MDbtSplitKey: 37,
@@ -104,47 +99,41 @@ test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   });
 
   test("Get Main Nursery Doubleton Splitting transaction by HdrKey", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const keyToUse = mdbtSplitKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurDbtSplit?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
   test("Get all Main Nursery Doubleton Splitting transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurDbtSplit?$format=json&$orderby=MDbtSplitDate%20desc,MDbtSplitKey&$select=MDbtSplitKey,MDbtSplitNum,StatusDesc,OUCode,NurBatchCodeDesc,SplitQty,MDbtSplitDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(MDbtSplitDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20MDbtSplitDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
   test("Update Main Nursery Doubleton Splitting transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const keyToUse = mdbtSplitKey || savedKey;
     const docNoToUse = mdbtSplitNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurDbtSplitPost`,
-      authToken,
       {
         data: {
           MDbtSplitKey: `${keyToUse}`,
@@ -182,16 +171,14 @@ test.describe.serial("Main Nursery Doubleton Splitting API Test", () => {
   });
 
   test("Delete Main Nursery Doubleton Splitting transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const keyToUse = mdbtSplitKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurDbtSplitPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

@@ -6,10 +6,7 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import {
-  setGlobal,
-  apiCall,
-} from "@ApiFolder/apiUtils/apiHelpers.js";
+import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
@@ -40,15 +37,11 @@ test.describe.serial("Main Nursery Received API Test", () => {
     editValues = edit;
   });
 
-  test("Add new Main Nursery Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Add new Main Nursery Received transaction", async ({ api }) => {
     const { status, json } = await apiCall(
-      request,
+      api,
       "POST", // <-- method
       `${url}/nur/api/NurRcvPost`, // <-- URL
-      authToken,
       {
         data: {
           MRcvKey: 529,
@@ -114,47 +107,35 @@ test.describe.serial("Main Nursery Received API Test", () => {
     }
   });
 
-  test("Get Main Nursery Received by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Main Nursery Received by HdrKey", async ({ api }) => {
     const keyToUse = mrcvKey || savedKey;
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurRcv?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Get all Main Nursery Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get all Main Nursery Received transaction", async ({ api }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurRcv?$format=json&$orderby=MRcvDate%20desc,MRcvKey&$select=MRcvKey,MRcvNum,StatusDesc,OUCode,NurBatchCodeDesc,SgtQty,DbtQty,Remarks,MRcvDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(MRcvDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20MRcvDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Main Nursery Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Main Nursery Received transaction", async ({ api }) => {
     const keyToUse = mrcvKey || savedKey;
     const docNoToUse = mrcvNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurRcvPost`,
-      authToken,
       {
         data: {
           MRcvKey: `${keyToUse}`,
@@ -207,17 +188,13 @@ test.describe.serial("Main Nursery Received API Test", () => {
     );
   });
 
-  test("Delete Main Nursery Received transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Main Nursery Received transaction", async ({ api }) => {
     const keyToUse = mrcvKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurRcvPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

@@ -71,14 +71,12 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To API Test", () => {
   });
 
   test("Add new Inter OU Pre Nursery Transfer To transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const { json } = await apiCall(
-      request,
+      api,
       "POST", // <-- method
       `${url}/nur/api/NurInterPTrnPost`, // <-- URL
-      authToken,
       {
         data: {
           PInterOUTrnKey: 1,
@@ -143,48 +141,40 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To API Test", () => {
     }
   });
 
-  test("Get Inter-OU Pre Nursery Transfer To by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Inter-OU Pre Nursery Transfer To by HdrKey", async ({ api }) => {
     const keyToUse = pinterOUTrnKey || savedKey;
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurInterPTrn?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
   test("Get all Inter-OU Pre Nursery Transfer To transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurInterPTrn?$format=json&$orderby=TrnDate%20desc,PInterOUTrnKey&$select=PInterOUTrnKey,IPTrnNum,StatusDesc,FromOUCode,ToOUCode,NurBatchCodeDesc,AccNum,CCIDCode,STQty,DTQty,Remarks,TrnDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(FromOUCode%20eq%20%27PMCE%27%20and%20(TrnDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20TrnDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
   test("Update Inter-OU Pre Nursery Transfer To transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const keyToUse = pinterOUTrnKey || savedKey;
     const docNoToUse = ipTrnNum || savedDocNo;
     const ouToUse = ouKey || savedOUKey;
 
     const { json } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurInterPTrnPost`,
-      authToken,
       {
         data: {
           PInterOUTrnKey: `${keyToUse}`,
@@ -250,18 +240,16 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To API Test", () => {
   });
 
   test("Delete Inter-OU Pre Nursery Transfer To transaction", async ({
-    request,
-    authToken,
+    api,
   }) => {
     const keyToUse = pinterOUTrnKey || savedKey;
     const ouToUse = ouKey || savedOUKey;
     const transTypeToUse = transTypeKey || savedTransTypeKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurInterPTrnPost?OUKey=${ouToUse}&TransTypeKey=${transTypeToUse}&key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

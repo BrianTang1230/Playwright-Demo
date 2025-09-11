@@ -6,10 +6,7 @@ import {
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import {
-  setGlobal,
-  apiCall,
-} from "@ApiFolder/apiUtils/apiHelpers.js";
+import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
 import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
@@ -40,15 +37,11 @@ test.describe.serial("Main Nursery Culling API Test", () => {
     editValues = edit;
   });
 
-  test("Add new Main Nursery Culling transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Add new Main Nursery Culling transaction", async ({ api }) => {
     const { status, json } = await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurMainCullPost`,
-      authToken,
       {
         data: {
           NCMainKey: 342,
@@ -105,48 +98,36 @@ test.describe.serial("Main Nursery Culling API Test", () => {
     }
   });
 
-  test("Get Main Nursery Culling transaction by HdrKey", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get Main Nursery Culling transaction by HdrKey", async ({ api }) => {
     const keyToUse = ncMainKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurMainCull?HdrKey=${keyToUse}&$format=json`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Get all Main Nursery Culling transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Get all Main Nursery Culling transaction", async ({ api }) => {
     await apiCall(
-      request,
+      api,
       "GET",
       `${url}/nur/odata/NurMainCull?$format=json&$orderby=CullDate%20desc,NCMainKey&$select=NCMainKey,NCNum,StatusDesc,OUCode,NurBatchCodeDesc,CullQty,CullDTQty,CullDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(CullDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20CullDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      authToken,
       {},
       [200]
     );
   });
 
-  test("Update Main Nursery Culling transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Update Main Nursery Culling transaction", async ({ api }) => {
     const keyToUse = ncMainKey || savedKey;
     const docNoToUse = ncMainNum || savedDocNo;
 
     await apiCall(
-      request,
+      api,
       "POST",
       `${url}/nur/api/NurMainCullPost`,
-      authToken,
       {
         data: {
           NCMainKey: `${keyToUse}`,
@@ -190,17 +171,13 @@ test.describe.serial("Main Nursery Culling API Test", () => {
     );
   });
 
-  test("Delete Main Nursery Culling transaction", async ({
-    request,
-    authToken,
-  }) => {
+  test("Delete Main Nursery Culling transaction", async ({ api }) => {
     const keyToUse = ncMainKey || savedKey;
 
     await apiCall(
-      request,
+      api,
       "DELETE",
       `${url}/nur/api/NurMainCullPost?key=${keyToUse}`,
-      authToken,
       {},
       [204]
     );

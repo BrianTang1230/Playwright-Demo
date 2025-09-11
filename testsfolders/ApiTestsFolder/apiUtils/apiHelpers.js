@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, request } from "@playwright/test";
 
 export async function handleApiResponse(response, expectedStatus = null) {
   const status = response.status();
@@ -61,19 +61,13 @@ export async function setGlobal(globalName, json, propMappings) {
 }
 
 export async function apiCall(
-  request,
+  api,
   method,
   url,
-  token,
   options = {},
   expectedStatus = [200]
 ) {
-  const response = await request[method.toLowerCase()](url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
+  const response = await api[method.toLowerCase()](url, {
     ...options,
   });
 
@@ -83,4 +77,3 @@ export async function apiCall(
 
   return { status, json, rawBody };
 }
-

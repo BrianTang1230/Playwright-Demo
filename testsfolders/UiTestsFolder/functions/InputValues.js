@@ -7,6 +7,7 @@ export async function InputValues(page, path, col, value) {
 
   col = col.toLowerCase();
   const element = await GetElementByPath(page, path);
+  if (!element) throw new Error("Element not found");
 
   if (col.includes("k-drop")) {
     await element.first().click();
@@ -18,8 +19,7 @@ export async function InputValues(page, path, col, value) {
 
   // Checkbox Input
   if (col.includes("checkbox")) {
-    if (value.toLowerCase() == "true") await element.check();
-    else await element.uncheck();
+    await setCheckboxOrSwitch(element, value.toLowerCase() === "true");
     return;
   }
 
@@ -60,12 +60,13 @@ export async function InputGridValues(
 ) {
   const table = page.locator(path);
   const row = table.locator("tr").first();
+  let valIndex = 0;
 
-  for (let j = 0; j < cellsIndex.length; j++) {
-    const cell = row.locator("td").nth(cellsIndex[j]);
+  for (let i = 0; i < cellsIndex.length; i++) {
+    const cell = row.locator("td").nth(cellsIndex[i]);
 
     await cell.click();
-    const value = values.split(";")[j];
+    const value = values.split(";")[i];
     if (value === "NA") return;
 
     const input = cell.locator("input").first();

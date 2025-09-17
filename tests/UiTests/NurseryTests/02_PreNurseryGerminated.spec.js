@@ -1,9 +1,9 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
-import ConnectExcel from "@utils/excel/ConnectExcel";
-import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getUiValues } from "@UiFolder/functions/GetValues";
+import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateDBValues,
@@ -23,12 +23,12 @@ import {
 } from "@UiFolder/pages/Nursery/PreNurseryGerminated";
 
 // ---------------- Global Variables ----------------
-let db;
 let ou;
 let docNo;
 let sideMenu;
 let createValues;
 let editValues;
+let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
@@ -41,18 +41,18 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Read Excel values
-    createValues = (
-      await excel.readExcel(sheetName, formName, "CreateData")
-    ).split(";");
-    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
-      ";"
+    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
+      sheetName,
+      formName
     );
-    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
+
+    await checkLength(paths, columns, createValues, editValues);
+
+    console.log(ou);
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
-      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
 
@@ -69,7 +69,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Pre Nursery Germinated", async ({ page, db }) => {
-    const allValues = await PreNurseryGerminatedCreate(
+    await PreNurseryGerminatedCreate(
       page,
       sideMenu,
       paths,
@@ -82,13 +82,15 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     docNo = await page.locator("#txtPGNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
+    const uiVals = await getUiValues(page, paths);
+
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, allValues[0]);
+    await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -96,7 +98,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Pre Nursery Germinated", async ({ page, db }) => {
-    const allValues = await PreNurseryGerminatedEdit(
+    await PreNurseryGerminatedEdit(
       page,
       sideMenu,
       paths,
@@ -107,13 +109,15 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
       docNo
     );
 
+    const uiVals = await getUiValues(page, paths);
+
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, allValues[0]);
+    await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );

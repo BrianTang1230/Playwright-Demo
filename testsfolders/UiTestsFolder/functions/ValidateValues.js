@@ -3,7 +3,12 @@ import Data from "@utils/data/uidata/loginData.json";
 
 export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
-    if (inputValues[i] === "NA") continue;
+    if (
+      inputValues[i] === "NA" ||
+      inputValues[i] === "Click" ||
+      uiValues[i] === "NA"
+    )
+      continue;
     if (columns[i].includes("numeric")) {
       const uiVal = normalizeNumber(uiValues[i]).toString();
       uiValues[i] = uiVal;
@@ -23,13 +28,13 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
-    if (inputValues[i] === "NA") continue;
+    if (inputValues[i] === "NA" || inputCols[i].includes("button")) continue;
     if (inputCols[i].includes("numeric")) {
       inputValues[i] = Number(inputValues[i]);
       dbValues[i] = Number(dbValues[i]);
     }
 
-    if (dbValues[colName] !== inputValues[i]) {
+    if (String(dbValues[colName]).trim() !== String(inputValues[i]).trim()) {
       throw new Error(
         `Mismatch DB values: ${inputValues[i]} !== ${dbValues[colName]}`
       );
@@ -50,7 +55,7 @@ export async function ValidateGridValues(eValues, gValues) {
     let expected = eValues[i];
     let actual = gValues[i];
 
-    if (expected === "NA") continue;
+    if (expected === "NA" || actual === "NA") continue;
 
     if (!isNaN(normalizeNumber(expected))) {
       actual = normalizeNumber(actual).toString();

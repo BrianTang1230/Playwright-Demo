@@ -1,6 +1,5 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecord, SelectRecord } from "@UiFolder/functions/OpenRecord";
-import getValues from "@UiFolder/functions/GetValues";
+import { FilterRecord } from "@UiFolder/functions/OpenRecord";
 
 export async function PreNurseryTransferSoldLossCreate(
   page,
@@ -17,21 +16,14 @@ export async function PreNurseryTransferSoldLossCreate(
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou }).first().click();
 
-  if (paths.length == columns.length && columns.length == values.length) {
-    for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
-    }
-  } else {
-    console.error(paths, columns, values);
-    throw new Error("Paths, columns, and values do not match in length.");
+  for (let i = 0; i < paths.length; i++) {
+    await InputValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnSave.click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
-
-  return await getValues(page, paths);
 }
 
 export async function PreNurseryTransferSoldLossEdit(
@@ -44,23 +36,16 @@ export async function PreNurseryTransferSoldLossEdit(
   ou,
   docNo
 ) {
-  await FilterRecord(page, values, ou, docNo);
+  await FilterRecord(page, values, ou[0], docNo);
 
-  if (paths.length == columns.length && columns.length == newValues.length) {
-    for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
-    }
-  } else {
-    console.error(paths, columns, values);
-    throw new Error("Paths, columns, and values do not match in length.");
+  for (let i = 0; i < paths.length; i++) {
+    await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.btnSave.click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
-
-  return await getValues(page, paths);
 }
 
 export async function PreNurseryTransferSoldLossDelete(
@@ -70,7 +55,7 @@ export async function PreNurseryTransferSoldLossDelete(
   ou,
   docNo
 ) {
-  await FilterRecord(page, values, ou, docNo);
+  await FilterRecord(page, values, ou[0], docNo);
 
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();

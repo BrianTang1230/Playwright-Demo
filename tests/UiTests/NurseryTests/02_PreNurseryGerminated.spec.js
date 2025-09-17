@@ -48,8 +48,6 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(ou);
-
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {

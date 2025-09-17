@@ -1,0 +1,12 @@
+{
+  "JsonPath": "utils/data/uidata/procurementData.json",
+  "InputPath": {
+    "PurchaseRequisitionPath": "RequestDate,#ExpectedDeliveryDate,#txtRemarks,#btnNewItem,combobox*0,combobox*1,#ItemSpec,spinbutton*0,#UsageRemarks,spinbutton*1,combobox*2,combobox*3,#btnSaveRecord",
+    "PurchaseRequisitionColumn": "RequestDate date,ExpDelDate date,Remarks text,AddNew button,Item dropdown,UOM dropdown,ItemSpec text,RequestQty numeric,Usage text,UnitPrice numeric,Account dropdown,CCID dropdown,AddRecord button"
+  },
+  "GridPath": {},
+  "DocNo": {
+    "PurchaseRequisition": "",
+    "PurchaseOrder": ""
+  }
+}

@@ -76,7 +76,7 @@ export default class ConnectExcel {
   async loadExcelValues(
     sheetName,
     formName,
-    { isUI = true, hasOU = true, hasGrid = false, hasTree = false }
+    { isUI = true, hasOU = true, hasGrid = false, hasTree = false } = {}
   ) {
     let columns = isUI
       ? ["CreateData", "EditData", "DeleteSQL"]

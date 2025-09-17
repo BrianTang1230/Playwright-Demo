@@ -38,10 +38,10 @@ module.exports = defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
 
-    baseURL: 'https://qa.quarto.cloud',
+    baseURL: "https://qa.quarto.cloud",
     extraHTTPHeaders: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
+      Accept: "application/json, */*",
+      "Content-Type": "application/json ",
     },
     headless: !!process.env.CI, // true in CI, false locally
     video: {

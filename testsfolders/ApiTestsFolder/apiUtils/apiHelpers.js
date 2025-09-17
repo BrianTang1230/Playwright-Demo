@@ -1,4 +1,5 @@
 import { expect, request } from "@playwright/test";
+import editJson from "@utils/commonFunctions/EditJson";
 
 export async function handleApiResponse(response, expectedStatus = null) {
   const status = response.status();
@@ -76,4 +77,21 @@ export async function apiCall(
   expect(expectedStatus).toContain(status);
 
   return { status, json, rawBody };
+}
+
+export async function handleJson(
+  formName,
+  json,
+  status,
+  JsonPath,
+  propMappings
+) {
+  if (json) {
+    const values = await setGlobal(formName, json, propMappings);
+
+    editJson(JsonPath, formName, values, false);
+
+    return { ...values, status, json };
+  }
+  return { status, json };
 }

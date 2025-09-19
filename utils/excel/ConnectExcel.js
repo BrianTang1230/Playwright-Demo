@@ -80,7 +80,7 @@ export default class ConnectExcel {
   ) {
     let columns = isUI
       ? ["CreateData", "EditData", "DeleteSQL"]
-      : ["CreaetAPIData", "EditAPIData"];
+      : ["CreateAPIData", "EditAPIData"];
     let data = [];
 
     // Check if sheetName exist

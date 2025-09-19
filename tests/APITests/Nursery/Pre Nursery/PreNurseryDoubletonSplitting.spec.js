@@ -8,7 +8,6 @@ import {
 } from "@utils/data/apidata/nurseryApiData.json";
 import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
 import editJson from "@utils/commonFunctions/EditJson";
-import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 
 let pdbtSplitKey;
 let pdbtSplitNum;

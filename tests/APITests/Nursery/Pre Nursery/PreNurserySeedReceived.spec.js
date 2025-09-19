@@ -1,7 +1,6 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import { loadExcelData } from "@utils/commonFunctions/LoadExcel";
 import NurseryApi from "@ApiFolder/pages/Nursery/NurseryPages.js";
 import { NUR_API_URL, ID } from "@utils/data/apidata/nurseryApiData.json";
 
@@ -20,17 +19,12 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
   test.beforeAll(async ({ api, excel }) => {
     await excel.init(false); // force API mode
     // Read Excel data once
-    const { create, edit } = await loadExcelData(
-      excel,
+    [createValues, editValues] = await excel.loadExcelValues(
       sheetName,
       formName,
-      false
+      { isUI: false }
     );
-
-    createValues = create;
-    editValues = edit;
   });
-
   test("Add new Pre Nursery Seed Received transaction", async ({ api }) => {
     apiObj = new NurseryApi(api, `${nurUrl}/nur/api/NurPRcvPost`, formName);
 
@@ -70,6 +64,7 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
 
   test("Get Pre Nursery Seed Received by HdrKey", async ({ api }) => {
     const keyToUse = prcvKey || savedKey;
+
     apiObj = new NurseryApi(
       api,
       `${nurUrl}/nur/odata/NurPRcv?HdrKey=${keyToUse}&$format=json`,

@@ -26,15 +26,13 @@ const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
 const formName = "Country Setup";
+const keyName = formName.split(" ").join("");
 const paths = InputPath.CountrySetupPath.split(",");
 const columns = InputPath.CountrySetupColumn.split(",");
 
 test.describe.serial("Country Setup Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll(async () => {
-    // Initialize Excel connection
-    connectExcel = new ConnectExcel(sheetName, formName);
-    await connectExcel.init();
+  test.beforeAll("Setup Excel, DB, and initial data", async ({db, excel}) => {
 
     // Read Excel data once
     createValues = (
@@ -44,25 +42,25 @@ test.describe.serial("Country Setup Tests", () => {
       ";"
     );
 
-    // Initialize database connection
-
+    // Clean up existing record if any 
     const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
-    await db.deleteData(deleteSQL);
+    await db.deleteData(deleteSQL, {Code:createValues[0]});
+
+    console.log('Start Running: ${formName}');
   });
 
   // ---------------- Before Each ----------------
   test.beforeEach(async ({ page, db }) => {
     // Login and navigate to the form
     const loginPage = new LoginPage(page);
-    await loginPage.login();
-    await loginPage.navigateToForm(module, submodule, formName);
+    await loginPage.login(module, submodule, formName);
 
     // Initialize side menu
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  // ---------------- Tests ----------------
+  // ---------------- Create Tests ----------------
   test("Create New Country Code", async ({ page, db }) => {
     const allValues = await CountrySetupCreate(
       page,
@@ -115,6 +113,6 @@ test.describe.serial("Country Setup Tests", () => {
 
   test.afterAll(async () => {
     // Close database connection
-    await db.closeAll();
+    console.log('End Running: ${formName}');
   });
 });

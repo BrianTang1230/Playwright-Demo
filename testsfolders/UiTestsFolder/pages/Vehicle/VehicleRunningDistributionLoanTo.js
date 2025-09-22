@@ -1,5 +1,5 @@
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecord } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionLoanToCreate(
   page,
@@ -30,9 +30,14 @@ export async function VehicleRunningDistributionLoanToCreate(
     .first()
     .click();
 
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
+
+  await page.locator("#btnNewItem").click();
+
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
@@ -55,7 +60,7 @@ export async function VehicleRunningDistributionLoanToEdit(
   ou,
   docNo
 ) {
-  await FilterRecord(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -77,7 +82,7 @@ export async function VehicleRunningDistributionLoanToDelete(
   ou,
   docNo
 ) {
-  await FilterRecord(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();

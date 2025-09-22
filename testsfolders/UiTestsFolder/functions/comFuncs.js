@@ -1,7 +1,7 @@
 export async function checkLength(paths, columns, createValues, editValues) {
   if (
-    paths.length !== columns.length &&
-    columns.length !== createValues.length &&
+    paths.length !== columns.length ||
+    columns.length !== createValues.length ||
     createValues.length !== editValues.length
   ) {
     console.error(paths, columns, createValues, editValues);

@@ -1,7 +1,10 @@
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterRecordByDateRange,
+  FilterRecordByOU,
+} from "@UiFolder/functions/OpenRecord";
 
-export async function VehicleRunningDistributionCreate(
+export async function RequestforQuotationCreate(
   page,
   sideMenu,
   paths,
@@ -16,15 +19,15 @@ export async function VehicleRunningDistributionCreate(
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
+  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
   await page
-    .locator("#comboBoxOU_listbox span", { hasText: ou[0] })
+    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
     .first()
     .click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
@@ -39,7 +42,7 @@ export async function VehicleRunningDistributionCreate(
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function VehicleRunningDistributionEdit(
+export async function RequestforQuotationEdit(
   page,
   sideMenu,
   paths,
@@ -52,11 +55,14 @@ export async function VehicleRunningDistributionEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
+    if (i === paths.length - 2) await sideMenu.confirmDelete.click();
   }
+
+  await page.locator("#btnPopulate").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
@@ -67,14 +73,14 @@ export async function VehicleRunningDistributionEdit(
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function VehicleRunningDistributionDelete(
+export async function RequestforQuotationDelete(
   page,
   sideMenu,
   values,
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();

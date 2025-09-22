@@ -1,17 +1,17 @@
 {
   "JsonPath": "utils/data/uidata/vehicleData.json",
   "InputPath": {
-    "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks,#btnNewItem",
-    "VehicleRunningDistributionColumn": "RunDistDate date,VehicleId dropdown,Remarks text,AddNew button",
-    "Inter-OUVehicleRunningDistribution(LoanTo)Path": "#InterOUVehRunDistDate,cboVehicle_input,#txtRemarks,#btnNewItem",
-    "Inter-OUVehicleRunningDistribution(LoanTo)Column": "RunDistDate date,VehicleId dropdown,Remarks text,AddNew button"
+    "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks",
+    "VehicleRunningDistributionColumn": "RunDistDate date,VehicleId dropdown,Remarks text",
+    "Inter-OUVehicleRunningDistribution(LoanTo)Path": "#InterOUVehRunDistDate,cboVehicle_input,#txtRemarks",
+    "Inter-OUVehicleRunningDistribution(LoanTo)Column": "RunDistDate date,VehicleId dropdown,Remarks text"
   },
   "GridPath": {
     "VehicleRunningDistributionGrid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable",
     "Inter-OUVehicleRunningDistribution(LoanTo)Grid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
   },
   "DocNo": {
-    "VehicleRunningDistribution": "VEH0002942",
-    "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000027"
+    "VehicleRunningDistribution": "VEH0002903",
+    "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000032"
   }
 }

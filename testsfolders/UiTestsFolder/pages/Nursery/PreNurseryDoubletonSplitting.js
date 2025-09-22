@@ -1,5 +1,5 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecord } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function PreNurseryDoubletonSplittingCreate(
@@ -18,6 +18,8 @@ export async function PreNurseryDoubletonSplittingCreate(
   // Select OU
   await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou[0] }).first().click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
@@ -42,7 +44,7 @@ export async function PreNurseryDoubletonSplittingEdit(
   docNo
 ) {
   // Select the created record
-  await FilterRecord(page, values, ou[0], docNo);
+  await FilterRecordByOU(page, values, ou[0], docNo);
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
@@ -63,7 +65,7 @@ export async function PreNurseryDoubletonSplittingDelete(
   docNo
 ) {
   // Select the created record
-  await FilterRecord(page, values, ou[0], docNo);
+  await FilterRecordByOU(page, values, ou[0], docNo);
 
   // Delete record
   await sideMenu.btnDelete.click();

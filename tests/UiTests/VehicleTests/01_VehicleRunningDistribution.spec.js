@@ -102,13 +102,13 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     docNo = await page.locator("#txtVEHNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),

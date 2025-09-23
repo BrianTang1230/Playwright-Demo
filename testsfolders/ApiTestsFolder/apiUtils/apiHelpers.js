@@ -1,7 +1,11 @@
 import { expect, request } from "@playwright/test";
 import editJson from "@utils/commonFunctions/EditJson";
 
-export async function handleApiResponse(response, expectedStatus = null) {
+export async function handleApiResponse(
+  response,
+  expectedStatus = null,
+  silent = false
+) {
   const status = response.status();
 
   // Read response once
@@ -16,12 +20,14 @@ export async function handleApiResponse(response, expectedStatus = null) {
   }
 
   // Log in a nicer format
-  if (status === 204 || !rawBody || rawBody.trim() === "") {
-    console.log("📩 No content (success)");
-  } else if (res) {
-    console.log("📩 JSON response:", res);
-  } else {
-    console.log("📩 Raw response:", rawBody);
+  if (!silent) {
+    if (status === 204 || !rawBody || rawBody.trim() === "") {
+      console.log("📩 No content (success)");
+    } else if (res) {
+      console.log("📩 JSON response:", res);
+    } else {
+      console.log("📩 Raw response:", rawBody);
+    }
   }
 
   // Determine what counts as success
@@ -30,7 +36,7 @@ export async function handleApiResponse(response, expectedStatus = null) {
       ? expectedStatus.includes(status)
       : status >= 200 && status < 300;
 
-  if (!isExpected) {
+  if (!isExpected && !silent) {
     console.error("❌ Unexpected status:", status);
     console.error("❌ Error:", res?.message || rawBody);
   }
@@ -66,13 +72,18 @@ export async function apiCall(
   method,
   url,
   options = {},
-  expectedStatus = [200]
+  expectedStatus,
+  silent = false // 👈 add this
 ) {
   const response = await api[method.toLowerCase()](url, {
     ...options,
   });
 
-  const { status, json, rawBody } = await handleApiResponse(response);
+  const { status, json, rawBody } = await handleApiResponse(
+    response,
+    expectedStatus,
+    silent
+  );
 
   expect(expectedStatus).toContain(status);
 
@@ -94,4 +105,27 @@ export async function handleJson(
     return { ...values, status, json };
   }
   return { status, json };
+}
+
+export async function deleteIfKeyExists(apiObj, api, url, savedKey) {
+  // Bind api
+  apiObj.api = api;
+
+  // Set delete URL
+  apiObj.setUrl(url);
+
+  // Perform delete
+
+  try {
+    const result = await apiObj.delete(true);
+
+    // Success message (your own, not handleApiResponse)
+    console.log(
+      `✅ Successfully deleted ${apiObj.formName} (key: ${savedKey})`
+    );
+
+    return result;
+  } catch (err) {
+    console.warn(`⚠️ Skipping delete, record not found (key: ${savedKey})`);
+  }
 }

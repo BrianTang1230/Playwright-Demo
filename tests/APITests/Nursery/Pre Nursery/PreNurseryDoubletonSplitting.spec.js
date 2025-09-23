@@ -1,21 +1,19 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
 import ConnectExcel from "@utils/excel/ConnectExcel";
+import NurseryApi from "@ApiFolder/pages/Nursery/NurseryPages.js";
 import {
-  JsonPath,
+  NurseryJsonPath,
   NUR_API_URL,
   ID,
 } from "@utils/data/apidata/nurseryApiData.json";
-import { setGlobal, apiCall } from "@ApiFolder/apiUtils/apiHelpers.js";
-import editJson from "@utils/commonFunctions/EditJson";
 
-let pdbtSplitKey;
-let pdbtSplitNum;
-let createValues;
-let editValues;
+let apiObj;
+let pdbtSplitKey, pdbtSplitNum;
+let createValues, editValues;
 const currentDate = new Date().toISOString().split("T")[0];
 
-const url = NUR_API_URL;
+const nurUrl = NUR_API_URL;
 const sheetName = "NURAPI_Data";
 const formName = "Pre Nursery Doubleton Splitting";
 const savedKey = ID.PreNurseryDoubletonSplitting.key;
@@ -25,76 +23,61 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   test.beforeAll(async ({ excel }) => {
     await excel.init(false); // force API mode
     // Read Excel data once
-    const { create, edit } = await loadExcelData(
-      excel,
+    [createValues, editValues] = await excel.loadExcelValues(
       sheetName,
       formName,
-      false
+      { isUI: false }
     );
 
-    createValues = create;
-    editValues = edit;
+    apiObj = new NurseryApi(null, "", formName, NurseryJsonPath);
+  });
+
+  test.beforeEach(async ({ api }) => {
+    // rebind fresh api context before every test
+    apiObj.api = api;
   });
 
   test("Add new Pre Nursery Doubleton Splitting transaction", async ({
     api,
   }) => {
-    const { json, status } = await apiCall(
-      api,
-      "POST",
-      `${url}/nur/api/NurPDbtSplitPost`,
+    apiObj.setUrl(`${nurUrl}/nur/api/NurPDbtSplitPost`);
+
+    const { key, num, status, json } = await apiObj.create(
       {
-        data: {
-          PDbtSplitKey: 1,
-          ClientKey: -1,
-          OUKey: 16,
-          OUCode: "",
-          OUDesc: "",
-          OUCodeOUDesc: "",
-          CompKey: -1,
-          PDbtSplitNum: "",
-          NurBatchKey: 138,
-          NurBatchCode: "",
-          NurBatchDesc: "",
-          NurBatchCodeDesc: "PA001 - PA BATCH 1",
-          PDbtSplitDate: currentDate,
-          SplitQty: createValues[0],
-          AvlbQty: 0.0, // Get from Pre-Nursery Germinated
-          PSeedling: 0.0,
-          Remarks: createValues[1],
-          Status: "O",
-          StatusDesc: "OPEN",
-          CreatedBy: 6,
-          CreatedByCode: "LMSUPPORT",
-          CreatedByDesc: "lmsupport",
-          CreatedDate: "2025-08-22T14:54:30.7401024",
-          UpdatedBy: 6,
-          UpdatedDate: "2025-08-22T06:54:30.7401024Z",
-          UpdatedByCode: "LMSUPPORT",
-          UpdatedByDesc: "lmsupport",
-          RowState: 1,
-        },
+        PDbtSplitKey: 1,
+        ClientKey: -1,
+        OUKey: 16,
+        OUCode: "",
+        OUDesc: "",
+        OUCodeOUDesc: "",
+        CompKey: -1,
+        PDbtSplitNum: "",
+        NurBatchKey: 138,
+        NurBatchCode: "",
+        NurBatchDesc: "",
+        NurBatchCodeDesc: "PA001 - PA BATCH 1",
+        PDbtSplitDate: currentDate,
+        SplitQty: createValues[0],
+        AvlbQty: 0.0, // Get from Pre-Nursery Germinated
+        PSeedling: 0.0,
+        Remarks: createValues[1],
+        Status: "O",
+        StatusDesc: "OPEN",
+        CreatedBy: 6,
+        CreatedByCode: "LMSUPPORT",
+        CreatedByDesc: "lmsupport",
+        CreatedDate: "2025-08-22T14:54:30.7401024",
+        UpdatedBy: 6,
+        UpdatedDate: "2025-08-22T06:54:30.7401024Z",
+        UpdatedByCode: "LMSUPPORT",
+        UpdatedByDesc: "lmsupport",
+        RowState: 1,
       },
-      [200, 201]
+      { key: "PDbtSplitKey", num: "PDbtSplitNum" }
     );
 
-    if (json) {
-      // Call your dynamic setter
-      const { key, num } = await setGlobal("preNursery", json, {
-        key: "PDbtSplitKey",
-        num: "PDbtSplitNum",
-      });
-
-      pdbtSplitKey = key;
-      pdbtSplitNum = num;
-
-      editJson(
-        JsonPath,
-        formName,
-        { key: pdbtSplitKey, num: pdbtSplitNum },
-        false
-      );
-    }
+    pdbtSplitKey = key;
+    pdbtSplitNum = num;
   });
 
   test("Get Pre Nursery Doubleton Splitting transaction by HdrKey", async ({
@@ -102,25 +85,19 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   }) => {
     const keyToUse = pdbtSplitKey || savedKey;
 
-    await apiCall(
-      api,
-      "GET",
-      `${url}/nur/odata/NurPDbtSplit?HdrKey=${keyToUse}&$format=json`,
-      {},
-      [200]
+    apiObj.setUrl(
+      `${nurUrl}/nur/odata/NurPDbtSplit?HdrKey=${keyToUse}&$format=json`
     );
+    await apiObj.getByKey();
   });
 
   test("Get all Pre Nursery Doubleton Splitting transaction", async ({
     api,
   }) => {
-    await apiCall(
-      api,
-      "GET",
-      `${url}/nur/odata/NurPDbtSplit?$format=json&$orderby=PDbtSplitDate%20desc,PDbtSplitKey&$select=PDbtSplitKey,PDbtSplitNum,StatusDesc,OUCode,NurBatchCodeDesc,SplitQty,PDbtSplitDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(PDbtSplitDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20PDbtSplitDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`,
-      {},
-      [200]
+    apiObj.setUrl(
+      `${nurUrl}/nur/odata/NurPDbtSplit?$format=json&$orderby=PDbtSplitDate%20desc,PDbtSplitKey&$select=PDbtSplitKey,PDbtSplitNum,StatusDesc,OUCode,NurBatchCodeDesc,SplitQty,PDbtSplitDate,CreatedByCode&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(OUCode%20eq%20%27PMCE%27%20and%20(PDbtSplitDate%20ge%20datetime%27${currentDate}T00%3A00%3A00%27%20and%20PDbtSplitDate%20le%20datetime%27${currentDate}T00%3A00%3A00%27))`
     );
+    await apiObj.getAll();
   });
 
   test("Update Pre Nursery Doubleton Splitting transaction", async ({
@@ -129,44 +106,37 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
     const keyToUse = pdbtSplitKey || savedKey;
     const docNoToUse = pdbtSplitNum || savedDocNo;
 
-    await apiCall(
-      api,
-      "POST",
-      `${url}/nur/api/NurPDbtSplitPost`,
-      {
-        data: {
-          PDbtSplitKey: `${keyToUse}`,
-          ClientKey: -1,
-          OUKey: 16,
-          OUCode: "",
-          OUDesc: "",
-          OUCodeOUDesc: "",
-          CompKey: -1,
-          PDbtSplitNum: `${docNoToUse}`,
-          NurBatchKey: 138,
-          NurBatchCode: "",
-          NurBatchDesc: "",
-          NurBatchCodeDesc: "PA001 - PA BATCH 1",
-          PDbtSplitDate: currentDate,
-          SplitQty: editValues[0],
-          AvlbQty: 0.0, // Get from Pre-Nursery Germinated
-          PSeedling: 0.0,
-          Remarks: editValues[1],
-          Status: "O",
-          StatusDesc: "OPEN",
-          CreatedBy: 6,
-          CreatedByCode: "LMSUPPORT",
-          CreatedByDesc: "lmsupport",
-          CreatedDate: "2025-08-22T14:54:30.7401024",
-          UpdatedBy: 6,
-          UpdatedDate: "2025-08-22T06:54:30.7401024Z",
-          UpdatedByCode: "LMSUPPORT",
-          UpdatedByDesc: "lmsupport",
-          RowState: 2,
-        },
-      },
-      [200, 204]
-    );
+    apiObj.setUrl(`${nurUrl}/nur/api/NurPDbtSplitPost`);
+    const { status, json } = await apiObj.update("POST", {
+      PDbtSplitKey: `${keyToUse}`,
+      ClientKey: -1,
+      OUKey: 16,
+      OUCode: "",
+      OUDesc: "",
+      OUCodeOUDesc: "",
+      CompKey: -1,
+      PDbtSplitNum: `${docNoToUse}`,
+      NurBatchKey: 138,
+      NurBatchCode: "",
+      NurBatchDesc: "",
+      NurBatchCodeDesc: "PA001 - PA BATCH 1",
+      PDbtSplitDate: currentDate,
+      SplitQty: editValues[0],
+      AvlbQty: 0.0, // Get from Pre-Nursery Germinated
+      PSeedling: 0.0,
+      Remarks: editValues[1],
+      Status: "O",
+      StatusDesc: "OPEN",
+      CreatedBy: 6,
+      CreatedByCode: "LMSUPPORT",
+      CreatedByDesc: "lmsupport",
+      CreatedDate: "2025-08-22T14:54:30.7401024",
+      UpdatedBy: 6,
+      UpdatedDate: "2025-08-22T06:54:30.7401024Z",
+      UpdatedByCode: "LMSUPPORT",
+      UpdatedByDesc: "lmsupport",
+      RowState: 2,
+    });
   });
 
   test("Delete Pre Nursery Doubleton Splitting transaction", async ({
@@ -174,12 +144,7 @@ test.describe.serial("Pre Nursery Doubleton Splitting API Test", () => {
   }) => {
     const keyToUse = pdbtSplitKey || savedKey;
 
-    await apiCall(
-      api,
-      "DELETE",
-      `${url}/nur/api/NurPDbtSplitPost?key=${keyToUse}`,
-      {},
-      [204]
-    );
+    apiObj.setUrl(`${nurUrl}/nur/api/NurPDbtSplitPost?key=${keyToUse}`);
+    await apiObj.delete();
   });
 });

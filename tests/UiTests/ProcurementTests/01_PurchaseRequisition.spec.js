@@ -7,37 +7,38 @@ import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
+import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
 import {
-  InputPath,
   JsonPath,
+  InputPath,
   DocNo,
-} from "@utils/data/uidata/nurseryData.json";
+} from "@utils/data/uidata/procurementData.json";
 
 import {
-  PreNurseryTransferSoldLossCreate,
-  PreNurseryTransferSoldLossEdit,
-  PreNurseryTransferSoldLossDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryTransferSoldLoss";
+  PurchaseRequisitionCreate,
+  PurchaseRequisitionEdit,
+  PurchaseRequisitionDelete,
+} from "@UiFolder/pages/Procurement/PurchaseRequisition";
 
-// ---------------- Global Variables ----------------
+// ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
-const sheetName = "NUR_DATA";
-const module = "Nursery";
-const submodule = "Pre Nursery";
-const formName = "Pre Nursery Transfer/Sold/Loss";
+const sheetName = "PROCUR_Data";
+const module = "Procurement";
+const submodule = null;
+const formName = "Purchase Requisition";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
+test.describe.serial("Purchase Requisition Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
@@ -66,8 +67,8 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Pre Nursery Transfer/Sold/Loss", async ({ page, db }) => {
-    await PreNurseryTransferSoldLossCreate(
+  test("Create Purchase Requisition", async ({ page, db }) => {
+    await PurchaseRequisitionCreate(
       page,
       sideMenu,
       paths,
@@ -76,16 +77,19 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtPTONum").inputValue();
+    // Save document number to json file
+    docNo = await page.locator("#txtRequisitionNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getUiValues(page, paths.slice(0, 3));
+    await page.locator("#btnEditItem").click();
+    const gridVals = await getUiValues(page, paths.slice(3, paths.length));
 
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, columns, [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
@@ -94,8 +98,8 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Pre Nursery Transfer/Sold/Loss", async ({ page, db }) => {
-    await PreNurseryTransferSoldLossEdit(
+  test("Edit Purchase Requisition", async ({ page, db }) => {
+    await PurchaseRequisitionEdit(
       page,
       sideMenu,
       paths,
@@ -106,13 +110,15 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getUiValues(page, paths.slice(0, 3));
+    await page.locator("#btnEditItem").click();
+    const gridVals = await getUiValues(page, paths.slice(3, paths.length));
 
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateUiValues(editValues, columns,  [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
@@ -121,21 +127,15 @@ test.describe.serial("Pre Nursery Transfer/Sold/Loss Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Pre Nursery Transfer/Sold/Loss", async ({ page, db }) => {
-    await PreNurseryTransferSoldLossDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Purchase Requisition", async ({ page, db }) => {
+    await PurchaseRequisitionDelete(page, sideMenu, editValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Transfer/Sold/Loss failed");
+      throw new Error(`Deleting ${formName} failed`);
     }
   });
 

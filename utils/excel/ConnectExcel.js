@@ -6,6 +6,7 @@ const region = process.env.REGION || Region.Region;
 
 export default class ConnectExcel {
   constructor() {
+    this.values = [];
     // initialize GraphClient
     this.graphClient = Client.initWithMiddleware({
       authProvider: {
@@ -57,7 +58,31 @@ export default class ConnectExcel {
   }
 
   // Read Excel data function
-  async readExcel(sheetName, formName, column, isUI = true) {
+  async readExcel(formName, column, isUI = true) {
+    // Find column index
+    const headerRow = this.values[0];
+    const colIndex = headerRow.indexOf(column);
+    if (colIndex === -1) throw new Error(`Column "${column}" not found`);
+
+    // Find row index
+    const firstColIndex = isUI ? 1 : 0; // Check what is the test type
+    const firstCol = this.values.map((r) => r[firstColIndex]);
+    const rowIndex = firstCol.indexOf(formName);
+    if (rowIndex === -1) throw new Error(`Row "${formName}" not found`);
+
+    return this.values[rowIndex][colIndex];
+  }
+
+  async loadExcelValues(
+    sheetName,
+    formName,
+    { isUI = true, hasOU = true, hasGrid = false, hasTree = false } = {}
+  ) {
+    let columns = isUI
+      ? ["CreateData", "EditData", "DeleteSQL"]
+      : ["CreateAPIData", "EditAPIData"];
+    let data = [];
+
     // Check if sheetName exist
     const sheetRes = await this.graphClient
       .api(
@@ -65,20 +90,39 @@ export default class ConnectExcel {
       )
       .get();
 
-    const values = sheetRes.values;
-    if (!values || values.length == 0) return [];
+    this.values = sheetRes.values;
+    if (!this.values || this.values.length == 0) return this.values;
 
-    // Find column index
-    const headerRow = values[0];
-    const colIndex = headerRow.indexOf(column);
-    if (colIndex === -1) throw new Error(`Column "${column}" not found`);
+    if (hasOU) {
+      columns.push("OperatingUnit");
+    }
 
-    // Find row index
-    const firstColIndex = isUI ? 1 : 0; // Check what is the test type
-    const firstCol = values.map((r) => r[firstColIndex]);
-    const rowIndex = firstCol.indexOf(formName);
-    if (rowIndex === -1) throw new Error(`Row "${formName}" not found`);
+    if (hasGrid) {
+      columns.push("GridDataCreate");
+      columns.push("GridDataEdit");
+    }
 
-    return values[rowIndex][colIndex];
+    if (hasTree) {
+      columns.push("TreeViewDataCreate");
+      columns.push("TreeViewDataEdit");
+      columns.push("TreeViewDataChecker");
+    }
+
+    for (let col = 0; col < columns.length; col++) {
+      let value;
+      if (
+        columns[col] === "GridDataCreate" ||
+        columns[col] === "GridDataEdit"
+      ) {
+        value = (await this.readExcel(formName, columns[col], isUI)).split("|");
+      } else if (columns[col] === "DeleteSQL") {
+        value = await this.readExcel(formName, columns[col], isUI);
+      } else {
+        value = (await this.readExcel(formName, columns[col], isUI)).split(";");
+      }
+      data.push(value);
+    }
+
+    return data;
   }
 }

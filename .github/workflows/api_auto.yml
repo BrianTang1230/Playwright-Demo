@@ -1,0 +1,13 @@
+name: API Automation Test
+
+on:
+  schedule: 
+   - cron: "30 1 * * 5"
+  workflow_dispatch: # trigger manually or by schedule
+
+jobs:
+  run-api-test:
+    uses: LintraMax/Playwright-Automation/.github/workflows/playwright_auto.yml@main # 👈 calls your Playwright workflow
+    with:
+      testType: "API Tests"
+    secrets: inherit 

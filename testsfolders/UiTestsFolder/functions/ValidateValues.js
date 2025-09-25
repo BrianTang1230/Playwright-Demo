@@ -10,7 +10,6 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
     )
       continue;
     if (columns[i].includes("numeric")) {
-      console.log(uiValues[i]);
       const uiVal = normalizeNumber(uiValues[i]);
       uiValues[i] = String(uiVal);
     }
@@ -75,9 +74,9 @@ function normalizeNumber(raw) {
   let cleaned = raw;
   if (Data.Region === "MY") {
     cleaned = cleaned.replace(",", "");
-    return parseFloat(cleaned);
+    return Number(cleaned);
   } else if (Data.Region === "IND") {
     cleaned = cleaned.replace(".", "").replace(",", ".");
-    return parseFloat(cleaned);
+    return Number(cleaned);
   }
 }

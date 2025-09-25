@@ -8,15 +8,15 @@ export default class SideMenuPage {
   }
 
   get btnNew() {
-    return this.page.locator("#btnNew");
+    return this.page.locator("#btnNew").first();
   }
 
   get btnSave() {
-    return this.page.locator("#btnSave");
+    return this.page.locator("#btnSave").first();
   }
 
   get btnEdit() {
-    return this.page.locator("#btnEdit");
+    return this.page.locator("#btnEdit").first();
   }
 
   get btnDelete() {

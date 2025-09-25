@@ -41,7 +41,8 @@ export async function InputValues(page, path, col, value) {
 
   // Numeric Input
   if (col.includes("numeric")) {
-    await element.fill("");
+    await element.press("Control+A");
+    await element.press("Backspace");
     await element.type(value);
     return;
   }
@@ -70,7 +71,7 @@ export async function InputGridValues(
     if (vals[i] === "NA") continue;
     const cell = row.locator("td").nth(cellsIndex[i]);
 
-    await cell.dblclick({ force: true });
+    await cell.click();
 
     const input = cell.locator("input").first();
 
@@ -82,9 +83,9 @@ export async function InputGridValues(
       continue;
     }
 
-    editing && (await input.fill(""));
+    await input.press("Control+A");
+    await input.press("Backspace");
     await input.type(vals[i]);
-    await input.press("ArrowDown");
     await input.press("Enter");
   }
 }

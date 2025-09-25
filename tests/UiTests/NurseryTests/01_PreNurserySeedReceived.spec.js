@@ -48,11 +48,8 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    // Clean up existing record if any
     docNo = DocNo[keyName];
-    if (docNo) {
-      await db.deleteData(deleteSQL, { DocNo: docNo });
-    }
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -135,7 +132,9 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async () => {
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+
     console.log(`End Running: ${formName}`);
   });
 });

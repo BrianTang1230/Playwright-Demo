@@ -65,11 +65,8 @@ test.describe
 
     await checkLength(paths, columns, createValues, editValues);
 
-    // Clean up existing record if any
     docNo = DocNo[keyName];
-    if (docNo) {
-      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-    }
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -210,7 +207,9 @@ test.describe
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async () => {
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

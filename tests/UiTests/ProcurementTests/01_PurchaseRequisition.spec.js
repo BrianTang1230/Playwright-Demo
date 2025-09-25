@@ -49,11 +49,8 @@ test.describe.serial("Purchase Requisition Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    // Clean up existing record if any
     docNo = DocNo[keyName];
-    if (docNo) {
-      await db.deleteData(deleteSQL, { DocNo: docNo });
-    }
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -118,7 +115,7 @@ test.describe.serial("Purchase Requisition Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns,  [...uiVals, ...gridVals]);
+    await ValidateUiValues(editValues, columns, [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
@@ -140,7 +137,9 @@ test.describe.serial("Purchase Requisition Tests", () => {
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async () => {
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+
     console.log(`End Running: ${formName}`);
   });
 });

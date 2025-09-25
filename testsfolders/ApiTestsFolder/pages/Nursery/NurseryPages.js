@@ -3,17 +3,13 @@ import {
   setGlobal,
   handleJson,
 } from "@ApiFolder/apiUtils/apiHelpers.js";
+import { JsonPath } from "@utils/data/apidata/nurseryApiData.json";
 
 export default class NurseryApi {
-  constructor(api, url, formName, jsonPath = null) {
+  constructor(api, url, formName = "Pre Nursery Seed Received") {
     this.api = api;
     this.url = url;
     this.formName = formName;
-    this.jsonPath = jsonPath;
-  }
-
-  setUrl(newUrl) {
-    this.url = newUrl;
   }
 
   async create(data, propMappings) {
@@ -29,7 +25,7 @@ export default class NurseryApi {
       this.formName, // used as globalName + in editJson
       json,
       status,
-      this.jsonPath,
+      JsonPath,
       propMappings // mapping for this form
     );
   }
@@ -42,33 +38,11 @@ export default class NurseryApi {
     return apiCall(this.api, "GET", this.url, {}, [200]);
   }
 
-  async update(
-    method = "PUT",
-    data,
-    shouldHandleJson = false,
-    propMappings = {}
-  ) {
-    const { status, json } = await apiCall(
-      this.api,
-      method,
-      this.url,
-      { data },
-      [200, 204]
-    );
-
-    if (shouldHandleJson) {
-      return handleJson(
-        this.formName, // used as globalName + in editJson
-        json,
-        status,
-        this.jsonPath,
-        propMappings // mapping for this form
-      );
-    }
-    return { status, json }; // <-- fallback return
+  async update(data) {
+    return apiCall(this.api, "POST", this.url, { data }, [200, 204]);
   }
 
-  async delete(key, silent = false) {
-    return apiCall(this.api, "DELETE", this.url, {}, [204], silent);
+  async delete(key) {
+    return apiCall(this.api, "DELETE", this.url, {}, [204]);
   }
 }

@@ -1,9 +1,9 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateDBValues,
@@ -23,12 +23,12 @@ import {
 } from "@UiFolder/pages/Nursery/PreNurseryTransferTo";
 
 // ---------------- Global Variables ----------------
+let db;
 let ou;
 let docNo;
 let sideMenu;
 let createValues;
 let editValues;
-let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
@@ -40,17 +40,21 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
-      sheetName,
-      formName
+    // Read Excel values
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
     );
-
-    await checkLength(paths, columns, createValues, editValues);
+    ou = (await excel.readExcel(sheetName, formName, "OperatingUnit")).split(
+      ";"
+    );
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
+      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
 
@@ -67,7 +71,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
-    await PreNurseryTransferToCreate(
+    const allValues = await PreNurseryTransferToCreate(
       page,
       sideMenu,
       paths,
@@ -79,13 +83,11 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     docNo = await page.locator("#txtPTONum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
       [...createValues, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
@@ -95,7 +97,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
-    await PreNurseryTransferToEdit(
+    const allValues = await PreNurseryTransferToEdit(
       page,
       sideMenu,
       paths,
@@ -106,13 +108,11 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
       [...editValues, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
@@ -122,7 +122,13 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
-    await PreNurseryTransferToDelete(page, sideMenu, createValues, ou, docNo);
+    await PreNurseryTransferToDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou[0],
+      docNo
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

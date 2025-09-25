@@ -1,6 +1,6 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
-import { getUiValues } from "@UiFolder/functions/GetValues";
+import { FilterRecord, SelectRecord } from "@UiFolder/functions/OpenRecord";
+import getValues from "@UiFolder/functions/GetValues";
 
 export async function PreNurseryTransferToCreate(
   page,
@@ -23,16 +23,21 @@ export async function PreNurseryTransferToCreate(
   await page.locator("#comboToOU .k-dropdown-wrap .k-select").click();
   await page.locator("#ddlOU_listbox li", { hasText: ou[1] }).first().click();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
-
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+  if (paths.length == columns.length && columns.length == values.length) {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], values[i]);
+    }
+  } else {
+    console.error(paths, columns, values);
+    throw new Error("Paths, columns, and values do not match in length.");
   }
 
   await sideMenu.btnSave.click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  return await getValues(page, paths);
 }
 
 export async function PreNurseryTransferToEdit(
@@ -45,16 +50,23 @@ export async function PreNurseryTransferToEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecord(page, values, ou[0], docNo);
 
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+  if (paths.length == columns.length && columns.length == newValues.length) {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], newValues[i]);
+    }
+  } else {
+    console.error(paths, columns, values);
+    throw new Error("Paths, columns, and values do not match in length.");
   }
 
   await sideMenu.btnSave.click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  return await getValues(page, paths);
 }
 
 export async function PreNurseryTransferToDelete(
@@ -64,7 +76,7 @@ export async function PreNurseryTransferToDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecord(page, values, ou, docNo);
 
   await sideMenu.btnDelete.click();
   await sideMenu.confirmDelete.click();

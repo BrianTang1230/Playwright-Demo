@@ -1,64 +1,60 @@
 {
-  "NurseryJsonPath": "utils/data/apidata/nurseryApiData.json",
+  "JsonPath": "utils/data/apidata/nurseryApiData.json",
   "NUR_API_URL": "/nurseryapi",
   "ID": {
     "PreNurserySeedReceived": {
-      "key": 226,
-      "num": "PSR0000180"
+      "key": 209,
+      "num": "PSR0000163"
     },
     "PreNurseryCulling": {
-      "key": 185,
-      "num": "PC00000041"
+      "key": 177,
+      "num": "PC00000033"
     },
     "PreNurseryDoubletonSplitting": {
-      "key": 37,
-      "num": "PDS0000037"
+      "key": 32,
+      "num": "PDS0000032"
     },
     "PreNurseryGerminated": {
-      "key": 92,
-      "num": "PG00000052"
+      "key": 84,
+      "num": "PG00000044"
     },
     "PreNurseryTransferSoldLoss": {
-      "key": 105,
-      "num": "PTO0000048",
+      "key": 92,
+      "num": "PTO0000035",
       "ou": 16,
       "transType": 1
     },
     "InterOUPreNurseryTransferTo": {
-      "key": 60,
-      "num": "IPT0000060",
+      "key": 27,
+      "num": "IPT0000027",
       "ou": 16,
       "transType": 2
     },
     "MainNurseryReceived": {
-      "key": 654,
-      "num": "NR00000142"
+      "key": 595,
+      "num": "NR00000113"
     },
     "MainNurseryDoubletonSplitting": {
-      "key": 52,
-      "num": "NDS0000016"
+      "key": 47,
+      "num": "NDS0000011"
     },
     "MainNurseryCulling": {
-      "key": 357,
-      "num": "NC00000020"
+      "key": 352,
+      "num": "NC00000015"
     },
     "MainNurseryTransferLoss": {
       "key": 266,
       "num": "NT00000035"
     },
     "MainNurserySold": {
-      "key": 269,
-      "num": "MS00000021"
+      "key": 264,
+      "num": "MS00000016"
     },
     "InterOUMainNurseryTransferTo": {
-      "key": 48,
-      "num": "IMT0000048",
+      "key": 18,
+      "num": "IMT0000018",
       "ou": 16,
       "transType": 1
-    },
-    "MainNurseryTransfer/Loss": {
-      "key": 271,
-      "num": "NT00000040"
     }
   }
 }

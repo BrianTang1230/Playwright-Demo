@@ -35,12 +35,9 @@ export default class LoginPage {
 
     await test.step(`Navigate to ${formName}`, async () => {
       if (module.includes(" ")) {
-        await this.page
-          .getByRole("link", { name: ` ${module}` })
-          .first()
-          .click();
+        await this.page.getByRole("link", { name: ` ${module}` }).click();
       } else {
-        await this.page.getByRole("link", { name: module }).first().click();
+        await this.page.getByRole("link", { name: module }).click();
       }
       // If submodule exists, select it
       if (submodule) {

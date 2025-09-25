@@ -75,7 +75,7 @@ jobs:
         with:
           name: playwright-report-${{ inputs.testType }}-${{ github.run_number }}
           path: report-bundle/
-          retention-days: 2
+          retention-days: 30
 
 
   deploy-report:

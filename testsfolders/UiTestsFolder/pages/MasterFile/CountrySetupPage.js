@@ -1,6 +1,7 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
-import { getUiValues } from "@UiFolder/functions/GetValues";
+import getValues from "@UiFolder/functions/GetValues";
+
 // Create Function
 export async function CountrySetupCreate(
   page,
@@ -29,6 +30,8 @@ export async function CountrySetupCreate(
 
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
+
+  return await getValues(page, paths);
 }
 
 // Edit Function
@@ -60,6 +63,8 @@ export async function CountrySetupEdit(
 
   // Search and select edited record
   await SelectRecord(page, sideMenu, newValues);
+
+  return await getValues(page, paths);
 }
 
 // Delete Function

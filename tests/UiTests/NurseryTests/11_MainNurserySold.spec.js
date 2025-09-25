@@ -1,9 +1,9 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateDBValues,
@@ -23,12 +23,12 @@ import {
 } from "@UiFolder/pages/Nursery/MainNurserySold";
 
 // ---------------- Set Global Variables ----------------
+let db;
 let ou;
 let docNo;
 let sideMenu;
 let createValues;
 let editValues;
-let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
@@ -40,17 +40,19 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial("Main Nursery Sold Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
-      sheetName,
-      formName
+    // Read Excel values
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
     );
-
-    await checkLength(paths, columns, createValues, editValues);
+    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
+      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
       await db.deleteData(deleteSQL, { DocNo: docNo });
     }
 
@@ -67,7 +69,7 @@ test.describe.serial("Main Nursery Sold Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Main Nursery Sold", async ({ page, db }) => {
-    await MainNurserySoldCreate(
+    const allValues = await MainNurserySoldCreate(
       page,
       sideMenu,
       paths,
@@ -79,13 +81,11 @@ test.describe.serial("Main Nursery Sold Tests", () => {
     docNo = await page.locator("#txtMSNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
@@ -95,7 +95,7 @@ test.describe.serial("Main Nursery Sold Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Main Nursery Sold", async ({ page, db }) => {
-    await MainNurserySoldEdit(
+    const allValues = await MainNurserySoldEdit(
       page,
       sideMenu,
       paths,
@@ -106,13 +106,11 @@ test.describe.serial("Main Nursery Sold Tests", () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],

@@ -1,13 +1,9 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
+import ConnectExcel from "@utils/excel/ConnectExcel";
+import DBHelper from "@UiFolder/pages/General/DBHelper";
 import editJson from "@utils/commonFunctions/EditJson";
-import {
-  getGridValue,
-  getGridValues,
-  getUiValues,
-} from "@UiFolder/functions/GetValues";
-import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateGridValues,
@@ -37,7 +33,6 @@ let docNo;
 let sideMenu;
 let createValues;
 let editValues;
-let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
 const sheetName = "VEH_DATA";
@@ -56,22 +51,26 @@ const cellsIndex = [
 test.describe.serial("Vehicle Running Distribution Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    // Load Excel values
-    [
-      createValues,
-      editValues,
-      deleteSQL,
-      ou,
-      gridCreateValues,
-      gridEditValues,
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
-
-    await checkLength(paths, columns, createValues, editValues);
+    // Read Excel values
+    createValues = (
+      await excel.readExcel(sheetName, formName, "CreateData")
+    ).split(";");
+    editValues = (await excel.readExcel(sheetName, formName, "EditData")).split(
+      ";"
+    );
+    gridCreateValues = (
+      await excel.readExcel(sheetName, formName, "GridDataCreate")
+    ).split("|");
+    gridEditValues = (
+      await excel.readExcel(sheetName, formName, "GridDataEdit")
+    ).split("|");
+    ou = await excel.readExcel(sheetName, formName, "OperatingUnit");
 
     // Clean up existing record if any
     docNo = DocNo[keyName];
     if (docNo) {
-      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+      const deleteSQL = await excel.readExcel(sheetName, formName, "DeleteSQL");
+      await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou });
     }
 
     console.log(`Start Running: ${formName}`);
@@ -87,7 +86,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- Create Test ----------------
   test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionCreate(
+    const allValues = await VehicleRunningDistributionCreate(
       page,
       sideMenu,
       paths,
@@ -102,31 +101,31 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     docNo = await page.locator("#txtVEHNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
+      OU: ou,
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
+        OU: ou,
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, columns, allValues[0]);
     await ValidateDBValues(
-      [...createValues, ou[0]],
+      [...createValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await ValidateGridValues(
+      gridCreateValues.join(";").split(";"),
+      allValues[1]
+    );
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
@@ -136,7 +135,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionEdit(
+    const allValues = await VehicleRunningDistributionEdit(
       page,
       sideMenu,
       paths,
@@ -150,31 +149,28 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
+      OU: ou,
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
+        OU: ou,
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateUiValues(editValues, columns, allValues[0]);
     await ValidateDBValues(
-      [...editValues, ou[0]],
+      [...editValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await ValidateGridValues(gridEditValues.join(";").split(";"), allValues[1]);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
@@ -194,7 +190,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
+      OU: ou,
     });
 
     if (dbValues.length > 0)

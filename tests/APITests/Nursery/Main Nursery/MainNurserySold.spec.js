@@ -1,7 +1,7 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
 import ConnectExcel from "@utils/excel/ConnectExcel";
-import NurseryApi from "@ApiFolder/pages/Nursery/NurseryPages.js";
+import ApiCallBase from "@ApiFolder/pages/ApiPages.js";
 import {
   NurseryJsonPath,
   NUR_API_URL,
@@ -30,7 +30,7 @@ test.describe.serial("Main Nursery Sold", () => {
       formName,
       { isUI: false }
     );
-    apiObj = new NurseryApi(null, "", formName, NurseryJsonPath);
+    apiObj = new ApiCallBase(null, "", formName, NurseryJsonPath);
   });
 
   test.beforeEach(async ({ api }) => {

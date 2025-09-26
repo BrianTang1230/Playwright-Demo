@@ -3,7 +3,7 @@ import editJson from "@utils/commonFunctions/EditJson";
 
 export async function handleApiResponse(
   response,
-  expectedStatus = null
+  expectedStatus = []
   // silent = false
 ) {
   const status = response.status();
@@ -33,10 +33,11 @@ export async function handleApiResponse(
   // }
 
   // Determine what counts as success
-  const isExpected =
-    expectedStatus?.length > 0
-      ? expectedStatus.includes(status)
-      : status >= 200 && status < 300;
+  // const isExpected =
+  //   expectedStatus?.length > 0
+  //     ? expectedStatus.includes(status)
+  //     : status >= 200 && status < 300;
+  const isExpected = expectedStatus.includes(status);
 
   if (!isExpected) {
     console.error("❌ Unexpected status:", status);
@@ -86,8 +87,10 @@ export async function apiCall(
     expectedStatus
     // silent
   );
-
-  expect(expectedStatus).toContain(status);
+  // 🔑 If it's a positive test (2xx expected) → fail hard
+  if (expectedStatus.some((s) => s >= 200 && s < 300)) {
+    expect(expectedStatus).toContain(status); // will throw if wrong
+  }
 
   return { status, json, rawBody };
 }

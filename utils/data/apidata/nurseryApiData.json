@@ -2,63 +2,60 @@
   "NurseryJsonPath": "utils/data/apidata/nurseryApiData.json",
   "NUR_API_URL": "/nurseryapi",
   "ID": {
-    "PreNurserySeedReceived": {
-      "key": 258,
-      "num": "PSR0000198"
-    },
+    "PreNurserySeedReceived": {},
     "PreNurseryCulling": {
-      "key": 190,
-      "num": "PC00000046"
+      "key": 191,
+      "num": "PC00000047"
     },
     "PreNurseryDoubletonSplitting": {
-      "key": 41,
-      "num": "PDS0000041"
+      "key": 42,
+      "num": "PDS0000042"
     },
     "PreNurseryGerminated": {
-      "key": 96,
-      "num": "PG00000056"
+      "key": 97,
+      "num": "PG00000057"
     },
     "PreNurseryTransferSoldLoss": {
-      "key": 126,
-      "num": "PTO0000068",
+      "key": 127,
+      "num": "PTO0000069",
       "ou": 16,
       "transType": 1
     },
     "InterOUPreNurseryTransferTo": {
-      "key": 70,
-      "num": "IPT0000069",
+      "key": 71,
+      "num": "IPT0000070",
       "ou": 16,
       "transType": 2
     },
     "MainNurseryReceived": {
-      "key": 687,
-      "num": "NR00000190"
+      "key": 691,
+      "num": "NR00000193"
     },
     "MainNurseryDoubletonSplitting": {
-      "key": 56,
-      "num": "NDS0000020"
+      "key": 57,
+      "num": "NDS0000021"
     },
     "MainNurseryCulling": {
-      "key": 361,
-      "num": "NC00000024"
+      "key": 362,
+      "num": "NC00000025"
     },
     "MainNurseryTransferLoss": {
       "key": 266,
       "num": "NT00000035"
     },
     "MainNurserySold": {
-      "key": 273,
-      "num": "MS00000025"
+      "key": 274,
+      "num": "MS00000026"
     },
     "InterOUMainNurseryTransferTo": {
-      "key": 63,
-      "num": "IMT0000063",
+      "key": 64,
+      "num": "IMT0000064",
       "ou": 16,
       "transType": 1
     },
     "MainNurseryTransfer/Loss": {
-      "key": 276,
-      "num": "NT00000045"
+      "key": 277,
+      "num": "NT00000046"
     }
   },
   "NurseryPayloads": {
@@ -81,8 +78,8 @@
       "StatusDesc": "OPEN",
       "OrdQty": "",
       "DelQty": "",
-      "DamQty": "",
-      "FocQty": "",
+      "DamQty": 0,
+      "FocQty": 0,
       "ClientKey": 0,
       "OUKey": 16,
       "OUCode": "",
@@ -206,18 +203,18 @@
       "PTrnKey": 64,
       "PTrnNum": "",
       "TrnSID": "",
-      "TrnDate": "currentDate",
-      "TrnQty": "createValues[0]",
-      "Remarks": "createValues[1]",
-      "DbtQty": "createValues[2]",
+      "TrnDate": "",
+      "TrnQty": "",
+      "Remarks": "",
+      "DbtQty": "",
       "NurBatchKey": 138,
       "Status": "O",
-      "TransTypeKey": "createValues[3]",
-      "SoldToAccKey": "createValues[4]",
+      "TransTypeKey": "",
+      "SoldToAccKey": "",
       "ClientKey": 0,
       "OUKey": 16,
       "CompKey": 0,
-      "CCIDKey": "createValues[5]",
+      "CCIDKey": "",
       "CreatedBy": 6,
       "CreatedByCode": "LMSUPPORT",
       "CreatedByDesc": "lmsupport",

@@ -5,7 +5,7 @@ import {
 } from "@ApiFolder/apiUtils/apiHelpers.js";
 import { JsonPath } from "@utils/data/apidata/nurseryApiData.json";
 
-export default class NurseryApi {
+export default class ApiCallBase {
   constructor(api, url, formName, jsonPath = null) {
     this.api = api;
     this.url = url;
@@ -17,13 +17,13 @@ export default class NurseryApi {
     this.url = newUrl;
   }
 
-  async create(data, propMappings) {
+  async create(data, propMappings, expectedStatus = [200, 201]) {
     const { status, json } = await apiCall(
       this.api,
       "POST",
       this.url,
       { data },
-      [200, 201]
+      expectedStatus
     );
 
     return handleJson(
@@ -35,26 +35,27 @@ export default class NurseryApi {
     );
   }
 
-  async getByKey() {
-    return apiCall(this.api, "GET", this.url, {}, [200]);
+  async getByKey(expectedStatus = [200]) {
+    return apiCall(this.api, "GET", this.url, {}, expectedStatus);
   }
 
-  async getAll() {
-    return apiCall(this.api, "GET", this.url, {}, [200]);
+  async getAll(expectedStatus = [200]) {
+    return apiCall(this.api, "GET", this.url, {}, expectedStatus);
   }
 
   async update(
     method = "PUT",
     data,
     shouldHandleJson = false,
-    propMappings = {}
+    propMappings = {},
+    expectedStatus = [200, 204]
   ) {
     const { status, json } = await apiCall(
       this.api,
       method,
       this.url,
       { data },
-      [200, 204]
+      expectedStatus
     );
 
     if (shouldHandleJson) {
@@ -68,8 +69,8 @@ export default class NurseryApi {
     }
     return { status, json }; // <-- fallback return
   }
-  async delete(key) {
-    return apiCall(this.api, "DELETE", this.url, {}, [204]);
+  async delete(key, expectedStatus = [204]) {
+    return apiCall(this.api, "DELETE", this.url, {}, expectedStatus);
   }
 }
 

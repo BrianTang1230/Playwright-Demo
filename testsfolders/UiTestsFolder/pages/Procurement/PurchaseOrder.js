@@ -30,7 +30,7 @@ export async function PurchaseOrderCreate(
   for (let i = 9; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
-  
+
   await sideMenu.btnSaveRecord.click();
 
   await sideMenu.btnSave.click();

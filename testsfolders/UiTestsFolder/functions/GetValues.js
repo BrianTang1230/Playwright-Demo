@@ -29,7 +29,7 @@ export async function getGridValues(page, gridPaths, cellsIndex) {
   for (let i = 0; i < gridPaths.length; i++) {
     const table = page.locator(gridPaths[i]);
     const row = table.locator("tr").first();
-
+    
     for (let j = 0; j < cellsIndex[i].length; j++) {
       const cell = row.locator("td").nth(cellsIndex[i][j]);
 

@@ -38,12 +38,10 @@ test.describe.serial("Purchase Order Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
-    [
-      createValues,
-      editValues,
-      deleteSQL,
-      ou,
-    ] = await excel.loadExcelValues(sheetName, formName);
+    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
+      sheetName,
+      formName
+    );
 
     await checkLength(paths, columns, createValues, editValues);
 
@@ -63,14 +61,7 @@ test.describe.serial("Purchase Order Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Purchase Order", async ({ page, db }) => {
-    await PurchaseOrderCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      ou
-    );
+    await PurchaseOrderCreate(page, sideMenu, paths, columns, createValues, ou);
 
     docNo = await page.locator("#txtHeaderDataPONum").inputValue();
     await editJson(JsonPath, formName, docNo);

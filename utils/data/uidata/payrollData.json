@@ -1,0 +1,13 @@
+{
+  "JsonPath": "utils/data/uidata/payrollData.json",
+  "InputPath": {
+    "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks",
+    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown"
+  },
+  "GridPath": {
+    "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table"
+  },
+  "DocNo": {
+    "StaffAdditionalRemuneration": "ADR0000030"
+  }
+}

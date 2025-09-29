@@ -1,7 +1,11 @@
 import { expect, request } from "@playwright/test";
 import editJson from "@utils/commonFunctions/EditJson";
 
-export async function handleApiResponse(response, expectedStatus = null) {
+export async function handleApiResponse(
+  response,
+  expectedStatus = []
+  // silent = false
+) {
   const status = response.status();
 
   // Read response once
@@ -15,7 +19,6 @@ export async function handleApiResponse(response, expectedStatus = null) {
     res = null;
   }
 
-  // Log in a nicer format
   if (status === 204 || !rawBody || rawBody.trim() === "") {
     console.log("📩 No content (success)");
   } else if (res) {
@@ -24,11 +27,17 @@ export async function handleApiResponse(response, expectedStatus = null) {
     console.log("📩 Raw response:", rawBody);
   }
 
+  // Log in a nicer format
+  // if (!silent) {
+
+  // }
+
   // Determine what counts as success
-  const isExpected =
-    expectedStatus?.length > 0
-      ? expectedStatus.includes(status)
-      : status >= 200 && status < 300;
+  // const isExpected =
+  //   expectedStatus?.length > 0
+  //     ? expectedStatus.includes(status)
+  //     : status >= 200 && status < 300;
+  const isExpected = expectedStatus.includes(status);
 
   if (!isExpected) {
     console.error("❌ Unexpected status:", status);
@@ -66,15 +75,22 @@ export async function apiCall(
   method,
   url,
   options = {},
-  expectedStatus = [200]
+  expectedStatus
+  // silent = false // 👈 add this
 ) {
   const response = await api[method.toLowerCase()](url, {
     ...options,
   });
 
-  const { status, json, rawBody } = await handleApiResponse(response);
-
-  expect(expectedStatus).toContain(status);
+  const { status, json, rawBody } = await handleApiResponse(
+    response,
+    expectedStatus
+    // silent
+  );
+  // 🔑 If it's a positive test (2xx expected) → fail hard
+  if (expectedStatus.some((s) => s >= 200 && s < 300)) {
+    expect(expectedStatus).toContain(status); // will throw if wrong
+  }
 
   return { status, json, rawBody };
 }
@@ -95,3 +111,26 @@ export async function handleJson(
   }
   return { status, json };
 }
+
+// export async function deleteIfSavedKeyExists(apiObj, api, url, savedKey) {
+//   // Bind api
+//   apiObj.api = api;
+
+//   // Set delete URL
+//   apiObj.setUrl(url);
+
+//   // Perform delete
+
+//   try {
+//     const result = await apiObj.delete({ silent: true }); // silent to avoid noise if not found
+
+//     // Success message (your own, not handleApiResponse)
+//     console.log(
+//       `✅ Successfully deleted ${apiObj.formName} (key: ${savedKey})`
+//     );
+
+//     return result;
+//   } catch (err) {
+//     console.warn(`⚠️ Skipping delete, record not found (key: ${savedKey})`);
+//   }
+// }

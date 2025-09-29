@@ -6,26 +6,28 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  vehicleGridSQLCommand,
-  vehicleSQLCommand,
-} from "@UiFolder/queries/VehicleQuery";
+  procurementGridSQLCommand,
+  procurementSQLCommand,
+} from "@UiFolder/queries/ProcurementQuery";
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
-} from "@utils/data/uidata/vehicleData.json";
+} from "@utils/data/uidata/procurementData.json";
 
 import {
-  VehicleRunningDistributionCreate,
-  VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+  RequestforQuotationCreate,
+  RequestforQuotationEdit,
+  RequestforQuotationDelete,
+} from "@UiFolder/pages/Procurement/RequestforQuotation";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,22 +38,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "VEH_DATA";
-const module = "Vehicle";
+const sheetName = "PROCUR_Data";
+const module = "Procurement";
 const submodule = null;
-const formName = "Vehicle Running Distribution";
+const formName = "Request for Quotation";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2, 3],
-  [0, 1, 2, 3, 4],
-];
+const cellsIndex = [[4, 5, 11, 12, 17, 18, 19]];
 
-test.describe.serial("Vehicle Running Distribution Tests", async () => {
+test.describe.serial("Request for Quotation Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (Login.Region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -65,12 +66,12 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -79,8 +80,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionCreate(
+  test("Create Request for Quotation", async ({ page, db }) => {
+    await RequestforQuotationCreate(
       page,
       sideMenu,
       paths,
@@ -92,22 +93,20 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#txtVEHNum").inputValue();
+    docNo = await page.locator("#txtQRFNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
     const uiVals = await getUiValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      procurementGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
@@ -115,7 +114,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0]],
+      [...createValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -128,8 +127,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionEdit(
+  test("Edit Request for Quotation", async ({ page, db }) => {
+    await RequestforQuotationEdit(
       page,
       sideMenu,
       paths,
@@ -143,19 +142,20 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       docNo
     );
 
+    docNo = await page.locator("#txtQRFNum").inputValue();
+    await editJson(JsonPath, formName, docNo);
+
     const uiVals = await getUiValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      procurementGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
@@ -163,7 +163,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0]],
+      [...editValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -176,27 +176,21 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Request for Quotation", async ({ page, db }) => {
+    await RequestforQuotationDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
-    if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting ${formName} failed`);
+    }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`End Running: ${formName}`);
   });

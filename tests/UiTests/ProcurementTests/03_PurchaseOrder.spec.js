@@ -7,20 +7,17 @@ import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
+import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
 import {
-  InputPath,
   JsonPath,
+  InputPath,
   DocNo,
-} from "@utils/data/uidata/nurseryData.json";
-import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
+} from "@utils/data/uidata/procurementData.json";
 
-import {
-  MainNurseryCullingCreate,
-  MainNurseryCullingEdit,
-  MainNurseryCullingDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryCulling";
+import { PurchaseOrderCreate } from "@UiFolder/pages/Procurement/PurchaseOrder";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -29,22 +26,24 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
-const sheetName = "NUR_DATA";
-const module = "Nursery";
-const submodule = "Main Nursery";
-const formName = "Main Nursery Culling";
+const sheetName = "PROCUR_Data";
+const module = "Procurement";
+const submodule = null;
+const formName = "Purchase Order";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Main Nursery Culling Tests", () => {
+test.describe.serial("Purchase Order Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
-      sheetName,
-      formName
-    );
+    [
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+    ] = await excel.loadExcelValues(sheetName, formName);
 
     await checkLength(paths, columns, createValues, editValues);
 
@@ -63,8 +62,8 @@ test.describe.serial("Main Nursery Culling Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Main Nursery Culling", async ({ page, db }) => {
-    await MainNurseryCullingCreate(
+  test("Create Purchase Order", async ({ page, db }) => {
+    await PurchaseOrderCreate(
       page,
       sideMenu,
       paths,
@@ -73,16 +72,18 @@ test.describe.serial("Main Nursery Culling Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtNCNum").inputValue();
+    docNo = await page.locator("#txtHeaderDataPONum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getUiValues(page, paths.slice(0, 9));
+    await page.locator("#btnEditItem").click();
+    const gridVals = await getUiValues(page, paths.slice(9, paths.length));
 
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(page, paths, uiVals);
+    await ValidateUiValues(createValues, columns, [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
@@ -91,44 +92,6 @@ test.describe.serial("Main Nursery Culling Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Main Nursery Culling", async ({ page, db }) => {
-    await MainNurseryCullingEdit(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      editValues,
-      ou,
-      docNo
-    );
-
-    const uiVals = await getUiValues(page, paths);
-
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
-      DocNo: docNo,
-    });
-
-    await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
-  });
-
-  // ---------------- Delete Test ----------------
-  test("Delete Main Nursery Culling", async ({ page, db }) => {
-    await MainNurseryCullingDelete(page, sideMenu, createValues, ou, docNo);
-
-    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
-      DocNo: docNo,
-    });
-
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting Main Nursery Culling failed`);
-    }
-  });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {

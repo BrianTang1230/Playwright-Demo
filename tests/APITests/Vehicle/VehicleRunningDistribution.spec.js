@@ -3,23 +3,24 @@ import { expect } from "@playwright/test";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import ApiCallBase from "@ApiFolder/pages/ApiPages.js";
 import {
-  NurseryJsonPath,
-  NUR_API_URL,
+  VehicleJsonPath,
+  VEH_API_URL,
   ID,
-  NurseryPayloads,
-} from "@utils/data/apidata/nurseryApiData.json";
+  VehiclePayloads,
+} from "@utils/data/apidata/vehicleApiData.json";
+import { create } from "domain";
 
 let apiObj;
 let prcvKey, prcvNum;
 let createValues, editValues;
 const currentDate = new Date().toISOString().split("T")[0];
 
-const nurUrl = NUR_API_URL;
+const vehUrl = VEH_API_URL;
 const sheetName = "NURAPI_Data";
 const formName = "Pre Nursery Seed Received";
-const basePayloads = NurseryPayloads.PreNurserySeedReceived;
-const savedKey = ID.PreNurserySeedReceived.key;
-const savedDocNo = ID.PreNurserySeedReceived.num;
+const basePayloads = VehiclePayloads.VehicleRunningDistribution;
+// const savedKey = ID.VehicleRunningDistribution.key;
+// const savedDocNo = ID.VehicleRunningDistribution.num;
 
 test.describe.serial("Pre Nursery Seed Received API Test", () => {
   test.beforeAll(async ({ excel }) => {
@@ -45,13 +46,8 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
       const { key, num, status, json } = await apiObj.create(
         {
           ...basePayloads,
-          RcvDate: currentDate,
-          RefNo: createValues[0],
-          Remarks: createValues[1],
-          OrdQty: createValues[2],
-          DelQty: createValues[3],
-          DamQty: createValues[4],
-          FocQty: createValues[5],
+          RunDistDate: currentDate,
+          Remarks: createValues[0],
         },
         {
           key: "PRcvKey",
@@ -106,32 +102,5 @@ test.describe.serial("Pre Nursery Seed Received API Test", () => {
 
       await apiObj.delete();
     });
-  });
-
-  test.describe("Negative Testing", () => {
-    test("Invalid Keys", async ({ api }) => {
-      apiObj.setUrl(`${nurUrl}/nur/api/NurPRcvPost`);
-
-      const { status, json } = await apiObj.create(
-        {
-          ...basePayloads,
-          RcvDate: currentDate,
-          PlantSourceKey: 999999,
-          NurBatchKey: 999999,
-          OrdQty: -1,
-          DelQty: -1,
-        },
-        {},
-        [400, 500]
-      );
-      expect(status).toBe(500);
-    });
-
-    // test("Delete Invalid Transaction", async ({ api }) => {
-    //   apiObj.setUrl(`${nurUrl}/nur/api/nurPRcvPost?key=999999`);
-
-    //   const { status, json } = await apiObj.delete([500]); // wrap in array
-    //   expect(status).toBe(500);
-    // });
   });
 });

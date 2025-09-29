@@ -1,4 +1,5 @@
 // @ts-check
+// require("module-alias/register");
 require("module-alias/register");
 import { defineConfig, devices } from "@playwright/test";
 /**

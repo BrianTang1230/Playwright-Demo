@@ -75,7 +75,7 @@ jobs:
         with:
           name: playwright-report-${{ inputs.testType }}-${{ github.run_number }}
           path: report-bundle/
-          retention-days: 30
+          retention-days: 1
 
 
   deploy-report:
@@ -105,6 +105,50 @@ jobs:
        - name: Deploy to GitHub Pages
          id: deployment
          uses: actions/deploy-pages@v4.0.5
+
+        # 🔹 Step 1: Determine container name
+       - name: Determine Container Name
+         id: set-container
+         run: |
+           region="${{ inputs.region }}"
+           testType="${{ inputs.testType }}"
+           
+           # normalize region to lowercase
+           region=$(echo "$region" | tr '[:upper:]' '[:lower:]')
+
+           # normalize testType to match container names
+           case "$testType" in
+             "UI Tests")
+               testType="playwrightui"
+               ;;
+             "API Tests")
+               testType="playwrightapi"
+               ;;
+             *)
+               echo "Unknown testType: $testType"
+               exit 1
+               ;;
+           esac
+
+           container="${region}${testType}"
+           echo "Using container: $container"
+           echo "container=$container" >> $GITHUB_OUTPUT
+
+     # ✅ Step 2: Zip report-bundle folder before upload
+       - name: Zip report bundle
+         run: |
+           cd report-bundle
+           zip -r ../report-bundle.zip .
+        
+     # 🔹 Step 3: Upload to Azure Blob Storage
+       - name: Upload Report to Azure Blob Storage
+         run: | 
+           az storage blob upload \
+             --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} \
+             --account-key ${{ secrets.AZURE_STORAGE_KEY }} \
+             --container-name ${{ steps.set-container.outputs.container }} \
+             --file report-bundle.zip \
+             --name "playwright-report-${{ inputs.testType }}-${{ inputs.region }}-${{ github.run_number }}.zip"
           
        - name: Send failure Microsoft Teams Notification
          uses: mikesprague/teams-incoming-webhook-action@v1

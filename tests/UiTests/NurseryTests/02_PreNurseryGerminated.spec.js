@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -49,7 +48,6 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -64,7 +62,9 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Pre Nursery Germinated", async ({ page, db }) => {
-    await PreNurseryGerminatedCreate(
+    await db.deleteData(deleteSQL, { DocNo: docNo });
+
+    const { uiVals } = await PreNurseryGerminatedCreate(
       page,
       sideMenu,
       paths,
@@ -74,10 +74,11 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
     );
 
     // Save document number to json file
-    docNo = await page.locator("#txtPGNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtPGNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -93,7 +94,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Pre Nursery Germinated", async ({ page, db }) => {
-    await PreNurseryGerminatedEdit(
+    const { uiVals } = await PreNurseryGerminatedEdit(
       page,
       sideMenu,
       paths,
@@ -103,8 +104,6 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
       ou,
       docNo
     );
-
-    const uiVals = await getUiValues(page, paths);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -133,8 +132,6 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-
     console.log(`End Running: ${formName}`);
   });
 });

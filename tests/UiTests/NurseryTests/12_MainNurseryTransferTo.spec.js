@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -39,7 +38,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -49,7 +48,6 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -64,7 +62,9 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Inter-OU Main Nursery Transfer To", async ({ page, db }) => {
-    await MainNurseryTransferToCreate(
+    await db.deleteData(deleteSQL, { DocNo: docNo });
+
+    const { uiVals } = await MainNurseryTransferToCreate(
       page,
       sideMenu,
       paths,
@@ -73,10 +73,11 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtNTNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtNTNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -92,7 +93,7 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Inter-OU Main Nursery Transfer To", async ({ page, db }) => {
-    await MainNurseryTransferToEdit(
+    const { uiVals } = await MainNurseryTransferToEdit(
       page,
       sideMenu,
       paths,
@@ -102,8 +103,6 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
       ou,
       docNo
     );
-
-    const uiVals = await getUiValues(page, paths);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
@@ -132,8 +131,6 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-
     console.log(`End Running: ${formName}`);
   });
 });

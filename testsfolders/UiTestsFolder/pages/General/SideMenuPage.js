@@ -11,8 +11,12 @@ export default class SideMenuPage {
     return this.page.locator("#btnNew").first();
   }
 
-  get btnSave() {
-    return this.page.locator("#btnSave").first();
+  async btnSave() {
+    await this.page.locator("#btnSave").first().click();
+    await this.page
+      .locator(".k-loading-image")
+      .first()
+      .waitFor({ state: "detached" });
   }
 
   get btnEdit() {
@@ -45,8 +49,12 @@ export default class SideMenuPage {
     return this.page.locator("#divError");
   }
 
-  get btnCreateNewForm() {
-    return this.page.locator("#btnCreateNewForm");
+  async btnCreateNewForm() {
+    await this.page.locator("#btnCreateNewForm").click();
+    await this.page
+      .locator(".k-loading-image")
+      .first()
+      .waitFor({ state: "detached" });
   }
 
   get btnSaveRecord() {

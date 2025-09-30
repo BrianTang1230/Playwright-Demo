@@ -2,12 +2,18 @@
   "JsonPath": "utils/data/uidata/payrollData.json",
   "InputPath": {
     "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks",
-    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown"
+    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown",
+    "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks",
+    "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text",
+    "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks,",
+    "StaffPreviousEmploymentTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text,"
   },
   "GridPath": {
-    "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table"
+    "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
+    "StaffMonthlyTaxDeductionGrid": "//*[@id='pcbDetGrid']/div[3]/table,//*[@id='bikDetGrid']/div[3]/table,//*[@id='deductDetGrid']/div[3]/table",
+    "StaffPreviousEmploymentTaxDeductionGrid": "//*[@id='prPreEmpDetGrid']/div[3]/table,//*[@id='prPreEmpBIKDetGrid']/div[3]/table,//*[@id='prPreEmpDctDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000030"
+    "StaffAdditionalRemuneration": "ADR0000037"
   }
 }

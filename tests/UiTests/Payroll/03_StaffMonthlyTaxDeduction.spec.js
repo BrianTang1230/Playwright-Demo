@@ -20,14 +20,18 @@ import {
 import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
-  StaffAdditionalRemunerationCreate,
-  StaffAdditionalRemunerationDelete,
-  StaffAdditionalRemunerationEdit,
-} from "@UiFolder/pages/Payroll/StaffAdditionalRemuneration";
+  StaffMonthlyTaxDeductionCreate,
+  StaffMonthlyTaxDeductionDelete,
+  StaffMonthlyTaxDeductionEdit,
+  StaffMonthTaxDeductionCreate,
+  StaffMonthTaxDeductionDelete,
+  StaffMonthTaxDeductionEdit,
+} from "@UiFolder/pages/Payroll/StaffMonthlyTaxDeduction";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -36,17 +40,23 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "PR_Data";
 const module = "Payroll";
-const submodule = null;
-const formName = "Staff Additional Remuneration";
+const submodule = "Income Tax";
+const formName = "Staff Monthly Tax Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2]];
+const cellsIndex = [
+  [1, 2, 3, 4],
+  [1, 2],
+  [1, 2],
+];
 
-test.describe.serial("Staff Additional Remuneration Tests", () => {
+test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (Login.Region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -59,8 +69,11 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Dept: createValues[1],
+      OU: ou[0],
+    });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -74,8 +87,8 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationCreate(
+  test("Create Staff Monthly Tax Deduction", async ({ page, db }) => {
+    await StaffMonthlyTaxDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -87,23 +100,29 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtADRNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
+    await page.locator("#prTabstripworkDet li").first().click();
     const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+    const gridVals = await getGridValues(
+      page,
+      gridPaths.slice(0, 2),
+      cellsIndex.slice(0, 2)
+    );
+    await page.locator("#prTabstripworkDet li").nth(1).click();
+    const gridVals2 = await getGridValues(
+      page,
+      gridPaths.slice(2, 3),
+      cellsIndex.slice(2, 3)
+    );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Dept: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -114,7 +133,10 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await ValidateGridValues(gridCreateValues.join(";").split(";"), [
+      ...gridVals,
+      ...gridVals2,
+    ]);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
@@ -123,8 +145,8 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationEdit(
+  test("Edit Staff Monthly Tax Deduction", async ({ page, db }) => {
+    await StaffMonthlyTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -134,27 +156,36 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou,
-      docNo
+      ou
     );
 
+    await page.locator("#prTabstripworkDet li").first().click();
     const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+    const gridVals = await getGridValues(
+      page,
+      gridPaths.slice(0, 2),
+      cellsIndex.slice(0, 2)
+    );
+    await page.locator("#prTabstripworkDet li").nth(1).click();
+    const gridVals2 = await getGridValues(
+      page,
+      gridPaths.slice(2, 3),
+      cellsIndex.slice(2, 3)
+    );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Dept: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
+    console.log(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
@@ -162,7 +193,10 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await ValidateGridValues(gridEditValues.join(";").split(";"), [
+      ...gridVals,
+      ...gridVals2,
+    ]);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
@@ -171,17 +205,18 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationDelete(
+  test("Delete Staff Monthly Tax Deduction", async ({ page, db }) => {
+    await StaffMonthlyTaxDeductionDelete(
       page,
       sideMenu,
       createValues,
-      ou,
-      docNo
+      editValues,
+      ou
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Dept: createValues[1],
       OU: ou[0],
     });
 
@@ -192,7 +227,11 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Dept: createValues[1],
+      OU: ou[0],
+    });
 
     console.log(`End Running: ${formName}`);
   });

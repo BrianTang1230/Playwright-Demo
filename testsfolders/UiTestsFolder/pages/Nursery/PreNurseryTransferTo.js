@@ -1,6 +1,7 @@
 import { InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 import { getUiValues } from "@UiFolder/functions/GetValues";
+import { SelectOU } from "@UiFolder/functions/comFuncs";
 
 export async function PreNurseryTransferToCreate(
   page,
@@ -10,29 +11,31 @@ export async function PreNurseryTransferToCreate(
   values,
   ou
 ) {
-  await sideMenu.btnCreateNewForm.click();
+  await sideMenu.btnCreateNewForm();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await SelectOU(
+    page,
+    "#comboFromOU .k-dropdown-wrap .k-select",
+    "#comboBoxInterNurFromOU-list li",
+    ou[0]
+  );
 
-  await page.locator("#comboFromOU .k-dropdown-wrap .k-select").click();
-  await page
-    .locator("#comboBoxInterNurFromOU-list li", { hasText: ou[0] })
-    .first()
-    .click();
-
-  await page.locator("#comboToOU .k-dropdown-wrap .k-select").click();
-  await page.locator("#ddlOU_listbox li", { hasText: ou[1] }).first().click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await SelectOU(
+    page,
+    "#comboToOU .k-dropdown-wrap .k-select",
+    "#ddlOU_listbox li",
+    ou[1]
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.btnSave();
 
-  // Wait for loading
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+
+  return { uiVals };
 }
 
 export async function PreNurseryTransferToEdit(
@@ -51,10 +54,11 @@ export async function PreNurseryTransferToEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.btnSave();
 
-  // Wait for loading
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+
+  return { uiVals };
 }
 
 export async function PreNurseryTransferToDelete(

@@ -1,3 +1,5 @@
+import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { getUiValues } from "@UiFolder/functions/GetValues";
 import { InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
@@ -11,25 +13,26 @@ export async function PreNurseryDoubletonSplittingCreate(
   ou
 ) {
   // Click "Create New Form" button
-  await sideMenu.btnCreateNewForm.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await sideMenu.btnCreateNewForm();
 
   // Select OU
-  await page.locator("#divComboOU .k-dropdown-wrap .k-select").click();
-  await page.locator("#ddlOU_listbox li", { hasText: ou[0] }).first().click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await SelectOU(
+    page,
+    "#divComboOU .k-dropdown-wrap .k-select",
+    "#ddlOU_listbox li",
+    ou[0]
+  );
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.btnSave();
 
-  // Wait for loading
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+
+  return { uiVals };
 }
 
 // Edit Function
@@ -51,10 +54,11 @@ export async function PreNurseryDoubletonSplittingEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.btnSave();
 
-  // Wait for loading
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+
+  return { uiVals };
 }
 
 export async function PreNurseryDoubletonSplittingDelete(

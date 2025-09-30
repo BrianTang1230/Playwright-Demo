@@ -16,12 +16,12 @@ import {
 } from "@utils/data/uidata/nurseryData.json";
 
 import {
-  PreNurserySeedReceivedCreate,
-  PreNurserySeedReceivedEdit,
-  PreNurserySeedReceivedDelete,
-} from "@UiFolder/pages/Nursery/PreNurserySeedReceived";
+  NurseryTransferRequisitionCreate,
+  NurseryTransferRequisitionDelete,
+  NurseryTransferRequisitionEdit,
+} from "@UiFolder/pages/Nursery/NurseryTransferRequisition";
 
-// ---------------- Set Global Variables ----------------
+// ---------------- Global Variables ----------------
 let ou;
 let docNo;
 let sideMenu;
@@ -30,13 +30,13 @@ let editValues;
 let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
-const submodule = "Pre Nursery";
-const formName = "Pre Nursery Seed Received";
+const submodule = null;
+const formName = "Nursery Transfer Requisition";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Pre Nursery Seed Received Tests", () => {
+test.describe.serial("Nursery Transfer Requisition Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
@@ -61,11 +61,9 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Pre Nursery Seed Received", async ({ page, db }) => {
-    // Delete Existing Data
+  test("Create Nursery Transfer Requisition", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo });
-
-    const { uiVals } = await PreNurserySeedReceivedCreate(
+    const { uiVals } = await NurseryTransferRequisitionCreate(
       page,
       sideMenu,
       paths,
@@ -74,11 +72,10 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
       ou
     );
 
-    // Save document number to json file
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtPSRNum").inputValue()
+      await page.locator("#txtMSNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
@@ -94,8 +91,8 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Pre Nursery Seed Received", async ({ page, db }) => {
-    const { uiVals } = await PreNurserySeedReceivedEdit(
+  test("Edit Nursery Transfer Requisition", async ({ page, db }) => {
+    const { uiVals } = await NurseryTransferRequisitionEdit(
       page,
       sideMenu,
       paths,
@@ -118,16 +115,22 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
     );
   });
 
-  // ---------------- Delete Test ----------------
-  test("Delete Pre Nursery Seed Received", async ({ page, db }) => {
-    await PreNurserySeedReceivedDelete(page, sideMenu, createValues, ou, docNo);
+  // ---------------- Delete Test ----------------\
+  test("Delete Nursery Transfer Requisition", async ({ page, db }) => {
+    await NurseryTransferRequisitionDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
+      throw new Error("Deleting Nursery Transfer Requisition failed.");
     }
   });
 

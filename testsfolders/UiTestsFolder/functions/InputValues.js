@@ -61,11 +61,11 @@ export async function InputGridValues(
   path,
   values,
   cellsIndex,
-  editing = false
+  nRow = 0
 ) {
   const table = page.locator(path);
-  const row = table.locator("tr").first();
   const vals = values.split(";");
+  const row = table.locator("tr").nth(nRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
     if (vals[i] === "NA") continue;

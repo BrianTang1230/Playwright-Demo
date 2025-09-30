@@ -35,8 +35,23 @@ export default class ApiCallBase {
     );
   }
 
-  async getByKey(expectedStatus = [200]) {
-    return apiCall(this.api, "GET", this.url, {}, expectedStatus);
+  async getByKey(
+    shouldHandleJson = false,
+    propMappings = {},
+    expectedStatus = [200]
+  ) {
+    const { status, json } = await apiCall(this.api, "GET", this.url, {}, expectedStatus);
+
+    if (shouldHandleJson) {
+      return handleJson(
+        this.formName, // used as globalName + in editJson
+        json,
+        status,
+        this.jsonPath,
+        propMappings // mapping for this form
+      );
+    }
+    return { status, json }; // <-- fallback return
   }
 
   async getAll(expectedStatus = [200]) {
@@ -69,6 +84,7 @@ export default class ApiCallBase {
     }
     return { status, json }; // <-- fallback return
   }
+
   async delete(key, expectedStatus = [204]) {
     return apiCall(this.api, "DELETE", this.url, {}, expectedStatus);
   }

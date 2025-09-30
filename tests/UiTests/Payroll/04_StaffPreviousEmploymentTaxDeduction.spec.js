@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -20,13 +19,10 @@ import {
 import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
-  StaffMonthlyTaxDeductionCreate,
-  StaffMonthlyTaxDeductionDelete,
-  StaffMonthlyTaxDeductionEdit,
-  StaffMonthTaxDeductionCreate,
-  StaffMonthTaxDeductionDelete,
-  StaffMonthTaxDeductionEdit,
-} from "@UiFolder/pages/Payroll/StaffMonthlyTaxDeduction";
+  StaffPreviousEmploymentTaxDeductionCreate,
+  StaffPreviousEmploymentTaxDeductionDelete,
+  StaffPreviousEmploymentTaxDeductionEdit,
+} from "@UiFolder/pages/Payroll/StaffPreviousEmploymentTaxDeduction";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -47,7 +43,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20],
+  [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21],
   [1, 2],
   [1, 2],
 ];
@@ -91,7 +87,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
     page,
     db,
   }) => {
-    await StaffMonthlyTaxDeductionCreate(
+    const [uiVals, gridVals] = await StaffPreviousEmploymentTaxDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -103,24 +99,10 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       ou
     );
 
-    await page.locator("#prTabstripworkDet li").first().click();
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(
-      page,
-      gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
-    );
-    await page.locator("#prTabstripworkDet li").nth(1).click();
-    const gridVals2 = await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
-    );
-
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
       Dept: createValues[1],
-      OU: ou[0],    
+      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -136,10 +118,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), [
-      ...gridVals,
-      ...gridVals2,
-    ]);
+    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
@@ -149,7 +128,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
-    await StaffMonthlyTaxDeductionEdit(
+    const [uiVals, gridVals] = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -160,20 +139,6 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       gridEditValues,
       cellsIndex,
       ou
-    );
-
-    await page.locator("#prTabstripworkDet li").first().click();
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(
-      page,
-      gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
-    );
-    await page.locator("#prTabstripworkDet li").nth(1).click();
-    const gridVals2 = await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -196,10 +161,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridEditValues.join(";").split(";"), [
-      ...gridVals,
-      ...gridVals2,
-    ]);
+    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
@@ -212,7 +174,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
     page,
     db,
   }) => {
-    await StaffMonthlyTaxDeductionDelete(
+    await StaffPreviousEmploymentTaxDeductionDelete(
       page,
       sideMenu,
       createValues,

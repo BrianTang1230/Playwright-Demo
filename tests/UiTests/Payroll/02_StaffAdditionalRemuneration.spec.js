@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -75,7 +74,7 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationCreate(
+    const [uiVals, gridVals] = await StaffAdditionalRemunerationCreate(
       page,
       sideMenu,
       paths,
@@ -90,9 +89,6 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
     docNo = await page.locator("#txtADRNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
@@ -105,7 +101,6 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -124,7 +119,7 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationEdit(
+    const [uiVals, gridVals] = await StaffAdditionalRemunerationEdit(
       page,
       sideMenu,
       paths,
@@ -137,9 +132,6 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       ou,
       docNo
     );
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,

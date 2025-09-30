@@ -2,7 +2,7 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function StaffMonthlyTaxDeductionCreate(
+export async function StaffPreviousEmploymentTaxDeductionCreate(
   page,
   sideMenu,
   paths,
@@ -62,7 +62,7 @@ export async function StaffMonthlyTaxDeductionCreate(
   return [uiVals, [...gridVals, ...gridVals2]];
 }
 
-export async function StaffMonthlyTaxDeductionEdit(
+export async function StaffPreviousEmploymentTaxDeductionEdit(
   page,
   sideMenu,
   paths,
@@ -118,7 +118,7 @@ export async function StaffMonthlyTaxDeductionEdit(
   return [uiVals, [...gridVals, ...gridVals2]];
 }
 
-export async function StaffMonthlyTaxDeductionDelete(
+export async function StaffPreviousEmploymentTaxDeductionDelete(
   page,
   sideMenu,
   values,

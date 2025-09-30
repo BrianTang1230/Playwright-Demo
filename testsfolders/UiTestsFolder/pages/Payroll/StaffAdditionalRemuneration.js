@@ -1,3 +1,4 @@
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
@@ -38,6 +39,11 @@ export async function StaffAdditionalRemunerationCreate(
   await sideMenu.btnSave.click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return [uiVals, gridVals];
 }
 
 export async function StaffAdditionalRemunerationEdit(
@@ -70,6 +76,11 @@ export async function StaffAdditionalRemunerationEdit(
   await sideMenu.btnSave.click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return [uiVals, gridVals];
 }
 
 export async function StaffAdditionalRemunerationDelete(

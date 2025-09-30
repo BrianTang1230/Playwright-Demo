@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -88,7 +87,7 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Staff Monthly Tax Deduction", async ({ page, db }) => {
-    await StaffMonthlyTaxDeductionCreate(
+    const [uiVals, gridVals] = await StaffMonthlyTaxDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -98,20 +97,6 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
       gridCreateValues,
       cellsIndex,
       ou
-    );
-
-    await page.locator("#prTabstripworkDet li").first().click();
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(
-      page,
-      gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
-    );
-    await page.locator("#prTabstripworkDet li").nth(1).click();
-    const gridVals2 = await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -133,10 +118,7 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), [
-      ...gridVals,
-      ...gridVals2,
-    ]);
+    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
@@ -146,7 +128,7 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Monthly Tax Deduction", async ({ page, db }) => {
-    await StaffMonthlyTaxDeductionEdit(
+    const [uiVals, gridVals] = await StaffMonthlyTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -157,20 +139,6 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
       gridEditValues,
       cellsIndex,
       ou
-    );
-
-    await page.locator("#prTabstripworkDet li").first().click();
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(
-      page,
-      gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
-    );
-    await page.locator("#prTabstripworkDet li").nth(1).click();
-    const gridVals2 = await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -185,7 +153,6 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
-    console.log(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
@@ -193,10 +160,7 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
-    await ValidateGridValues(gridEditValues.join(";").split(";"), [
-      ...gridVals,
-      ...gridVals2,
-    ]);
+    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,

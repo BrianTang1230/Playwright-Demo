@@ -23,7 +23,25 @@ function payrollSQLCommand(formName) {
         FROM PR_PCBHdr A
         LEFT JOIN GMS_DeptStp B ON A.DeptKey = B.DeptKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE FORMAT(A.PCBDate, 'MMMM yyyy') = @Date AND B.DeptCode + ' - ' + B.DeptDesc = @Dept AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+        WHERE FORMAT(A.PCBDate, 'MMMM yyyy') = @Date
+          AND B.DeptCode + ' - ' + B.DeptDesc = @Dept
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
+      break;
+
+    case "Staff Previous Employment Tax Deduction":
+      sqlCommand = `
+        SELECT FORMAT(A.PreEmpDate, 'MMMM yyyy') AS PreEmpMonth, 
+        B.DeptCode + ' - ' + B.DeptDesc AS Department,
+        A.Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_PreEmpHdr A
+        LEFT JOIN GMS_DeptStp B ON A.DeptKey = B.DeptKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE FORMAT(A.PCBDate, 'MMMM yyyy') = @Date
+          AND B.DeptCode + ' - ' + B.DeptDesc = @Dept
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
       break;
 
     default:
@@ -79,6 +97,43 @@ function payrollGridSQLCommand(formName) {
           WHERE FORMAT(H.PCBDate, 'MMMM yyyy') = @Date
             AND Dept.DeptCode + ' - ' + Dept.DeptDesc = @Dept 
             AND OU.OUCode + ' - ' + OU.OUDesc = @OU
+            AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
+        )
+        GROUP BY 
+          B.EmpyID, EmpyName, 
+          A.ZakatAmt, A.LevyAmt, A.VOLA;`;
+      break;
+
+    case "Staff Previous Employment Tax Deduction":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
+        CASE
+          WHEN A.IsNewJoiner = 1 THEN 'True'
+          ELSE 'False'
+        END AS IsNewJoiner,
+        A.NormalRem,
+        A.EPF,
+        A.S
+        A.ZakatAmt AS Zakatnumric,
+        A.LevyAmt AS Levynumric,
+        A.VOLA AS VOLAnumric,
+        MAX(CASE WHEN C.Type = 'B' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS BIK,
+        SUM(CASE WHEN C.Type = 'B' THEN C.DedAmt ELSE 0 END) AS BIKnumeric,
+        MAX(CASE WHEN C.Type = 'A' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS AD,
+        SUM(CASE WHEN C.Type = 'A' THEN C.DedAmt ELSE 0 END) AS ADnumeric
+        FROM PR_PreEmpDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN PR_PCBDedDet C ON A.PCBDetKey = C.PCBDetKey
+        LEFT JOIN SYT_TaxDed D ON C.TaxDedKey = D.TaxDedKey
+        WHERE A.PCBHdrKey IN (
+          SELECT PCBHdrKey 
+          FROM PR_PCBHdr H
+          LEFT JOIN GMS_DeptStp Dept ON H.DeptKey = Dept.DeptKey
+          LEFT JOIN GMS_OUStp OU ON H.OUKey = OU.OUKey
+          WHERE FORMAT(H.PCBDate, 'MMMM yyyy') = @Date
+            AND Dept.DeptCode + ' - ' + Dept.DeptDesc = @Dept 
+            AND OU.OUCode + ' - ' + OU.OUDesc = @OU
+            AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )
         GROUP BY 
           B.EmpyID, EmpyName, 

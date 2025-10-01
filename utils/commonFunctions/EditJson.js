@@ -15,7 +15,10 @@ export default async function editJson(json, formName, value, isUi = true) {
 
   const key = formName.split(" ").join("");
   if (!isUi) {
-    content.ID[key] = value;
+    content.ID[key] = {
+      ...(content.ID[key] || {}),
+      ...value,
+    };
   } else {
     content.DocNo[key] = value;
   }

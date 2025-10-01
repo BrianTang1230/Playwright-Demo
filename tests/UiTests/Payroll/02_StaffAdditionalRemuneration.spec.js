@@ -59,7 +59,6 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -74,7 +73,9 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Staff Additional Remuneration", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffAdditionalRemunerationCreate(
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+    const { uiVals, gridVals } = await StaffAdditionalRemunerationCreate(
       page,
       sideMenu,
       paths,
@@ -119,7 +120,7 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Additional Remuneration", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffAdditionalRemunerationEdit(
+    const { uiVals, gridVals } = await StaffAdditionalRemunerationEdit(
       page,
       sideMenu,
       paths,

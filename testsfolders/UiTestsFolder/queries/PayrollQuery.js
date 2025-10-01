@@ -38,7 +38,7 @@ function payrollSQLCommand(formName) {
         FROM PR_PreEmpHdr A
         LEFT JOIN GMS_DeptStp B ON A.DeptKey = B.DeptKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE FORMAT(A.PCBDate, 'MMMM yyyy') = @Date
+        WHERE FORMAT(A.PreEmpDate, 'MMMM yyyy') = @Date
           AND B.DeptCode + ' - ' + B.DeptDesc = @Dept
           AND C.OUCode + ' - ' + C.OUDesc = @OU
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
@@ -111,33 +111,47 @@ function payrollGridSQLCommand(formName) {
           WHEN A.IsNewJoiner = 1 THEN 'True'
           ELSE 'False'
         END AS IsNewJoiner,
-        A.NormalRem,
-        A.EPF,
-        A.S
-        A.ZakatAmt AS Zakatnumric,
-        A.LevyAmt AS Levynumric,
-        A.VOLA AS VOLAnumric,
+        A.NormalRem AS NorRemnumeric,
+        A.EPF AS EPFnumeric,
+        SUM(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) = 'SOCSO - SOCSO and EIS payment' THEN C.DedAmt ELSE 0 END) AS SOSOCnumeric,
+        A.AddRem AS AddRemnumeric,
+        CASE
+          WHEN A.IsInclAddRemInPCBCalc = 1 THEN 'True'
+          ELSE 'False'
+        END AS InclAddRem,
+        A.AddEPF AS AddEPFnumeric,
+        A.VOLA AS VOLAnumeric,
+        A.NormalAlw AS NorAllwnumeric,
+        A.Allowance AS Allwnumeric,
+        A.ChildAllw AS ChildAllwnumeric,
+        A.FreeGoods AS FreeGoodsnumeric,
+        A.Perquisite AS Perquisitenumeric,
+        A.Others AS Othersnumeric,
+        A.TotDeduct AS PCBDednumeric,
+        A.TotZakat AS Zakatnumric,
+        A.TotLevy AS Levynumric,
+        A.CP38 AS CP38numric,
         MAX(CASE WHEN C.Type = 'B' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS BIK,
         SUM(CASE WHEN C.Type = 'B' THEN C.DedAmt ELSE 0 END) AS BIKnumeric,
-        MAX(CASE WHEN C.Type = 'A' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS AD,
-        SUM(CASE WHEN C.Type = 'A' THEN C.DedAmt ELSE 0 END) AS ADnumeric
+        MAX(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS AD,
+        SUM(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN C.DedAmt ELSE 0 END) AS ADnumeric
         FROM PR_PreEmpDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
-        LEFT JOIN PR_PCBDedDet C ON A.PCBDetKey = C.PCBDetKey
+        LEFT JOIN PR_PreEmpDedDet C ON A.PreEmpDetKey = C.PreEmpDetKey
         LEFT JOIN SYT_TaxDed D ON C.TaxDedKey = D.TaxDedKey
-        WHERE A.PCBHdrKey IN (
-          SELECT PCBHdrKey 
-          FROM PR_PCBHdr H
-          LEFT JOIN GMS_DeptStp Dept ON H.DeptKey = Dept.DeptKey
-          LEFT JOIN GMS_OUStp OU ON H.OUKey = OU.OUKey
-          WHERE FORMAT(H.PCBDate, 'MMMM yyyy') = @Date
-            AND Dept.DeptCode + ' - ' + Dept.DeptDesc = @Dept 
-            AND OU.OUCode + ' - ' + OU.OUDesc = @OU
+        WHERE A.PreEmpHdrKey IN (
+          SELECT PreEmpHdrKey 
+          FROM PR_PreEmpHdr H
+          LEFT JOIN GMS_DeptStp E ON H.DeptKey = E.DeptKey
+          LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
+          WHERE FORMAT(H.PreEmpDate, 'MMMM yyyy') = @Date
+            AND E.DeptCode + ' - ' + E.DeptDesc = @Dept 
+            AND F.OUCode + ' - ' + F.OUDesc = @OU
             AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )
         GROUP BY 
-          B.EmpyID, EmpyName, 
-          A.ZakatAmt, A.LevyAmt, A.VOLA;`;
+          B.EmpyID, EmpyName,
+		      A.IsNewJoiner,NormalRem,EPF,AddRem,IsInclAddRemInPCBCalc,AddEPF,VOLA,NormalAlw,Allowance,ChildAllw,FreeGoods,Perquisite,Others,TotDeduct,TotZakat,TotLevy,CP38`;
       break;
 
     default:

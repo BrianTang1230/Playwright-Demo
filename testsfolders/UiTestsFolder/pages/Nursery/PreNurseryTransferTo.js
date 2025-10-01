@@ -11,7 +11,7 @@ export async function PreNurseryTransferToCreate(
   values,
   ou
 ) {
-  await sideMenu.btnCreateNewForm();
+  await sideMenu.clickBtnCreateNewForm();
 
   await SelectOU(
     page,
@@ -31,7 +31,7 @@ export async function PreNurseryTransferToCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -54,7 +54,7 @@ export async function PreNurseryTransferToEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -70,6 +70,5 @@ export async function PreNurseryTransferToDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

@@ -1,3 +1,5 @@
+import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
@@ -12,39 +14,40 @@ export async function VehicleRunningDistributionLoanToCreate(
   cellsIndex,
   ou
 ) {
-  await sideMenu.btnCreateNewForm.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await sideMenu.clickBtnCreateNewForm();
 
   await page.waitForTimeout(2000);
 
-  await page.locator("#comboOU .k-dropdown-wrap .k-select").first().click();
-  await page
-    .locator("#comboBoxOU_listbox li span", { hasText: ou[0] })
-    .first()
-    .click();
+  await SelectOU(
+    page,
+    "#comboOU .k-dropdown-wrap .k-select",
+    "#comboBoxOU_listbox li span",
+    ou[0]
+  );
 
-  await page.locator("#comboToOU .k-dropdown-wrap .k-select").first().click();
-  await page
-    .locator("#comboBoxToOU_listbox li span", { hasText: ou[1] })
-    .first()
-    .click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await SelectOU(
+    page,
+    "#comboToOU .k-dropdown-wrap .k-select",
+    "#comboBoxToOU_listbox li span",
+    ou[1]
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.locator("#btnNewItem").click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.clickBtnSave();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
 }
 
 export async function VehicleRunningDistributionLoanToEdit(
@@ -70,9 +73,12 @@ export async function VehicleRunningDistributionLoanToEdit(
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.clickBtnSave();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
 }
 
 export async function VehicleRunningDistributionLoanToDelete(
@@ -84,6 +90,5 @@ export async function VehicleRunningDistributionLoanToDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

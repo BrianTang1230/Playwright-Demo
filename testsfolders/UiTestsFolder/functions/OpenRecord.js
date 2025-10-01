@@ -20,7 +20,19 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function FilterRecordByOU(page, values, ou, keyword, times = 1) {
+/* 
+  type:
+      D - use document number
+      
+ */
+export async function FilterRecordByOU(
+  page,
+  values,
+  ou,
+  keyword,
+  times = 1,
+  type = "DN"
+) {
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
@@ -39,7 +51,14 @@ export async function FilterRecordByOU(page, values, ou, keyword, times = 1) {
   }
   await seletor.press("Enter");
 
-  await page.getByRole("textbox").fill(keyword);
+  if ((type = "DN")) {
+    await page.getByRole("textbox").fill(keyword);
+  } else if ((type = "OT")) {
+    await page
+      .getByRole("combobox", { name: "comboBoxSearchParam_input" })
+      .fill(keyword);
+  }
+
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page.getByRole("gridcell", { name: keyword }).click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();

@@ -5,8 +5,8 @@
     "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown",
     "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks",
     "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text",
-    "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks,",
-    "StaffPreviousEmploymentTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text,"
+    "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks",
+    "StaffPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Department dropdown,Remarks text"
   },
   "GridPath": {
     "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
@@ -14,6 +14,6 @@
     "StaffPreviousEmploymentTaxDeductionGrid": "//*[@id='prPreEmpDetGrid']/div[3]/table,//*[@id='prPreEmpBIKDetGrid']/div[3]/table,//*[@id='prPreEmpDctDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000025"
+    "StaffAdditionalRemuneration": "ADR0000026"
   }
 }

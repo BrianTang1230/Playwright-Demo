@@ -68,6 +68,5 @@ export async function CountrySetupDelete(page, sideMenu, newValues) {
   await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

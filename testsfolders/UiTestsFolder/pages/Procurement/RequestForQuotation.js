@@ -82,6 +82,5 @@ export async function RequestforQuotationDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

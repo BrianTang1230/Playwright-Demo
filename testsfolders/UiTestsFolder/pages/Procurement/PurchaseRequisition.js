@@ -76,6 +76,5 @@ export async function PurchaseRequisitionDelete(
 ) {
   await FilterRecordByDateRange(page, newValues, ou[0], docNo);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

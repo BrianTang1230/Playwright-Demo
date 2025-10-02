@@ -3,6 +3,7 @@ import {
   setGlobal,
   handleJson,
 } from "@ApiFolder/apiUtils/apiHelpers.js";
+import { JsonPath } from "@utils/data/apidata/nurseryApiData.json";
 
 export default class ApiCallBase {
   constructor(api, url, formName, jsonPath = null) {
@@ -39,25 +40,15 @@ export default class ApiCallBase {
     propMappings = {},
     expectedStatus = [200]
   ) {
-    const { status, json } = await apiCall(
-      this.api,
-      "GET",
-      this.url,
-      {},
-      expectedStatus
-    );
+    const { status, json } = await apiCall(this.api, "GET", this.url, {}, expectedStatus);
 
     if (shouldHandleJson) {
-      const transformedJson = Array.isArray(json?.value)
-        ? json.value[0] // ✅ Flatten the first row
-        : json;
-
       return handleJson(
-        this.formName,
-        transformedJson,
+        this.formName, // used as globalName + in editJson
+        json,
         status,
         this.jsonPath,
-        propMappings
+        propMappings // mapping for this form
       );
     }
     return { status, json }; // <-- fallback return
@@ -94,7 +85,22 @@ export default class ApiCallBase {
     return { status, json }; // <-- fallback return
   }
 
-  async delete(key, expectedStatus = [200, 204]) {
+  async delete(key, expectedStatus = [204]) {
     return apiCall(this.api, "DELETE", this.url, {}, expectedStatus);
   }
 }
+
+// async deleteIfExist(options = {}) {
+//   const { status, json } = await apiCall(
+//     this.api,
+//     "DELETE",
+//     this.url,
+//     options,
+//     [404], // allow 404 = not found
+//     true
+//   );
+//   return { status, json };
+// }
+// savedKey, deleteUrl,
+
+//  = null, silent = false , silent

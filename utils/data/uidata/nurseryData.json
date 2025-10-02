@@ -29,7 +29,7 @@
     "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,Qty numeric,StartDate date,EndDate date,Type dropdown,PlantMaterial dropdown"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000172",
+    "PreNurserySeedReceived": "PSR0000171",
     "PreNurseryGerminated": "PG00000081",
     "PreNurseryDoubletonSplitting": "PDS0000055",
     "PreNurseryCulling": "PC00000034",

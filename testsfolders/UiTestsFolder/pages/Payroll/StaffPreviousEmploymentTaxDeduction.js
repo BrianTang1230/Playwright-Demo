@@ -1,4 +1,3 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
@@ -14,35 +13,40 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
   cellsIndex,
   ou
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await sideMenu.btnCreateNewForm.click();
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown .k-select",
-    "ul[aria-hidden='false'] li span",
-    ou[0]
-  );
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
+  await page
+    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
+    .first()
+    .click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnAddNewItem.click();
+  await page.locator("#btnNewItem").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     if (i === 1) await page.locator("#btnNewBIK").click();
     if (i === 2) {
       await page.locator("#prTabstripworkDet li").nth(1).click();
-      await page.locator("#btnNewDeductionItem").click();
+      await page.locator("#btnNewDeduct").click();
     }
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   await page.locator("#prTabstripworkDet li").first().click();
   const uiVals = await getUiValues(page, paths);
-  const gridVals1 = await getGridValues(
+  const gridVals = await getGridValues(
     page,
     gridPaths.slice(0, 2),
     cellsIndex.slice(0, 2)
@@ -55,9 +59,7 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
     cellsIndex.slice(2, 3)
   );
 
-  const gridVals = [...gridVals1, ...gridVals2];
-
-  return { uiVals, gridVals };
+  return [uiVals, [...gridVals, ...gridVals2]];
 }
 
 export async function StaffPreviousEmploymentTaxDeductionEdit(
@@ -72,31 +74,35 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   cellsIndex,
   ou
 ) {
-  await FilterRecordByOU(page, values, ou[0], values[2], 1, "OT");
+  await FilterRecordByOU(page, values, ou[0], values[2], 5);
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await page.locator("#IsPREmpySelect").check();
+  await page.locator("#btnDeleteItem").click();
 
-  await sideMenu.clickBtnDelete();
+  await sideMenu.confirmDelete.click();
+
+  await page.locator("#btnNewItem").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    i == 0 && (await sideMenu.btnAddNewItem.click());
     if (i === 1) await page.locator("#btnNewBIK").click();
     if (i === 2) {
       await page.locator("#prTabstripworkDet li").nth(1).click();
-      await page.locator("#btnNewDeductionItem").click();
+      await page.locator("#btnNewDeduct").click();
     }
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   await page.locator("#prTabstripworkDet li").first().click();
   const uiVals = await getUiValues(page, paths);
-  const gridVals1 = await getGridValues(
+  const gridVals = await getGridValues(
     page,
     gridPaths.slice(0, 2),
     cellsIndex.slice(0, 2)
@@ -109,9 +115,7 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
     cellsIndex.slice(2, 3)
   );
 
-  const gridVals = [...gridVals1, ...gridVals2];
-
-  return { uiVals, gridVals };
+  return [uiVals, [...gridVals, ...gridVals2]];
 }
 
 export async function StaffPreviousEmploymentTaxDeductionDelete(
@@ -123,5 +127,8 @@ export async function StaffPreviousEmploymentTaxDeductionDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], newValues[2], 5);
 
-  await sideMenu.clickBtnDelete();
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }

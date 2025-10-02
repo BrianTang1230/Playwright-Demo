@@ -32,7 +32,7 @@ module.exports = defineConfig({
     ["html", { outputFolder: "playwright-report", open: "never" }],
   ] /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */,
 
-  timeout: 300000,
+  timeout: 180000,
   expect: { timeout: 10000 },
 
   use: {

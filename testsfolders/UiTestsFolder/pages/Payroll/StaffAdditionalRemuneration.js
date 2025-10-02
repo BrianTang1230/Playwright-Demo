@@ -1,4 +1,3 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
@@ -14,14 +13,17 @@ export async function StaffAdditionalRemunerationCreate(
   cellsIndex,
   ou
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await sideMenu.btnCreateNewForm.click();
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown .k-select",
-    "ul[aria-hidden='false'] li span",
-    ou[0]
-  );
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
+  await page
+    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
+    .first()
+    .click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
@@ -34,12 +36,14 @@ export async function StaffAdditionalRemunerationCreate(
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   const uiVals = await getUiValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-  return { uiVals, gridVals };
+  return [uiVals, gridVals];
 }
 
 export async function StaffAdditionalRemunerationEdit(
@@ -69,12 +73,14 @@ export async function StaffAdditionalRemunerationEdit(
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   const uiVals = await getUiValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-  return { uiVals, gridVals };
+  return [uiVals, gridVals];
 }
 
 export async function StaffAdditionalRemunerationDelete(
@@ -86,5 +92,8 @@ export async function StaffAdditionalRemunerationDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
-  await sideMenu.clickBtnDelete();
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }

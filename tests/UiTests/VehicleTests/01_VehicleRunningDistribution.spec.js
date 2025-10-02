@@ -2,6 +2,7 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -50,7 +51,7 @@ const cellsIndex = [
 
 test.describe.serial("Vehicle Running Distribution Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
     [
       createValues,
@@ -64,6 +65,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -78,9 +80,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- Create Test ----------------
   test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    const { uiVals, gridVals } = await VehicleRunningDistributionCreate(
+    await VehicleRunningDistributionCreate(
       page,
       sideMenu,
       paths,
@@ -92,11 +92,11 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#txtVEHNum").inputValue()
-    );
+    docNo = await page.locator("#txtVEHNum").inputValue();
+    await editJson(JsonPath, formName, docNo);
+
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
@@ -129,7 +129,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    const { uiVals, gridVals } = await VehicleRunningDistributionEdit(
+    await VehicleRunningDistributionEdit(
       page,
       sideMenu,
       paths,
@@ -142,6 +142,9 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou,
       docNo
     );
+
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
@@ -193,6 +196,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

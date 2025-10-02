@@ -180,8 +180,8 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       page,
       sideMenu,
       createValues,
-      gridEditValues[0],
-      ou
+      ou,
+      gridEditValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {

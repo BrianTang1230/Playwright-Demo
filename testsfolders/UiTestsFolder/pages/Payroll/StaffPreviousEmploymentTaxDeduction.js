@@ -87,7 +87,7 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) await page.locator("#btnNewBIK").click();
+    if (i === 1) await page.locator("#btnNewBIK").click();
     if (i === 2) {
       await page.locator("#prTabstripworkDet li").nth(1).click();
       await page.locator("#btnNewDeductionItem").click();
@@ -121,17 +121,10 @@ export async function StaffPreviousEmploymentTaxDeductionDelete(
   page,
   sideMenu,
   values,
-  gridValues,
-  ou
+  ou,
+  keyword
 ) {
-  await FilterRecordByOU(
-    page,
-    values,
-    ou[0],
-    gridValues.split(";")[0],
-    1,
-    "OT"
-  );
+  await FilterRecordByOU(page, values, ou[0], keyword, 1, "OT");
 
   await sideMenu.clickBtnDelete();
 }

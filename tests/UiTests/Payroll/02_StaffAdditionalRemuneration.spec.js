@@ -87,8 +87,11 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtADRNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtADRNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,

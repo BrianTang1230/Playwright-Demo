@@ -19,9 +19,9 @@ import {
 import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
-  StaffMonthTaxDeductionCreate,
-  StaffMonthTaxDeductionDelete,
-  StaffMonthTaxDeductionEdit,
+  StaffMonthlyTaxDeductionCreate,
+  StaffMonthlyTaxDeductionDelete,
+  StaffMonthlyTaxDeductionEdit,
 } from "@UiFolder/pages/Payroll/StaffMonthlyTaxDeduction";
 
 import Login from "@utils/data/uidata/loginData.json";

@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -66,7 +65,6 @@ test.describe.serial("Request for Quotation Tests", () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -81,7 +79,9 @@ test.describe.serial("Request for Quotation Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Request for Quotation", async ({ page, db }) => {
-    await RequestforQuotationCreate(
+    await db.deleteData(deleteSQL, { DocNo: docNo });
+
+    const { uiVals, gridVals } = await RequestforQuotationCreate(
       page,
       sideMenu,
       paths,
@@ -93,11 +93,11 @@ test.describe.serial("Request for Quotation Tests", () => {
       ou
     );
 
-    docNo = await page.locator("#txtQRFNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtQRFNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
@@ -128,7 +128,7 @@ test.describe.serial("Request for Quotation Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Request for Quotation", async ({ page, db }) => {
-    await RequestforQuotationEdit(
+    const { uiVals, gridVals } = await RequestforQuotationEdit(
       page,
       sideMenu,
       paths,
@@ -141,12 +141,6 @@ test.describe.serial("Request for Quotation Tests", () => {
       ou,
       docNo
     );
-
-    docNo = await page.locator("#txtQRFNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
@@ -190,8 +184,6 @@ test.describe.serial("Request for Quotation Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-
     console.log(`End Running: ${formName}`);
   });
 });

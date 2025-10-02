@@ -1,3 +1,5 @@
+import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import {
   FilterRecordByDateRange,
@@ -15,31 +17,31 @@ export async function RequestforQuotationCreate(
   cellsIndex,
   ou
 ) {
-  await sideMenu.btnCreateNewForm.click();
+  await sideMenu.clickBtnCreateNewForm();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
-
-  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
-  await page
-    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
-    .first()
-    .click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await SelectOU(
+    page,
+    "#divComboOU .k-dropdown .k-select",
+    "ul[aria-hidden='false'] li span",
+    ou[0]
+  );
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.locator("#btnNewItem").click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.clickBtnSave();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
 }
 
 export async function RequestforQuotationEdit(
@@ -68,9 +70,12 @@ export async function RequestforQuotationEdit(
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.btnSave.click();
+  await sideMenu.clickBtnSave();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
 }
 
 export async function RequestforQuotationDelete(

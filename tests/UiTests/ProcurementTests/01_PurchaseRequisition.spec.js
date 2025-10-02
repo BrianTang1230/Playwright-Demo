@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -50,7 +49,6 @@ test.describe.serial("Purchase Requisition Tests", () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -65,7 +63,9 @@ test.describe.serial("Purchase Requisition Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Purchase Requisition", async ({ page, db }) => {
-    await PurchaseRequisitionCreate(
+    await db.deleteData(deleteSQL, { DocNo: docNo });
+
+    const { uiVals, gridVals } = await PurchaseRequisitionCreate(
       page,
       sideMenu,
       paths,
@@ -75,12 +75,11 @@ test.describe.serial("Purchase Requisition Tests", () => {
     );
 
     // Save document number to json file
-    docNo = await page.locator("#txtRequisitionNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths.slice(0, 3));
-    await page.locator("#btnEditItem").click();
-    const gridVals = await getUiValues(page, paths.slice(3, paths.length));
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtRequisitionNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
@@ -96,7 +95,7 @@ test.describe.serial("Purchase Requisition Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Purchase Requisition", async ({ page, db }) => {
-    await PurchaseRequisitionEdit(
+    const { uiVals, gridVals } = await PurchaseRequisitionEdit(
       page,
       sideMenu,
       paths,
@@ -106,10 +105,6 @@ test.describe.serial("Purchase Requisition Tests", () => {
       ou,
       docNo
     );
-
-    const uiVals = await getUiValues(page, paths.slice(0, 3));
-    await page.locator("#btnEditItem").click();
-    const gridVals = await getUiValues(page, paths.slice(3, paths.length));
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
@@ -138,8 +133,6 @@ test.describe.serial("Purchase Requisition Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-
     console.log(`End Running: ${formName}`);
   });
 });

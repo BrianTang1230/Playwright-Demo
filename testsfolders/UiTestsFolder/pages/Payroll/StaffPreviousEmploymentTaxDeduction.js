@@ -70,21 +70,24 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
+  keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], values[2], 1, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 1, "OT");
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await page.locator("#IsPREmpySelect").check();
+  await page.locator("#IsPRPreEmpySelect").check();
+  await page.locator("#btnDeleteItem").click();
 
-  await sideMenu.clickBtnDelete();
+  await sideMenu.confirmDelete.click();
+
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    i == 0 && (await sideMenu.btnAddNewItem.click());
-    if (i === 1) await page.locator("#btnNewBIK").click();
+      if (i === 1) await page.locator("#btnNewBIK").click();
     if (i === 2) {
       await page.locator("#prTabstripworkDet li").nth(1).click();
       await page.locator("#btnNewDeductionItem").click();
@@ -118,10 +121,17 @@ export async function StaffPreviousEmploymentTaxDeductionDelete(
   page,
   sideMenu,
   values,
-  newValues,
+  gridValues,
   ou
 ) {
-  await FilterRecordByOU(page, values, ou[0], newValues[2], 5);
+  await FilterRecordByOU(
+    page,
+    values,
+    ou[0],
+    gridValues.split(";")[0],
+    1,
+    "OT"
+  );
 
   await sideMenu.clickBtnDelete();
 }

@@ -29,17 +29,17 @@
     "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,Qty numeric,StartDate date,EndDate date,Type dropdown,PlantMaterial dropdown"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000172",
-    "PreNurseryGerminated": "PG00000081",
-    "PreNurseryDoubletonSplitting": "PDS0000055",
-    "PreNurseryCulling": "PC00000034",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000037",
-    "Inter-OUPreNurseryTransferTo": "IPT0000047",
-    "MainNurseryReceived": "NR00000070",
-    "MainNurseryDoubletonSplitting": "NDS0000024",
-    "MainNurseryCulling": "NC00000022",
-    "MainNurseryTransfer/Loss": "NT00000028",
-    "MainNurserySold": "MS00000022",
-    "Inter-OUMainNurseryTransferTo": "IMT0000031"
+    "PreNurserySeedReceived": "PSR0000174",
+    "PreNurseryGerminated": "PG00000083",
+    "PreNurseryDoubletonSplitting": "PDS0000058",
+    "PreNurseryCulling": "PC00000037",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000039",
+    "Inter-OUPreNurseryTransferTo": "IPT0000049",
+    "MainNurseryReceived": "NR00000074",
+    "MainNurseryDoubletonSplitting": "NDS0000026",
+    "MainNurseryCulling": "NC00000024",
+    "MainNurseryTransfer/Loss": "NT00000030",
+    "MainNurserySold": "MS00000024",
+    "Inter-OUMainNurseryTransferTo": "IMT0000033"
   }
 }

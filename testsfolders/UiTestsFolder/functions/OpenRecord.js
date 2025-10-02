@@ -22,7 +22,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 
 /* 
   type:
-      D - use document number
+      DN - use document number
       
  */
 export async function FilterRecordByOU(
@@ -51,12 +51,10 @@ export async function FilterRecordByOU(
   }
   await seletor.press("Enter");
 
-  if ((type = "DN")) {
+  if (type === "DN") {
     await page.getByRole("textbox").fill(keyword);
-  } else if ((type = "OT")) {
-    await page
-      .getByRole("combobox", { name: "comboBoxSearchParam_input" })
-      .fill(keyword);
+  } else if (type === "OT") {
+    await page.locator("[name='comboBoxSearchParam_input']").type(keyword);
   }
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();

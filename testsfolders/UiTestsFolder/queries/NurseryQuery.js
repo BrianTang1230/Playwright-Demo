@@ -65,6 +65,21 @@ function nurserySQLCommand(formName) {
         WHERE A.PCullNum = @DocNo`;
       break;
 
+    case "Pre Nursery Adjustment":
+      sqlCommand = `
+        SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS PAdjDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        A.NGQty,
+        A.STQty,
+        A.DTQty,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM NUR_PAdjustment A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.AdjNum = @DocNo`;
+      break;
+
     case "Pre Nursery Transfer/Sold/Loss":
       sqlCommand = `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS PreNurTransDate,
@@ -176,6 +191,20 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
         WHERE A.NCNum = @DocNo`;
+      break;
+
+    case "Main Nursery Adjustment":
+      sqlCommand = `
+        SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS MAdjDate,
+        B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        A.Remarks,
+        A.STQty,
+        A.DTQty,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM NUR_MAdjustment A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.AdjNum = @DocNo`;
       break;
 
     case "Main Nursery Transfer/Loss":

@@ -16,10 +16,10 @@ import {
 } from "@utils/data/uidata/nurseryData.json";
 
 import {
-  PreNurseryCullingCreate,
-  PreNurseryCullingEdit,
-  PreNurseryCullingDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryCulling";
+  PreNurseryAdjustmentCreate,
+  PreNurseryAdjustmentEdit,
+  PreNurseryAdjustmentDelete,
+} from "@UiFolder/pages/Nursery/PreNurseryAdjustment";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -31,12 +31,12 @@ let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Pre Nursery";
-const formName = "Pre Nursery Culling";
+const formName = "Pre Nursery Adjustment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Pre Nursery Culling Tests", () => {
+test.describe.serial("Pre Nursery Adjustment Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
@@ -61,10 +61,10 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Pre Nursery Culling", async ({ page, db }) => {
+  test("Create Pre Nursery Adjustment", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo });
 
-    const { uiVals } = await PreNurseryCullingCreate(
+    const { uiVals } = await PreNurseryAdjustmentCreate(
       page,
       sideMenu,
       paths,
@@ -77,7 +77,7 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtPCNum").inputValue()
+      await page.locator("#txtPNAdjNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
@@ -93,8 +93,8 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Pre Nursery Culling", async ({ page, db }) => {
-    const { uiVals } = await PreNurseryCullingEdit(
+  test("Edit Pre Nursery Adjustment", async ({ page, db }) => {
+    const { uiVals } = await PreNurseryAdjustmentEdit(
       page,
       sideMenu,
       paths,
@@ -118,15 +118,15 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Pre Nursery Culling", async ({ page, db }) => {
-    await PreNurseryCullingDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Pre Nursery Adjustment", async ({ page, db }) => {
+    await PreNurseryAdjustmentDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Culling failed");
+      throw new Error("Deleting Pre Nursery Adjustment failed");
     }
   });
 

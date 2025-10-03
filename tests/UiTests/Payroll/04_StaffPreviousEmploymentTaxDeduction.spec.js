@@ -65,12 +65,6 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Dept: createValues[1],
-      OU: ou[0],
-    });
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -87,17 +81,24 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
     page,
     db,
   }) => {
-    const [uiVals, gridVals] = await StaffPreviousEmploymentTaxDeductionCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      gridPaths,
-      gridCreateValues,
-      cellsIndex,
-      ou
-    );
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Dept: createValues[1],
+      OU: ou[0],
+    });
+
+    const { uiVals, gridVals } =
+      await StaffPreviousEmploymentTaxDeductionCreate(
+        page,
+        sideMenu,
+        paths,
+        columns,
+        createValues,
+        gridPaths,
+        gridCreateValues,
+        cellsIndex,
+        ou
+      );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
@@ -110,6 +111,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
     );
 
+    console.log(gridDbValues);
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -128,7 +130,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffPreviousEmploymentTaxDeductionEdit(
+    const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -138,7 +140,8 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      gridCreateValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -153,7 +156,6 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
-    console.log(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
@@ -178,8 +180,8 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       page,
       sideMenu,
       createValues,
-      editValues,
-      ou
+      ou,
+      gridEditValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -195,12 +197,6 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Dept: createValues[1],
-      OU: ou[0],
-    });
-
     console.log(`End Running: ${formName}`);
   });
 });

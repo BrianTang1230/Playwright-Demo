@@ -3,7 +3,7 @@ import { getUiValues } from "@UiFolder/functions/GetValues";
 import { InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function NurseryTransferRequisitionCreate(
+export async function PreNurseryAdjustmentCreate(
   page,
   sideMenu,
   paths,
@@ -11,7 +11,7 @@ export async function NurseryTransferRequisitionCreate(
   values,
   ou
 ) {
-  await sideMenu.btnCreateNewForm();
+  await sideMenu.clickBtnCreateNewForm();
 
   await SelectOU(
     page,
@@ -24,14 +24,14 @@ export async function NurseryTransferRequisitionCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
   return { uiVals };
 }
 
-export async function NurseryTransferRequisitionEdit(
+export async function PreNurseryAdjustmentEdit(
   page,
   sideMenu,
   paths,
@@ -41,20 +41,20 @@ export async function NurseryTransferRequisitionEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
   return { uiVals };
 }
 
-export async function NurseryTransferRequisitionDelete(
+export async function PreNurseryAdjustmentDelete(
   page,
   sideMenu,
   values,
@@ -63,6 +63,5 @@ export async function NurseryTransferRequisitionDelete(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

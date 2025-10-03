@@ -16,10 +16,10 @@ import {
 } from "@utils/data/uidata/nurseryData.json";
 
 import {
-  NurseryTransferRequisitionCreate,
-  NurseryTransferRequisitionDelete,
-  NurseryTransferRequisitionEdit,
-} from "@UiFolder/pages/Nursery/NurseryTransferRequisition";
+  MainNurseryAdjustmentCreate,
+  MainNurseryAdjustmentEdit,
+  MainNurseryAdjustmentDelete,
+} from "@UiFolder/pages/Nursery/MainNurseryAdjustment";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -30,13 +30,13 @@ let editValues;
 let deleteSQL;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
-const submodule = null;
-const formName = "Nursery Transfer Requisition";
+const submodule = "Main Nursery";
+const formName = "Main Nursery Adjustment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Nursery Transfer Requisition Tests", () => {
+test.describe.serial("Main Nursery Adjustment Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
@@ -61,9 +61,10 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Nursery Transfer Requisition", async ({ page, db }) => {
+  test("Create Main Nursery Adjustment", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo });
-    const { uiVals } = await NurseryTransferRequisitionCreate(
+
+    const { uiVals } = await MainNurseryAdjustmentCreate(
       page,
       sideMenu,
       paths,
@@ -72,10 +73,11 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
       ou
     );
 
+    // Save document number to json file
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtMSNum").inputValue()
+      await page.locator("#txtMAdjNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
@@ -91,8 +93,8 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Nursery Transfer Requisition", async ({ page, db }) => {
-    const { uiVals } = await NurseryTransferRequisitionEdit(
+  test("Edit Main Nursery Adjustment", async ({ page, db }) => {
+    const { uiVals } = await MainNurseryAdjustmentEdit(
       page,
       sideMenu,
       paths,
@@ -115,27 +117,23 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
     );
   });
 
-  // ---------------- Delete Test ----------------\
-  test("Delete Nursery Transfer Requisition", async ({ page, db }) => {
-    await NurseryTransferRequisitionDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  // ---------------- Delete Test ----------------
+  test("Delete Main Nursery Adjustment", async ({ page, db }) => {
+    await MainNurseryAdjustmentDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Nursery Transfer Requisition failed.");
+      throw new Error("Deleting Main Nursery Adjustment failed");
     }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+
     console.log(`End Running: ${formName}`);
   });
 });

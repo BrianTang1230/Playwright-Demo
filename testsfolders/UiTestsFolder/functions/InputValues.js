@@ -34,21 +34,20 @@ export async function InputValues(page, path, col, value) {
   }
 
   // Integer,Date,Text Input
-  if (col.includes("text") || col.includes("date")) {
+  if (col.includes("text")) {
     await element.fill(value);
     return;
   }
 
   // Numeric Input
   if (col.includes("numeric")) {
-    await element.press("Control+A");
     await element.press("Backspace");
     await element.type(value);
     return;
   }
 
   // All elements which have dropdown menu
-  if (col.includes("dropdown")) {
+  if (col.includes("dropdown") || col.includes("date")) {
     await element.fill("");
     await element.type(value);
     await element.press("Enter");
@@ -83,7 +82,6 @@ export async function InputGridValues(
       continue;
     }
 
-    await input.press("Control+A");
     await input.press("Backspace");
     await input.type(vals[i]);
     await input.press("Enter");

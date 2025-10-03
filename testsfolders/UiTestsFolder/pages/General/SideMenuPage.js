@@ -41,6 +41,10 @@ export default class SideMenuPage {
     return this.page.locator("#btnNewItem").first();
   }
 
+  get btnEditItem() {
+    return this.page.locator("#btnEditItem").first(); 
+  }
+
   get successMessage() {
     return this.page.locator(".alert.alert-successs");
   }

@@ -20,7 +20,19 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function FilterRecord(page, values, ou, keyword, times = 1) {
+/* 
+  type:
+      DN - use document number
+      
+ */
+export async function FilterRecordByOU(
+  page,
+  values,
+  ou,
+  keyword,
+  times = 1,
+  type = "DN"
+) {
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
@@ -39,10 +51,32 @@ export async function FilterRecord(page, values, ou, keyword, times = 1) {
   }
   await seletor.press("Enter");
 
-  await page.getByRole("textbox").fill(keyword);
+  if (type === "DN") {
+    await page.getByRole("textbox").fill(keyword);
+  } else if (type === "OT") {
+    await page.locator("[name='comboBoxSearchParam_input']").type(keyword);
+  }
+
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page.getByRole("gridcell", { name: keyword }).click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+}
+
+export async function FilterRecordByDateRange(page, values, ou, keyword) {
+  await page.locator("#FromDate").first().fill(values[0]);
+  await page.locator("#ToDate").first().fill(values[1]);
+  await page.locator('[name="OUCode_input"]').first().type(ou);
+  await page.locator("#prnum").fill(keyword);
+
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page.getByRole("gridcell", { name: keyword }).click();
+  await page
+    .getByRole("button", { name: "   Open Transaction" })
+    .first()
+    .click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });

@@ -22,9 +22,6 @@ import {
   StaffMonthlyTaxDeductionCreate,
   StaffMonthlyTaxDeductionDelete,
   StaffMonthlyTaxDeductionEdit,
-  StaffMonthTaxDeductionCreate,
-  StaffMonthTaxDeductionDelete,
-  StaffMonthTaxDeductionEdit,
 } from "@UiFolder/pages/Payroll/StaffMonthlyTaxDeduction";
 
 import Login from "@utils/data/uidata/loginData.json";
@@ -53,7 +50,7 @@ const cellsIndex = [
 
 test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     if (Login.Region === "IND") test.skip(true);
 
     // Load Excel values
@@ -68,12 +65,6 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Dept: createValues[1],
-      OU: ou[0],
-    });
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -87,7 +78,13 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Staff Monthly Tax Deduction", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffMonthlyTaxDeductionCreate(
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Dept: createValues[1],
+      OU: ou[0],
+    });
+
+    const { uiVals, gridVals } = await StaffMonthlyTaxDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -128,7 +125,7 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Staff Monthly Tax Deduction", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffMonthlyTaxDeductionEdit(
+    const { uiVals, gridVals } = await StaffMonthlyTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -191,12 +188,6 @@ test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Dept: createValues[1],
-      OU: ou[0],
-    });
-
     console.log(`End Running: ${formName}`);
   });
 });

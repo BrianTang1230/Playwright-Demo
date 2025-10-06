@@ -23,6 +23,7 @@ import {
   StaffIncomeDeclarationEdit,
   StaffIncomeDeclarationDelete,
 } from "@UiFolder/pages/Payroll/StaffIncomeDeclaration";
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -45,6 +46,8 @@ const cellsIndex = [[1], [1, 2, 3, 4, 5, 6, 7]];
 test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (Login.Region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,

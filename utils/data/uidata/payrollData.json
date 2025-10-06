@@ -2,7 +2,7 @@
   "JsonPath": "utils/data/uidata/payrollData.json",
   "InputPath": {
     "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks",
-    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown",
+    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department dropdown,Remarks text",
     "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks",
     "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text",
     "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks",

@@ -54,7 +54,13 @@ export async function FilterRecordByOU(
   if (type === "DN") {
     await page.getByRole("textbox").fill(keyword);
   } else if (type === "OT") {
-    await page.locator("[name='comboBoxSearchParam_input']").type(keyword);
+    const paramInput = page.locator("[name='comboBoxSearchParam_input']");
+    await paramInput.type(keyword);
+    await page
+      .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
+      .first()
+      .waitFor({ state: "visible" });
+    await paramInput.press("Enter");
   }
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();

@@ -51,8 +51,7 @@ function payrollSQLCommand(formName) {
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM PR_AddTaxHdr A
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-          WHERE FORMAT(A.AddTaxDate, 'MMMM yyyy') = @Date
-          AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+        WHERE A.ADTNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Staff Income Declaration (EA Form)":
@@ -65,6 +64,15 @@ function payrollSQLCommand(formName) {
         WHERE A.Yr = @Date
           AND C.OUCode + ' - ' + C.OUDesc = @OU
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
+      break;
+    case "Staff Advance Payment":
+      sqlCommand = `
+        SELECT FORMAT(A.AdvPayDate,'MMMM yyyy') AS ADVMonth,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_AdvPayHdr A 
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
@@ -208,7 +216,20 @@ function payrollGridSQLCommand(formName) {
             AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )`;
       break;
-
+    case "Staff Advance Payment":
+      sqlCommand = `
+        SELECT B.EmpyID + '-' + B.EmpyName AS Employee,
+        A.Amt AS Amount
+        FROM PR_AdvPayDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        WHERE AdvPayHdrKey IN (
+        SELECT AdvPayHdrKey FROM PR_AdvPayHdr
+        WHERE AdvPayNum = @DocNo AND OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+        )`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

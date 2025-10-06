@@ -19,12 +19,10 @@ import {
 import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
-  StaffPreviousEmploymentTaxDeductionCreate,
-  StaffPreviousEmploymentTaxDeductionDelete,
-  StaffPreviousEmploymentTaxDeductionEdit,
-} from "@UiFolder/pages/Payroll/StaffPreviousEmploymentTaxDeduction";
-
-import Login from "@utils/data/uidata/loginData.json";
+  StaffIncomeDeclarationCreate,
+  StaffIncomeDeclarationEdit,
+  StaffIncomeDeclarationDelete,
+} from "@UiFolder/pages/Payroll/StaffIncomeDeclaration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -37,22 +35,16 @@ let gridEditValues;
 const sheetName = "PR_Data";
 const module = "Payroll";
 const submodule = "Income Tax";
-const formName = "Staff Previous Employment Tax Deduction";
-const keyName = formName.split(" ").join("");
+const formName = "Staff Income Declaration (EA Form)";
+const keyName = "StaffIncomeDeclarationEAForm";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21],
-  [1, 2],
-  [1, 2],
-];
+const cellsIndex = [[1], [1, 2, 3, 4, 5, 6, 7]];
 
-test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
+test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -77,38 +69,35 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test.only("Create Staff Previous Employment Tax Deduction", async ({
+  test.only("Create Staff Income Declaration (EA Form)", async ({
     page,
     db,
   }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Dept: createValues[1],
-      OU: ou[0],
-    });
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } =
-      await StaffPreviousEmploymentTaxDeductionCreate(
-        page,
-        sideMenu,
-        paths,
-        columns,
-        createValues,
-        gridPaths,
-        gridCreateValues,
-        cellsIndex,
-        ou
-      );
+    const { uiVals, gridVals } = await StaffIncomeDeclarationCreate(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      gridPaths,
+      gridCreateValues,
+      cellsIndex,
+      ou
+    );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      Dept: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
-      { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -128,11 +117,8 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test.only("Edit Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
+  test.only("Edit Staff Income Declaration (EA Form)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await StaffIncomeDeclarationEdit(
       page,
       sideMenu,
       paths,
@@ -143,18 +129,19 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0]
+      gridCreateValues[0] // need to add keyword to identify the record
     );
-
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      Dept: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
-      { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -174,21 +161,17 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
-    await StaffPreviousEmploymentTaxDeductionDelete(
+  test("Delete Staff Income Declaration (EA Form)", async ({ page, db }) => {
+    await StaffIncomeDeclarationDelete(
       page,
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0].split(";")[0]
+      gridEditValues[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      Dept: createValues[1],
       OU: ou[0],
     });
 

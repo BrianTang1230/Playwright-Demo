@@ -73,7 +73,7 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 1, "OT");
+  await FilterRecordByOU(page, values, ou[0], values[2], 1, "OT");
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);

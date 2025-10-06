@@ -8,6 +8,7 @@ export async function InputValues(page, path, col, value) {
   col = col.toLowerCase();
   const element = await GetElementByPath(page, path);
   if (!element) throw new Error("Element not found");
+  else await element.focus();
 
   if (col.includes("k-drop")) {
     await element.first().click();
@@ -18,41 +19,39 @@ export async function InputValues(page, path, col, value) {
   }
 
   // Checkbox Input
-  if (col.includes("checkbox")) {
+  else if (col.includes("checkbox")) {
     if (value.toLowerCase() === "true") {
       await element.check();
     } else if (value.toLowerCase() === "false") {
       await element.uncheck();
     }
-    return;
   }
 
   // Button Input
-  if (col.includes("button")) {
+  else if (col.includes("button")) {
     await element.click();
-    return;
   }
 
   // Integer,Date,Text Input
-  if (col.includes("text")) {
+  else if (col.includes("text") || col.includes("date")) {
     await element.fill(value);
-    return;
+    await element.press("Enter");
   }
 
   // Numeric Input
-  if (col.includes("numeric")) {
+  else if (col.includes("numeric")) {
     await element.press("Backspace");
     await element.type(value);
-    return;
   }
 
   // All elements which have dropdown menu
-  if (col.includes("dropdown") || col.includes("date")) {
+  else if (col.includes("dropdown")) {
     await element.fill("");
     await element.type(value);
     await element.press("Enter");
-    return;
   }
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
 export async function InputGridValues(

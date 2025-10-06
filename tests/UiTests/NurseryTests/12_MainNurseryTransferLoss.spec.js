@@ -14,7 +14,6 @@ import {
   JsonPath,
   DocNo,
 } from "@utils/data/uidata/nurseryData.json";
-
 import {
   MainNurseryTransferLossCreate,
   MainNurseryTransferLossDelete,

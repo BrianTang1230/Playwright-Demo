@@ -1,3 +1,4 @@
+import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByDateRange } from "@UiFolder/functions/OpenRecord";
 
@@ -9,15 +10,14 @@ export async function PurchaseOrderCreate(
   values,
   ou
 ) {
-  await sideMenu.btnCreateNewForm.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
-
-  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
-  await page
-    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
-    .first()
-    .click();
+  await sideMenu.clickBtnCreateNewForm();
+  
+    await SelectOU(
+      page,
+      "#divComboOU .k-dropdown .k-select",
+      "ul[aria-hidden='false'] li span",
+      ou[0]
+    );
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
@@ -33,7 +33,7 @@ export async function PurchaseOrderCreate(
 
   await sideMenu.btnSaveRecord.click();
 
-  await sideMenu.btnSave.click();
+  await sideMenu.clickBtnSave();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }

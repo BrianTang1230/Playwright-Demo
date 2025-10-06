@@ -21,6 +21,8 @@ import {
   MainNurseryAdjustmentDelete,
 } from "@UiFolder/pages/Nursery/MainNurseryAdjustment";
 
+import { Region } from "@utils/data/uidata/loginData.json";
+
 // ---------------- Global Variables ----------------
 let ou;
 let docNo;
@@ -38,7 +40,9 @@ const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Main Nursery Adjustment Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (Region === "IND") test.skip(true);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,

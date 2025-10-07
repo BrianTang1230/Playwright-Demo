@@ -77,7 +77,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test.only("Create Staff Previous Employment Tax Deduction", async ({
+  test("Create Staff Previous Employment Tax Deduction", async ({
     page,
     db,
   }) => {
@@ -128,10 +128,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test.only("Edit Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
+  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
     const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,

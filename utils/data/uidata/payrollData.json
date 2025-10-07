@@ -11,8 +11,8 @@
     "StaffCP38Column": "AddTaxMonth date,Remarks text",
     "StaffIncomeDeclarationEAFormPath": "#yrPicker,#txtRemarks",
     "StaffIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
-    "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#txtRemarks",
-    "StaffAdvancePaymentColumn": "Month date,Remarks text"
+    "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
+    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text"
   },
   "GridPath": {
     "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
@@ -24,6 +24,7 @@
   },
   "DocNo": {
     "StaffAdditionalRemuneration": "ADR0000028",
-    "StaffCP38": "ADT0000023"
+    "StaffCP38": "ADT0000023",
+    "StaffAdvancePayment": "SAP0000008"
   }
 }

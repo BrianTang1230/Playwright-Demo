@@ -218,7 +218,7 @@ function payrollGridSQLCommand(formName) {
       break;
     case "Staff Advance Payment":
       sqlCommand = `
-        SELECT B.EmpyID + '-' + B.EmpyName AS Employee,
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
         A.Amt AS Amount
         FROM PR_AdvPayDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey

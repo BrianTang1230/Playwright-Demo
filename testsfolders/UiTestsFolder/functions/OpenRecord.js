@@ -64,7 +64,9 @@ export async function FilterRecordByOU(
   }
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();
-  await page.getByRole("gridcell", { name: keyword }).click();
+  await page
+    .getByRole("gridcell", { name: `${keyword.slice(0, 4)}` })
+    .click({ force: true });
   await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading

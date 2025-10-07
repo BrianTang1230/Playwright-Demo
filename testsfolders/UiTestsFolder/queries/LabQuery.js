@@ -21,7 +21,7 @@ function labSQLCommand(formName) {
   return sqlCommand;
 }
 
-function labGridSqlCommand(formName) {
+function labGridSQLCommand(formName) {
   let sqlCommand = "";
 
   switch (formName) {
@@ -55,5 +55,5 @@ function labGridSqlCommand(formName) {
 
 module.exports = {
   labSQLCommand,
-  labGridSqlCommand,
+  labGridSQLCommand,
 };

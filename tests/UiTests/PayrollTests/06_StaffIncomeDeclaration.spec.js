@@ -72,7 +72,10 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Income Declaration (EA Form)", async ({ page, db }) => {
+  test("Create Staff Income Declaration (EA Form)", async ({
+    page,
+    db,
+  }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     const { uiVals, gridVals } = await StaffIncomeDeclarationCreate(

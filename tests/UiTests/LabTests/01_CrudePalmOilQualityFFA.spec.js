@@ -9,7 +9,7 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { labSQLCommand, labGridSqlCommand } from "@UiFolder/queries/LabQuery";
+import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
 import {
   JsonPath,
   InputPath,
@@ -92,7 +92,7 @@ test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
     });
 
     const gridDbValues = await db.retrieveGridData(
-      labGridSqlCommand(formName),
+      labGridSQLCommand(formName),
       {
         Date: createValues[0],
         OU: ou[0],
@@ -128,7 +128,7 @@ test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0]
+      gridCreateValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
@@ -167,7 +167,7 @@ test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0]
+      gridEditValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {

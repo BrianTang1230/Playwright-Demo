@@ -128,7 +128,10 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
+  test("Edit Staff Previous Employment Tax Deduction", async ({
+    page,
+    db,
+  }) => {
     const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,

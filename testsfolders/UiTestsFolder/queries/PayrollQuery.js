@@ -183,6 +183,7 @@ function payrollGridSQLCommand(formName) {
           B.EmpyID, EmpyName,
 		      A.IsNewJoiner,NormalRem,EPF,AddRem,IsInclAddRemInPCBCalc,AddEPF,VOLA,NormalAlw,Allowance,ChildAllw,FreeGoods,Perquisite,Others,TotDeduct,TotZakat,TotLevy,CP38`;
       break;
+    
     case "Staff CP38":
       sqlCommand = `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,

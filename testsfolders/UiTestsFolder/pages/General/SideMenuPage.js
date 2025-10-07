@@ -12,7 +12,7 @@ export default class SideMenuPage {
   }
 
   async clickBtnSave() {
-    await this.page.locator("#btnSave").first().click();
+    await this.page.locator("#btnSave").first().dblclick({ force: true });
     await this.page
       .locator(".k-loading-image")
       .first()
@@ -47,7 +47,7 @@ export default class SideMenuPage {
   }
 
   get btnEditItem() {
-    return this.page.locator("#btnEditItem").first(); 
+    return this.page.locator("#btnEditItem").first();
   }
 
   get successMessage() {

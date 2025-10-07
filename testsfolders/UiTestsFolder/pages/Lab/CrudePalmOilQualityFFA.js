@@ -54,12 +54,7 @@ export async function CrudePalmOilQualityFFAEdit(
   ou,
   keyword
 ) {
-  console.log(keyword);
   await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
-
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
-  }
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);

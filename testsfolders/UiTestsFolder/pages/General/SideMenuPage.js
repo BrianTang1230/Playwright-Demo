@@ -11,8 +11,8 @@ export default class SideMenuPage {
     return this.page.locator("#btnNew").first();
   }
 
-  async btnSave() {
-    await this.page.locator("#btnSave").first().click();
+  async clickBtnSave() {
+    await this.page.locator("#btnSave").first().dblclick({ force: true });
     await this.page
       .locator(".k-loading-image")
       .first()
@@ -23,8 +23,13 @@ export default class SideMenuPage {
     return this.page.locator("#btnEdit").first();
   }
 
-  get btnDelete() {
-    return this.page.locator("#btnDelete").first();
+  async clickBtnDelete() {
+    await this.page.locator("#btnDelete").first().click();
+    await this.confirmDelete.click();
+    await this.page
+      .locator(".k-loading-image")
+      .first()
+      .waitFor({ state: "detached" });
   }
 
   get confirmDelete() {
@@ -42,7 +47,7 @@ export default class SideMenuPage {
   }
 
   get btnEditItem() {
-    return this.page.locator("#btnEditItem").first(); 
+    return this.page.locator("#btnEditItem").first();
   }
 
   get successMessage() {
@@ -53,7 +58,7 @@ export default class SideMenuPage {
     return this.page.locator("#divError");
   }
 
-  async btnCreateNewForm() {
+  async clickBtnCreateNewForm() {
     await this.page.locator("#btnCreateNewForm").click();
     await this.page
       .locator(".k-loading-image")

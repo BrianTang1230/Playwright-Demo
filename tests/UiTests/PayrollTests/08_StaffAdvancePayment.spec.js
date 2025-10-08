@@ -11,21 +11,22 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  vehicleGridSQLCommand,
-  vehicleSQLCommand,
-} from "@UiFolder/queries/VehicleQuery";
+  payrollGridSQLCommand,
+  payrollSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
-} from "@utils/data/uidata/vehicleData.json";
-
+} from "@utils/data/uidata/payrollData.json";
 import {
-  VehicleRunningDistributionCreate,
-  VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+  StaffAdvancePaymentCreate,
+  StaffAdvancePaymentEdit,
+  StaffAdvancePaymentDelete,
+} from "@UiFolder/pages/Payroll/StaffAdvancePayment";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,22 +37,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "VEH_DATA";
-const module = "Vehicle";
-const submodule = null;
-const formName = "Vehicle Running Distribution";
+const sheetName = "PR_DATA";
+const module = "Payroll";
+const submodule = "Miscellaneous";
+const formName = "Staff Advance Payment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2, 3],
-  [0, 1, 2, 3, 4],
-];
+const cellsIndex = [[1, 3]];
 
-test.describe.serial("Vehicle Running Distribution Tests", async () => {
+test.describe.serial("Staff Advance Payment Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (Login.Region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -64,10 +64,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(createValues);
-
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -81,8 +78,10 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionCreate(
+  test("Create New Staff Advance Payment", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+    const { uiVals, gridVals } = await StaffAdvancePaymentCreate(
       page,
       sideMenu,
       paths,
@@ -94,19 +93,19 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#txtVEHNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.getByPlaceholder("Auto No.").inputValue()
+    );
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
         OU: ou[0],
@@ -130,8 +129,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionEdit(
+  test("Edit Staff Advance Payment", async ({ page, db }) => {
+    await StaffAdvancePaymentEdit(
       page,
       sideMenu,
       paths,
@@ -148,19 +147,18 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     const uiVals = await getUiValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -178,28 +176,20 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Staff Advance Payment", async ({ page, db }) => {
+    await StaffAdvancePaymentDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+      throw new Error("Deleting Staff Advance Payment failed");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

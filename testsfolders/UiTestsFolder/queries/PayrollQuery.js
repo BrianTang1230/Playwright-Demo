@@ -44,6 +44,36 @@ function payrollSQLCommand(formName) {
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
       break;
 
+    case "Staff CP38":
+      sqlCommand = `
+        SELECT FORMAT(A.AddTaxDate, 'MMMM yyyy') AS AddTaxMonth, 
+        A.Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_AddTaxHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.ADTNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Staff Income Declaration (EA Form)":
+      sqlCommand = `
+        SELECT A.Yr AS YearDeclared, 
+        A.Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_PCBArrearsHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.Yr = @Date
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
+      break;
+    case "Staff Advance Payment":
+      sqlCommand = `
+        SELECT FORMAT(A.AdvPayDate,'MMMM yyyy') AS ADVMonth,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_AdvPayHdr A 
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -139,7 +169,54 @@ function payrollGridSQLCommand(formName) {
           B.EmpyID, EmpyName, 
           A.ZakatAmt, A.LevyAmt, A.VOLA;`;
       break;
+    
+    case "Staff CP38":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        A.AddTaxAmt AS TaxAmt
+        FROM PR_AddTaxDet A
+        INNER JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey AND B.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp WHERE OUCode + ' - ' + OUDesc = @OU
+        )
+        INNER JOIN PR_AddTaxHdr C ON A.AddTaxHdrKey = C.AddTaxHdrKey`;
+      break;
 
+    case "Staff Income Declaration (EA Form)":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
+        C.IncType AS IncomeType,
+        FORMAT(DATEFROMPARTS(C.IncYr, C.IncMth, 1), 'MMMM yyyy') AS MonthOfIncome,
+        C.TransNo AS TransNo,
+        FORMAT(C.TransDate, 'dd/MM/yyyy') AS TransDate,
+        C.IncAmt AS IncomeAmt,
+        C.EPFAmt AS EPFAmt,
+        C.PCBAmt AS TaxAmt
+        FROM PR_PCBArrearsDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN PR_PCBArrearsIncDet C ON A.PCBArrearsDetKey = C.PCBArrearsDetKey
+        WHERE A.PCBArrearsHdrKey IN (
+            SELECT PCBArrearsHdrKey 
+            FROM PR_PCBArrearsHdr H
+            LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
+            WHERE H.Yr = @Date
+            AND F.OUCode + ' - ' + F.OUDesc = @OU
+            AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
+        )`;
+      break;
+    case "Staff Advance Payment":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        A.Amt AS Amount
+        FROM PR_AdvPayDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        WHERE AdvPayHdrKey IN (
+        SELECT AdvPayHdrKey FROM PR_AdvPayHdr
+        WHERE AdvPayNum = @DocNo AND OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+        )`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

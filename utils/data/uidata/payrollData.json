@@ -2,18 +2,29 @@
   "JsonPath": "utils/data/uidata/payrollData.json",
   "InputPath": {
     "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks",
-    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department text,Remarks dropdown",
+    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department dropdown,Remarks text",
     "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks",
     "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text",
     "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks",
-    "StaffPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Department dropdown,Remarks text"
+    "StaffPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Department dropdown,Remarks text",
+    "StaffCP38Path": "#prAddTaxMonthPicker,#txtRemarks",
+    "StaffCP38Column": "AddTaxMonth date,Remarks text",
+    "StaffIncomeDeclarationEAFormPath": "#yrPicker,#txtRemarks",
+    "StaffIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
+    "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
+    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text"
   },
   "GridPath": {
     "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
     "StaffMonthlyTaxDeductionGrid": "//*[@id='pcbDetGrid']/div[3]/table,//*[@id='bikDetGrid']/div[3]/table,//*[@id='deductDetGrid']/div[3]/table",
-    "StaffPreviousEmploymentTaxDeductionGrid": "//*[@id='prPreEmpDetGrid']/div[3]/table,//*[@id='prPreEmpBIKDetGrid']/div[3]/table,//*[@id='prPreEmpDctDetGrid']/div[3]/table"
+    "StaffPreviousEmploymentTaxDeductionGrid": "//*[@id='prPreEmpDetGrid']/div[3]/table,//*[@id='prPreEmpBIKDetGrid']/div[3]/table,//*[@id='prPreEmpDctDetGrid']/div[3]/table",
+    "StaffCP38Grid": "//*[@id='prAddTaxDetailGrid']/div[3]/table",
+    "StaffIncomeDeclarationEAFormGrid": "//*[@id='empydetailGrid']/div[3]/table,//*[@id='incdetailGrid']/div[3]/table",
+    "StaffAdvancePaymentGrid": "//*[@id='prAdvPayDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000028"
+    "StaffAdditionalRemuneration": "ADR0000028",
+    "StaffCP38": "ADT0000023",
+    "StaffAdvancePayment": "SAP0000008"
   }
 }

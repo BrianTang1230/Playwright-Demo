@@ -111,7 +111,6 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       { Date: createValues[0], Dept: createValues[1], OU: ou[0] }
     );
 
-    console.log(gridDbValues);
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -129,7 +128,10 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
+  test("Edit Staff Previous Employment Tax Deduction", async ({
+    page,
+    db,
+  }) => {
     const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,

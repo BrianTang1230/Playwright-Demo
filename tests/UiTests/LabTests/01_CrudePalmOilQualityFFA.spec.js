@@ -9,43 +9,44 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
-} from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
+  DocNo,
+} from "@utils/data/uidata/labData.json";
 
 import {
-  StaffAdditionalRemunerationCreate,
-  StaffAdditionalRemunerationDelete,
-  StaffAdditionalRemunerationEdit,
-} from "@UiFolder/pages/Payroll/StaffAdditionalRemuneration";
+  CrudePalmOilQualityFFACreate,
+  CrudePalmOilQualityFFADelete,
+  CrudePalmOilQualityFFAEdit,
+} from "@UiFolder/pages/Lab/CrudePalmOilQualityFFA";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "PR_Data";
-const module = "Payroll";
+const sheetName = "LAB_DATA";
+const module = "Lab";
 const submodule = null;
-const formName = "Staff Additional Remuneration";
+const formName = "Crude Palm Oil Quality (FFA)";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2]];
+const cellsIndex = [
+  [1, 3],
+  [0, 1, 2, 3, 4],
+];
 
-test.describe.serial("Staff Additional Remuneration Tests", () => {
+test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -58,13 +59,10 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -73,8 +71,10 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Additional Remuneration", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffAdditionalRemunerationCreate(
+  test("Create New Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+
+    const { uiVals, gridVals } = await CrudePalmOilQualityFFACreate(
       page,
       sideMenu,
       paths,
@@ -86,29 +86,24 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#txtADRNum").inputValue()
-    );
-
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      payrollGridSQLCommand(formName),
+      labGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -121,8 +116,8 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Additional Remuneration", async ({ page, db }) => {
-    const [uiVals, gridVals] = await StaffAdditionalRemunerationEdit(
+  test("Edit Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await CrudePalmOilQualityFFAEdit(
       page,
       sideMenu,
       paths,
@@ -133,18 +128,18 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      gridCreateValues[0].split(";")[0]
     );
 
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      payrollGridSQLCommand(formName),
+      labGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -153,7 +148,7 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -166,29 +161,26 @@ test.describe.serial("Staff Additional Remuneration Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff Additional Remuneration", async ({ page, db }) => {
-    await StaffAdditionalRemunerationDelete(
+  test("Delete Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
+    await CrudePalmOilQualityFFADelete(
       page,
       sideMenu,
       createValues,
       ou,
-      docNo
+      gridEditValues[0].split(";")[0]
     );
 
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0)
+      throw new Error("Deleting Crude Palm Oil Quality (FFA) failed");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

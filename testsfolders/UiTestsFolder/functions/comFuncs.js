@@ -15,3 +15,4 @@ export async function SelectOU(page, inputPath, dropdownPath, ou) {
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
+//*[@id="ddlOU_listbox"]/li[2]

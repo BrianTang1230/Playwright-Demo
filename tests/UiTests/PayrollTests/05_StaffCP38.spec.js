@@ -2,29 +2,29 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  procurementGridSQLCommand,
-  procurementSQLCommand,
-} from "@UiFolder/queries/ProcurementQuery";
+  payrollGridSQLCommand,
+  payrollSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
-} from "@utils/data/uidata/procurementData.json";
-
+} from "@utils/data/uidata/payrollData.json";
 import {
-  RequestforQuotationCreate,
-  RequestforQuotationEdit,
-  RequestforQuotationDelete,
-} from "@UiFolder/pages/Procurement/RequestforQuotation";
+  StaffCP38Create,
+  StaffCP38Edit,
+  StaffCP38Delete,
+} from "@UiFolder/pages/Payroll/StaffCP38";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -37,21 +37,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "PROCUR_Data";
-const module = "Procurement";
-const submodule = null;
-const formName = "Request for Quotation";
+const sheetName = "PR_DATA";
+const module = "Payroll";
+const submodule = "Income Tax";
+const formName = "Staff CP38";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[4, 5, 11, 12, 17, 18, 19]];
+const cellsIndex = [[1, 2]];
 
-test.describe.serial("Request for Quotation Tests", () => {
+test.describe.serial("Staff CP38 Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "MY") test.skip(true);
-
+    if (Login.Region === "IND") test.skip(true);
+    
     // Load Excel values
     [
       createValues,
@@ -69,7 +69,7 @@ test.describe.serial("Request for Quotation Tests", () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -78,10 +78,10 @@ test.describe.serial("Request for Quotation Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Request for Quotation", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+  test("Create New Staff CP38", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await RequestforQuotationCreate(
+    const { uiVals, gridVals } = await StaffCP38Create(
       page,
       sideMenu,
       paths,
@@ -96,17 +96,20 @@ test.describe.serial("Request for Quotation Tests", () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtQRFNum").inputValue()
+      await page.locator("#txtADTNum").inputValue()
     );
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      procurementGridSQLCommand(formName),
+      payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
+        OU: ou[0],
       }
     );
 
@@ -114,7 +117,7 @@ test.describe.serial("Request for Quotation Tests", () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -127,8 +130,8 @@ test.describe.serial("Request for Quotation Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Request for Quotation", async ({ page, db }) => {
-    const { uiVals, gridVals } = await RequestforQuotationEdit(
+  test("Edit Staff CP38", async ({ page, db }) => {
+    await StaffCP38Edit(
       page,
       sideMenu,
       paths,
@@ -142,22 +145,29 @@ test.describe.serial("Request for Quotation Tests", () => {
       docNo
     );
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
     });
+    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
-      procurementGridSQLCommand(formName),
+      payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
+        OU: ou[0],
       }
     );
-
+    console.log(gridDbValues);
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -170,16 +180,16 @@ test.describe.serial("Request for Quotation Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Request for Quotation", async ({ page, db }) => {
-    await RequestforQuotationDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Staff CP38", async ({ page, db }) => {
+    await StaffCP38Delete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error("Deleting Staff CP38 failed");
   });
 
   // ---------------- After All ----------------

@@ -14,7 +14,6 @@ import {
   JsonPath,
   DocNo,
 } from "@utils/data/uidata/nurseryData.json";
-
 import {
   MainNurseryTransferLossCreate,
   MainNurseryTransferLossDelete,
@@ -137,6 +136,8 @@ test.describe.serial("Main Nursery Transfer/Loss Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+
     console.log(`End Running: ${formName}`);
   });
 });

@@ -1,0 +1,13 @@
+{
+  "InputPath": {
+    "CrudePalmOilQuality(FFA)Path": "#CPOFFADatePicker",
+    "CrudePalmOilQuality(FFA)Column": "CPOFFADate date",
+    "CrudePalmOilQuality(Moisture)Path": "#CPOMoistureDatePicker",
+    "CrudePalmOilQuality(Moisture)Column": "CPOFFADate date"
+  },
+
+  "GridPath": {
+    "CrudePalmOilQuality(FFA)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
+    "CrudePalmOilQuality(Moisture)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
+  }
+}

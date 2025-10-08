@@ -33,19 +33,19 @@
     "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,Qty numeric,StartDate date,EndDate date,Type dropdown,PlantMaterial dropdown"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000174",
-    "PreNurseryGerminated": "PG00000083",
-    "PreNurseryDoubletonSplitting": "PDS0000058",
-    "PreNurseryCulling": "PC00000037",
-    "PreNurseryAdjustment": "PNA0000003",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000039",
-    "Inter-OUPreNurseryTransferTo": "IPT0000049",
-    "MainNurseryReceived": "NR00000074",
-    "MainNurseryDoubletonSplitting": "NDS0000026",
-    "MainNurseryCulling": "NC00000024",
-    "MainNurseryAdjustment": "MNA0000001",
-    "MainNurseryTransfer/Loss": "NT00000030",
-    "MainNurserySold": "MS00000024",
-    "Inter-OUMainNurseryTransferTo": "IMT0000033"
+    "PreNurserySeedReceived": "PSR0000187",
+    "PreNurseryGerminated": "PG00000093",
+    "PreNurseryDoubletonSplitting": "PDS0000063",
+    "PreNurseryCulling": "PC00000041",
+    "PreNurseryAdjustment": "PNA0000007",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000043",
+    "Inter-OUPreNurseryTransferTo": "IPT0000054",
+    "MainNurseryReceived": "NR00000080",
+    "MainNurseryDoubletonSplitting": "NDS0000028",
+    "MainNurseryCulling": "NC00000026",
+    "MainNurseryAdjustment": "MNA0000003",
+    "MainNurseryTransfer/Loss": "NT00000032",
+    "MainNurserySold": "MS00000026",
+    "Inter-OUMainNurseryTransferTo": "IMT0000035"
   }
 }

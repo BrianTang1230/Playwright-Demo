@@ -46,9 +46,7 @@
 //     await checkLength(paths, columns, createValues, editValues);
 
 //     docNo = DocNo[keyName];
-//     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-
-//     console.log(`Start Running: ${formName}`);
+//     if (docNo) console.log(`Start Running: ${formName}`);
 //   });
 
 //   // ---------------- Before Each ----------------
@@ -61,14 +59,24 @@
 
 //   // ---------------- Create Test ----------------
 //   test("Create Purchase Order", async ({ page, db }) => {
-//     await PurchaseOrderCreate(page, sideMenu, paths, columns, createValues, ou);
+//     await db.deleteData(deleteSQL, { DocNo: docNo });
 
-//     docNo = await page.locator("#txtHeaderDataPONum").inputValue();
-//     await editJson(JsonPath, formName, docNo);
+//     const { uiVals,gridVals } = await PurchaseOrderCreate(
+//       page,
+//       sideMenu,
+//       paths,
+//       columns,
+//       createValues,
+//       ou
+//     );
 
-//     const uiVals = await getUiValues(page, paths.slice(0, 9));
-//     await page.locator("#btnEditItem").click();
-//     const gridVals = await getUiValues(page, paths.slice(9, paths.length));
+//     docNo = await editJson(
+//       JsonPath,
+//       formName,
+//       await page.locator("#txtHeaderDataPONum").inputValue()
+//     );
+
+    
 
 //     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
 //       DocNo: docNo,

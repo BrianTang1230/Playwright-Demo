@@ -65,6 +65,20 @@ function payrollSQLCommand(formName) {
           AND C.OUCode + ' - ' + C.OUDesc = @OU
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
       break;
+    case "Staff Loan/Deposit Maintenance":
+      sqlCommand = `
+      SELECT FORMAT(A.OutsMaintDate, 'MMMM yyyy') AS OMMonth,
+      B.RecTypeCode + ' - ' + B.RecTypeDesc AS RecType,
+      A.Remarks AS Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM PR_OutsMaintHdr A
+      LEFT JOIN GMS_RecTypeStp B ON A.RecTypeKey = B.RecTypeKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE FORMAT(A.OutsMaintDate, 'MMMM yyyy') = @Date
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+        AND B.RecTypeCode + ' - ' + B.RecTypeDesc = @RecType
+        AND Remarks IN ('Automation Testing Create','Automation Testing Edit');`;
+      break;
     case "Staff Advance Payment":
       sqlCommand = `
         SELECT FORMAT(A.AdvPayDate,'MMMM yyyy') AS ADVMonth,
@@ -217,6 +231,27 @@ function payrollGridSQLCommand(formName) {
             AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )`;
       break;
+    case "Staff Loan/Deposit Maintenance":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        D.PayCode + ' - ' + D.PayDesc AS DeductionCode,
+        C.Amt AS Amount,
+        C.Remarks AS Remarks
+        FROM PR_OutsMaintDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN PR_OutsMaintDeductDet C ON A.OutsMaintDetKey = C.OutsMaintDetKey
+        LEFT JOIN GMS_PayCodeStp D ON C.PayCodeKey = D.PayKey
+        WHERE A.OutsMaintHdrKey IN (
+          SELECT OutsMaintHdrKey 
+          FROM PR_OutsMaintHdr E
+          LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
+          LEFT JOIN GMS_RecTypeStp G ON E.RecTypeKey = G.RecTypeKey
+          WHERE FORMAT(E.OutsMaintDate, 'MMMM yyyy') = @Date
+          AND F.OUCode + ' - ' + F.OUDesc = @OU
+          AND G.RecTypeCode + ' - ' + G.RecTypeDesc = @RecType
+          AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
+        )`;
+      break;
     case "Staff Advance Payment":
       sqlCommand = `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
@@ -224,11 +259,11 @@ function payrollGridSQLCommand(formName) {
         FROM PR_AdvPayDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
         WHERE AdvPayHdrKey IN (
-        SELECT AdvPayHdrKey FROM PR_AdvPayHdr
-        WHERE AdvPayNum = @DocNo AND OUKey IN (
-          SELECT OUKey FROM GMS_OUStp
-          WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+          SELECT AdvPayHdrKey FROM PR_AdvPayHdr
+          WHERE AdvPayNum = @DocNo AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+  )
         )`;
       break;
     default:

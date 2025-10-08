@@ -25,7 +25,6 @@ import {
   StaffAdvancePaymentEdit,
   StaffAdvancePaymentDelete,
 } from "@UiFolder/pages/Payroll/StaffAdvancePayment";
-
 import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------

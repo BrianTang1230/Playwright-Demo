@@ -275,6 +275,28 @@ function nurserySQLCommand(formName) {
         WHERE A.IMTrnNum = @DocNo`;
       break;
 
+    case "Nursery Transfer Requisition":
+      sqlCommand = `
+          SELECT FORMAT(A.TransferDate, 'yyyy-MM-dd') AS TransDate,
+          A.Remark AS Remarks,
+          A.ReferenceNum AS RefNo,
+          B.OUCode + ' - ' + B.OUDesc AS ToOU,
+          C.ContactCode + ' - ' + C.ContactDesc AS Contact,
+          A.Price AS UnitPrice,
+          A.Qty AS TransQty,
+          FORMAT(A.ExpStartDeliveryDate, 'yyyy-MM-dd') AS ExpStartDate,
+          FORMAT(A.ExpEndDeliveryDate, 'yyyy-MM-dd') AS ExpEndDate,
+          CASE 
+            WHEN A.Type = 1 THEN 'Pre Nursery'
+            WHEN A.Type = 2 THEN 'Main Nursery'
+          END AS NurType,
+          D.PlantMateCode + ' - ' + D.PlantMateDesc AS PlantMaterial
+          FROM NUR_TransferHdr A
+          LEFT JOIN GMS_OUStp B ON A.FromOUKey = B.OUKey
+          LEFT JOIN GMS_ContactStp C ON A.ContactKey = C.ContactKey
+          LEFT JOIN GMS_PlantMateStp D ON A.PlantMateKey = D.PlantMateKey
+          WHERE A.TransferNum = @DocNo`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

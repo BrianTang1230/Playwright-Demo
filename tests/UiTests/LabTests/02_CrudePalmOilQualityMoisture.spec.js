@@ -41,13 +41,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 3],
-  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3],
 ];
 
 test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    test.skip(true);
+    // test.skip(true);
 
     // Load Excel values
     [

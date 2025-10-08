@@ -35,7 +35,7 @@ export async function InputValues(page, path, col, value) {
   // Integer,Date,Text Input
   else if (col.includes("text") || col.includes("date")) {
     await element.fill(value);
-    await element.press("Enter")
+    await element.press("Enter");
   }
 
   // Numeric Input

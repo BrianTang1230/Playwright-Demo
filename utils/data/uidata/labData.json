@@ -2,12 +2,18 @@
   "InputPath": {
     "CrudePalmOilQuality(FFA)Path": "#CPOFFADatePicker",
     "CrudePalmOilQuality(FFA)Column": "CPOFFADate date",
-    "CrudePalmOilQuality(Moisture)Path": "#CPOMoistureDatePicker",
-    "CrudePalmOilQuality(Moisture)Column": "CPOFFADate date"
+    "CrudePalmOilQuality(Moisture)Path": "#CPOMoistDatePicker",
+    "CrudePalmOilQuality(Moisture)Column": "CPOMoistDate date",
+    "CrudePalmOilQuality(Impurities)Path": "#CPOImpDatePicker",
+    "CrudePalmOilQuality(Impurities)Column": "CPOImpDate date",
+    "CrudePalmOilQuality(DOBI)Path": "#CPODOBIDatePicker",
+    "CrudePalmOilQuality(DOBI)Column": "CPODOBIDate date"
   },
 
   "GridPath": {
     "CrudePalmOilQuality(FFA)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
-    "CrudePalmOilQuality(Moisture)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
+    "CrudePalmOilQuality(Moisture)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
+    "CrudePalmOilQuality(Impurities)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
+    "CrudePalmOilQuality(DOBI)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
   }
 }

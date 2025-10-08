@@ -60,7 +60,7 @@ export async function CrudePalmOilQualityFFAEdit(
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.clickBtnSave(true);
 
   const uiVals = await getUiValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);

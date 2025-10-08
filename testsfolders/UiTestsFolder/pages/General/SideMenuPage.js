@@ -11,10 +11,14 @@ export default class SideMenuPage {
     return this.page.locator("#btnNew").first();
   }
 
-  async clickBtnSave() {
+  async clickBtnSave(isDblClick = false) {
     const saveBtn = this.page.locator("#btnSave").first();
-    await saveBtn.click();
-    // await saveBtn.dblclick();
+
+    if (isDblClick) {
+      await saveBtn.dblclick();
+    } else {
+      await saveBtn.click();
+    }
 
     await this.page
       .locator(".k-loading-image")

@@ -4,7 +4,6 @@ import editJson from "@utils/commonFunctions/EditJson";
 export async function handleApiResponse(
   response,
   expectedStatus = []
-  // silent = false
 ) {
   const status = response.status();
 
@@ -27,10 +26,6 @@ export async function handleApiResponse(
     console.log("📩 Raw response:", rawBody);
   }
 
-  // Log in a nicer format
-  // if (!silent) {
-
-  // }
 
   // Determine what counts as success
   // const isExpected =
@@ -76,7 +71,6 @@ export async function apiCall(
   url,
   options = {},
   expectedStatus
-  // silent = false // 👈 add this
 ) {
   const response = await api[method.toLowerCase()](url, {
     ...options,
@@ -85,7 +79,6 @@ export async function apiCall(
   const { status, json, rawBody } = await handleApiResponse(
     response,
     expectedStatus
-    // silent
   );
   // 🔑 If it's a positive test (2xx expected) → fail hard
   if (expectedStatus.some((s) => s >= 200 && s < 300)) {
@@ -111,26 +104,3 @@ export async function handleJson(
   }
   return { status, json };
 }
-
-// export async function deleteIfSavedKeyExists(apiObj, api, url, savedKey) {
-//   // Bind api
-//   apiObj.api = api;
-
-//   // Set delete URL
-//   apiObj.setUrl(url);
-
-//   // Perform delete
-
-//   try {
-//     const result = await apiObj.delete({ silent: true }); // silent to avoid noise if not found
-
-//     // Success message (your own, not handleApiResponse)
-//     console.log(
-//       `✅ Successfully deleted ${apiObj.formName} (key: ${savedKey})`
-//     );
-
-//     return result;
-//   } catch (err) {
-//     console.warn(`⚠️ Skipping delete, record not found (key: ${savedKey})`);
-//   }
-// }

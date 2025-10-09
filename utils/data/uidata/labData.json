@@ -7,13 +7,24 @@
     "CrudePalmOilQuality(Impurities)Path": "#CPOImpDatePicker",
     "CrudePalmOilQuality(Impurities)Column": "CPOImpDate date",
     "CrudePalmOilQuality(DOBI)Path": "#CPODOBIDatePicker",
-    "CrudePalmOilQuality(DOBI)Column": "CPODOBIDate date"
+    "CrudePalmOilQuality(DOBI)Column": "CPODOBIDate date",
+    "KernelQuality(KernelDirt)Path": "#PKDirtDatePicker",
+    "KernelQuality(KernelDirt)Column": "PKDirtDate date",
+    "KernelQuality(FFA)Path": "#PKFFADatePicker",
+    "KernelQuality(FFA)Column": "PKFFADate date",
+    "KernelQuality(Moisture&OilContent)Path": "#PKMoistDatePicker",
+    "KernelQuality(Moisture&OilContent)Column": "PKMoistDate date",
+    "OilLossesPath": "#FibreLossDatePicker",
+    "OilLossesColumn": "FibreLossDate date",
+    "SludgeWasteLossesPath": "#SludgeWasteDatePicker",
+    "SludgeWasteLossesColumn": "SludgeWasteDate date",
+    "KernelLossesPath": "#KernelLossDatePicker",
+    "KernelLossesColumn": "KernelLossDate date",
+    "CrackingEfficiencyPath": "#CrackEffDatePicker",
+    "CrackingEfficiencyColumn": "CrackEffDate date"
   },
 
   "GridPath": {
-    "CrudePalmOilQuality(FFA)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
-    "CrudePalmOilQuality(Moisture)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
-    "CrudePalmOilQuality(Impurities)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
-    "CrudePalmOilQuality(DOBI)Grid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
+    "LabGrid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
   }
 }

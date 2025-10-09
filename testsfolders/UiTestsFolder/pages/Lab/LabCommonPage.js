@@ -3,7 +3,7 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function CrudePalmOilQualityImpuritiesCreate(
+export async function LabCommonPageCreate(
   page,
   sideMenu,
   paths,
@@ -41,7 +41,7 @@ export async function CrudePalmOilQualityImpuritiesCreate(
   return { uiVals, gridVals };
 }
 
-export async function CrudePalmOilQualityImpuritiesEdit(
+export async function LabCommonPageEdit(
   page,
   sideMenu,
   paths,
@@ -68,13 +68,7 @@ export async function CrudePalmOilQualityImpuritiesEdit(
   return { uiVals, gridVals };
 }
 
-export async function CrudePalmOilQualityImpuritiesDelete(
-  page,
-  sideMenu,
-  values,
-  ou,
-  keyword
-) {
+export async function LabCommonPageDelete(page, sideMenu, values, ou, keyword) {
   await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
 
   await sideMenu.clickBtnDelete();

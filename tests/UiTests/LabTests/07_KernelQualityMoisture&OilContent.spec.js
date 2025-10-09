@@ -5,50 +5,47 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import {
-  vehicleGridSQLCommand,
-  vehicleSQLCommand,
-} from "@UiFolder/queries/VehicleQuery";
+import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
-} from "@utils/data/uidata/vehicleData.json";
+} from "@utils/data/uidata/labData.json";
 
 import {
-  VehicleRunningDistributionCreate,
-  VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+  LabCommonPageCreate,
+  LabCommonPageDelete,
+  LabCommonPageEdit,
+} from "@UiFolder/pages/Lab/LabCommonPage";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "VEH_DATA";
-const module = "Vehicle";
+const sheetName = "LAB_DATA";
+const module = "Lab";
 const submodule = null;
-const formName = "Vehicle Running Distribution";
+const formName = "Kernel Quality (Moisture & Oil Content)";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
-const gridPaths = GridPath[keyName + "Grid"].split(",");
+const gridPaths = GridPath[module + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3],
-  [0, 1, 2, 3, 4],
+  [1, 3],
+  [0, 1, 2, 3, 4, 5],
 ];
 
-test.describe.serial("Vehicle Running Distribution Tests", async () => {
+test.describe
+  .serial("Kernel Quality (Moisture & Oil Content) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -63,8 +60,6 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -77,10 +72,13 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create New Kernel Quality (Moisture & Oil Content)", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } = await VehicleRunningDistributionCreate(
+    const { uiVals, gridVals } = await LabCommonPageCreate(
       page,
       sideMenu,
       paths,
@@ -92,21 +90,15 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#txtVEHNum").inputValue()
-    );
-
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      labGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -128,8 +120,8 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    const { uiVals, gridVals } = await VehicleRunningDistributionEdit(
+  test("Edit Kernel Quality (Moisture & Oil Content)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await LabCommonPageEdit(
       page,
       sideMenu,
       paths,
@@ -140,18 +132,18 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      gridCreateValues[0].split(";")[0]
     );
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      labGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -173,28 +165,31 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionDelete(
+  test("Delete Kernel Quality (Moisture & Oil Content)", async ({
+    page,
+    db,
+  }) => {
+    await LabCommonPageDelete(
       page,
       sideMenu,
       createValues,
       ou,
-      docNo
+      gridEditValues[0].split(";")[0]
     );
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
-      DocNo: docNo,
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
       OU: ou[0],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+      throw new Error(
+        "Deleting Kernel Quality (Moisture & Oil Content) failed"
+      );
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

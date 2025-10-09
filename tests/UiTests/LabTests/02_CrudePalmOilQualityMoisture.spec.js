@@ -18,10 +18,10 @@ import {
 } from "@utils/data/uidata/labData.json";
 
 import {
-  CrudePalmOilQualityMoistureCreate,
-  CrudePalmOilQualityMoistureDelete,
-  CrudePalmOilQualityMoistureEdit,
-} from "@UiFolder/pages/Lab/CrudePalmOilQualityMoisture";
+  LabCommonPageCreate,
+  LabCommonPageDelete,
+  LabCommonPageEdit,
+} from "@UiFolder/pages/Lab/LabCommonPage";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,7 +38,7 @@ const formName = "Crude Palm Oil Quality (Moisture)";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
-const gridPaths = GridPath[keyName + "Grid"].split(",");
+const gridPaths = GridPath[module + "Grid"].split(",");
 const cellsIndex = [
   [1, 3],
   [0, 1, 2, 3],
@@ -47,8 +47,6 @@ const cellsIndex = [
 test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    // test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -76,7 +74,7 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
   test("Create New Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } = await CrudePalmOilQualityMoistureCreate(
+    const { uiVals, gridVals } = await LabCommonPageCreate(
       page,
       sideMenu,
       paths,
@@ -119,7 +117,7 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
 
   // ---------------- Edit Test ----------------
   test("Edit Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CrudePalmOilQualityMoistureEdit(
+    const { uiVals, gridVals } = await LabCommonPageEdit(
       page,
       sideMenu,
       paths,
@@ -164,7 +162,7 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
-    await CrudePalmOilQualityMoistureDelete(
+    await LabCommonPageDelete(
       page,
       sideMenu,
       createValues,

@@ -51,7 +51,7 @@ test.describe.serial("Staff CP38 Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     if (Login.Region === "IND") test.skip(true);
-    
+
     // Load Excel values
     [
       createValues,
@@ -153,7 +153,6 @@ test.describe.serial("Staff CP38 Tests", async () => {
       Date: createValues[0],
       OU: ou[0],
     });
-    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
@@ -162,7 +161,6 @@ test.describe.serial("Staff CP38 Tests", async () => {
         OU: ou[0],
       }
     );
-    console.log(gridDbValues);
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);

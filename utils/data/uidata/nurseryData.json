@@ -38,21 +38,21 @@
     "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000187",
-    "PreNurseryGerminated": "PG00000093",
-    "PreNurseryDoubletonSplitting": "PDS0000063",
-    "PreNurseryCulling": "PC00000041",
+    "PreNurserySeedReceived": "PSR0000049",
+    "PreNurseryGerminated": "PG00000028",
+    "PreNurseryDoubletonSplitting": "PDS0000024",
+    "PreNurseryCulling": "PC00000023",
     "PreNurseryAdjustment": "PNA0000007",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000043",
-    "Inter-OUPreNurseryTransferTo": "IPT0000054",
-    "MainNurseryReceived": "NR00000080",
-    "MainNurseryDoubletonSplitting": "NDS0000028",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000023",
+    "Inter-OUPreNurseryTransferTo": "IPT0000028",
+    "MainNurseryReceived": "NR00000051",
+    "MainNurseryDoubletonSplitting": "NDS0000022",
     "MainNurseryCulling": "NC00000026",
     "MainNurseryAdjustment": "MNA0000003",
-    "MainNurseryTransfer/Loss": "NT00000032",
-    "MainNurserySold": "MS00000026",
-    "Inter-OUMainNurseryTransferTo": "IMT0000035",
-    "NurseryTransferRequisition": "RNT0000014",
-    "NurserySalesRequisition": "RNS0000006"
+    "MainNurseryTransfer/Loss": "NT00000029",
+    "MainNurserySold": "MS00000018",
+    "Inter-OUMainNurseryTransferTo": "IMT0000016",
+    "NurseryTransferRequisition": "RNT0000006",
+    "NurserySalesRequisition": "RNS0000001"
   }
 }

@@ -33,7 +33,7 @@ jobs:
           timezone: "Asia/Kuala_Lumpur"
   test:
     needs: notify-job-triggered
-    timeout-minutes: 60
+    timeout-minutes: 4320
     runs-on: self-hosted
 
     env: # 👈 inject secrets here

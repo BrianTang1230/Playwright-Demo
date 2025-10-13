@@ -17,8 +17,8 @@ import {
 
 import {
   NurseryTransferRequisitionCreate,
-  //   NurseryTransferRequisitionEdit,
-  //   NurseryTransferRequisitionDelete,
+  NurseryTransferRequisitionEdit,
+  NurseryTransferRequisitionDelete,
 } from "@UiFolder/pages/Nursery/NurseryTransferRequisition";
 
 // ---------------- Set Global Variables ----------------
@@ -91,54 +91,54 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
     );
   });
 
-//   // ---------------- Edit Test ----------------
-//   test("Edit Nursery Transfer Requisition", async ({ page, db }) => {
-//     const { uiVals } = await NurseryTransferRequisitionEdit(
-//       page,
-//       sideMenu,
-//       paths,
-//       columns,
-//       createValues,
-//       editValues,
-//       ou,
-//       docNo
-//     );
+  // ---------------- Edit Test ----------------
+  test("Edit Nursery Transfer Requisition", async ({ page, db }) => {
+    const { uiVals } = await NurseryTransferRequisitionEdit(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou,
+      docNo
+    );
 
-//     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
-//       DocNo: docNo,
-//     });
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
+    });
 
-//     await ValidateUiValues(editValues, columns, uiVals);
-//     await ValidateDBValues(
-//       [...editValues, ou],
-//       [...columns, "OU"],
-//       dbValues[0]
-//     );
-//   });
+    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateDBValues(
+      [...editValues, ou],
+      [...columns, "OU"],
+      dbValues[0]
+    );
+  });
 
-//   // ---------------- Delete Test ----------------
-//   test("Delete Nursery Transfer Requisition", async ({ page, db }) => {
-//     await NurseryTransferRequisitionDelete(
-//       page,
-//       sideMenu,
-//       createValues,
-//       ou,
-//       docNo
-//     );
+  // ---------------- Delete Test ----------------
+  test("Delete Nursery Transfer Requisition", async ({ page, db }) => {
+    await NurseryTransferRequisitionDelete(
+      page,
+      sideMenu,
+      editValues,
+      ou,
+      docNo
+    );
 
-//     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
-//       DocNo: docNo,
-//     });
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
+    });
 
-//     if (dbValues.length > 0) {
-//       throw new Error(`Deleting Nursery Transfer Requisition failed`);
-//     }
-//   });
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting Nursery Transfer Requisition failed`);
+    }
+  });
 
-//   // ---------------- After All ----------------
-//   test.afterAll(async ({ db }) => {
-//     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
-//     console.log(`End Running: ${formName}`);
-//   });
+    console.log(`End Running: ${formName}`);
+  });
 });

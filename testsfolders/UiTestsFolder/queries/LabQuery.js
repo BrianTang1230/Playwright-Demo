@@ -134,6 +134,128 @@ function labSQLCommand(formName) {
           AND C.Num IN (6666,9999)`;
       break;
 
+    case "Water Quality":
+      sqlCommand = `
+        SELECT FORMAT(A.WaterQltyDate, 'dd/MM/yyyy') AS WaterQltyDate,
+        A.Rainfall,
+        A.PondWaterLvl,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_WaterQltyHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_WaterQltyDet C ON C.WaterQltyHdrKey = A.WaterQltyHdrKey
+        WHERE FORMAT(A.WaterQltyDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Effluent Test":
+      sqlCommand = `
+        SELECT FORMAT(A.EffluentDate, 'dd/MM/yyyy') AS EffluentDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_EffluentHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_EffluentDet C ON C.EffluentHdrKey = A.EffluentHdrKey
+        WHERE FORMAT(A.EffluentDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Effluent Flowmeter Reading":
+      sqlCommand = `
+        SELECT FORMAT(A.EfflFlowmeterDate, 'dd/MM/yyyy') AS EfflFlowmeterDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_EfflFlowmeterHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_EfflFlowmeterDet C ON C.EfflFlowmeterHdrKey = A.EfflFlowmeterHdrKey
+        WHERE FORMAT(A.EfflFlowmeterDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Press Cake":
+      sqlCommand = `
+        SELECT FORMAT(A.PressCakeDate, 'dd/MM/yyyy') AS PressCakeDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_PressCakeHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_PressCakeDet C ON C.PressCakeHdrKey = A.PressCakeHdrKey
+        WHERE FORMAT(A.PressCakeDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Press Cake MPD":
+      sqlCommand = `
+        SELECT FORMAT(A.PressCakeMPDDate, 'dd/MM/yyyy') AS PressCakeMPDDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_PressCakeMPDHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_PressCakeMPDDet C ON C.PressCakeMPDHdrKey = A.PressCakeMPDHdrKey
+        WHERE FORMAT(A.PressCakeMPDDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Press Cake Nut Composition":
+      sqlCommand = `
+        SELECT FORMAT(A.PressCakeNCDate, 'dd/MM/yyyy') AS PressCakeNCDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_PressCakeNCHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_PressCakeNCDuraDet C ON C.PressCakeNCHdrKey = A.PressCakeNCHdrKey
+        WHERE FORMAT(A.PressCakeNCDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Press Cake Dried Nut Moisture":
+      sqlCommand = `
+        SELECT FORMAT(A.PressCakeDNMoistDate, 'dd/MM/yyyy') AS PressCakeDNMoistDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_PressCakeDNMoistHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_PressCakeDNMoistDet C ON C.PressCakeDNMoistHdrKey = A.PressCakeDNMoistHdrKey
+        WHERE FORMAT(A.PressCakeDNMoistDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Losses in Empty Fruit Bunches":
+      sqlCommand = `
+        SELECT FORMAT(A.EFBLossDate, 'dd/MM/yyyy') AS EFBLossDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_EFBLossHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_EFBLossDet C ON C.EFBLossHdrKey = A.EFBLossHdrKey
+        WHERE FORMAT(A.EFBLossDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Spin Test":
+      sqlCommand = `
+        SELECT FORMAT(A.SpinTestDate, 'dd/MM/yyyy') AS SpinTestDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_SpinTestHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_SpinTestDet C ON C.SpinTestHdrKey = A.SpinTestHdrKey
+        WHERE FORMAT(A.SpinTestDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
+    case "Chemical Dosage":
+      sqlCommand = `
+        SELECT FORMAT(A.ChemicalDosDate, 'dd/MM/yyyy') AS ChemicalDosDate,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM LAB_ChemicalDosHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN LAB_ChemicalDosDet C ON C.ChemicalDosHdrKey = A.ChemicalDosHdrKey
+        WHERE FORMAT(A.ChemicalDosDate, 'dd/MM/yyyy') = @Date
+          AND B.OUCode + ' - ' + B.OUDesc = @OU
+          AND C.Num IN (6666,9999)`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -148,7 +270,7 @@ function labGridSQLCommand(formName) {
     case "Crude Palm Oil Quality (FFA)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Flask AS Fnumeric,
         A.FlaskAndOil AS FOnumeric,
@@ -169,7 +291,7 @@ function labGridSQLCommand(formName) {
     case "Crude Palm Oil Quality (Moisture)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Beaker AS Bnumeric,
         A.BeakerAndSamp AS BSOnumeric,
@@ -189,7 +311,7 @@ function labGridSQLCommand(formName) {
     case "Crude Palm Oil Quality (Impurities)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Sample AS Snumeric,
         A.Crucible AS Cnumeric,
@@ -209,7 +331,7 @@ function labGridSQLCommand(formName) {
     case "Crude Palm Oil Quality (DOBI)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Sample AS Snumeric,
         A.Blanknm269 AS B2numeric,
@@ -231,7 +353,7 @@ function labGridSQLCommand(formName) {
     case "Kernel Quality (Kernel Dirt)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Sample AS Snumeric,
         A.WN AS WNnumeric,
@@ -255,7 +377,7 @@ function labGridSQLCommand(formName) {
     case "Kernel Quality (FFA)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Flask AS Fnumeric,
         A.FlaskAndOil AS FOnumeric,
@@ -276,7 +398,7 @@ function labGridSQLCommand(formName) {
     case "Kernel Quality (Moisture & Oil Content)":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Dish AS Dnumeric,
         A.DishAndKernel AS DKnumeric,
@@ -298,7 +420,7 @@ function labGridSQLCommand(formName) {
     case "Oil Losses":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Beaker AS Bnumeric,
         A.BeakerAndSample AS BSnumeric,
@@ -320,7 +442,7 @@ function labGridSQLCommand(formName) {
     case "Sludge Waste Losses":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.Beaker AS Bnumeric,
         A.BeakerAndSample AS BSnumeric,
@@ -342,7 +464,7 @@ function labGridSQLCommand(formName) {
     case "Kernel Losses":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.SampleWeight AS SWnumeric,
         A.UncrackNut AS WNnumeric,
@@ -365,7 +487,7 @@ function labGridSQLCommand(formName) {
     case "Cracking Efficiency":
       sqlCommand = `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
-        A.Num AS Numnumerice,
+        A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
         A.SampleAfter AS Snumeric,
         A.WNAfter AS WNnumeric,
@@ -381,6 +503,236 @@ function labGridSQLCommand(formName) {
           FROM LAB_CrackEffHdr H
           LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
           WHERE FORMAT(H.CrackEffDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Water Quality":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.PH AS PHnumeric,
+        A.TDS AS TDSnumeric,
+        A.Hardness AS Hnumeric,
+        A.PAlkal AS PAnumeric,
+        A.MAlkal AS MAnumeric,
+        A.CAlkal AS CAnumeric,
+        A.Phosphate AS Pnumeric,
+        A.Silica AS Snumeric,
+        A.Sulphite AS Sunumeric
+        FROM LAB_WaterQltyDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.WaterQltyHdrKey IN (
+          SELECT H.WaterQltyHdrKey
+          FROM LAB_WaterQltyHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.WaterQltyDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Effluent Test":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.PH AS PHnumeric,
+        A.BioOxy AS BOnumeric,
+        A.ChemOxy AS COnumeric,
+        A.Nitrogen AS Nnumeric,
+        A.AmmoNitro AS ANnumeric,
+        A.Solid AS Snumeric,
+        A.Susolid AS SSnumeric,
+        A.OilGrease AS OGnumeric
+        FROM LAB_EffluentDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.EffluentHdrKey IN (
+          SELECT H.EffluentHdrKey
+          FROM LAB_EffluentHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.EffluentDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Effluent Flowmeter Reading":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Reading AS Rnumeric
+        FROM LAB_EfflFlowmeterDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.EfflFlowmeterHdrKey IN (
+          SELECT H.EfflFlowmeterHdrKey
+          FROM LAB_EfflFlowmeterHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.EfflFlowmeterDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Press Cake":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Sample AS Snumeric,
+        A.WN AS WNnumeric,
+        A.HCN AS HCNnumeric,
+        A.WK AS WKnumeric,
+        A.BK AS BKnumeric,
+        A.FreeShell AS FreeShell
+        FROM LAB_PressCakeDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.PressCakeHdrKey IN (
+          SELECT H.PressCakeHdrKey
+          FROM LAB_PressCakeHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.PressCakeDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Press Cake MPD":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Sample AS Snumeric,
+        A.Mesocarp AS Mnumeric,
+        A.Nut AS Nnumeric,
+        A.NParthencarp AS NPnumeric,
+        A.AbParthencarp AS APnumeric,
+        A.Thrash AS Tnumeric,
+        A.Yellowish AS Ynumeric,
+        A.Reddish AS Rnumeric
+        FROM LAB_PressCakeMPDDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.PressCakeMPDHdrKey IN (
+          SELECT H.PressCakeMPDHdrKey
+          FROM LAB_PressCakeMPDHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.PressCakeMPDDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Press Cake Nut Composition":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Sample AS Snumeric,
+        A.Dura AS Dnumeric,
+        A.Tenera AS Tnumeric,
+        D.TypeIDCode + ' - ' + D.TypeIDDesc AS KTypeID,
+        C.Num AS KNumnumeric,
+        CONVERT(varchar(5), C.Time, 108) AS KTime,
+        C.Sample AS KSnumeric,
+        C.Kernel AS Knumeric,
+        C.Shell AS Shnumeric
+        FROM LAB_PressCakeNCDuraDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey
+        LEFT JOIN LAB_PressCakeNCKernelDet C ON A.PressCakeNCHdrKey = C.PressCakeNCHdrKey
+        LEFT JOIN GMS_TypeIDStp D ON C.TypeIDKey = D.TypeIDKey
+        WHERE A.Num IN (6666,9999)
+        AND A.PressCakeNCHdrKey IN (
+          SELECT H.PressCakeNCHdrKey
+          FROM LAB_PressCakeNCHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.PressCakeNCDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Press Cake Dried Nut Moisture":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Beaker AS Bnumeric,
+        A.BeakerAndSamp AS BSnumeric,
+        A.BeakerAndDSamp AS BDSnumeric
+        FROM LAB_PressCakeDNMoistDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.PressCakeDNMoistHdrKey IN (
+          SELECT H.PressCakeDNMoistHdrKey
+          FROM LAB_PressCakeDNMoistHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.PressCakeDNMoistDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Losses in Empty Fruit Bunches":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Beaker AS Bnumeric,
+        A.BeakerAndSample AS BSnumeric,
+        A.BeakerAndDSample AS BDSnumeric,
+        A.Flask AS Fnumeric,
+        A.FlaskAndDSample AS FDSnumeric
+        FROM LAB_EFBLossDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.EFBLossHdrKey IN (
+          SELECT H.EFBLossHdrKey
+          FROM LAB_EFBLossHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.EFBLossDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Spin Test":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        A.Sample AS Snumeric,
+        A.Oil AS Onumeric,
+        A.Water AS Wnumeric,
+        A.Sludge AS SDnumeric,
+        A.FRate AS FRnumeric,
+        A.Temperature AS Tnumeric
+        FROM LAB_SpinTestDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
+        WHERE A.Num IN (6666,9999)
+        AND A.SpinTestHdrKey IN (
+          SELECT H.SpinTestHdrKey
+          FROM LAB_SpinTestHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.SpinTestDate, 'dd/MM/yyyy') = @Date
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Chemical Dosage":
+      sqlCommand = `
+        SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+        A.Num AS Numnumeric,
+        CONVERT(varchar(5), A.Time, 108) AS Time,
+        C.ChemCode + ' - ' + C.ChemDesc,
+        A.Amount AS Anumeric
+        FROM LAB_ChemicalDosDet A  
+        LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey
+        LEFT JOIN GMS_ChemStp  C ON A.ChemKey = C.ChemKey
+        WHERE A.Num IN (6666,9999)  
+        AND A.ChemicalDosHdrKey IN (
+          SELECT H.ChemicalDosHdrKey
+          FROM LAB_ChemicalDosHdr H
+          LEFT JOIN GMS_OUStp G ON H.OUKey = G.OUKey
+          WHERE FORMAT(H.ChemicalDosDate, 'dd/MM/yyyy') = @Date
             AND G.OUCode + ' - ' + G.OUDesc = @OU
         )`;
       break;

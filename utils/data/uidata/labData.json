@@ -21,10 +21,31 @@
     "KernelLossesPath": "#KernelLossDatePicker",
     "KernelLossesColumn": "KernelLossDate date",
     "CrackingEfficiencyPath": "#CrackEffDatePicker",
-    "CrackingEfficiencyColumn": "CrackEffDate date"
+    "CrackingEfficiencyColumn": "CrackEffDate date",
+    "WaterQualityPath": "#WaterQltyDatePicker,spinbutton*0,spinbutton*1",
+    "WaterQualityColumn": "WaterQltyDate date,Rainfall numeric,PondWaterLvl numeric",
+    "EffluentTestPath": "#EffluentDatePicker",
+    "EffluentTestColumn": "EffluentDate date",
+    "EffluentFlowmeterReadingPath": "#EfflFlowmeterDatePicker",
+    "EffluentFlowmeterReadingColumn": "EfflFlowmeterDate date",
+    "PressCakePath": "#PressCakeDatePicker",
+    "PressCakeColumn": "PressCakeDate date",
+    "PressCakeMPDPath": "#PressCakeMPDDatePicker",
+    "PressCakeMPDColumn": "PressCakeMPDDate date",
+    "PressCakeNutCompositionPath": "#PressCakeNCDatePicker",
+    "PressCakeNutCompositionColumn": "PressCakeNCDate date",
+    "PressCakeDriedNutMoisturePath": "#PressCakeDNMoistDatePicker",
+    "PressCakeDriedNutMoistureColumn": "PressCakeDNMoistDate date",
+    "LossesinEmptyFruitBunchesPath": "#EFBLossDatePicker",
+    "LossesinEmptyFruitBunchesColumn": "EFBLossDate date",
+    "SpinTestPath": "#SpinTestDatePicker",
+    "SpinTestColumn": "SpinTestDate date",
+    "ChemicalDosagePath": "#ChemicalDosDatePicker",
+    "ChemicalDosageColumn": "ChemicalDosDate date"
   },
 
   "GridPath": {
-    "LabGrid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable"
+    "LabGrid": "#DetailGrid > .k-grid-content-locked,#DetailGrid > .k-grid-content.k-auto-scrollable",
+    "PressCakeNutCompositionGrid": "#DuraDetGrid > .k-grid-content-locked,#DuraDetGrid > .k-grid-content.k-auto-scrollable,#KernelDetGrid > .k-grid-content-locked,#KernelDetGrid > .k-grid-content.k-auto-scrollable"
   }
 }

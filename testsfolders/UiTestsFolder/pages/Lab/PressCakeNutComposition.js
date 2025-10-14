@@ -3,7 +3,7 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function LabCommonPageCreate(
+export async function PressCakeNutCompositionCreate(
   page,
   sideMenu,
   paths,
@@ -27,9 +27,10 @@ export async function LabCommonPageCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnAddNewItem.click();
+  await page.locator("#btnNewItemDura").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
+    if (i === 2) await page.locator("#btnNewItemKernel").click();
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
@@ -41,7 +42,7 @@ export async function LabCommonPageCreate(
   return { uiVals, gridVals };
 }
 
-export async function LabCommonPageEdit(
+export async function PressCakeNutCompositionEdit(
   page,
   sideMenu,
   paths,
@@ -72,7 +73,13 @@ export async function LabCommonPageEdit(
   return { uiVals, gridVals };
 }
 
-export async function LabCommonPageDelete(page, sideMenu, values, ou, keyword) {
+export async function PressCakeNutCompositionDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  keyword
+) {
   await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
 
   await sideMenu.clickBtnDelete();

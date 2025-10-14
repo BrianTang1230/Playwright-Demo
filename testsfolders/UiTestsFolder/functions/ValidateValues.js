@@ -10,7 +10,9 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
     )
       continue;
     if (columns[i].includes("numeric")) {
+      const inpVal = normalizeNumber(inputValues[i]);
       const uiVal = normalizeNumber(uiValues[i]);
+      inputValues[i] = String(inpVal);
       uiValues[i] = String(uiVal);
     }
     if (inputValues[i] !== uiValues[i]) {
@@ -48,6 +50,7 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
 export async function ValidateGridValues(eValues, gValues) {
   if (eValues.length !== gValues.length) {
+    console.log(eValues, gValues);
     throw new Error("Mismatch length in Grid values.");
   }
 

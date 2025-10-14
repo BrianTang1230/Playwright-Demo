@@ -35,6 +35,11 @@ jobs:
     needs: notify-job-triggered
     timeout-minutes: 4320
     runs-on: self-hosted
+    outputs:
+      passed: ${{ steps.test-summary.outputs.passed }}
+      failed: ${{ steps.test-summary.outputs.failed }}
+      flaky: ${{ steps.test-summary.outputs.flaky }}
+      skipped: ${{ steps.test-summary.outputs.skipped }}
 
     env: # 👈 inject secrets here
       TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
@@ -59,9 +64,29 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
         
-      - name: Run Playwright tests
+    # ✅ Replace the existing test step with this:
+      - name: Run Playwright tests and capture summary
+        id: run-tests
         continue-on-error: true
-        run: npx playwright test --project="${{ inputs.testType }}"
+        run: |
+          npx playwright test --project="${{ inputs.testType }}" | tee test-output.txt
+
+     # ✅ Then add the summary extraction step right after:
+      - name: Extract Test Summary
+        id: test-summary
+        shell: powershell
+        run: |
+          $content = Get-Content "test-output.txt" -Raw
+      
+          $passed = if ($content -match '\b(\d+)\s+passed\b') { $matches[1] } else { 0 }
+          $failed = if ($content -match '\b(\d+)\s+failed\b') { $matches[1] } else { 0 }
+          $flaky = if ($content -match '\b(\d+)\s+flaky\b') { $matches[1] } else { 0 }
+          $skipped = if ($content -match '\b(\d+)\s+skipped\b') { $matches[1] } else { 0 }
+      
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "passed=$passed"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "failed=$failed"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "flaky=$flaky"
+          Add-Content -Path $env:GITHUB_OUTPUT -Value "skipped=$skipped"
 
       - name: Prepare Playwright Report Bundle
         run: |
@@ -175,5 +200,9 @@ jobs:
              - **Workflow**: ${{ github.workflow }}
              - **Branch**: ${{ github.ref_name }}
              - **Status**: ${{ job.status }}
+             - ✅ Passed: ${{ needs.test.outputs.passed }}
+             - ❌ Failed: ${{ needs.test.outputs.failed }}
+             - ⚠️ Flaky: ${{ needs.test.outputs.flaky }}
+             - ⚪ Skipped: ${{ needs.test.outputs.skipped }}
              - 📄 **Report**: [Click here to view live report](${{ steps.deployment.outputs.page_url }})
              - 🔗 **Workflow Run**: [Click here to download report](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})

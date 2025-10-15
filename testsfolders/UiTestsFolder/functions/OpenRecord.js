@@ -37,30 +37,32 @@ export async function FilterRecordByOU(
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
     .fill(ou);
-  await page.getByRole("button", { name: "+", exact: true }).click();
   await page.getByRole("combobox").nth(3).fill(values[0]);
+  await page.getByRole("button", { name: "+", exact: true }).click();
   await page.getByRole("combobox").nth(4).fill(values[0]);
 
-  const seletor = await page
-    .locator("#tabstrip-2")
-    .getByText("Choose a Column to Filter")
-    .nth(2);
-  await seletor.click();
-  for (let i = 0; i < times; i++) {
-    await seletor.press("ArrowDown");
-  }
-  await seletor.press("Enter");
+  if (type !== "DT") {
+    const seletor = await page
+      .locator("#tabstrip-2")
+      .getByText("Choose a Column to Filter")
+      .nth(2);
+    await seletor.click();
+    for (let i = 0; i < times; i++) {
+      await seletor.press("ArrowDown");
+    }
+    await seletor.press("Enter");
 
-  if (type === "DN") {
-    await page.getByRole("textbox").fill(keyword);
-  } else if (type === "OT") {
-    const paramInput = page.locator("[name='comboBoxSearchParam_input']");
-    await paramInput.type(keyword);
-    await page
-      .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
-      .first()
-      .waitFor({ state: "visible" });
-    await paramInput.press("Enter");
+    if (type === "DN") {
+      await page.getByRole("textbox").fill(keyword);
+    } else if (type === "OT") {
+      const paramInput = page.locator("[name='comboBoxSearchParam_input']");
+      await paramInput.type(keyword);
+      await page
+        .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
+        .first()
+        .waitFor({ state: "visible" });
+      await paramInput.press("Enter");
+    }
   }
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();

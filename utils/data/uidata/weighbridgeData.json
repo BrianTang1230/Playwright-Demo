@@ -1,0 +1,10 @@
+{
+  "JsonPath": "utils/data/uidata/weighbridgeData.json",
+  "InputPath": {
+    "DailyTotalCropReceiptbyCropSupplierPath": "#monthPicker,EstateType_input,#Remarks",
+    "DailyTotalCropReceiptbyCropSupplierColumn": "Month date,EstateType dropdown,Remarks text"
+  },
+  "GridPath": {
+    "DailyTotalCropReceiptbyCropSupplierGrid": "#DailyTotCropRcvBySuppDetGrid > div.k-grid-content-locked,#DailyTotCropRcvBySuppDetGrid > div.k-grid-content.k-auto-scrollable"
+  }
+}

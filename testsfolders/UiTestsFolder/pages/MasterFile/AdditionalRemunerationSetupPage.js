@@ -1,4 +1,7 @@
-import { InputValues, InputGridValues } from "@UiFolder/functions/InputValues";
+import {
+  InputValues,
+  InputGridValuesSameCols,
+} from "@UiFolder/functions/InputValues";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import { getUiValues } from "@UiFolder/functions/GetValues";
 // Create Function
@@ -29,7 +32,12 @@ export async function AddRemSetupCreate(
 
   // Input grid data
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
   }
 
   // Save created data
@@ -70,7 +78,7 @@ export async function AddRemSetupEdit(
 
   // Input new grid data
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(
+    await InputGridValuesSameCols(
       page,
       gridPaths[i],
       gridNewValues[i],

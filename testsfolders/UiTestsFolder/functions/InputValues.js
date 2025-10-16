@@ -54,7 +54,7 @@ export async function InputValues(page, path, col, value) {
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function InputGridValues(
+export async function InputGridValuesSameCols(
   page,
   path,
   values,

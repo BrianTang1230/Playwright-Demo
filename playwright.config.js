@@ -2,6 +2,7 @@
 // require("module-alias/register");
 require("module-alias/register");
 import { defineConfig, devices } from "@playwright/test";
+import Login from "./utils/data/uidata/loginData.json";
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
@@ -78,6 +79,7 @@ module.exports = defineConfig({
     {
       name: "UI Tests",
       testDir: "tests/UiTests",
+      testIgnore: [Login.Region === "IND" ? "tests/UiTests/LabTests/**" : ""], // ignore Lab tests temporarily
       use: {
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,

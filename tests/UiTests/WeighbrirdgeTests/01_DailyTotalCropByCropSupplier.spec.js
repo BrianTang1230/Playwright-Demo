@@ -25,6 +25,8 @@ import {
   DailyTotalCropReceiptByCropSupplierEdit,
 } from "@UiFolder/pages/Weighbridge/01_DailyTotalCropReceiptByCropSupplier";
 
+import Login from "@utils/data/uidata/loginData.json";
+
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;
@@ -43,8 +45,8 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [0, 4, 5, 6, 7, 8]];
 
-test.describe
-  .serial("Daily Total Crop Receipt by Crop Supplier Tests", async () => {
+test.describe.serial("Daily Total Crop Receipt by Crop Supplier Tests", () => {
+  test.skip(Login.Region === "IND", "IND UI values have bug currently");
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

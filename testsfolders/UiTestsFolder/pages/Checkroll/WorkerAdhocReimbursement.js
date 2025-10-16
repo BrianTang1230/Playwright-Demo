@@ -1,6 +1,9 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
-import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
+import {
+  InputGridValuesSameCols,
+  InputValues,
+} from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerAdhocReimbursementCreate(
@@ -31,7 +34,12 @@ export async function WorkerAdhocReimbursementCreate(
   await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
   }
 
   await sideMenu.clickBtnSave();
@@ -67,7 +75,12 @@ export async function WorkerAdhocReimbursementEdit(
   await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
   }
 
   await sideMenu.clickBtnSave();

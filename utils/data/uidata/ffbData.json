@@ -5,6 +5,6 @@
     "MonthlyMPOBPriceColumn": "Year date,Region dropdown,Remarks text"
   },
   "GridPath": {
-    "MonthlyMPOBPriceGrid": "#DailyTotCropRcvBySuppDetGrid > div.k-grid-content-locked,#DailyTotCropRcvBySuppDetGrid > div.k-grid-content.k-auto-scrollable"
+    "MonthlyMPOBPriceGrid": "#PriceDetGrid > table.k-selectable"
   }
 }

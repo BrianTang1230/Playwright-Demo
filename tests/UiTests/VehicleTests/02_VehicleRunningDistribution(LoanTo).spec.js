@@ -24,7 +24,7 @@ import {
   VehicleRunningDistributionLoanToCreate,
   VehicleRunningDistributionLoanToEdit,
   VehicleRunningDistributionLoanToDelete,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistributionLoanTo";
+} from "@UiFolder/pages/Vehicle/02_VehicleRunningDistributionLoanTo";
 
 // ---------------- Set Global Variables ----------------
 let ou;

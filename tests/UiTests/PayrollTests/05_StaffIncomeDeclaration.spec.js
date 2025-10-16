@@ -22,7 +22,7 @@ import {
   StaffIncomeDeclarationCreate,
   StaffIncomeDeclarationEdit,
   StaffIncomeDeclarationDelete,
-} from "@UiFolder/pages/Payroll/StaffIncomeDeclaration";
+} from "@UiFolder/pages/Payroll/05_StaffIncomeDeclaration";
 import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------

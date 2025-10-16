@@ -19,7 +19,7 @@ import {
   NurseryTransferRequisitionCreate,
   NurseryTransferRequisitionEdit,
   NurseryTransferRequisitionDelete,
-} from "@UiFolder/pages/Nursery/NurseryTransferRequisition";
+} from "@UiFolder/pages/Nursery/15_NurseryTransferRequisition";
 
 // ---------------- Set Global Variables ----------------
 let ou;

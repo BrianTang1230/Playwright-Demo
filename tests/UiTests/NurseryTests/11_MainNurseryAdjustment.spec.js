@@ -19,7 +19,7 @@ import {
   MainNurseryAdjustmentCreate,
   MainNurseryAdjustmentEdit,
   MainNurseryAdjustmentDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryAdjustment";
+} from "@UiFolder/pages/Nursery/11_MainNurseryAdjustment";
 
 import Login from "@utils/data/uidata/loginData.json";
 

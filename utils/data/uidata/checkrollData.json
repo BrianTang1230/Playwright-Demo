@@ -1,12 +1,21 @@
 {
   "JsonPath": "utils/data/uidata/checkrollData.json",
   "InputPath": {
-    
+    "WorkerAdhocAllowancePath": "#AdHocAllowanceMonth,#txtRemarks",
+    "WorkerAdhocAllowanceColumn": "AllowMonth date,Remarks text",
+    "WorkerAdhocDeductionPath": "#AdHocDeductionMonth,#txtRemarks",
+    "WorkerAdhocDeductionColumn": "DeductMonth date,Remarks text",
+    "WorkerAdhocReimbursementPath": "#AdHocReimburseMonth,#txtRemarks",
+    "WorkerAdhocReimbursementColumn": "ReimburseMonth date,Remarks text"
   },
   "GridPath": {
-    
+    "WorkerAdhocAllowanceGrid": "//*[@id=\"ahallowdetailGrid\"]/div[3]/table",
+    "WorkerAdhocDeductionGrid": "//*[@id=\"ahdeductdetailGrid\"]/div[3]/table",
+    "WorkerAdhocReimbursementGrid": "//*[@id=\"ahreimbursementdetailGrid\"]/div[3]/table"
   },
   "DocNo": {
-   
+    "WorkerAdhocAllowance": "AHA0001128",
+    "WorkerAdhocDeduction": "AHD0000093",
+    "WorkerAdhocReimbursement": "AHR0000020"
   }
 }

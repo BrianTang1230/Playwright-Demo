@@ -24,7 +24,7 @@ import {
   StaffCP38Create,
   StaffCP38Edit,
   StaffCP38Delete,
-} from "@UiFolder/pages/Payroll/StaffCP38";
+} from "@UiFolder/pages/Payroll/04_StaffCP38";
 
 import Login from "@utils/data/uidata/loginData.json";
 

@@ -19,7 +19,7 @@ import {
   MainNurseryCullingCreate,
   MainNurseryCullingEdit,
   MainNurseryCullingDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryCulling";
+} from "@UiFolder/pages/Nursery/10_MainNurseryCulling";
 
 // ---------------- Set Global Variables ----------------
 let ou;

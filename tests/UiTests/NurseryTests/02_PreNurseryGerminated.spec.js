@@ -19,7 +19,7 @@ import {
   PreNurseryGerminatedCreate,
   PreNurseryGerminatedEdit,
   PreNurseryGerminatedDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryGerminated";
+} from "@UiFolder/pages/Nursery/02_PreNurseryGerminated";
 
 // ---------------- Global Variables ----------------
 let ou;

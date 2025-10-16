@@ -10,41 +10,41 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  weighbridgeGridSQLCommand,
-  weighbridgeSQLCommand,
-} from "@UiFolder/queries/WeighbridgeQuery";
+  checkrollSQLCommand,
+  checkrollGridSQLCommand,
+} from "@UiFolder/queries/CheckrollQuery";
 import {
   JsonPath,
   InputPath,
   GridPath,
-} from "@utils/data/uidata/weighbridgeData.json";
-
+  DocNo,
+} from "@utils/data/uidata/checkrollData.json";
 import {
-  DailyTotalCropReceiptByCropSupplierCreate,
-  DailyTotalCropReceiptByCropSupplierDelete,
-  DailyTotalCropReceiptByCropSupplierEdit,
-} from "@UiFolder/pages/Weighbridge/DailyTotalCropReceiptByCropSupplier";
+  WorkerAdhocDeductionCreate,
+  WorkerAdhocDeductionEdit,
+  WorkerAdhocDeductionDelete,
+} from "@UiFolder/pages/Checkroll/WorkerAdhocDeduction";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "WEIGH_DATA";
-const module = "Weighbridge";
-const submodule = null;
-const formName = "Daily Total Crop Receipt by Crop Supplier";
+const sheetName = "CR_DATA";
+const module = "Checkroll";
+const submodule = "Allowance & Deduction";
+const formName = "Worker Ad hoc Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [0, 4, 5, 6, 7, 8]];
+const cellsIndex = [[1, 3, 4, 5, 6, 7, 9]];
 
-test.describe
-  .serial("Daily Total Crop Receipt by Crop Supplier Tests", async () => {
+test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -59,6 +59,8 @@ test.describe
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`Start Running: ${formName}`);
   });
 
@@ -71,34 +73,36 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Daily Total Crop Receipt by Crop Supplier", async ({
-    page,
-    db,
-  }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+  test("Create New Worker Ad hoc Deduction", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } =
-      await DailyTotalCropReceiptByCropSupplierCreate(
-        page,
-        sideMenu,
-        paths,
-        columns,
-        createValues,
-        gridPaths,
-        gridCreateValues,
-        cellsIndex,
-        ou
-      );
+    const { uiVals, gridVals } = await WorkerAdhocDeductionCreate(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      gridPaths,
+      gridCreateValues,
+      cellsIndex,
+      ou
+    );
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
-      Date: createValues[0],
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtAdHocNum").inputValue()
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      weighbridgeGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
@@ -120,11 +124,8 @@ test.describe
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Total Crop Receipt by Crop Supplier", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await DailyTotalCropReceiptByCropSupplierEdit(
+  test("Edit Worker Ad hoc Deduction", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdhocDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -134,18 +135,19 @@ test.describe
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
-      Date: createValues[0],
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      weighbridgeGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
@@ -167,30 +169,22 @@ test.describe
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Total Crop Receipt by Crop Supplier", async ({
-    page,
-    db,
-  }) => {
-    await DailyTotalCropReceiptByCropSupplierDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou
-    );
+  test("Delete Worker Ad hoc Deduction", async ({ page, db }) => {
+    await WorkerAdhocDeductionDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
-      Date: createValues[0],
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
     });
 
     if (dbValues.length > 0)
-      throw new Error(
-        "Deleting Daily Total Crop Receipt by Crop Supplier failed"
-      );
+      throw new Error("Deleting Worker Ad hoc Deduction failed");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

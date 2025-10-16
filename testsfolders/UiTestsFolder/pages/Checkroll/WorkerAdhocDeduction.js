@@ -3,7 +3,7 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function NurserySalesRequisitionCreate(
+export async function WorkerAdhocDeductionCreate(
   page,
   sideMenu,
   paths,
@@ -19,7 +19,7 @@ export async function NurserySalesRequisitionCreate(
   await SelectOU(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
-    "#ddlOU_listbox span",
+    "#comboBoxOU_listbox span",
     ou[0]
   );
 
@@ -41,7 +41,7 @@ export async function NurserySalesRequisitionCreate(
   return { uiVals, gridVals };
 }
 
-export async function NurserySalesRequisitionEdit(
+export async function WorkerAdhocDeductionEdit(
   page,
   sideMenu,
   paths,
@@ -54,13 +54,13 @@ export async function NurserySalesRequisitionEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 3);
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await page.locator("#IsDateSelectGrid").check();
+  await page.locator("#IsAdHocDeductEmpySelectGrid").check();
   await page.locator("#btnDeleteItem").click();
   await sideMenu.confirmDelete.click();
   await sideMenu.btnAddNewItem.click();
@@ -77,14 +77,14 @@ export async function NurserySalesRequisitionEdit(
   return { uiVals, gridVals };
 }
 
-export async function NurserySalesRequisitionDelete(
+export async function WorkerAdhocDeductionDelete(
   page,
   sideMenu,
   values,
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 3);
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   await sideMenu.clickBtnDelete();
 }

@@ -24,8 +24,7 @@ import {
   StaffAdvancePaymentCreate,
   StaffAdvancePaymentEdit,
   StaffAdvancePaymentDelete,
-} from "@UiFolder/pages/Payroll/StaffAdvancePayment";
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/Payroll/07_StaffAdvancePayment";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -49,8 +48,6 @@ const cellsIndex = [[1, 3]];
 test.describe.serial("Staff Advance Payment Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,

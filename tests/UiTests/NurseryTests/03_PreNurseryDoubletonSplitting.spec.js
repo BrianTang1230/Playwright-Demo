@@ -19,7 +19,7 @@ import {
   PreNurseryDoubletonSplittingCreate,
   PreNurseryDoubletonSplittingEdit,
   PreNurseryDoubletonSplittingDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryDoubletonSplitting";
+} from "@UiFolder/pages/Nursery/03_PreNurseryDoubletonSplitting";
 
 // ---------------- Global Variables ----------------
 let ou;

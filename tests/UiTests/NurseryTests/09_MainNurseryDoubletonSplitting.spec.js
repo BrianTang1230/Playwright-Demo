@@ -19,7 +19,7 @@ import {
   MainNurseryDoubletonSplittingCreate,
   MainNurseryDoubletonSplittingEdit,
   MainNurseryDoubletonSplittingDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryDoubletonSplitting";
+} from "@UiFolder/pages/Nursery/09_MainNurseryDoubletonSplitting";
 
 // ---------------- Set Global Variables ----------------
 let ou;

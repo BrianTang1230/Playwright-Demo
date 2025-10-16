@@ -22,7 +22,7 @@ import {
   StaffPreviousEmploymentTaxDeductionCreate,
   StaffPreviousEmploymentTaxDeductionDelete,
   StaffPreviousEmploymentTaxDeductionEdit,
-} from "@UiFolder/pages/Payroll/StaffPreviousEmploymentTaxDeduction";
+} from "@UiFolder/pages/Payroll/03_StaffPreviousEmploymentTaxDeduction";
 
 import Login from "@utils/data/uidata/loginData.json";
 

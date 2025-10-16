@@ -3,7 +3,7 @@ import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function StaffCP38Create(
+export async function WorkerAdhocAllowanceCreate(
   page,
   sideMenu,
   paths,
@@ -25,11 +25,6 @@ export async function StaffCP38Create(
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
-
-    if (i === 0) {
-      // If Month is the first field
-      await page.waitForTimeout(1000);
-    }
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -46,7 +41,7 @@ export async function StaffCP38Create(
   return { uiVals, gridVals };
 }
 
-export async function StaffCP38Edit(
+export async function WorkerAdhocAllowanceEdit(
   page,
   sideMenu,
   paths,
@@ -59,11 +54,16 @@ export async function StaffCP38Edit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
+
+  await page.locator("#IsAdHocAllowEmpySelectGrid").check();
+  await page.locator("#btnDeleteItem").click();
+  await sideMenu.confirmDelete.click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
@@ -77,8 +77,14 @@ export async function StaffCP38Edit(
   return { uiVals, gridVals };
 }
 
-export async function StaffCP38Delete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+export async function WorkerAdhocAllowanceDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOU(page, values, ou[0], docNo, 4);
 
   await sideMenu.clickBtnDelete();
 }

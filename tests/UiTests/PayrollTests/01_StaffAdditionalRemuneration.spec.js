@@ -23,9 +23,7 @@ import {
   StaffAdditionalRemunerationCreate,
   StaffAdditionalRemunerationDelete,
   StaffAdditionalRemunerationEdit,
-} from "@UiFolder/pages/Payroll/StaffAdditionalRemuneration";
-
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/Payroll/01_StaffAdditionalRemuneration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -49,8 +47,6 @@ const cellsIndex = [[1], [1, 2]];
 test.describe.serial("Staff Additional Remuneration Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,

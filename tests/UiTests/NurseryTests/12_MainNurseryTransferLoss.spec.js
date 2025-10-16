@@ -18,7 +18,7 @@ import {
   MainNurseryTransferLossCreate,
   MainNurseryTransferLossDelete,
   MainNurseryTransferLossEdit,
-} from "@UiFolder/pages/Nursery/MainNurseryTransferLoss";
+} from "@UiFolder/pages/Nursery/12_MainNurseryTransferLoss";
 
 // ---------------- Set Global Variables ----------------
 let ou;

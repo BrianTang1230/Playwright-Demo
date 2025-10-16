@@ -22,8 +22,7 @@ import {
   StaffLoanDepositMaintenanceCreate,
   StaffLoanDepositMaintenanceEdit,
   StaffLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Payroll/StaffLoanDepositMaintenance";
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/Payroll/06_StaffLoanDepositMaintenance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -46,8 +45,6 @@ const cellsIndex = [[1], [1, 4, 6]];
 test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,

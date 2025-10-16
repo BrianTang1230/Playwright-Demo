@@ -19,7 +19,7 @@ import {
   PreNurseryAdjustmentCreate,
   PreNurseryAdjustmentEdit,
   PreNurseryAdjustmentDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryAdjustment";
+} from "@UiFolder/pages/Nursery/05_PreNurseryAdjustment";
 
 import Login from "@utils/data/uidata/loginData.json";
 

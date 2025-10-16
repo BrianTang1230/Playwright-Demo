@@ -21,7 +21,7 @@ import {
   PressCakeNutCompositionCreate,
   PressCakeNutCompositionDelete,
   PressCakeNutCompositionEdit,
-} from "@UiFolder/pages/Lab/PressCakeNutComposition";
+} from "@UiFolder/pages/Lab/17_PressCakeNutComposition";
 
 // ---------------- Set Global Variables ----------------
 let ou;

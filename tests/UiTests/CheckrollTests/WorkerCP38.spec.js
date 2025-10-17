@@ -2,6 +2,7 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -13,17 +14,21 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  WorkerAdhocReimbursementCreate,
-  WorkerAdhocReimbursementEdit,
-  WorkerAdhocReimbursementDelete,
-} from "@UiFolder/pages/Checkroll/WorkerAdhocReimbursement";
+  WorkerCP38Create,
+  WorkerCP38Edit,
+  WorkerCP38Delete,
+} from "@UiFolder/pages/Checkroll/WorkerCP38";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,17 +41,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Allowance & Deduction";
-const formName = "Worker Ad hoc Reimbursement";
+const submodule = "Income Tax";
+const formName = "Worker CP38";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 3, 4, 5, 6, 7, 9]];
+const cellsIndex = [[1, 2]];
 
-test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
+test.describe.serial("Worker CP38 Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (Login.Region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -73,13 +80,10 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Ad hoc Reimbursement", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
-    });
+  test("Create New Worker CP38", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdhocReimbursementCreate(
+    const { uiVals, gridVals } = await WorkerCP38Create(
       page,
       sideMenu,
       paths,
@@ -94,7 +98,7 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtAdHocNum").inputValue()
+      await page.locator("#txtATDNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -127,8 +131,8 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Ad hoc Reimbursement", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerAdhocReimbursementEdit(
+  test("Edit Worker CP38", async ({ page, db }) => {
+    await WorkerCP38Edit(
       page,
       sideMenu,
       paths,
@@ -142,6 +146,9 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
       docNo
     );
 
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
@@ -154,7 +161,6 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -172,28 +178,19 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Ad hoc Reimbursement", async ({ page, db }) => {
-    await WorkerAdhocReimbursementDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Worker CP38", async ({ page, db }) => {
+    await WorkerCP38Delete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0)
-      throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

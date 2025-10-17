@@ -106,6 +106,21 @@ function payrollSQLCommand(formName) {
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
         WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU;`;
       break;
+
+    case "Staff Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT FORMAT(A.PrecedingDate, 'MMMM yyyy', 'id-ID') AS PrecedingMonth,
+        A.Remarks AS Remarks,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM PR_PreTaxSubHdr_IND A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE A.PreTaxSubNum = @DocNo 
+        AND A.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+        )
+        AND A.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND');`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -287,6 +302,26 @@ function payrollGridSQLCommand(formName) {
             SELECT OUKey FROM GMS_OUStp
             WHERE OUCode + ' - ' + OUDesc = @OU
           )
+        )`;
+      break;
+
+    case "Staff Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.GrossIncome AS GrossIncome,
+        B.BPJSJHT AS BPJSJHTAmt,
+        B.BPJSPen AS BPJSPenAmt,
+        B.PreDeductedTax AS PPh21
+        FROM PR_PreTaxSubDet_IND B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        WHERE PreTaxSubHdrKey IN (
+          SELECT PreTaxSubHdrKey FROM PR_PreTaxSubHdr_IND
+          WHERE PreTaxSubNum = @DocNo 
+          AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+          AND Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
         )`;
       break;
     default:

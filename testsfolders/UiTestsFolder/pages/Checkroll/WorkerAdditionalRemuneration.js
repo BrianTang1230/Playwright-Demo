@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function VehicleRunningDistributionLoanToCreate(
+export async function WorkerAdditionalRemunerationCreate(
   page,
   sideMenu,
   paths,
@@ -19,29 +19,21 @@ export async function VehicleRunningDistributionLoanToCreate(
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
-  await page.waitForTimeout(2000);
-
   await SelectOU(
     page,
-    "#comboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li span",
+    "#divComboOU .k-dropdown .k-select",
+    "ul[aria-hidden='false'] li span",
     ou[0]
   );
 
-  await SelectOU(
-    page,
-    "#comboToOU .k-dropdown-wrap .k-select",
-    "#comboBoxToOU_listbox li span",
-    ou[1]
-  );
-
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnAddNewItem.click();
-
   for (let i = 0; i < gridPaths.length; i++) {
+    i === 0
+      ? await page.locator("#btnNewEmpRem").click()
+      : await page.locator("#btnAddNewItemRem").click();
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -58,7 +50,7 @@ export async function VehicleRunningDistributionLoanToCreate(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToEdit(
+export async function WorkerAdditionalRemunerationEdit(
   page,
   sideMenu,
   paths,
@@ -73,11 +65,15 @@ export async function VehicleRunningDistributionLoanToEdit(
 ) {
   await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
+    if (i === 1) {
+      await sideMenu.confirmDelete.click();
+      await page.locator("#btnAddNewItemRem").click();
+    }
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -94,7 +90,7 @@ export async function VehicleRunningDistributionLoanToEdit(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToDelete(
+export async function WorkerAdditionalRemunerationDelete(
   page,
   sideMenu,
   values,

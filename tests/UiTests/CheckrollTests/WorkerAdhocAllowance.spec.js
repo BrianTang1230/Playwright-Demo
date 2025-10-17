@@ -13,6 +13,7 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
   JsonPath,
   InputPath,
@@ -178,7 +179,7 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Worker Ad hoc Allowance failed");
+      throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

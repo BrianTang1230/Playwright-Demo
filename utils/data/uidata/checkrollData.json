@@ -6,16 +6,41 @@
     "WorkerAdhocDeductionPath": "#AdHocDeductionMonth,#txtRemarks",
     "WorkerAdhocDeductionColumn": "DeductMonth date,Remarks text",
     "WorkerAdhocReimbursementPath": "#AdHocReimburseMonth,#txtRemarks",
-    "WorkerAdhocReimbursementColumn": "ReimburseMonth date,Remarks text"
+    "WorkerAdhocReimbursementColumn": "ReimburseMonth date,Remarks text",
+    "WorkerAdditionalRemunerationPath": "#AddRemMonth,cboGang_input,#txtRemarks",
+    "WorkerAdditionalRemunerationColumn": "AddRemMonth date,Gang dropdown,Remarks text",
+    "WorkerMonthlyTaxDeductionPath": "#MTDMonth,cboGang_input,#txtRemarks",
+    "WorkerMonthlyTaxDeductionColumn": "PCBMonth date,Gang dropdown,Remarks text",
+    "WorkerPreviousEmploymentTaxDeductionPath": "#PrevTaxDedMonth,cboGang_input,#txtRemarks",
+    "WorkerPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Gang dropdown,Remarks text",
+    "WorkerCP38Path": "#addTaxMonthPicker,#txtRemarks",
+    "WorkerCP38Column": "AddTaxMonth date,Remarks text",
+    "WorkerIncomeDeclarationEAFormPath": "#DisplayYr,#txtRemarks",
+    "WorkerIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
+    "WorkerLoanDepositMaintenancePath": "#omMonthPicker,cboRecType_input,#Remarks",
+    "WorkerLoanDepositMaintenanceColumn": "OMMonth date,RecType dropdown,Remarks text",
+    "WorkerAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
+    "WorkerAdvancePaymentColumn": "ADVMonth date,Remarks text"
   },
   "GridPath": {
     "WorkerAdhocAllowanceGrid": "//*[@id=\"ahallowdetailGrid\"]/div[3]/table",
     "WorkerAdhocDeductionGrid": "//*[@id=\"ahdeductdetailGrid\"]/div[3]/table",
-    "WorkerAdhocReimbursementGrid": "//*[@id=\"ahreimbursementdetailGrid\"]/div[3]/table"
+    "WorkerAdhocReimbursementGrid": "//*[@id=\"ahreimbursementdetailGrid\"]/div[3]/table",
+    "WorkerAdditionalRemunerationGrid": "//*[@id=\"ardetailGrid\"]/div[3]/table,//*[@id=\"remdetailGrid\"]/div[3]/table",
+    "WorkerMonthlyTaxDeductionGrid": "//*[@id=\"pcbDetGrid\"]/div[3]/table,//*[@id=\"bikDetGrid\"]/div[3]/table,//*[@id=\"deductDetGrid\"]/div[3]/table",
+    "WorkerPreviousEmploymentTaxDeductionGrid": "//*[@id=\"preEmpDetGrid\"]/div[3]/table,//*[@id=\"preEmpBIKDetGrid\"]/div[3]/table,//*[@id=\"preEmpDctDetGrid\"]/div[3]/table",
+    "WorkerCP38Grid": "//*[@id=\"addTaxDetailGrid\"]/div[3]/table",
+    "WorkerIncomeDeclarationEAFormGrid": "//*[@id=\"empydetailGrid\"]/div[3]/table,//*[@id=\"incdetailGrid\"]/div[3]/table",
+    "WorkerLoanDepositMaintenanceGrid": "//*[@id='omdetailGrid']/div[3]/table,//*[@id='deductdetailGrid']/div[3]/table",
+    "WorkerAdvancePaymentGrid": "//*[@id='prAdvPayDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "WorkerAdhocAllowance": "AHA0001128",
-    "WorkerAdhocDeduction": "AHD0000093",
-    "WorkerAdhocReimbursement": "AHR0000020"
+    "WorkerAdhocAllowance": "AHA0000031",
+    "WorkerAdhocDeduction": "AHD0000029",
+    "WorkerAdhocReimbursement": "AHR0000001",
+    "WorkerAdditionalRemuneration": "ADR0000038",
+    "WorkerAdvancePayment": "SAP0000004",
+    "WorkerPrecedingTax": "PT00000010",
+    "WorkerCP38": "ADT0000029"
   }
 }

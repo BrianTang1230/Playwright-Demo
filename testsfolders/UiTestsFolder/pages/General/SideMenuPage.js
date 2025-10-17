@@ -50,7 +50,7 @@ export default class SideMenuPage {
   }
 
   get btnAddNewItem() {
-    return this.page.locator("#btnNewItem").first();
+    return this.page.locator('#btnNewItem, #btnCreateNew').first();
   }
 
   get btnEditItem() {

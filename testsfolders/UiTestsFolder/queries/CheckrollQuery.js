@@ -4,7 +4,11 @@ function checkrollSQLCommand(formName) {
   switch (formName) {
     case "Worker Ad hoc Allowance":
       sqlCommand = `
-        SELECT FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy') AS AllowMonth,
+        SELECT
+        IIF(@region = 'IND',
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID'),
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'en-US')
+        ) AS AllowMonth,
         A.Remarks AS Remarks,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_PCHdr A
@@ -17,7 +21,11 @@ function checkrollSQLCommand(formName) {
 
     case "Worker Ad hoc Deduction":
       sqlCommand = `
-        SELECT FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy') AS DeductMonth,
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID'),
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'en-US')
+        ) AS DeductMonth,
         A.Remarks AS Remarks,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_PCHdr A
@@ -30,7 +38,11 @@ function checkrollSQLCommand(formName) {
 
     case "Worker Ad hoc Reimbursement":
       sqlCommand = `
-        SELECT FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy') AS ReimburseMonth,
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID'),
+          FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'en-US')
+        ) AS ReimburseMonth,
         A.Remarks AS Remarks,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_PCHdr A
@@ -40,6 +52,81 @@ function checkrollSQLCommand(formName) {
             WHERE OUCode + ' - ' + OUDesc = @OU
         )`;
       break;
+
+    case "Worker Additional Remuneration":
+      sqlCommand = `
+        SELECT    
+        IIF(@region = 'IND',
+          FORMAT(A.AddRemDate, 'MMMM yyyy','id-ID'),
+          FORMAT(A.AddRemDate, 'MMMM yyyy', 'en-US')
+        ) AS AddRemMonth,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_AddRemHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.ADRNum = @DocNo AND A.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+        )`;
+      break;
+
+    case "Worker Monthly Tax Deduction":
+      sqlCommand = `
+        SELECT FORMAT(A.PCBDate, 'MMMM yyyy') AS PCBMonth,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_PCBHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE FORMAT(A.PCBDate, 'MMMM yyyy') = @Date
+        AND GangCode + ' - ' + GangDesc = @Gang 
+        AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')`;
+      break;
+
+    case "Worker Previous Employment Tax Deduction":
+      sqlCommand = `
+        SELECT FORMAT(A.PreEmpDate, 'MMMM yyyy') AS PreEmpMonth, 
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_PreEmpHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE FORMAT(A.PreEmpDate, 'MMMM yyyy') = @Date
+        AND B.GangCode + ' - ' + B.GangDesc = @Gang
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+        AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')`;
+      break;
+
+    case "Worker CP38":
+      sqlCommand = `
+        SELECT FORMAT(A.AddTaxDate , 'MMMM yyyy') AS AddTaxMonth,
+        A.Remarks AS Remarks,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM CR_AddTaxHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE A.ATDNum = @DocNo AND A.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp 
+          WHERE OUCode + ' - ' + OUDesc = @OU
+        )`;
+      break;
+
+    case "Worker Income Declaration (EA Form)":
+      sqlCommand = `
+        SELECT A.Yr AS YearDeclared, 
+        A.Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_PCBArrearsHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.Yr = @Date
+            AND C.OUCode + ' - ' + C.OUDesc = @OU
+            AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')`;
+      break;
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;
@@ -117,6 +204,142 @@ function checkrollGridSQLCommand(formName) {
           )
         )`;
       break;
+
+    case "Worker Additional Remuneration":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        E.AddRemCode + ' - ' + E.AddRemDesc AS AddRem,
+        D.AddRemAmt AS Amount
+        FROM CR_AddRemDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN CR_AddRemDedDet D ON B.AddRemDetKey = D.AddRemDetKey
+        LEFT JOIN GMS_AddRemStp E ON D.AddRemKey = E.AddRemKey
+        WHERE AddRemHdrKey IN (
+          SELECT AddRemHdrKey FROM CR_AddRemHdr
+          WHERE ADRNum = @DocNo AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+        )`;
+      break;
+
+    case "Worker Monthly Tax Deduction":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.ZakatAmt AS Zakat,
+        B.LevyAmt AS Levy,
+        B.VOLA AS VOLAAmt,
+        MAX(CASE WHEN D.Type = 'B' THEN E.TaxDedCode + ' - ' + E.TaxDedDesc END) AS BIK,
+        SUM(CASE WHEN D.Type = 'B' THEN D.DedAmt ELSE 0 END) AS BIKnumeric,
+        MAX(CASE WHEN D.Type = 'A' THEN E.TaxDedCode + ' - ' + E.TaxDedDesc END) AS AD,
+        SUM(CASE WHEN D.Type = 'A' THEN D.DedAmt ELSE 0 END) AS ADnumeric
+        FROM CR_PCBDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN CR_PCBDedDet D ON B.PCBDetKey = D.PCBDetKey
+        LEFT JOIN SYT_TaxDed E ON D.TaxDedKey = E.TaxDedKey
+        WHERE B.PCBHdrKey IN (
+          SELECT PCBHdrKey FROM CR_PCBHdr F
+          LEFT JOIN GMS_GangStp G ON F.GangKey = G.GangKey
+          LEFT JOIN GMS_OUStp H ON F.OUKey = H.OUKey
+          WHERE
+          IIF(@region = 'IND',
+            FORMAT(F.PCBDate, 'MMMM yyyy', 'id-ID'),
+            FORMAT(F.PCBDate, 'MMMM yyyy', 'en-US')
+          ) = @Date
+          AND G.GangCode + ' - ' + G.GangDesc = @Gang 
+          AND H.OUCode + ' - ' + H.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+        )
+        GROUP BY 
+        C.EmpyID, EmpyName, 
+        B.ZakatAmt, B.LevyAmt, B.VOLA
+      `;
+      break;
+
+    case "Worker Previous Employment Tax Deduction":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
+        CASE WHEN A.IsNewJoiner = 1 THEN 'True' ELSE 'False' END AS IsNewJoiner,
+        A.NormalRem AS NorRemnumeric,
+        A.EPF AS EPFnumeric,
+        SUM(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) = 'SOCSO - SOCSO and EIS payment' THEN C.DedAmt ELSE 0 END) AS SOSOCnumeric,
+        A.AddRem AS AddRemnumeric,
+        CASE WHEN A.IsInclAddRemInPCBCalc = 1 THEN 'True' ELSE 'False' END AS InclAddRem,
+        A.AddEPF AS AddEPFnumeric,
+        A.VOLA AS VOLAnumeric,
+        A.NormalAlw AS NorAllwnumeric,
+        A.Allowance AS Allwnumeric,
+        A.ChildAllw AS ChildAllwnumeric,
+        A.FreeGoods AS FreeGoodsnumeric,
+        A.Perquisite AS Perquisitenumeric,
+        A.Others AS Othersnumeric,
+        A.TotDeduct AS PCBDednumeric,
+        A.TotZakat AS Zakatnumric,
+        A.TotLevy AS Levynumric,
+        A.CP38 AS CP38numric,
+        MAX(CASE WHEN C.Type = 'B' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS BIK,
+        SUM(CASE WHEN C.Type = 'B' THEN C.DedAmt ELSE 0 END) AS BIKnumeric,
+        MAX(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS AD,
+        SUM(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN C.DedAmt ELSE 0 END) AS ADnumeric
+        FROM CR_PreEmpDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN CR_PreEmpDedDet C ON A.PreEmpDetKey = C.PreEmpDetKey
+        LEFT JOIN SYT_TaxDed D ON C.TaxDedKey = D.TaxDedKey
+        WHERE A.PreEmpHdrKey IN (
+            SELECT PreEmpHdrKey 
+            FROM CR_PreEmpHdr H
+            LEFT JOIN GMS_GangStp E ON H.GangKey = E.GangKey
+            LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
+            WHERE FORMAT(H.PreEmpDate, 'MMMM yyyy') = @Date
+            AND E.GangCode + ' - ' + E.GangDesc = @Gang
+            AND F.OUCode + ' - ' + F.OUDesc = @OU
+            AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+        )
+        GROUP BY 
+        B.EmpyID, EmpyName,
+        A.IsNewJoiner,NormalRem,EPF,AddRem,IsInclAddRemInPCBCalc,AddEPF,VOLA,NormalAlw,Allowance,ChildAllw,FreeGoods,Perquisite,Others,TotDeduct,TotZakat,TotLevy,CP38
+      `;
+      break;
+
+    case "Worker CP38":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.AddTaxAmt AS Amount
+        FROM CR_AddTaxDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        WHERE AddTaxHdrKey IN (
+        SELECT AddTaxHdrKey FROM CR_AddTaxHdr
+        WHERE ATDNum = @DocNo AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp 
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+        )`;
+      break;
+
+    case "Worker Income Declaration (EA Form)":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
+        C.IncType AS IncomeType,
+        FORMAT(DATEFROMPARTS(C.IncYr, C.IncMth, 1), 'MMMM yyyy') AS MonthOfIncome,
+        C.TransNo AS TransNo,
+        FORMAT(C.TransDate, 'dd/MM/yyyy') AS TransDate,
+        C.IncAmt AS IncomeAmt,
+        C.EPFAmt AS EPFAmt,
+        C.PCBAmt AS TaxAmt
+        FROM CR_PCBArrearsDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN CR_PCBArrearsIncDet C ON A.PCBArrearsDetKey = C.PCBArrearsDetKey
+        WHERE A.PCBArrearsHdrKey IN (
+          SELECT PCBArrearsHdrKey 
+          FROM CR_PCBArrearsHdr H
+          LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
+          WHERE H.Yr = @Date
+          AND F.OUCode + ' - ' + F.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+        )`;
+      break;
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

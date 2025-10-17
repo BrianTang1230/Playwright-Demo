@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function VehicleRunningDistributionLoanToCreate(
+export async function WorkerCP38Create(
   page,
   sideMenu,
   paths,
@@ -19,24 +19,20 @@ export async function VehicleRunningDistributionLoanToCreate(
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
-  await page.waitForTimeout(2000);
-
   await SelectOU(
     page,
-    "#comboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li span",
+    "#divComboOU .k-dropdown-wrap .k-select",
+    "#ddlOU_listbox span",
     ou[0]
-  );
-
-  await SelectOU(
-    page,
-    "#comboToOU .k-dropdown-wrap .k-select",
-    "#comboBoxToOU_listbox li span",
-    ou[1]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
+
+    if (i === 0) {
+      // If Month is the first field
+      await page.waitForTimeout(1000);
+    }
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -58,7 +54,7 @@ export async function VehicleRunningDistributionLoanToCreate(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToEdit(
+export async function WorkerCP38Edit(
   page,
   sideMenu,
   paths,
@@ -94,13 +90,7 @@ export async function VehicleRunningDistributionLoanToEdit(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToDelete(
-  page,
-  sideMenu,
-  values,
-  ou,
-  docNo
-) {
+export async function WorkerCP38Delete(page, sideMenu, values, ou, docNo) {
   await FilterRecordByOU(page, values, ou[0], docNo, 2);
 
   await sideMenu.clickBtnDelete();

@@ -1,6 +1,9 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
-import { InputGridValues, InputValues } from "@UiFolder/functions/InputValues";
+import {
+  InputGridValuesSameCols,
+  InputValues,
+} from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionCreate(
@@ -30,7 +33,12 @@ export async function VehicleRunningDistributionCreate(
   await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
   }
 
   await sideMenu.clickBtnSave();
@@ -61,7 +69,12 @@ export async function VehicleRunningDistributionEdit(
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
   }
 
   await sideMenu.clickBtnSave();

@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
-export async function VehicleRunningDistributionLoanToCreate(
+export async function WorkerIncomeDeclarationCreate(
   page,
   sideMenu,
   paths,
@@ -19,29 +19,21 @@ export async function VehicleRunningDistributionLoanToCreate(
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
-  await page.waitForTimeout(2000);
-
   await SelectOU(
     page,
-    "#comboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li span",
+    "#divComboOU .k-dropdown .k-select",
+    "#ddlOU-list li span",
     ou[0]
-  );
-
-  await SelectOU(
-    page,
-    "#comboToOU .k-dropdown-wrap .k-select",
-    "#comboBoxToOU_listbox li span",
-    ou[1]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnAddNewItem.click();
-
   for (let i = 0; i < gridPaths.length; i++) {
+    i === 0
+      ? await sideMenu.btnAddNewItem.click()
+      : await page.locator("#btnAddNewItemInc").click();
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -58,7 +50,7 @@ export async function VehicleRunningDistributionLoanToCreate(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToEdit(
+export async function WorkerIncomeDeclarationEdit(
   page,
   sideMenu,
   paths,
@@ -69,15 +61,23 @@ export async function VehicleRunningDistributionLoanToEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
+  await page.locator("#IsTaxDeductArrEmpySelectGrid").check();
+  await page.locator("#btnDeleteItem").click();
+  await sideMenu.confirmDelete.click();
+  await sideMenu.btnAddNewItem.click();
+
   for (let i = 0; i < gridPaths.length; i++) {
+    if (i === 1) {
+      await page.locator("#btnAddNewItemInc").click();
+    }
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -94,14 +94,14 @@ export async function VehicleRunningDistributionLoanToEdit(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionLoanToDelete(
+export async function WorkerIncomeDeclarationDelete(
   page,
   sideMenu,
   values,
   ou,
-  docNo
+  keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
 
   await sideMenu.clickBtnDelete();
 }

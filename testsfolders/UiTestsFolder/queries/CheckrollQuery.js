@@ -160,6 +160,29 @@ function checkrollSQLCommand(formName) {
             WHERE OUCode + ' - ' + OUDesc = @OU
         )`;
       break;
+
+    case "Worker Loan/Deposit Maintenance":
+      sqlCommand = `
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) AS OMMonth,
+        B.RecTypeCode + ' - ' + B.RecTypeDesc AS RecType,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_OutsMaintHdr A
+        LEFT JOIN GMS_RecTypeStp B ON A.RecTypeKey = B.RecTypeKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE   
+        IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) = @Date
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+        AND B.RecTypeCode + ' - ' + B.RecTypeDesc = @RecType
+        AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -413,6 +436,31 @@ function checkrollGridSQLCommand(formName) {
             SELECT OUKey FROM GMS_OUStp
             WHERE OUCode + ' - ' + OUDesc = @OU
           )
+        )`;
+      break;
+
+    case "Worker Loan/Deposit Maintenance":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        D.PayCode + ' - ' + D.PayDesc AS DeductionCode,
+        C.Amt AS Amount,
+        C.Remarks AS Remarks
+        FROM CR_OutsMaintDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN CR_OutsMaintDeductDet C ON A.OutsMaintDetKey = C.OutsMaintDetKey
+        LEFT JOIN GMS_PayCodeStp D ON C.PayCodeKey = D.PayKey
+        WHERE A.OutsMaintHdrKey IN (
+          SELECT OutsMaintHdrKey 
+          FROM CR_OutsMaintHdr E
+          LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
+          LEFT JOIN GMS_RecTypeStp G ON E.RecTypeKey = G.RecTypeKey
+          WHERE IIF(@region = 'IND',
+            FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+            FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'en-US')
+          ) = @Date 
+          AND F.OUCode + ' - ' + F.OUDesc = @OU
+          AND G.RecTypeCode + ' - ' + G.RecTypeDesc = @RecType
+          AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
         )`;
       break;
     default:

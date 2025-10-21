@@ -17,6 +17,10 @@
     "WorkerCP38Column": "AddTaxMonth date,Remarks text",
     "WorkerIncomeDeclarationEAFormPath": "#DisplayYr,#txtRemarks",
     "WorkerIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
+    "WorkerPrecedingTaxPath": "#monthPicker,#Remarks",
+    "WorkerPrecedingTaxColumn": "PreceedingMonth date,Remarks text",
+    "CreateRainfallEntryPath": "#VehRunDistDate",
+    "CreateRainfallEntryColumn": "RFMonth date",
     "WorkerLoanDepositMaintenancePath": "#omMonthPicker,cboRecType_input,#Remarks",
     "WorkerLoanDepositMaintenanceColumn": "OMMonth date,RecType dropdown,Remarks text",
     "WorkerAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
@@ -31,6 +35,8 @@
     "WorkerPreviousEmploymentTaxDeductionGrid": "//*[@id=\"preEmpDetGrid\"]/div[3]/table,//*[@id=\"preEmpBIKDetGrid\"]/div[3]/table,//*[@id=\"preEmpDctDetGrid\"]/div[3]/table",
     "WorkerCP38Grid": "//*[@id=\"addTaxDetailGrid\"]/div[3]/table",
     "WorkerIncomeDeclarationEAFormGrid": "//*[@id=\"empydetailGrid\"]/div[3]/table,//*[@id=\"incdetailGrid\"]/div[3]/table",
+    "WorkerPrecedingTaxGrid": "//*[@id=\"preTaxSubDetGrid\"]/div[3]/table[1]",
+    "CreateRainfallEntryGrid": "//*[@id=\"raindistdetailGrid\"]/div[3]/table,//*[@id=\"raindistdetailGrid\"]/div[4]/table",
     "WorkerLoanDepositMaintenanceGrid": "//*[@id='omdetailGrid']/div[3]/table,//*[@id='deductdetailGrid']/div[3]/table",
     "WorkerAdvancePaymentGrid": "//*[@id='prAdvPayDetGrid']/div[3]/table"
   },
@@ -39,8 +45,8 @@
     "WorkerAdhocDeduction": "AHD0000029",
     "WorkerAdhocReimbursement": "AHR0000001",
     "WorkerAdditionalRemuneration": "ADR0000038",
-    "WorkerAdvancePayment": "SAP0000004",
-    "WorkerPrecedingTax": "PT00000010",
-    "WorkerCP38": "ADT0000029"
+    "WorkerCP38": "ADT0000029",
+    "WorkerPrecedingTax": "",
+    "WorkerAdvancePayment": "SAP0000004"
   }
 }

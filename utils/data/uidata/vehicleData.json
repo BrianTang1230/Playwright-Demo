@@ -11,7 +11,7 @@
     "Inter-OUVehicleRunningDistribution(LoanTo)Grid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
   },
   "DocNo": {
-    "VehicleRunningDistribution": "VEH0000373",
-    "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000002"
+    "VehicleRunningDistribution": "VEH0002975",
+    "Inter-OUVehicleRunningDistribution(LoanTo)": ""
   }
 }

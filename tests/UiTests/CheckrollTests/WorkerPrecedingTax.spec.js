@@ -2,6 +2,7 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -10,21 +11,24 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  vehicleGridSQLCommand,
-  vehicleSQLCommand,
-} from "@UiFolder/queries/VehicleQuery";
-import {
-  JsonPath,
-  InputPath,
-  GridPath,
-  DocNo,
-} from "@utils/data/uidata/vehicleData.json";
+  checkrollSQLCommand,
+  checkrollGridSQLCommand,
+} from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  VehicleRunningDistributionCreate,
-  VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/01_VehicleRunningDistribution";
+  InputPath,
+  JsonPath,
+  DocNo,
+  GridPath,
+} from "@utils/data/uidata/checkrollData.json";
+
+import {
+  WorkerPrecedingTaxCreate,
+  WorkerPrecedingTaxEdit,
+  WorkerPrecedingTaxDelete,
+} from "@UiFolder/pages/Checkroll/WorkerPrecedingTax";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -35,22 +39,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "VEH_DATA";
-const module = "Vehicle";
-const submodule = null;
-const formName = "Vehicle Running Distribution";
-const keyName = formName.split(" ").join("");
+const sheetName = "CR_DATA";
+const module = "Checkroll";
+const submodule = "Income Tax";
+const formName = "Worker Preceding Tax (PPh 21)";
+const keyName = "WorkerPrecedingTax";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2, 3],
-  [0, 1, 2, 3, 4],
-];
+const cellsIndex = [[1, 2, 3, 4, 5]];
 
-test.describe.skip("Vehicle Running Distribution Tests", async () => {
+test.describe.skip("Worker Preceding Tax (PPh 21) Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // if (Login.Region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -77,10 +80,10 @@ test.describe.skip("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
+  test("Create New Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await VehicleRunningDistributionCreate(
+    const { uiVals, gridVals } = await WorkerPrecedingTaxCreate(
       page,
       sideMenu,
       paths,
@@ -94,17 +97,17 @@ test.describe.skip("Vehicle Running Distribution Tests", async () => {
 
     docNo = await editJson(
       JsonPath,
-      formName,
-      await page.locator("#txtVEHNum").inputValue()
+      keyName,
+      await page.locator("#PreTaxSubNum").inputValue()
     );
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
         OU: ou[0],
@@ -128,8 +131,8 @@ test.describe.skip("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    const { uiVals, gridVals } = await VehicleRunningDistributionEdit(
+  test("Edit Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+    await WorkerPrecedingTaxEdit(
       page,
       sideMenu,
       paths,
@@ -143,19 +146,21 @@ test.describe.skip("Vehicle Running Distribution Tests", async () => {
       docNo
     );
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      vehicleGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -173,28 +178,19 @@ test.describe.skip("Vehicle Running Distribution Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+    await WorkerPrecedingTaxDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

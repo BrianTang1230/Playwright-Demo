@@ -125,6 +125,41 @@ function checkrollSQLCommand(formName) {
             AND C.OUCode + ' - ' + C.OUDesc = @OU
             AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')`;
       break;
+
+    case "Worker Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT FORMAT(A.PreceedingDate, 'MMMM yyyy', 'id-ID') AS PreceedingMonth,
+        A.Remarks AS Remarks,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM CR_PreTaxSubHdr_IND A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE A.PreTaxSubNum = @DocNo 
+        AND A.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+        )
+        AND A.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')`;
+      break;
+
+    case "Create Rainfall Entry":
+      sqlCommand = `
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(A.RainfallDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.RainfallDate, 'MMMM yyyy', 'en-US')
+        ) AS RFMonth,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM CR_RainfallDistHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE  
+        IIF(@region = 'IND',
+            FORMAT(A.RainfallDate, 'MMMM yyyy', 'id-ID'),
+            FORMAT(A.RainfallDate, 'MMMM yyyy', 'en-US')
+        ) = @Date AND A.OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+        )`;
+      break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -336,6 +371,48 @@ function checkrollGridSQLCommand(formName) {
           WHERE H.Yr = @Date
           AND F.OUCode + ' - ' + F.OUDesc = @OU
           AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+        )`;
+      break;
+
+    case "Worker Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.GrossIncome AS GrossIncome,
+        B.BPJSJHT AS BPJSJHTAmt,
+        B.BPJSPen AS BPJSPenAmt,
+        B.PreDeductedTax AS PPh21
+        FROM CR_PreTaxSubDet_IND B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        WHERE PreTaxSubHdrKey IN (
+          SELECT PreTaxSubHdrKey FROM CR_PreTaxSubHdr_IND
+          WHERE PreTaxSubNum = @DocNo 
+          AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+          AND Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
+        )`;
+      break;
+    case "Create Rainfall Entry":
+      sqlCommand = `
+        SELECT C.DivCode + ' - ' + C.DivDesc AS Division,
+        B.Day01 AS D1,
+        B.Day02 AS D2,
+        B.Day03 AS D3,
+        B.Day04 AS D4,
+        B.Day05 AS D5
+        FROM CR_RainfallDistDet B
+        LEFT JOIN GMS_DivStp C ON B.DivKey = C.DivKey
+        WHERE B.CRRainFallHdrKey IN (
+          SELECT CRRainFallHdrKey FROM CR_RainfallDistHdr
+          WHERE IIF(@region = 'IND',
+            FORMAT(RainfallDate, 'MMMM yyyy', 'id-ID'),
+            FORMAT(RainfallDate, 'MMMM yyyy', 'en-US')
+          ) = @Date 
+          AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
         )`;
       break;
     default:

@@ -48,7 +48,7 @@ const cellsIndex = [
   [0, 1, 2, 3, 4],
 ];
 
-test.describe.skip("Vehicle Running Distribution Tests", async () => {
+test.describe.serial("Vehicle Running Distribution Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

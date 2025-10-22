@@ -57,7 +57,7 @@ export default class DBHelper {
 
     // ✅ Only add Region if the query actually references @Region
     if (query.includes("@region") && !params.Region) {
-      params.Region = this.region;
+      params.Region = this.region;  
     }
 
     this.setParams(request, params);

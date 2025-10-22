@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getUiValues } from "@UiFolder/functions/GetValues";
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function PreNurseryDoubletonSplittingCreate(
@@ -47,7 +47,7 @@ export async function PreNurseryDoubletonSplittingEdit(
   docNo
 ) {
   // Select the created record
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
@@ -69,7 +69,7 @@ export async function PreNurseryDoubletonSplittingDelete(
   docNo
 ) {
   // Select the created record
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   // Delete record
   await sideMenu.clickBtnDelete();

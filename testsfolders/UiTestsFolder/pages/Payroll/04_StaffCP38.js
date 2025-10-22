@@ -4,7 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffCP38Create(
   page,
@@ -67,7 +67,7 @@ export async function StaffCP38Edit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -91,7 +91,7 @@ export async function StaffCP38Edit(
 }
 
 export async function StaffCP38Delete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   await sideMenu.clickBtnDelete();
 }

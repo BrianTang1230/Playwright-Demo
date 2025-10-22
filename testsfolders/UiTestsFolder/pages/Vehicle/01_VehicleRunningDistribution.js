@@ -1,10 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
-import {
-  InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { InputGridValuesSameCols, InputValues } from "@UiFolder/functions/InputValues";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionCreate(
   page,
@@ -62,7 +59,7 @@ export async function VehicleRunningDistributionEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -92,7 +89,7 @@ export async function VehicleRunningDistributionDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   await sideMenu.clickBtnDelete();
 }

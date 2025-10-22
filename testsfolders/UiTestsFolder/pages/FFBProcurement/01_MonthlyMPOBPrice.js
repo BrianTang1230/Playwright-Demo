@@ -4,7 +4,10 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterRecordByOU,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function MonthlyMPOBPriceCreate(
   page,
@@ -21,8 +24,8 @@ export async function MonthlyMPOBPriceCreate(
 
   await SelectOU(
     page,
-    "#divComboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox span",
+    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+    "#comboBoxOU_listbox li",
     ou[0]
   );
 
@@ -30,7 +33,7 @@ export async function MonthlyMPOBPriceCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnAddNewItem.click();
+  await page.getByRole("button", { name: " Populate Month" }).click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -62,7 +65,7 @@ export async function MonthlyMPOBPriceEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -92,7 +95,7 @@ export async function MonthlyMPOBPriceDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
 
   await sideMenu.clickBtnDelete();
 }

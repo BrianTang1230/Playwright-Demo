@@ -4,7 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffMonthlyTaxDeductionCreate(
   page,
@@ -80,7 +80,7 @@ export async function StaffMonthlyTaxDeductionEdit(
   cellsIndex,
   ou
 ) {
-  await FilterRecordByOU(page, values, ou[0], values[2], 5);
+  await FilterRecordByOUAndDate(page, values, ou[0], values[2], 5);
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -136,7 +136,7 @@ export async function StaffMonthlyTaxDeductionDelete(
   newValues,
   ou
 ) {
-  await FilterRecordByOU(page, values, ou[0], newValues[2], 5);
+  await FilterRecordByOUAndDate(page, values, ou[0], newValues[2], 5);
 
   await sideMenu.clickBtnDelete();
 }

@@ -11,6 +11,10 @@ export default class SideMenuPage {
     return this.page.locator("#btnNew").first();
   }
 
+  get btnPopulate() {
+    return this.page.locator("#btnNew").first();
+  }
+
   async clickBtnSave(isDblClick = false) {
     const saveBtn = this.page.locator("#btnSave").first();
 

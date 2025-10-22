@@ -4,7 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function PressCakeNutCompositionCreate(
   page,
@@ -63,7 +63,7 @@ export async function PressCakeNutCompositionEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
+  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "OT");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -93,7 +93,7 @@ export async function PressCakeNutCompositionDelete(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
+  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "OT");
 
   await sideMenu.clickBtnDelete();
 }

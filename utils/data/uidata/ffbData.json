@@ -2,9 +2,12 @@
   "JsonPath": "utils/data/uidata/ffbData.json",
   "InputPath": {
     "MonthlyMPOBPricePath": "#yrPicker,Region_input,#Remarks",
-    "MonthlyMPOBPriceColumn": "Year date,Region dropdown,Remarks text"
+    "MonthlyMPOBPriceColumn": "Year date,Region dropdown,Remarks text",
+    "DailyMPOBPricePath": "#monthPicker,Region_input,#Remarks",
+    "DailyMPOBPriceColumn": "Month date,Region dropdown,Remarks text"
   },
   "GridPath": {
-    "MonthlyMPOBPriceGrid": "#PriceDetGrid > table.k-selectable"
-  }
+    "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
+    "DailyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody"
+  } 
 }

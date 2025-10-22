@@ -25,7 +25,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
       DN - use document number
       
  */
-export async function FilterRecordByOU(
+export async function FilterRecordByOUAndDate(
   page,
   values,
   ou,
@@ -88,6 +88,62 @@ export async function FilterRecordByDateRange(page, values, ou, keyword) {
     .getByRole("button", { name: "   Open Transaction" })
     .first()
     .click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+}
+
+export async function FilterRecordByOU(
+  page,
+  date,
+  ou,
+  keyword,
+  times = [1, 1]
+) {
+  await page
+    .locator('input[name="comboBoxCompulSearchParam_input"]')
+    .first()
+    .fill(ou);
+  await page.getByRole("button", { name: "+", exact: true }).click();
+
+  const seletor = await page
+    .locator("#tabstrip-2")
+    .getByText("Choose a Column to Filter")
+    .nth(1);
+  await seletor.click();
+  for (let i = 0; i < times[0]; i++) {
+    await seletor.press("ArrowDown");
+  }
+  await seletor.press("Enter");
+
+  await page.getByRole("combobox").nth(4).fill(date);
+
+  await page.getByRole("button", { name: "+", exact: true }).click();
+
+  const seletor2 = await page
+    .locator("#tabstrip-2")
+    .getByText("Choose a Column to Filter")
+    .nth(2);
+  await seletor2.click();
+  for (let i = 0; i < times[1]; i++) {
+    await seletor2.press("ArrowDown");
+  }
+  await seletor2.press("Enter");
+
+  const paramInput = page.locator("[name='comboBoxSearchParam_input']").nth(-1);
+  await paramInput.type(keyword);
+  await page
+    .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
+    .first()
+    .waitFor({ state: "visible" });
+  await paramInput.press("Enter");
+
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: `${keyword.slice(0, 4)}` })
+    .first()
+    .click({ force: true });
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });

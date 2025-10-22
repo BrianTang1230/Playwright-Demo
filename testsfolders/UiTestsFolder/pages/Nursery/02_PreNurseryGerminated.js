@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getUiValues } from "@UiFolder/functions/GetValues";
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function PreNurseryGerminatedCreate(
@@ -47,7 +47,7 @@ export async function PreNurseryGerminatedEdit(
   docNo
 ) {
   // Select the created record
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   // Input Values
   for (let i = 0; i < paths.length; i++) {
@@ -70,7 +70,7 @@ export async function PreNurseryGerminatedDelete(
   docNo
 ) {
   // Select the created record
-  await FilterRecordByOU(page, values, ou[0], docNo);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   // Delete record
   await sideMenu.clickBtnDelete();

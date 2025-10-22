@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import {
   FilterRecordByDateRange,
-  FilterRecordByOU,
+  FilterRecordByOUAndDate,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function RequestforQuotationCreate(
@@ -65,7 +65,7 @@ export async function RequestforQuotationEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 4);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -98,7 +98,7 @@ export async function RequestforQuotationDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 4);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   await sideMenu.clickBtnDelete();
 }

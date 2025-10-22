@@ -9,7 +9,7 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { ffbSQLCommand } from "@UiFolder/queries/FFBQuery";
+import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
@@ -64,7 +64,11 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create New Monthly MPOB Price", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      OU: ou[0],
+      Region: createValues[1],
+    });
 
     const { uiVals, gridVals } = await MonthlyMPOBPriceCreate(
       page,
@@ -78,16 +82,18 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       ou
     );
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
+    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
+      Region: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      weighbridgeGridSQLCommand(formName),
+      ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
         OU: ou[0],
+        Region: createValues[1],
       }
     );
 
@@ -122,16 +128,18 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       ou
     );
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
+    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
+      Region: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      weighbridgeGridSQLCommand(formName),
+      ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
         OU: ou[0],
+        Region: createValues[1],
       }
     );
 
@@ -155,9 +163,10 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   test("Delete Monthly MPOB Price", async ({ page, db }) => {
     await MonthlyMPOBPriceDelete(page, sideMenu, createValues, ou);
 
-    const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
+    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
+      Region: createValues[1],
     });
 
     if (dbValues.length > 0)

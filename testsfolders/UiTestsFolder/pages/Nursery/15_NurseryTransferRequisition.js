@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import { getUiValues } from "@UiFolder/functions/GetValues";
 import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function NurseryTransferRequisitionCreate(
   page,
@@ -43,7 +43,7 @@ export async function NurseryTransferRequisitionEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 3);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -63,7 +63,7 @@ export async function NurseryTransferRequisitionDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 3);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

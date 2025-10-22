@@ -34,14 +34,15 @@ export default class LoginPage {
       this.page.click("a#moduleMenuToggleBtn-2"));
 
     await test.step(`Navigate to ${formName}`, async () => {
-      if (module.includes(" ")) {
-        await this.page
-          .getByRole("link", { name: ` ${module}` })
-          .first()
-          .click();
-      } else {
-        await this.page.getByRole("link", { name: module }).first().click();
-      }
+      await this.page.locator(`//a[@id='side${module}']`).first().click();
+      // if (module.includes(" ")) {
+      //   await this.page
+      //     .getByRole("link", { name: ` ${module}` })
+      //     .first()
+      //     .click();
+      // } else {
+      //   await this.page.getByRole("link", { name: module }).first().click();
+      // }
       // If submodule exists, select it
       if (submodule) {
         await this.page

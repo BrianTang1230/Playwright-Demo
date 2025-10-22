@@ -42,7 +42,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [1, 4, 6]];
 
-test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
+test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values

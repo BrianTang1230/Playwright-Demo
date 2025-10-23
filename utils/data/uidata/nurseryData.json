@@ -38,7 +38,7 @@
     "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000204",
+    "PreNurserySeedReceived": "PSR0000206",
     "PreNurseryGerminated": "PG00000108",
     "PreNurseryDoubletonSplitting": "PDS0000074",
     "PreNurseryCulling": "PC00000050",

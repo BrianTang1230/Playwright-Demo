@@ -18,7 +18,7 @@ import {
   MonthlyRatePerOEREdit,
 } from "@UiFolder/pages/FFBProcurement/04_MonthlyRatePerOER";
 
-import { Login } from "@utils/data/uidata/loginData.json";
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -35,6 +35,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Monthly Rate Per OER Tests", () => {
+  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

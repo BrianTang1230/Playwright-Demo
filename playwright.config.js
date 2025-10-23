@@ -79,7 +79,12 @@ module.exports = defineConfig({
     {
       name: "UI Tests",
       testDir: "tests/UiTests",
-      testIgnore: [Login.Region === "IND" ? "tests/UiTests/LabTests/**" : ""], // ignore Lab tests temporarily
+      testIgnore: [
+        ...(Login.Region === "IND"
+          ? ["tests/UiTests/LabTests/**", "tests/UiTests/FFBTests/MY/**"]
+          : []),
+        ...(Login.Region === "MY" ? ["tests/UiTests/FFBTests/IND/**"] : []),
+      ], // IND side ignore Lab tests temporarily
       use: {
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,

@@ -4,9 +4,12 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterRecordByOU,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
-export async function DailyTotalCropReceiptByCropSupplierCreate(
+export async function TransportProcessingChargesCreate(
   page,
   sideMenu,
   paths,
@@ -21,7 +24,7 @@ export async function DailyTotalCropReceiptByCropSupplierCreate(
 
   await SelectOU(
     page,
-    "div.viewModeOU.pinOU .k-dropdown .k-select",
+    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
     "#comboBoxOU_listbox li",
     ou[0]
   );
@@ -49,7 +52,7 @@ export async function DailyTotalCropReceiptByCropSupplierCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyTotalCropReceiptByCropSupplierEdit(
+export async function TransportProcessingChargesEdit(
   page,
   sideMenu,
   paths,
@@ -58,10 +61,19 @@ export async function DailyTotalCropReceiptByCropSupplierEdit(
   newValues,
   gridPaths,
   gridValues,
+  gridNewValues,
   cellsIndex,
-  ou
+  ou,
+  docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 3);
+  await FilterRecordByOUAndDate(
+    page,
+    values,
+    ou[0],
+    gridValues[0].split(";")[0],
+    3,
+    "Directly"
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -71,7 +83,7 @@ export async function DailyTotalCropReceiptByCropSupplierEdit(
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
-      gridValues[i],
+      gridNewValues[i],
       cellsIndex[i]
     );
   }
@@ -84,13 +96,21 @@ export async function DailyTotalCropReceiptByCropSupplierEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyTotalCropReceiptByCropSupplierDelete(
+export async function TransportProcessingChargesDelete(
   page,
   sideMenu,
   values,
+  gridValues,
   ou
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
+  await FilterRecordByOUAndDate(
+    page,
+    values,
+    ou[0],
+    gridValues[0].split(";")[0],
+    3,
+    "Directly"
+  );
 
   await sideMenu.clickBtnDelete();
 }

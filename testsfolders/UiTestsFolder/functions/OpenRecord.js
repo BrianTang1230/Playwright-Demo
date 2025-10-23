@@ -24,7 +24,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
   type:
       Default - use document number
       Dropdown - use dropdown selection
-      D
+      Directly - directly apply filter with only OU and Date
  */
 export async function FilterRecordByOUAndDate(
   page,
@@ -42,7 +42,7 @@ export async function FilterRecordByOUAndDate(
   await page.getByRole("button", { name: "+", exact: true }).click();
   await page.getByRole("combobox").nth(4).fill(values[0]);
 
-  if (type !== "DT") {
+  if (type !== "Directly") {
     const seletor = await page
       .locator("#tabstrip-2")
       .getByText("Choose a Column to Filter")

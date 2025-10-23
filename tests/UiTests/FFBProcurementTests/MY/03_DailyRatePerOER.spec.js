@@ -13,10 +13,12 @@ import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
-  MonthlyMPOBPriceCreate,
-  MonthlyMPOBPriceDelete,
-  MonthlyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/01_MonthlyMPOBPrice";
+  DailyRatePerOERCreate,
+  DailyRatePerOERDelete,
+  DailyRatePerOEREdit,
+} from "@UiFolder/pages/FFBProcurement/03_DailyRatePerOER";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -29,14 +31,15 @@ let gridEditValues;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
-const formName = "Monthly MPOB Price";
+const formName = "Daily Rate Per OER";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6]];
+const cellsIndex = [[2]];
 
-test.describe.serial("Monthly MPOB Price Tests", () => {
+test.describe.serial("Daily Rate Per OER Tests", () => {
+  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -63,14 +66,14 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Monthly MPOB Price", async ({ page, db }) => {
+  test("Create New Daily Rate Per OER", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
       OU: ou[0],
-      Region: createValues[1],
+      Nation: createValues[1],
     });
 
-    const { uiVals, gridVals } = await MonthlyMPOBPriceCreate(
+    const { uiVals, gridVals } = await DailyRatePerOERCreate(
       page,
       sideMenu,
       paths,
@@ -85,7 +88,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
-      Region: createValues[1],
+      Nation: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -93,7 +96,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-        Region: createValues[1],
+        Nation: createValues[1],
       }
     );
 
@@ -114,8 +117,8 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Monthly MPOB Price", async ({ page, db }) => {
-    const { uiVals, gridVals } = await MonthlyMPOBPriceEdit(
+  test("Edit Daily Rate Per OER", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyRatePerOEREdit(
       page,
       sideMenu,
       paths,
@@ -131,7 +134,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
-      Region: createValues[1],
+      Nation: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -139,7 +142,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-        Region: createValues[1],
+        Nation: createValues[1],
       }
     );
 
@@ -160,17 +163,17 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Monthly MPOB Price", async ({ page, db }) => {
-    await MonthlyMPOBPriceDelete(page, sideMenu, createValues, ou);
+  test("Delete Daily Rate Per OER", async ({ page, db }) => {
+    await DailyRatePerOERDelete(page, sideMenu, createValues, ou);
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
-      Region: createValues[1],
+      Nation: createValues[1],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Monthly MPOB Price failed");
+      throw new Error("Deleting Daily Rate Per OER failed");
   });
 
   // ---------------- After All ----------------

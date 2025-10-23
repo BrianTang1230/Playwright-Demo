@@ -8,11 +8,23 @@
     "DailyRatePerOERPath": "#monthPicker,Region_input,#Remarks",
     "DailyRatePerOERColumn": "Month date,Region dropdown,Remarks text",
     "MonthlyRatePerOERPath": "#monthPicker,Region_input,spinbutton*0,#Remarks",
-    "MonthlyRatePerOERColumn": "Month date,Region dropdown,MRate numeric,Remarks text"
+    "MonthlyRatePerOERColumn": "Month date,Region dropdown,MRate numeric,Remarks text",
+    "Transport&ProcessingChargesPath": "#monthPicker,#Remarks",
+    "Transport&ProcessingChargesColumn": "Month date,Remarks text",
+    "Transport,QualityandVolumeSubsidyPath": "#dpTransSubDate,textbox*0",
+    "Transport,QualityandVolumeSubsidyColumn": "Month date,Remarks text",
+    "FFBAdvancePaymentPath": "#advDatePicker,#payDatePicker,#Remarks,#ffbFromDatePicker,ffbToDatePicker",
+    "FFBAdvancePaymentColumn": ""
   },
   "GridPath": {
     "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
     "DailyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
-    "DailyRatePerOERGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody"
+    "DailyRatePerOERGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody",
+    "Transport&ProcessingChargesGrid": "#EstateDetGrid > .k-grid-content > .k-selectable > tbody",
+    "Transport,QualityandVolumeSubsidyGrid": "#TransSubDetGrid > .k-grid-content > .k-selectable > tbody,#VolSubGrid > .k-grid-content > .k-selectable > tbody",
+    "FFBAdvancePaymentGrid": ""
+  },
+  "DocNo": {
+    "FFBAdvancePayment": "" 
   }
 }

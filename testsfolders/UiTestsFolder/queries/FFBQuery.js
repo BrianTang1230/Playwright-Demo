@@ -184,6 +184,112 @@ function ffbSQLCommand(formName) {
       AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
       AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
+
+    case "Transport & Processing Charges":
+      sqlCommand = `
+      SELECT
+      IIF(@region = 'IND',
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'id-ID'
+        ),
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'en-US'
+        )
+      ) AS [Month],
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_TProHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE 
+        TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND IIF(@region = 'IND',
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'id-ID'
+          ),
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'en-US'
+          )
+      ) = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Transport, Quality and Volume Subsidy":
+      sqlCommand = `
+      SELECT
+      IIF(@region = 'IND',
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'id-ID'
+        ),
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'en-US'
+        )
+      ) AS [Month],
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_TransSubHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE 
+        TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND IIF(@region = 'IND',
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'id-ID'
+          ),
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'en-US'
+          )
+      ) = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
   }
 
   return sqlCommand;
@@ -291,6 +397,91 @@ function ffbGridSQLCommand(formName) {
             )
           ) = @Date
           AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "Transport & Processing Charges":
+      sqlCommand = `
+        SELECT
+        E.EstateCode + ' - ' + E.EstateDesc AS Estate,
+        D.CPOTrans AS CPOnumeric,
+        D.PKTrans AS PKPnumeric,
+        D.Process AS Pnumeric,
+        D.DiffCPO AS DCPOnumeric,
+        D.DiffPK AS DPKnumeric
+        FROM FPS_TProDet D
+        LEFT JOIN GMS_EstateStp E ON D.EstateKey = E.EstateKey
+        WHERE E.EstateCode + ' - ' + E.EstateDesc = @Estate
+        AND D.TProHdrKey IN (
+        SELECT A.TProHdrKey
+        FROM FPS_TProHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE 
+          TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+          AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+          AND IIF(@region = 'IND',
+            FORMAT(
+              DATEFROMPARTS(
+                TRY_CAST(A.Yr AS int),
+                TRY_CAST(A.Mth AS int),
+                1
+              ),
+            'MMMM yyyy',
+            'id-ID'
+          ),
+          FORMAT(
+            DATEFROMPARTS(
+              TRY_CAST(A.Yr AS int),
+              TRY_CAST(A.Mth AS int),
+              1
+            ),
+            'MMMM yyyy',
+            'en-US'
+            )
+          ) = @Date
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "Transport, Quality and Volume Subsidy":
+      sqlCommand = `
+        SELECT
+        E.EstateCode + ' - ' + E.EstateDesc AS Estate,
+        D.Normal AS Nnumeric,
+        D.Quality AS Qnumeric,
+        F.ToWt AS Wnumeric
+        FROM FPS_TransSubDet D
+        LEFT JOIN GMS_EstateStp E ON D.EstateKey = E.EstateKey
+        LEFT JOIN FPS_VolumeSub F ON D.TransSubDetKey = F.TransSubDetKey
+        WHERE E.EstateCode + ' - ' + E.EstateDesc = @Estate
+        AND D.TransSubHdrKey IN (
+        SELECT A.TransSubHdrKey
+        FROM FPS_TransSubHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE 
+          TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+          AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+          AND IIF(@region = 'IND',
+            FORMAT(
+              DATEFROMPARTS(
+                TRY_CAST(A.Yr AS int),
+                TRY_CAST(A.Mth AS int),
+                1
+              ),
+            'MMMM yyyy',
+            'id-ID'
+          ),
+          FORMAT(
+            DATEFROMPARTS(
+              TRY_CAST(A.Yr AS int),
+              TRY_CAST(A.Mth AS int),
+              1
+            ),
+            'MMMM yyyy',
+            'en-US'
+            )
+          ) = @Date
           AND C.OUCode + ' - ' + C.OUDesc = @OU
         )`;
       break;

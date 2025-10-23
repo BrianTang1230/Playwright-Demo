@@ -13,12 +13,12 @@ import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
-  DailyMPOBPriceCreate,
-  DailyMPOBPriceDelete,
-  DailyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/02_DailyMPOBPrice";
+  TransportProcessingChargesCreate,
+  TransportProcessingChargesDelete,
+  TransportProcessingChargesEdit,
+} from "@UiFolder/pages/FFBProcurement/05_Transport&ProcessingCharges";
 
-import { Login } from "@utils/data/uidata/loginData.json";
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -31,14 +31,15 @@ let gridEditValues;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
-const formName = "Daily MPOB Price";
+const formName = "Transport & Processing Charges";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6]];
+const cellsIndex = [[1, 3, 4, 5, 6, 7]];
 
-test.describe.serial("Daily MPOB Price Tests", () => {
+test.describe.serial("Transport & Processing Charges Tests", () => {
+  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -65,14 +66,13 @@ test.describe.serial("Daily MPOB Price Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Daily MPOB Price", async ({ page, db }) => {
+  test("Create New Transport & Processing Charges", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
     });
 
-    const { uiVals, gridVals } = await DailyMPOBPriceCreate(
+    const { uiVals, gridVals } = await TransportProcessingChargesCreate(
       page,
       sideMenu,
       paths,
@@ -95,7 +95,7 @@ test.describe.serial("Daily MPOB Price Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-        Nation: createValues[1],
+        Estate: gridCreateValues[0].split(";")[0],
       }
     );
 
@@ -116,8 +116,8 @@ test.describe.serial("Daily MPOB Price Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily MPOB Price", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyMPOBPriceEdit(
+  test("Edit Transport & Processing Charges", async ({ page, db }) => {
+    const { uiVals, gridVals } = await TransportProcessingChargesEdit(
       page,
       sideMenu,
       paths,
@@ -125,6 +125,7 @@ test.describe.serial("Daily MPOB Price Tests", () => {
       createValues,
       editValues,
       gridPaths,
+      gridCreateValues,
       gridEditValues,
       cellsIndex,
       ou
@@ -133,7 +134,6 @@ test.describe.serial("Daily MPOB Price Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -141,7 +141,7 @@ test.describe.serial("Daily MPOB Price Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-        Nation: createValues[1],
+        Estate: gridEditValues[0].split(";")[0],
       }
     );
 
@@ -162,17 +162,22 @@ test.describe.serial("Daily MPOB Price Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily MPOB Price", async ({ page, db }) => {
-    await DailyMPOBPriceDelete(page, sideMenu, createValues, ou);
+  test("Delete Transport & Processing Charges", async ({ page, db }) => {
+    await TransportProcessingChargesDelete(
+      page,
+      sideMenu,
+      createValues,
+      gridEditValues,
+      ou
+    );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Daily MPOB Price failed");
+      throw new Error("Deleting Transport & Processing Charges failed");
   });
 
   // ---------------- After All ----------------

@@ -4,7 +4,6 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
 
 export async function CreateRainfallEntryCreate(
   page,
@@ -88,12 +87,12 @@ export async function CreateRainfallEntryEdit(
 }
 
 export async function CreateRainfallEntryDelete(page, sideMenu, values, ou) {
-   await SelectOU(
+  await SelectOU(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
     "#comboBoxOU_listbox span",
     ou[0]
   );
-  
+
   await sideMenu.clickBtnDelete();
 }

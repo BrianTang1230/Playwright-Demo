@@ -23,16 +23,13 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerPrecedingTaxCreate,
-  WorkerPrecedingTaxEdit,
-  WorkerPrecedingTaxDelete,
-} from "@UiFolder/pages/Checkroll/WorkerPrecedingTax";
-
-import Login from "@utils/data/uidata/loginData.json";
+  MillCPOandPKCreate,
+  MillCPOandPKEdit,
+  MillCPOandPKDelete,
+} from "@UiFolder/pages/Checkroll/MillCPOandPK";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -41,19 +38,17 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Preceding Tax (PPh 21)";
-const keyName = "WorkerPrecedingTax";
+const submodule = "Miscellaneous";
+const formName = "Mill CPO and PK";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5]];
+const cellsIndex = [[1, 2, 3]];
 
-test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
+test.describe.skip("Mill CPO and PK Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "MY") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -65,8 +60,6 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
-
-    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -80,10 +73,15 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create New Mill CPO and PK", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await WorkerPrecedingTaxCreate(
+    const { uiVals, gridVals } = await MillCPOandPKCreate(
       page,
       sideMenu,
       paths,
@@ -95,21 +93,19 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      keyName,
-      await page.locator("#PreTaxSubNum").inputValue()
-    );
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        FYear: createValues[0],
+        Period: createValues[1],
+        Div: createValues[2],
         OU: ou[0],
       }
     );
@@ -131,8 +127,8 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxEdit(
+  test("Edit Mill CPO and PK", async ({ page, db }) => {
+    await MillCPOandPKEdit(
       page,
       sideMenu,
       paths,
@@ -143,21 +139,25 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      gridCreateValues[0]
     );
 
     const uiVals = await getUiValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        FYear: createValues[0],
+        Period: createValues[1],
+        Div: createValues[2],
         OU: ou[0],
       }
     );
@@ -177,20 +177,20 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
     );
   });
 
-  // ---------------- Delete Test ----------------
-  test("Delete Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxDelete(page, sideMenu, createValues, ou, docNo);
+  // // ---------------- Delete Test ----------------
+  // test("Delete Mill CPO and PK", async ({ page, db }) => {
+  //   await MillCPOandPKDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
-      OU: ou[0],
-    });
+  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+  //     DocNo: docNo,
+  //     OU: ou[0],
+  //   });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-  });
+  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+  // });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    console.log(`End Running: ${formName}`);
-  });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

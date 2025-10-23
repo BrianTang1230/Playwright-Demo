@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function WorkerCP38Create(
+export async function WorkerAdvancePaymentCreate(
   page,
   sideMenu,
   paths,
@@ -22,7 +22,7 @@ export async function WorkerCP38Create(
   await SelectOU(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
-    "#ddlOU_listbox span",
+    "#comboBoxOU_listbox span",
     ou[0]
   );
 
@@ -54,7 +54,7 @@ export async function WorkerCP38Create(
   return { uiVals, gridVals };
 }
 
-export async function WorkerCP38Edit(
+export async function WorkerAdvancePaymentEdit(
   page,
   sideMenu,
   paths,
@@ -67,7 +67,7 @@ export async function WorkerCP38Edit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -90,8 +90,14 @@ export async function WorkerCP38Edit(
   return { uiVals, gridVals };
 }
 
-export async function WorkerCP38Delete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+export async function WorkerAdvancePaymentDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

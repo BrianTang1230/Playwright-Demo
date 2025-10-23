@@ -4,9 +4,9 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function StaffLoanDepositMaintenanceCreate(
+export async function WorkerLoanDepositMaintenanceCreate(
   page,
   sideMenu,
   paths,
@@ -50,7 +50,7 @@ export async function StaffLoanDepositMaintenanceCreate(
   return { uiVals, gridVals };
 }
 
-export async function StaffLoanDepositMaintenanceEdit(
+export async function WorkerLoanDepositMaintenanceEdit(
   page,
   sideMenu,
   paths,
@@ -63,13 +63,13 @@ export async function StaffLoanDepositMaintenanceEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 5, "Dropdown");
+  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await page.locator("#IsOutMainEmpySelectGrid").check();
+  await page.locator("#IsDWOutMainEmpySelectGrid").check();
   await page.locator("#btnDeleteItem").click();
   await sideMenu.confirmDelete.click();
   await sideMenu.btnAddNewItem.click();
@@ -94,14 +94,14 @@ export async function StaffLoanDepositMaintenanceEdit(
   return { uiVals, gridVals };
 }
 
-export async function StaffLoanDepositMaintenanceDelete(
+export async function WorkerLoanDepositMaintenanceDelete(
   page,
   sideMenu,
   values,
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 5, "Dropdown");
+  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
 
   await sideMenu.clickBtnDelete();
 }

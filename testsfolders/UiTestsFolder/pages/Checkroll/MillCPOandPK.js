@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function WorkerCP38Create(
+export async function MillCPOandPKCreate(
   page,
   sideMenu,
   paths,
@@ -22,17 +22,12 @@ export async function WorkerCP38Create(
   await SelectOU(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
-    "#ddlOU_listbox span",
+    "#comboBoxOU-list span",
     ou[0]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
-
-    if (i === 0) {
-      // If Month is the first field
-      await page.waitForTimeout(1000);
-    }
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -54,7 +49,7 @@ export async function WorkerCP38Create(
   return { uiVals, gridVals };
 }
 
-export async function WorkerCP38Edit(
+export async function MillCPOandPKEdit(
   page,
   sideMenu,
   paths,
@@ -65,9 +60,9 @@ export async function WorkerCP38Edit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  keyword
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -90,8 +85,8 @@ export async function WorkerCP38Edit(
   return { uiVals, gridVals };
 }
 
-export async function WorkerCP38Delete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+export async function MillCPOandPKDelete(page, sideMenu, values, ou, docNo) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

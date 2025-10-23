@@ -104,7 +104,7 @@ function payrollSQLCommand(formName) {
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM PR_AdvPayHdr A 
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU;`;
+        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Staff Preceding Tax (PPh 21)":

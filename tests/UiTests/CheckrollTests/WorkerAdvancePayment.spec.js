@@ -23,12 +23,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerPrecedingTaxCreate,
-  WorkerPrecedingTaxEdit,
-  WorkerPrecedingTaxDelete,
-} from "@UiFolder/pages/Checkroll/WorkerPrecedingTax";
-
-import Login from "@utils/data/uidata/loginData.json";
+  WorkerAdvancePaymentCreate,
+  WorkerAdvancePaymentEdit,
+  WorkerAdvancePaymentDelete,
+} from "@UiFolder/pages/Checkroll/WorkerAdvancePayment";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -41,19 +39,17 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Preceding Tax (PPh 21)";
-const keyName = "WorkerPrecedingTax";
+const submodule = "Miscellaneous";
+const formName = "Worker Advance Payment";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5]];
+const cellsIndex = [[1, 3]];
 
-test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
+test.describe.serial("Worker Advance Payment Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "MY") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -80,10 +76,10 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+  test("Create New Worker Advance Payment", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerPrecedingTaxCreate(
+    const { uiVals, gridVals } = await WorkerAdvancePaymentCreate(
       page,
       sideMenu,
       paths,
@@ -97,8 +93,8 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
 
     docNo = await editJson(
       JsonPath,
-      keyName,
-      await page.locator("#PreTaxSubNum").inputValue()
+      formName,
+      await page.getByPlaceholder("Auto No.").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -131,8 +127,8 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxEdit(
+  test("Edit Worker Advance Payment", async ({ page, db }) => {
+    await WorkerAdvancePaymentEdit(
       page,
       sideMenu,
       paths,
@@ -178,8 +174,8 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Worker Advance Payment", async ({ page, db }) => {
+    await WorkerAdvancePaymentDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,

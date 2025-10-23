@@ -51,6 +51,12 @@ export async function InputValues(page, path, col, value) {
     await element.press("Enter");
   }
 
+  // For dropdown with no text input
+  else if (col.includes("combobox")) {
+    await element.click();
+    await page.locator('ul[role="listbox"] li', { hasText: value }).click();
+  }
+
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 

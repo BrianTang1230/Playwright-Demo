@@ -167,7 +167,7 @@ function checkrollSQLCommand(formName) {
         IIF(@region = 'IND',
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
-        ) AS OMMonth,
+        ) AS LoanDepMonth,
         B.RecTypeCode + ' - ' + B.RecTypeDesc AS RecType,
         A.Remarks AS Remarks,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -182,6 +182,35 @@ function checkrollSQLCommand(formName) {
         AND C.OUCode + ' - ' + C.OUDesc = @OU
         AND B.RecTypeCode + ' - ' + B.RecTypeDesc = @RecType
         AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')`;
+      break;
+
+    case "Worker Advance Payment":
+      sqlCommand = `
+        SELECT 
+        IIF(@region = 'IND',
+            FORMAT(A.AdvPayDate, 'MMMM yyyy', 'id-ID'),
+            FORMAT(A.AdvPayDate, 'MMMM yyyy', 'en-US')
+        ) AS ADVMonth,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_AdvPayHdr A 
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Mill CPO and PK":
+      sqlCommand = `
+        SELECT A.FY AS FiscYear,
+        A.Period AS Period,
+        B.DivCode + ' - ' + B.DivDesc AS Division,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_MillCPOPKHdr A
+        LEFT JOIN GMS_DivStp B ON A.DivKey = B.DivKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE FY = @FYear 
+        AND Period = @Period
+        AND DivCode + ' - ' + DivDesc = @Div
+        AND OUCode + ' - ' + OUDesc = @OU`;
       break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
@@ -462,6 +491,37 @@ function checkrollGridSQLCommand(formName) {
           AND G.RecTypeCode + ' - ' + G.RecTypeDesc = @RecType
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
         )`;
+      break;
+
+    case "Worker Advance Payment":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        A.Amt AS Amount
+        FROM CR_AdvPayDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        WHERE AdvPayHdrKey IN (
+          SELECT AdvPayHdrKey FROM CR_AdvPayHdr
+          WHERE AdvPayNum = @DocNo AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+        )`;
+      break;
+
+    case "Mill CPO and PK":
+      sqlCommand = `
+        SELECT C.MillCode + ' - ' + C.MillDesc AS Mill,
+        B.CPO AS CPOAmt,
+        B.PK AS PKAmt
+        FROM CR_MillCPOPKDet B
+        LEFT JOIN GMS_MillStp C ON B.MillKey = C.MillKey
+        LEFT JOIN CR_MillCPOPKHdr D ON B.MCPHdrKey = D.MCPHdrKey
+        LEFT JOIN GMS_DivStp E ON D.DivKey = D.DivKey
+        LEFT JOIN GMS_OUStp F ON D.OUKey = E.OUKey
+        WHERE FY = @FYear 
+        AND Period = @Period
+        AND DivCode + ' - ' + DivDesc = @Div
+        AND OUCode + ' - ' + OUDesc = @OU`;
       break;
     default:
       throw new Error(`Unknown formName: ${formName}`);

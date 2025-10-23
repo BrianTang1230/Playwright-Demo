@@ -4,7 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOU } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerAdditionalRemunerationCreate(
   page,
@@ -63,7 +63,7 @@ export async function WorkerAdditionalRemunerationEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -97,7 +97,7 @@ export async function WorkerAdditionalRemunerationDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   await sideMenu.clickBtnDelete();
 }

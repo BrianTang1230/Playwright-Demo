@@ -9,20 +9,23 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import {
+  checkrollSQLCommand,
+  checkrollGridSQLCommand,
+} from "@UiFolder/queries/CheckrollQuery";
+
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
-} from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
+} from "@utils/data/uidata/checkrollData.json";
 
 import {
-  StaffLoanDepositMaintenanceCreate,
-  StaffLoanDepositMaintenanceEdit,
-  StaffLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Payroll/06_StaffLoanDepositMaintenance";
+  WorkerLoanDepositMaintenanceCreate,
+  WorkerLoanDepositMaintenanceEdit,
+  WorkerLoanDepositMaintenanceDelete,
+} from "@UiFolder/pages/Checkroll/WorkerLoanDepositMaintenance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -32,19 +35,20 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "PR_Data";
-const module = "Payroll";
+const sheetName = "CR_Data";
+const module = "Checkroll";
 const submodule = "Miscellaneous";
-const formName = "Staff Loan/Deposit Maintenance";
-const keyName = "StaffLoanDepositMaintenance";
+const formName = "Worker Loan/Deposit Maintenance";
+const keyName = "WorkerLoanDepositMaintenance";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [1, 4, 6]];
 
-test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
+test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+
     // Load Excel values
     [
       createValues,
@@ -69,14 +73,14 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Loan/Deposit Maintenance", async ({ page, db }) => {
+  test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
       RecType: createValues[1],
       OU: ou[0],
     });
 
-    const { uiVals, gridVals } = await StaffLoanDepositMaintenanceCreate(
+    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceCreate(
       page,
       sideMenu,
       paths,
@@ -88,14 +92,14 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
       ou
     );
 
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       RecType: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      payrollGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
         RecType: createValues[1],
@@ -120,8 +124,8 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Loan/Deposit Maintenance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await StaffLoanDepositMaintenanceEdit(
+  test("Edit Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceEdit(
       page,
       sideMenu,
       paths,
@@ -134,14 +138,14 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
       ou,
       gridCreateValues[0] // need to add keyword to identify the record
     );
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       RecType: createValues[1],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      payrollGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
         RecType: createValues[1],
@@ -166,8 +170,8 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff Loan/Deposit Maintenance", async ({ page, db }) => {
-    await StaffLoanDepositMaintenanceDelete(
+  test("Delete Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+    await WorkerLoanDepositMaintenanceDelete(
       page,
       sideMenu,
       createValues,
@@ -175,7 +179,7 @@ test.describe.skip("Staff Loan/Deposit Maintenance Tests", () => {
       gridEditValues[0]
     );
 
-    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       RecType: createValues[1],
       OU: ou[0],

@@ -63,7 +63,7 @@ export async function StaffLoanDepositMaintenanceEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 5, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 5, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -101,7 +101,7 @@ export async function StaffLoanDepositMaintenanceDelete(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 5, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 5, "Dropdown");
 
   await sideMenu.clickBtnDelete();
 }

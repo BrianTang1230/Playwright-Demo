@@ -63,7 +63,7 @@ export async function WorkerIncomeDeclarationEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 3, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -101,7 +101,7 @@ export async function WorkerIncomeDeclarationDelete(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 3, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 3, "Dropdown");
 
   await sideMenu.clickBtnDelete();
 }

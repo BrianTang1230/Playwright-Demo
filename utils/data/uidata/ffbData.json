@@ -4,10 +4,15 @@
     "MonthlyMPOBPricePath": "#yrPicker,Region_input,#Remarks",
     "MonthlyMPOBPriceColumn": "Year date,Region dropdown,Remarks text",
     "DailyMPOBPricePath": "#monthPicker,Region_input,#Remarks",
-    "DailyMPOBPriceColumn": "Month date,Region dropdown,Remarks text"
+    "DailyMPOBPriceColumn": "Month date,Region dropdown,Remarks text",
+    "DailyRatePerOERPath": "#monthPicker,Region_input,#Remarks",
+    "DailyRatePerOERColumn": "Month date,Region dropdown,Remarks text",
+    "MonthlyRatePerOERPath": "#monthPicker,Region_input,spinbutton*0,#Remarks",
+    "MonthlyRatePerOERColumn": "Month date,Region dropdown,MRate numeric,Remarks text"
   },
   "GridPath": {
     "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
-    "DailyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody"
-  } 
+    "DailyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
+    "DailyRatePerOERGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody"
+  }
 }

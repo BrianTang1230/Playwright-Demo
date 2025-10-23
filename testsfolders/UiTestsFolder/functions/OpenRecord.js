@@ -22,8 +22,9 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 
 /* 
   type:
-      DN - use document number
-      
+      Default - use document number
+      Dropdown - use dropdown selection
+      D
  */
 export async function FilterRecordByOUAndDate(
   page,
@@ -31,7 +32,7 @@ export async function FilterRecordByOUAndDate(
   ou,
   keyword,
   times = 1,
-  type = "DN"
+  type = "Default"
 ) {
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
@@ -52,9 +53,9 @@ export async function FilterRecordByOUAndDate(
     }
     await seletor.press("Enter");
 
-    if (type === "DN") {
+    if (type === "Default") {
       await page.getByRole("textbox").fill(keyword);
-    } else if (type === "OT") {
+    } else if (type === "Dropdown") {
       const paramInput = page.locator("[name='comboBoxSearchParam_input']");
       await paramInput.type(keyword);
       await page

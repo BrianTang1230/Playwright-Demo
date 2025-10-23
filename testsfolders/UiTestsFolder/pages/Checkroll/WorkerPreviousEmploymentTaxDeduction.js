@@ -81,7 +81,7 @@ export async function WorkerPreviousEmploymentTaxDeductionEdit(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 1, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 1, "Dropdown");
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -137,7 +137,7 @@ export async function WorkerPreviousEmploymentTaxDeductionDelete(
   ou,
   keyword
 ) {
-  await FilterRecordByOU(page, values, ou[0], keyword, 1, "OT");
+  await FilterRecordByOU(page, values, ou[0], keyword, 1, "Dropdown");
 
   await sideMenu.clickBtnDelete();
 }

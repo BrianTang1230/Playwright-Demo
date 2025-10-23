@@ -114,11 +114,14 @@ export default class ConnectExcel {
         columns[col] === "GridDataCreate" ||
         columns[col] === "GridDataEdit"
       ) {
-        value = (await this.readExcel(formName, columns[col], isUI)).split("|");
+        value = await this.readExcel(formName, columns[col], isUI);
+        value = String(value).split("|");
       } else if (columns[col] === "DeleteSQL") {
         value = await this.readExcel(formName, columns[col], isUI);
+        value = String(value);
       } else {
-        value = (await this.readExcel(formName, columns[col], isUI)).split(";");
+        value = await this.readExcel(formName, columns[col], isUI);
+        value = String(value).split(";");
       }
       data.push(value);
     }

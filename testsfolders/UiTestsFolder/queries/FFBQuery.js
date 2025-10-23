@@ -71,6 +71,119 @@ function ffbSQLCommand(formName) {
       AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
       AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
+
+    case "Daily Rate Per OER":
+      sqlCommand = `
+      SELECT
+      IIF(@region = 'IND',
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'id-ID'
+        ),
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'en-US'
+        )
+      ) AS [Month],
+      B.RegionCode + ' - ' + B.RegionDesc AS Region,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_DailyRateHdr A
+      LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE 
+        TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND IIF(@region = 'IND',
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'id-ID'
+          ),
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'en-US'
+          )
+      ) = @Date
+      AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Monthly Rate Per OER":
+      sqlCommand = `
+      SELECT
+      IIF(@region = 'IND',
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'id-ID'
+        ),
+        FORMAT(
+          DATEFROMPARTS(
+            TRY_CAST(A.Yr AS int),
+            TRY_CAST(A.Mth AS int),
+            1
+          ),
+          'MMMM yyyy',
+          'en-US'
+        )
+      ) AS [Month],
+      B.RegionCode + ' - ' + B.RegionDesc AS Region,
+      A.MRatePerOER AS MRate,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_MonthlyRateHdr A
+      LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE 
+        TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND IIF(@region = 'IND',
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'id-ID'
+          ),
+          FORMAT(
+              DATEFROMPARTS(
+                  TRY_CAST(A.Yr AS int),
+                  TRY_CAST(A.Mth AS int),
+                  1
+              ),
+              'MMMM yyyy',
+              'en-US'
+          )
+      ) = @Date
+      AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
   }
 
   return sqlCommand;
@@ -114,6 +227,44 @@ function ffbGridSQLCommand(formName) {
         WHERE D.PriceHdrKey IN (
         SELECT A.PriceHdrKey
         FROM FPS_DailyPriceHdr A
+        LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE 
+          TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+          AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+          AND IIF(@region = 'IND',
+            FORMAT(
+              DATEFROMPARTS(
+                TRY_CAST(A.Yr AS int),
+                TRY_CAST(A.Mth AS int),
+                1
+              ),
+            'MMMM yyyy',
+            'id-ID'
+          ),
+          FORMAT(
+            DATEFROMPARTS(
+              TRY_CAST(A.Yr AS int),
+              TRY_CAST(A.Mth AS int),
+              1
+            ),
+            'MMMM yyyy',
+            'en-US'
+            )
+          ) = @Date
+          AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "Daily Rate Per OER":
+      sqlCommand = `
+        SELECT 
+        D.RatePerOER AS RPOERnumeric
+        FROM FPS_DailyRateDet D
+        WHERE D.RateHdrKey IN (
+        SELECT A.RateHdrKey
+        FROM FPS_DailyRateHdr A
         LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
         WHERE 

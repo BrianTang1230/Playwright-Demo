@@ -36,7 +36,6 @@ const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Monthly Rate Per OER Tests", () => {
   if (Login.Region === "IND") test.skip(true);
-  // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(

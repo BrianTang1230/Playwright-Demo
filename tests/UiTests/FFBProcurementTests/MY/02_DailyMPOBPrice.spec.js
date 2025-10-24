@@ -39,7 +39,6 @@ const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3, 4, 5, 6]];
 
 test.describe.serial("Daily MPOB Price Tests", () => {
-  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

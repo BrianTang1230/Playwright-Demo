@@ -39,7 +39,6 @@ const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 3, 4], [3]];
 
 test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
-  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

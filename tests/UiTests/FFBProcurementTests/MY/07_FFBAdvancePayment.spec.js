@@ -10,7 +10,12 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
-import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
+import {
+  JsonPath,
+  InputPath,
+  GridPath,
+  DocNo,
+} from "@utils/data/uidata/ffbData.json";
 
 import {
   FFBAdvancePaymentCreate,
@@ -22,6 +27,7 @@ import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -36,10 +42,9 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 3, 4], [3]];
+const cellsIndex = [[1], [3, 5, 6, 12, 13, 14, 15]];
 
 test.describe.serial("FFB Advance Payment Tests", () => {
-  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -54,6 +59,8 @@ test.describe.serial("FFB Advance Payment Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`Start Running: ${formName}`);
   });
 
@@ -67,10 +74,10 @@ test.describe.serial("FFB Advance Payment Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create New FFB Advance Payment", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      OU: ou[0],
-    });
+    if (docNo)
+      await db.deleteData(deleteSQL, {
+        DocNo: docNo,
+      });
 
     const { uiVals, gridVals } = await FFBAdvancePaymentCreate(
       page,
@@ -84,18 +91,20 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#AdvPayNo").inputValue()
+    );
+
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      OU: ou[0],
-      Nation: createValues[1],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        Date: createValues[0],
-        OU: ou[0],
-        Estate: gridCreateValues[0].split(";")[0],
+        DocNo: docNo,
       }
     );
 
@@ -128,20 +137,18 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       gridCreateValues,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      OU: ou[0],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        Date: createValues[0],
-        OU: ou[0],
-        Estate: gridEditValues[0].split(";")[0],
+        DocNo: docNo,
       }
     );
 
@@ -168,12 +175,12 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       sideMenu,
       createValues,
       gridEditValues,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      OU: ou[0],
+      DocNo: docNo,
     });
 
     if (dbValues.length > 0)
@@ -182,6 +189,11 @@ test.describe.serial("FFB Advance Payment Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo)
+      await db.deleteData(deleteSQL, {
+        DocNo: docNo,
+      });
+
     console.log(`End Running: ${formName}`);
   });
 });

@@ -290,6 +290,65 @@ function ffbSQLCommand(formName) {
       ) = @Date
       AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
+
+    case "FFB Advance Payment":
+      sqlCommand = `
+      SELECT 
+      FORMAT(A.AdvDate, 'dd/MM/yyyy') AS Advance,
+      FORMAT(A.PayDate, 'dd/MM/yyyy') AS Payment,
+      A.Remarks,
+      FORMAT(B.FFBFromDate, 'dd/MM/yyyy') AS FromDate,
+      FORMAT(B.FFBToDate, 'dd/MM/yyyy') AS ToDate,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_AdvPayHdr A
+      LEFT JOIN FPS_AdvPayDet B ON A.AdvPayHdrKey = B.AdvPayHdrKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.AdvPayNo = @DocNo`;
+      break;
+
+    case "FFB Unit Cost Adjustment":
+      sqlCommand = `
+      SELECT 
+      FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy') AS Month,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_FFBUPAdjHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy') = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "FFB Unit Cost Adjustment (Block)":
+      sqlCommand = `
+      SELECT 
+      FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy') AS Month,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_FFBUPAdjBlkHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy') = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
   }
 
   return sqlCommand;
@@ -482,6 +541,73 @@ function ffbGridSQLCommand(formName) {
             'en-US'
             )
           ) = @Date
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "FFB Advance Payment":
+      sqlCommand = `
+        SELECT
+        F.ContactCode + ' - ' + F.ContactDesc AS Contact,
+        A.UnitPrice AS UPnumeric,
+        A.AdvPer AS Pnumeric,
+        A.AdjAmt AS AAnumeric,
+        CASE
+          WHEN A.PaymentType = 'Q' THEN 'Cheque'
+          WHEN A.PaymentType = 'C' THEN 'Cash'
+          ELSE 'Bank'
+        END AS PaymentType
+        FROM FPS_AdvPayDet A
+        LEFT JOIN GMS_ContactStp F ON A.ContactKey = F.ContactKey
+        WHERE A.AdvPayHdrKey IN (
+         SELECT AdvPayHdrKey
+         FROM FPS_AdvPayHdr
+         WHERE AdvPayNo = @DocNo
+        )`;
+      break;
+
+    case "FFB Unit Cost Adjustment":
+      sqlCommand = `
+        SELECT
+        E.EstateCode + ' - ' + E.EstateDesc AS Estate,
+        A.FromDay AS FDnumeric,
+        A.ToDay AS TDnumeric,
+        A.AdjAmt AS AAnumeric
+        FROM FPS_FFBUPAdjDet A
+        LEFT JOIN GMS_EstateStp E ON A.EstateKey = E.EstateKey
+        WHERE A.FFBUPAdjHdrKey IN (
+          SELECT H.FFBUPAdjHdrKey
+          FROM FPS_FFBUPAdjHdr H
+          LEFT JOIN GMS_OUStp C ON H.OUKey = C.OUKey
+          WHERE FORMAT(DATEFROMPARTS(
+            TRY_CAST(H.Yr AS int),
+            TRY_CAST(H.Mth AS int),
+            1
+          ),
+          'MMMM yyyy') = @Date
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "FFB Unit Cost Adjustment (Block)":
+      sqlCommand = `
+        SELECT
+        E.BlockCode + ' - ' + E.BlockDesc AS Block,
+        A.FromDay AS FDnumeric,
+        A.ToDay AS TDnumeric,
+        A.AdjAmt AS AAnumeric
+        FROM FPS_FFBUPAdjBlkDet A
+        LEFT JOIN GMS_BlockStp E ON A.BlockKey = E.BlockKey
+        WHERE A.FFBUPAdjHdrKey IN (
+          SELECT H.FFBUPAdjHdrKey
+          FROM FPS_FFBUPAdjBlkHdr H
+          LEFT JOIN GMS_OUStp C ON H.OUKey = C.OUKey
+          WHERE FORMAT(DATEFROMPARTS(
+            TRY_CAST(H.Yr AS int),
+            TRY_CAST(H.Mth AS int),
+            1
+          ),
+          'MMMM yyyy') = @Date
           AND C.OUCode + ' - ' + C.OUDesc = @OU
         )`;
       break;

@@ -9,7 +9,7 @@ import {
   FilterRecordByOUAndDate,
 } from "@UiFolder/functions/OpenRecord";
 
-export async function FFBAdvancePaymentCreate(
+export async function FFBUnitCostAdjustmentCreate(
   page,
   sideMenu,
   paths,
@@ -33,7 +33,7 @@ export async function FFBAdvancePaymentCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.getByRole("button", { name: "Add" }).click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -52,7 +52,7 @@ export async function FFBAdvancePaymentCreate(
   return { uiVals, gridVals };
 }
 
-export async function FFBAdvancePaymentEdit(
+export async function FFBUnitCostAdjustmentEdit(
   page,
   sideMenu,
   paths,
@@ -63,10 +63,16 @@ export async function FFBAdvancePaymentEdit(
   gridValues,
   gridNewValues,
   cellsIndex,
-  ou,
-  docNo
+  ou
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(
+    page,
+    values,
+    ou[0],
+    gridValues[0].split(";")[0],
+    2,
+    "Directly"
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -89,15 +95,21 @@ export async function FFBAdvancePaymentEdit(
   return { uiVals, gridVals };
 }
 
-export async function FFBAdvancePaymentDelete(
+export async function FFBUnitCostAdjustmentDelete(
   page,
   sideMenu,
   values,
   gridValues,
-  ou,
-  docNo
+  ou
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await FilterRecordByOUAndDate(
+    page,
+    values,
+    ou[0],
+    gridValues[0].split(";")[0],
+    2,
+    "Directly"
+  );
 
   await sideMenu.clickBtnDelete();
 }

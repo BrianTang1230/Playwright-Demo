@@ -13,10 +13,10 @@ import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
-  DailyRatePerOERCreate,
-  DailyRatePerOERDelete,
-  DailyRatePerOEREdit,
-} from "@UiFolder/pages/FFBProcurement/03_DailyRatePerOER";
+  FFBUnitCostAdjustmentCreate,
+  FFBUnitCostAdjustmentDelete,
+  FFBUnitCostAdjustmentEdit,
+} from "@UiFolder/pages/FFBProcurement/10_FFBUnitCostAdjustment";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -31,14 +31,14 @@ let gridEditValues;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
-const formName = "Daily Rate Per OER";
+const formName = "FFB Unit Cost Adjustment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[2]];
+const cellsIndex = [[1, 3, 4, 5]];
 
-test.describe.serial("Daily Rate Per OER Tests", () => {
+test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -65,14 +65,8 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Daily Rate Per OER", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      OU: ou[0],
-      Nation: createValues[1],
-    });
-
-    const { uiVals, gridVals } = await DailyRatePerOERCreate(
+  test("Create New FFB Unit Cost Adjustment", async ({ page, db }) => {
+    const { uiVals, gridVals } = await FFBUnitCostAdjustmentCreate(
       page,
       sideMenu,
       paths,
@@ -85,17 +79,15 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
+      Date: createValues[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        Date: createValues[0],
         OU: ou[0],
-        Nation: createValues[1],
+        Date: createValues[0],
       }
     );
 
@@ -116,8 +108,8 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Rate Per OER", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyRatePerOEREdit(
+  test("Edit FFB Unit Cost Adjustment", async ({ page, db }) => {
+    const { uiVals, gridVals } = await FFBUnitCostAdjustmentEdit(
       page,
       sideMenu,
       paths,
@@ -125,23 +117,22 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
       createValues,
       editValues,
       gridPaths,
+      gridCreateValues,
       gridEditValues,
       cellsIndex,
       ou
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
+      Date: createValues[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        Date: createValues[0],
         OU: ou[0],
-        Nation: createValues[1],
+        Date: createValues[0],
       }
     );
 
@@ -162,17 +153,22 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Rate Per OER", async ({ page, db }) => {
-    await DailyRatePerOERDelete(page, sideMenu, createValues, ou);
+  test("Delete FFB Unit Cost Adjustment", async ({ page, db }) => {
+    await FFBUnitCostAdjustmentDelete(
+      page,
+      sideMenu,
+      createValues,
+      gridEditValues,
+      ou
+    );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
       OU: ou[0],
-      Nation: createValues[1],
+      Date: createValues[0],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Daily Rate Per OER failed");
+      throw new Error("Deleting FFB Unit Cost Adjustment failed");
   });
 
   // ---------------- After All ----------------

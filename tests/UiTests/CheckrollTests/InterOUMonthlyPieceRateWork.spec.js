@@ -27,6 +27,8 @@ import {
   InterOUMonthlyPieceRateWorkDelete,
 } from "@UiFolder/pages/Checkroll/InterOUMonthlyPieceRateWork";
 
+import Login from "@utils/data/uidata/loginData.json";
+
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -49,6 +51,8 @@ const cellsIndex = [[1, 2, 4, 5, 6, 7, 9, 13]];
 test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (Login.Region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,

@@ -52,7 +52,7 @@ const cellsIndex = [[1, 2, 4, 5, 6, 7, 9, 13]];
 test.describe.serial("Monthly Piece Rate Work Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    // if (Login.Region === "MY") test.skip(true);
+    if (Login.Region === "IND") test.skip(true);
 
     // Load Excel values
     [

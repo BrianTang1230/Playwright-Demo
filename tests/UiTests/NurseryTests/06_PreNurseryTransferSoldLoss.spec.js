@@ -19,7 +19,7 @@ import {
   PreNurseryTransferSoldLossCreate,
   PreNurseryTransferSoldLossEdit,
   PreNurseryTransferSoldLossDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryTransferSoldLoss";
+} from "@UiFolder/pages/Nursery/06_PreNurseryTransferSoldLoss";
 
 // ---------------- Global Variables ----------------
 let ou;

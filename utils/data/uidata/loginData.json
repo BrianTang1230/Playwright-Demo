@@ -1,6 +1,6 @@
 {
   "Client": "QTAUTO - QUARTO AUTOMATION",
-  "ClientIND": "QTAUTOIND - QUARTO IND AUTOMATION",
+  "ClientIND": "QTAUTOIND - WILIAN PERKASA",
   "LaunchUrl": "https://qa.quarto.cloud/",
 
   "UserID": "QT_Auto",
@@ -15,5 +15,5 @@
     "Port": 14336,
     "Database": "LONE_QTAUTOIND"
   },
-  "Region": "IND"
+  "Region": "MY"
 }

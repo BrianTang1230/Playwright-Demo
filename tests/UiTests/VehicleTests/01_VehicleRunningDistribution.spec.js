@@ -25,7 +25,7 @@ import {
   VehicleRunningDistributionCreate,
   VehicleRunningDistributionDelete,
   VehicleRunningDistributionEdit,
-} from "@UiFolder/pages/Vehicle/VehicleRunningDistribution";
+} from "@UiFolder/pages/Vehicle/01_VehicleRunningDistribution";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -63,8 +63,6 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
-
-    console.log(createValues);
 
     docNo = DocNo[keyName];
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });

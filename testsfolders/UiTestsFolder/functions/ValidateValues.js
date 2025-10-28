@@ -3,14 +3,11 @@ import Data from "@utils/data/uidata/loginData.json";
 
 export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
-    if (
-      inputValues[i] === "NA" ||
-      inputValues[i] === "Click" ||
-      uiValues[i] === "NA"
-    )
-      continue;
+    if (inputValues[i] === "NA" || uiValues[i] === "NA") continue;
     if (columns[i].includes("numeric")) {
+      const inpVal = normalizeNumber(inputValues[i]);
       const uiVal = normalizeNumber(uiValues[i]);
+      inputValues[i] = String(inpVal);
       uiValues[i] = String(uiVal);
     }
     if (inputValues[i] !== uiValues[i]) {
@@ -48,6 +45,7 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
 export async function ValidateGridValues(eValues, gValues) {
   if (eValues.length !== gValues.length) {
+    console.log(eValues, gValues);
     throw new Error("Mismatch length in Grid values.");
   }
 
@@ -74,9 +72,8 @@ function normalizeNumber(raw) {
   let cleaned = raw;
   if (Data.Region === "MY") {
     cleaned = cleaned.replace(",", "");
-    return Number(cleaned);
   } else if (Data.Region === "IND") {
     cleaned = cleaned.replace(".", "").replace(",", ".");
-    return Number(cleaned);
   }
+  return Number(cleaned);
 }

@@ -4,7 +4,11 @@ function payrollSQLCommand(formName) {
   switch (formName) {
     case "Staff Additional Remuneration":
       sqlCommand = `
-        SELECT FORMAT(A.AddRemDate, 'MMMM yyyy') AS StaffAddRemDate, 
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(A.AddRemDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.AddRemDate, 'MMMM yyyy', 'en-US')
+        ) AS StaffAddRemDate,
         B.DeptCode + ' - ' + B.DeptDesc AS Department,
         A.Remarks,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -65,14 +69,57 @@ function payrollSQLCommand(formName) {
           AND C.OUCode + ' - ' + C.OUDesc = @OU
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
       break;
+
+    case "Staff Loan/Deposit Maintenance":
+      sqlCommand = `
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) AS OMMonth,
+        B.RecTypeCode + ' - ' + B.RecTypeDesc AS RecType,
+        A.Remarks AS Remarks,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM PR_OutsMaintHdr A
+        LEFT JOIN GMS_RecTypeStp B ON A.RecTypeKey = B.RecTypeKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE   
+        IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) = @Date
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+        AND B.RecTypeCode + ' - ' + B.RecTypeDesc = @RecType
+        AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND');`;
+      break;
+
     case "Staff Advance Payment":
       sqlCommand = `
-        SELECT FORMAT(A.AdvPayDate,'MMMM yyyy') AS ADVMonth,
+        SELECT 
+        IIF(@region = 'IND',
+          FORMAT(A.AdvPayDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.AdvPayDate, 'MMMM yyyy', 'en-US')
+        ) AS ADVMonth,
         A.Remarks AS Remarks,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM PR_AdvPayHdr A 
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
         WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Staff Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT FORMAT(A.PrecedingDate, 'MMMM yyyy', 'id-ID') AS PrecedingMonth,
+        A.Remarks AS Remarks,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM PR_PreTaxSubHdr_IND A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE A.PreTaxSubNum = @DocNo 
+        AND A.OUKey IN (
+          SELECT OUKey FROM GMS_OUStp
+          WHERE OUCode + ' - ' + OUDesc = @OU
+        )
+        AND A.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND');`;
       break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
@@ -169,7 +216,7 @@ function payrollGridSQLCommand(formName) {
           B.EmpyID, EmpyName, 
           A.ZakatAmt, A.LevyAmt, A.VOLA;`;
       break;
-    
+
     case "Staff CP38":
       sqlCommand = `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
@@ -203,6 +250,32 @@ function payrollGridSQLCommand(formName) {
             AND Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )`;
       break;
+
+    case "Staff Loan/Deposit Maintenance":
+      sqlCommand = `
+        SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        D.PayCode + ' - ' + D.PayDesc AS DeductionCode,
+        C.Amt AS Amount,
+        C.Remarks AS Remarks
+        FROM PR_OutsMaintDet A
+        LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN PR_OutsMaintDeductDet C ON A.OutsMaintDetKey = C.OutsMaintDetKey
+        LEFT JOIN GMS_PayCodeStp D ON C.PayCodeKey = D.PayKey
+        WHERE A.OutsMaintHdrKey IN (
+        SELECT OutsMaintHdrKey 
+        FROM PR_OutsMaintHdr E
+        LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
+        LEFT JOIN GMS_RecTypeStp G ON E.RecTypeKey = G.RecTypeKey
+        WHERE IIF(@region = 'IND',
+          FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) = @Date 
+        AND F.OUCode + ' - ' + F.OUDesc = @OU
+        AND G.RecTypeCode + ' - ' + G.RecTypeDesc = @RecType
+        AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
+        );`;
+      break;
+
     case "Staff Advance Payment":
       sqlCommand = `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
@@ -210,11 +283,31 @@ function payrollGridSQLCommand(formName) {
         FROM PR_AdvPayDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
         WHERE AdvPayHdrKey IN (
-        SELECT AdvPayHdrKey FROM PR_AdvPayHdr
-        WHERE AdvPayNum = @DocNo AND OUKey IN (
-          SELECT OUKey FROM GMS_OUStp
-          WHERE OUCode + ' - ' + OUDesc = @OU
+          SELECT AdvPayHdrKey FROM PR_AdvPayHdr
+          WHERE AdvPayNum = @DocNo AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
           )
+        )`;
+      break;
+
+    case "Staff Preceding Tax (PPh 21)":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.GrossIncome AS GrossIncome,
+        B.BPJSJHT AS BPJSJHTAmt,
+        B.BPJSPen AS BPJSPenAmt,
+        B.PreDeductedTax AS PPh21
+        FROM PR_PreTaxSubDet_IND B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        WHERE PreTaxSubHdrKey IN (
+          SELECT PreTaxSubHdrKey FROM PR_PreTaxSubHdr_IND
+          WHERE PreTaxSubNum = @DocNo 
+          AND OUKey IN (
+            SELECT OUKey FROM GMS_OUStp
+            WHERE OUCode + ' - ' + OUDesc = @OU
+          )
+          AND Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
         )`;
       break;
     default:

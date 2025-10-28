@@ -35,7 +35,7 @@ export async function InputValues(page, path, col, value) {
   // Integer,Date,Text Input
   else if (col.includes("text") || col.includes("date")) {
     await element.fill(value);
-    await element.press("Enter")
+    await element.press("Enter");
   }
 
   // Numeric Input
@@ -51,10 +51,16 @@ export async function InputValues(page, path, col, value) {
     await element.press("Enter");
   }
 
+  // For dropdown with no text input
+  else if (col.includes("combobox")) {
+    await element.click();
+    await page.locator('ul[role="listbox"] li', { hasText: value }).click();
+  }
+
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function InputGridValues(
+export async function InputGridValuesSameCols(
   page,
   path,
   values,

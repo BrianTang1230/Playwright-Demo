@@ -11,8 +11,19 @@ export default class SideMenuPage {
     return this.page.locator("#btnNew").first();
   }
 
-  async clickBtnSave() {
-    await this.page.locator("#btnSave").first().dblclick({ force: true });
+  get btnPopulate() {
+    return this.page.locator("#btnNew").first();
+  }
+
+  async clickBtnSave(isDblClick = false) {
+    const saveBtn = this.page.locator("#btnSave").first();
+
+    if (isDblClick) {
+      await saveBtn.dblclick();
+    } else {
+      await saveBtn.click();
+    }
+
     await this.page
       .locator(".k-loading-image")
       .first()
@@ -43,7 +54,7 @@ export default class SideMenuPage {
   }
 
   get btnAddNewItem() {
-    return this.page.locator("#btnNewItem").first();
+    return this.page.locator("#btnNewItem, #btnCreateNew,#btnCreate").first();
   }
 
   get btnEditItem() {

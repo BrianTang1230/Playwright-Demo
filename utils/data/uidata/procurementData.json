@@ -14,7 +14,7 @@
     "RequestforQuotationGrid": "#quotRequestGrid div:nth-of-type(3) table tbody"
   },
   "DocNo": {
-    "PurchaseRequisition": "BNG2500138",
+    "PurchaseRequisition": "BNG2500147",
     "RequestforQuotation": "QRF0000043",
     "PurchaseOrder": "BNG0002369"
   }

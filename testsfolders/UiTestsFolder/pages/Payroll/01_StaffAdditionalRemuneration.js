@@ -1,0 +1,112 @@
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
+import {
+  InputGridValuesSameCols,
+  InputValues,
+} from "@UiFolder/functions/InputValues";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+
+export async function StaffAdditionalRemunerationCreate(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou
+) {
+  await sideMenu.btnCreateNewForm.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  await page.locator("#divComboOU .k-dropdown .k-select").first().click();
+  await page
+    .locator("ul[aria-hidden='false'] li span", { hasText: ou[0] })
+    .first()
+    .click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  for (let i = 0; i < paths.slice(0, 3).length; i++) {
+    await InputValues(page, paths[i], columns[i], values[i]);
+  }
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    i === 0
+      ? await page.locator("#btnNewEmpRem").click()
+      : await page.locator("#btnAddNewItemRem").click();
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
+  }
+
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return [uiVals, gridVals];
+}
+
+export async function StaffAdditionalRemunerationEdit(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+
+  for (let i = 0; i < paths.slice(0, 3).length; i++) {
+    await InputValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    if (i === 1) {
+      await sideMenu.confirmDelete.click();
+      await page.locator("#btnAddNewItemRem").click();
+    }
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
+  }
+
+  await sideMenu.btnSave.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+
+  const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return [uiVals, gridVals];
+}
+
+export async function StaffAdditionalRemunerationDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
+
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+}

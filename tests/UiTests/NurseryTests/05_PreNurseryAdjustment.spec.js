@@ -19,7 +19,7 @@ import {
   PreNurseryAdjustmentCreate,
   PreNurseryAdjustmentEdit,
   PreNurseryAdjustmentDelete,
-} from "@UiFolder/pages/Nursery/PreNurseryAdjustment";
+} from "@UiFolder/pages/Nursery/05_PreNurseryAdjustment";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -39,10 +39,9 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Pre Nursery Adjustment Tests", () => {
+  if (Login.Region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
-
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,

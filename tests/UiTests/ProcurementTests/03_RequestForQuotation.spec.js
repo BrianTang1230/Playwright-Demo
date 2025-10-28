@@ -24,7 +24,7 @@ import {
   RequestforQuotationCreate,
   RequestforQuotationEdit,
   RequestforQuotationDelete,
-} from "@UiFolder/pages/Procurement/RequestforQuotation";
+} from "@UiFolder/pages/Procurement/02_RequestForQuotation";
 
 import { Region } from "@utils/data/uidata/loginData.json";
 

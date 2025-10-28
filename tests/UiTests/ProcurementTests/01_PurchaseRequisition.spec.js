@@ -20,7 +20,7 @@ import {
   PurchaseRequisitionCreate,
   PurchaseRequisitionEdit,
   PurchaseRequisitionDelete,
-} from "@UiFolder/pages/Procurement/PurchaseRequisition";
+} from "@UiFolder/pages/Procurement/01_PurchaseRequisition";
 
 // ---------------- Set Global Variables ----------------
 let ou;

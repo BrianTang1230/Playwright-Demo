@@ -30,22 +30,29 @@
     "Inter-OUMainNurseryTransferToPath": "#MainNurTransDate,cboNurseryBatch_input,#remarkTextMInterTrn,cboMainTransType_input,cboPlantSource_input,cboAcc_input,cboCCID_input,cboTrnToBatch_input,spinbutton*0,spinbutton*2",
     "Inter-OUMainNurseryTransferToColumn": "InterTrnDate date,NurBatch dropdown,Remarks text,TransType dropdown,PlantSource dropdown,Account dropdown,CCID dropdown,TrnToBatch dropdown,UnitPrice numeric,STQty numeric",
     "NurseryTransferRequisitionPath": "#TransferDatePicker,#txtTransferRemark,#txtRefNo,cboTargetOU_input,cboContact_input,spinbutton*0,spinbutton*1,#StartDeliveryDatePicker,#EndDeliveryDatePicker,cboNurseryType_input,cboPlantMaterial_input",
-    "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,Qty numeric,StartDate date,EndDate date,Type dropdown,PlantMaterial dropdown"
+    "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,TransQty numeric,ExpStartDate date,ExpEndDate date,NurType dropdown,PlantMaterial dropdown",
+    "NurserySalesRequisitionPath": "#SoldDatePicker,#txtSoldRemark,#txtRefNo,cboContact_input,spinbutton*0,cboNurseryType_input,cboPlantMaterial_input",
+    "NurserySalesRequisitionColumn": "SoldDate date,Remarks text,RefNo text,Contact dropdown,UnitPrice numeric,NurType dropdown,PlantMaterial dropdown"
+  },
+  "GridPath": {
+    "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000187",
-    "PreNurseryGerminated": "PG00000093",
-    "PreNurseryDoubletonSplitting": "PDS0000063",
-    "PreNurseryCulling": "PC00000041",
-    "PreNurseryAdjustment": "PNA0000007",
-    "PreNurseryTransfer/Sold/Loss": "PTO0000043",
-    "Inter-OUPreNurseryTransferTo": "IPT0000054",
-    "MainNurseryReceived": "NR00000080",
-    "MainNurseryDoubletonSplitting": "NDS0000028",
-    "MainNurseryCulling": "NC00000026",
-    "MainNurseryAdjustment": "MNA0000003",
-    "MainNurseryTransfer/Loss": "NT00000032",
-    "MainNurserySold": "MS00000026",
-    "Inter-OUMainNurseryTransferTo": "IMT0000035"
+    "PreNurserySeedReceived": "PSR0000206",
+    "PreNurseryGerminated": "PG00000108",
+    "PreNurseryDoubletonSplitting": "PDS0000074",
+    "PreNurseryCulling": "PC00000050",
+    "PreNurseryAdjustment": "PNA0000015",
+    "PreNurseryTransfer/Sold/Loss": "PTO0000052",
+    "Inter-OUPreNurseryTransferTo": "IPT0000066",
+    "MainNurseryReceived": "NR00000101",
+    "MainNurseryDoubletonSplitting": "NDS0000037",
+    "MainNurseryCulling": "NC00000036",
+    "MainNurseryAdjustment": "MNA0000008",
+    "MainNurseryTransfer/Loss": "NT00000042",
+    "MainNurserySold": "MS00000036",
+    "Inter-OUMainNurseryTransferTo": "IMT0000045",
+    "NurseryTransferRequisition": "RNT0000018",
+    "NurserySalesRequisition": "RNS0000011"
   }
 }

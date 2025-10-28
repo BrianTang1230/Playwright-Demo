@@ -17,7 +17,7 @@
 //   DocNo,
 // } from "@utils/data/uidata/procurementData.json";
 
-// import { PurchaseOrderCreate } from "@UiFolder/pages/Procurement/PurchaseOrder";
+// import { PurchaseOrderCreate } from "@UiFolder/pages/Procurement/03_PurchaseOrder";
 
 // // ---------------- Set Global Variables ----------------
 // let ou;

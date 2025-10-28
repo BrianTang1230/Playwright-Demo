@@ -31,6 +31,7 @@ const configs = {
 export default class DBHelper {
   constructor() {
     this.pools = {};
+    this.region = region; // ✅ store region
     this.dbName = `db${region}`;
   }
 
@@ -53,6 +54,12 @@ export default class DBHelper {
   async execute(query, params = {}) {
     const pool = await this.connect();
     const request = pool.request();
+
+    // ✅ Only add Region if the query actually references @Region
+    if (query.includes("@region") && !params.Region) {
+      params.Region = this.region;  
+    }
+
     this.setParams(request, params);
     return await request.query(query);
   }

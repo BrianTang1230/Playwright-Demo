@@ -19,7 +19,7 @@ import {
   MainNurseryReceivedCreate,
   MainNurseryReceivedEdit,
   MainNurseryReceivedDelete,
-} from "@UiFolder/pages/Nursery/MainNurseryReceived";
+} from "@UiFolder/pages/Nursery/08_MainNurseryReceived";
 
 // ---------------- Set Global Variables ----------------
 let ou;

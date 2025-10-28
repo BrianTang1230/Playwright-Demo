@@ -12,7 +12,11 @@
     "StaffIncomeDeclarationEAFormPath": "#yrPicker,#txtRemarks",
     "StaffIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
     "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
-    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text"
+    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text",
+    "StaffLoanDepositMaintenancePath": "#omMonthPicker,cboRecType_input,#Remarks",
+    "StaffLoanDepositMaintenanceColumn": "OMMonth date,RecType dropdown,Remarks text",
+    "StaffPrecedingTaxPath": "#monthPicker,#Remarks",
+    "StaffPrecedingTaxColumn": "PrecedingMonth date,Remarks text"
   },
   "GridPath": {
     "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
@@ -20,11 +24,14 @@
     "StaffPreviousEmploymentTaxDeductionGrid": "//*[@id='prPreEmpDetGrid']/div[3]/table,//*[@id='prPreEmpBIKDetGrid']/div[3]/table,//*[@id='prPreEmpDctDetGrid']/div[3]/table",
     "StaffCP38Grid": "//*[@id='prAddTaxDetailGrid']/div[3]/table",
     "StaffIncomeDeclarationEAFormGrid": "//*[@id='empydetailGrid']/div[3]/table,//*[@id='incdetailGrid']/div[3]/table",
-    "StaffAdvancePaymentGrid": "//*[@id='prAdvPayDetGrid']/div[3]/table"
+    "StaffAdvancePaymentGrid": "//*[@id='prAdvPayDetGrid']/div[3]/table",
+    "StaffLoanDepositMaintenanceGrid": "//*[@id='omdetailGrid']/div[3]/table,//*[@id='deductdetailGrid']/div[3]/table",
+    "StaffPrecedingTaxGrid": "//*[@id='staffPreTaxSubDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000028",
-    "StaffCP38": "ADT0000023",
-    "StaffAdvancePayment": "SAP0000008"
+    "StaffAdditionalRemuneration": "ADR0000050",
+    "StaffCP38": "ADT0000027",
+    "StaffAdvancePayment": "SAP0000004",
+    "StaffPrecedingTax": "PT00000010"
   }
 }

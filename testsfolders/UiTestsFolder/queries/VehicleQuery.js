@@ -4,7 +4,10 @@ function vehicleSQLCommand(formName) {
   switch (formName) {
     case "Vehicle Running Distribution":
       sqlCommand = `
-      SELECT FORMAT(A.RunDistDate, 'MMMM yyyy') AS RunDistDate,
+      SELECT IIF(@region = 'IND',
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'id-ID'),
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'en-US')
+      ) AS RunDistDate,
       B.VehID + ' - ' + B.VehDesc AS VehicleId,
       A.Remarks,
       C.OUCode + ' - ' + C.OUDesc AS OU
@@ -16,7 +19,10 @@ function vehicleSQLCommand(formName) {
 
     case "Inter-OU Vehicle Running Distribution (Loan To)":
       sqlCommand = `
-      SELECT FORMAT(A.RunDistDate, 'MMMM yyyy') AS RunDistDate,
+      SELECT IIF(@region = 'IND',
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'id-ID'),
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'en-US')
+      ) AS RunDistDate,
       B.VehID + ' - ' + B.VehDesc AS VehicleId,
       A.Remarks,
       C.OUCode + ' - ' + C.OUDesc AS OU,

@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function DailyRatePerOERCreate(
+export async function InterOUMonthlyPieceRateWorkCreate(
   page,
   sideMenu,
   paths,
@@ -19,18 +19,27 @@ export async function DailyRatePerOERCreate(
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
+  await page.waitForTimeout(2000);
+
   await SelectOU(
     page,
-    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
+    "#ddlFromOU_listbox li span",
     ou[0]
+  );
+
+  await SelectOU(
+    page,
+    "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
+    "#ddlToOU_listbox li span",
+    ou[1]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.getByRole("button", { name: " Populate Day" }).click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -49,7 +58,7 @@ export async function DailyRatePerOERCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOEREdit(
+export async function InterOUMonthlyPieceRateWorkEdit(
   page,
   sideMenu,
   paths,
@@ -62,11 +71,16 @@ export async function DailyRatePerOEREdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
+
+  await page.locator("#IsMthPRSelectEmpy").check();
+  await page.locator("#btnDeletePRDetail").click();
+  await sideMenu.confirmDelete.click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -85,8 +99,14 @@ export async function DailyRatePerOEREdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOERDelete(page, sideMenu, values, ou) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+export async function InterOUMonthlyPieceRateWorkDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   await sideMenu.clickBtnDelete();
 }

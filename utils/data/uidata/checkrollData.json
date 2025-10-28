@@ -1,6 +1,12 @@
 {
   "JsonPath": "utils/data/uidata/checkrollData.json",
   "InputPath": {
+    "DailyPieceRateWorkPath": "#AtrDate,cboGang_input,#txtRemarks,comboBoxMandor_input",
+    "DailyPieceRateWorkColumn": "ATRDate date,Gang dropdown,Remarks text,Mandor dropdown",
+    "MonthlyPieceRateWorkPath": "#MonthlyPRMonth,cboGang_input,#txtRemarks,comboBoxMandor_input",
+    "MonthlyPieceRateWorkColumn": "MonthlyPRDate date,Gang dropdown,Remarks text,Mandor dropdown",
+    "InterOUMonthlyPieceRateWorkPath": "#InterOUMPRMonth,cboGang_input,#txtRemarks,comboBoxMandor_input",
+    "InterOUMonthlyPieceRateWorkColumn": "InterOUMonthlyPRDate date,Gang dropdown,Remarks text,Mandor dropdown",
     "WorkerAdhocAllowancePath": "#AdHocAllowanceMonth,#txtRemarks",
     "WorkerAdhocAllowanceColumn": "AllowMonth date,Remarks text",
     "WorkerAdhocDeductionPath": "#AdHocDeductionMonth,#txtRemarks",
@@ -29,6 +35,9 @@
     "MillCPOandPKColumn": "FiscYear combobox,Period combobox,Division dropdown"
   },
   "GridPath": {
+    "DailyPieceRateWorkGrid": "//*[@id=\"atrdetailGrid\"]/div[3]/table,//*[@id=\"atrAllocDetGrid\"]/div[3]/table,//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
+    "MonthlyPieceRateWorkGrid": "//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
+    "InterOUMonthlyPieceRateWorkGrid": "//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
     "WorkerAdhocAllowanceGrid": "//*[@id=\"ahallowdetailGrid\"]/div[3]/table",
     "WorkerAdhocDeductionGrid": "//*[@id=\"ahdeductdetailGrid\"]/div[3]/table",
     "WorkerAdhocReimbursementGrid": "//*[@id=\"ahreimbursementdetailGrid\"]/div[3]/table",
@@ -44,6 +53,9 @@
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
+    "DailyPieceRateWork": "",
+    "MonthlyPieceRateWork": "MPR0000003",
+    "InterOUMonthlyPieceRateWork": "IPR0000015",
     "WorkerAdhocAllowance": "AHA0001132",
     "WorkerAdhocDeduction": "AHD0000096",
     "WorkerAdhocReimbursement": "AHR0000023",

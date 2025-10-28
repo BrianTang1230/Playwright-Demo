@@ -2,45 +2,58 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
-import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
+import {
+  checkrollSQLCommand,
+  checkrollGridSQLCommand,
+} from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  MonthlyMPOBPriceCreate,
-  MonthlyMPOBPriceDelete,
-  MonthlyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/01_MonthlyMPOBPrice";
+  InputPath,
+  JsonPath,
+  DocNo,
+  GridPath,
+} from "@utils/data/uidata/checkrollData.json";
+
+import {
+  MonthlyPieceRateWorkCreate,
+  MonthlyPieceRateWorkEdit,
+  MonthlyPieceRateWorkDelete,
+} from "@UiFolder/pages/Checkroll/MonthlyPieceRateWork";
 
 import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "FFB_DATA";
-const module = "FFB Procurement";
-const submodule = null;
-const formName = "Monthly MPOB Price";
+const sheetName = "CR_DATA";
+const module = "Checkroll";
+const submodule = "Attendance";
+const formName = "Monthly Piece Rate Work";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6]];
+const cellsIndex = [[1, 2, 4, 5, 6, 7, 9, 13]];
 
-test.describe.serial("Monthly MPOB Price Tests", () => {
+test.describe.serial("Monthly Piece Rate Work Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // if (Login.Region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -52,6 +65,8 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -65,14 +80,10 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Monthly MPOB Price", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      OU: ou[0],
-      Region: createValues[1],
-    });
+  test("Create New Monthly Piece Rate Work", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await MonthlyMPOBPriceCreate(
+    const { uiVals, gridVals } = await MonthlyPieceRateWorkCreate(
       page,
       sideMenu,
       paths,
@@ -84,22 +95,24 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       ou
     );
 
-    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
+    docNo = await editJson(
+      JsonPath,
+      keyName,
+      await page.locator("#txtMPRNum").inputValue()
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
-      Region: createValues[1],
     });
-    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
-      ffbGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
-        Region: createValues[1],
       }
     );
-    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -118,8 +131,8 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Monthly MPOB Price", async ({ page, db }) => {
-    const { uiVals, gridVals } = await MonthlyMPOBPriceEdit(
+  test("Edit Monthly Piece Rate Work", async ({ page, db }) => {
+    await MonthlyPieceRateWorkEdit(
       page,
       sideMenu,
       paths,
@@ -129,24 +142,25 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
-    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
-      Region: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
-      ffbGridSQLCommand(formName),
+      checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
-        Region: createValues[1],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -164,17 +178,15 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Monthly MPOB Price", async ({ page, db }) => {
-    await MonthlyMPOBPriceDelete(page, sideMenu, createValues, ou);
+  test("Delete Monthly Piece Rate Work", async ({ page, db }) => {
+    await MonthlyPieceRateWorkDelete(page, sideMenu, createValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
       OU: ou[0],
-      Region: createValues[1],
     });
 
-    if (dbValues.length > 0)
-      throw new Error("Deleting Monthly MPOB Price failed");
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

@@ -360,23 +360,24 @@ function ffbGridSQLCommand(formName) {
   switch (formName) {
     case "Monthly MPOB Price":
       sqlCommand = `
-        SELECT CPOPrice AS CPOnumeric,
-        PKPrice AS PKPnumeric,
-        FFBPrice AS FPnumeric,
-        RegionTax AS RTnumeric,
-        MPOBCess AS MPnumeric,
+        SELECT
+        A.CPOPrice AS CPOnumeric,
+        A.PKPrice AS PKPnumeric,
+        A.FFBPrice AS FPnumeric,
+        A.RegionTax AS RTnumeric,
+        A.MPOBCess AS MPnumeric,
         AddCess AS ACnumeric
-        FROM FPS_PriceDet
+        FROM FPS_PriceDet A
         WHERE PriceHdrKey IN (
-          SELECT PriceHdrKey
-          FROM FPS_PriceHdr A
-          LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
-          LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-          WHERE A.Mth = '1'
-          AND Yr = @Date
-          AND B.RegionCode + ' - ' + B.RegionDesc = @Region
-          AND C.OUCode + ' - ' + C.OUDesc = @OU
-        )`;
+            SELECT PriceHdrKey
+            FROM FPS_PriceHdr A
+            LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+            LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+            AND Yr = @Date
+            AND B.RegionCode + ' - ' + B.RegionDesc = @Region
+            AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )
+        AND A.Mth = '1'`;
       break;
 
     case "Daily MPOB Price":

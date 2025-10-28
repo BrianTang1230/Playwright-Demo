@@ -4,10 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import {
-  FilterRecordByOU,
-  FilterRecordByOUAndDate,
-} from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function MonthlyRatePerOERCreate(
   page,

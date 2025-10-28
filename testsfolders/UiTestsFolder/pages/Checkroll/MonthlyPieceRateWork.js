@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function DailyRatePerOERCreate(
+export async function MonthlyPieceRateWorkCreate(
   page,
   sideMenu,
   paths,
@@ -22,15 +22,20 @@ export async function DailyRatePerOERCreate(
   await SelectOU(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#ddlOU-list span",
     ou[0]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
+
+    if (i === 0) {
+      // If Month is the first field
+      await page.waitForTimeout(1000);
+    }
   }
 
-  await page.getByRole("button", { name: " Populate Day" }).click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -49,7 +54,7 @@ export async function DailyRatePerOERCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOEREdit(
+export async function MonthlyPieceRateWorkEdit(
   page,
   sideMenu,
   paths,
@@ -62,11 +67,16 @@ export async function DailyRatePerOEREdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
+
+  await page.locator("#isSelectGrid").check();
+  await page.locator("#btnDeleteItem").click();
+  await sideMenu.confirmDelete.click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -85,8 +95,14 @@ export async function DailyRatePerOEREdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOERDelete(page, sideMenu, values, ou) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+export async function MonthlyPieceRateWorkDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

@@ -2,6 +2,53 @@ function checkrollSQLCommand(formName) {
   let sqlCommand = "";
 
   switch (formName) {
+    case "Daily Piece Rate Work":
+      sqlCommand = `
+        SELECT FORMAT(A.ATRDate, 'dd/MM/yyyy') AS ATRDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remarks,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM CR_ATRHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.HarvManKey = C.EmpyKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.ATRNum = @DocNo
+        AND OUCode + ' - ' + OUDesc = @OU`;
+      break;
+
+    case "Monthly Piece Rate Work":
+      sqlCommand = `
+        SELECT FORMAT(A.ATRDate, 'MMMM yyyy') AS MonthlyPRDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remarks,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM CR_MthPRHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.HarvManKey = C.EmpyKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.MthPRNum = @DocNo
+        AND OUCode + ' - ' + OUDesc = @OU`;
+      break;
+
+    case "Inter-OU Monthly Piece Rate Work":
+      sqlCommand = `
+        SELECT FORMAT(A.ATRDate, 'MMMM yyyy') AS InterOUMonthlyPRDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remarks,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor,
+        D.OUCode + ' - ' + D.OUDesc AS OU,
+        E.OUCode + ' - ' + E.OUDesc AS LoanToOU
+        FROM CR_InterMthPRHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.HarvManKey = C.EmpyKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        LEFT JOIN GMS_OUStp E ON A.ToOUKey = E.OUKey
+        WHERE A.MthPRNum = @DocNo
+        AND D.OUCode + ' - ' + D.OUDesc = @OU`;
+      break;
+
     case "Worker Ad hoc Allowance":
       sqlCommand = `
         SELECT
@@ -223,6 +270,91 @@ function checkrollGridSQLCommand(formName) {
   let sqlCommand = "";
 
   switch (formName) {
+    case "Daily Piece Rate Work":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        D.AttdCode + ' - ' + D.AttdDesc AS AttendanceCode,
+        F.AccNum + ' - ' + F.AccDesc AS Account,
+        G.CCIDCode + ' - ' + G.CCIDDesc AS CCID,
+        E.MD AS ManDay,
+        E.OTH1 AS OT,
+        E.AllowAmt AS Allowance,
+        E.Remarks AS Remarks,
+        I.ACode + ' - ' + I.ACodeDesc AS ActivityCode,
+        J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
+        CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
+        H.PayQty AS PayQty,
+        H.OTPayQty AS OvertimePay,
+        H.Remarks AS PRRemarks
+        FROM CR_ATRDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN GMS_AttdCodeStp D ON B.AttdKey = D.AttdKey
+        LEFT JOIN CR_ATRAllocDet E ON B.ATRDetKey = E.ATRDetKey
+        LEFT JOIN GMS_AccMas F ON E.AccKey = F.AccKey
+        LEFT JOIN V_SYC_CCIDMapping G On E.CCIDKey = G.CCIDKey 
+        LEFT JOIN CR_PieceRateDet H ON B.ATRDetKey = H.ATRDetKey
+        LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
+        LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey 
+        WHERE B.ATRHdrKey IN (
+          SELECT ATRHdrKey FROM CR_ATRHdr K
+          LEFT JOIN GMS_OUStp L ON K.OUKey = L.OUKey
+          WHERE K.ATRNum = @DocNo
+          AND L.OUCode + ' - ' + L.OUDesc = @OU
+        )`;
+      break;
+
+    case "Monthly Piece Rate Work":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        D.ACode + ' - ' + D.ACodeDesc AS ActivityCode,
+        E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
+        B.MD AS ManDay,
+        CASE B.WorkOn 
+        WHEN 'OT' THEN 'Overtime'
+        WHEN 'RD' THEN 'Rest Day'
+        WHEN 'PH' THEN 'Public Holiday'
+        ELSE '' END AS WorkOn,
+        CASE WHEN B.IsDRAsPayRate = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
+        B.PayQty AS PayQty,
+        B.Remarks AS Remarks
+        FROM CR_MthPRDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN GMS_ActivityCodeStp D ON B.ActivityKey = D.ACodeKey
+        LEFT JOIN V_SYC_CCIDMapping E On B.CCIDKey = E.CCIDKey 
+        WHERE B.MthPRHdrKey IN (
+          SELECT MthPRHdrKey FROM CR_MthPRHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.MthPRNum = @DocNo
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Inter-OU Monthly Piece Rate Work":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        D.ACode + ' - ' + D.ACodeDesc AS ActivityCode,
+        E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
+        B.MD AS ManDay,
+        CASE B.WorkOn 
+        WHEN 'OT' THEN 'Overtime'
+        WHEN 'RD' THEN 'Rest Day'
+        WHEN 'PH' THEN 'Public Holiday'
+        ELSE '' END AS WorkOn,
+        CASE WHEN B.IsDRAsPayRate = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
+        B.PayQty AS PayQty,
+        B.Remarks AS Remarks
+        FROM CR_InterMthPRDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN GMS_ActivityCodeStp D ON B.ActivityKey = D.ACodeKey       
+        LEFT JOIN V_SYC_CCIDMapping E On B.CCIDKey = E.CCIDKey
+        WHERE B.MthPRHdrKey IN (
+            SELECT MthPRHdrKey FROM CR_InterMthPRHdr F
+            LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+            WHERE F.MthPRNum = @DocNo
+            AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
     case "Worker Ad hoc Allowance":
       sqlCommand = `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,

@@ -10,6 +10,7 @@ import Login from "./utils/data/uidata/loginData.json";
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
+const region = process.env.REGION || Login.Region; // ✅ HERE
 
 const device = { ...devices["Desktop Chrome"] };
 // @ts-ignore
@@ -81,10 +82,10 @@ module.exports = defineConfig({
       name: "UI Tests",
       testDir: "tests/UiTests",
       testIgnore: [
-        ...(Login.Region === "IND"
+        ...(region === "IND"
           ? ["tests/UiTests/LabTests/**", "tests/UiTests/FFBTests/MY/**"]
           : []),
-        ...(Login.Region === "MY" ? ["tests/UiTests/FFBTests/IND/**"] : []),
+        ...(region === "MY" ? ["tests/UiTests/FFBTests/IND/**"] : []),
       ], // IND side ignore Lab tests temporarily
       use: {
         ...device,

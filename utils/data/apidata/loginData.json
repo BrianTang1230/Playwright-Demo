@@ -1,0 +1,12 @@
+{
+  "Client": "QTAUTO - QUARTO AUTOMATION",
+  "LaunchUrl": "https://qa.quarto.cloud/",
+
+  "UserID": "",
+  "Password": "",
+  "DataSourceMY": {
+    "DataSource": "quartovm-qa.quarto.cloud",
+    "Port": 14337,
+    "Database": "LONE_API"
+  }
+}

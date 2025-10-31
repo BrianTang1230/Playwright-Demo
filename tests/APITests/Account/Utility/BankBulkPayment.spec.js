@@ -10,9 +10,9 @@ import {
 } from "@utils/data/apidata/accountApiData.json";
 
 let apiObj;
-let createValues;
+let createValues, editValues;
 let BPHdrKey, DocNum;
-const currentDate = new Date().toISOString().split("T")[0];
+const currentDate = new Date();
 
 const accUrl = ACC_API_URL;
 const sheetName = "ACCAPI_Data";
@@ -24,9 +24,11 @@ const savedDocNo = ID.BankBulkPayment.num;
 test.describe.serial("Bank Bulk Payment API Test", () => {
   test.beforeAll(async ({ excel }) => {
     await excel.init(false); // Force API mode
-    [createValues] = await excel.loadExcelValues(sheetName, formName, {
-      isUI: false,
-    });
+    [createValues, editValues] = await excel.loadExcelValues(
+      sheetName,
+      formName,
+      { isUI: false }
+    );
 
     apiObj = new ApiCallBase(null, "", formName, AccountJsonPath);
   });
@@ -36,40 +38,40 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
   });
 
   test.describe("CRUD Operation Testing", () => {
-    // 🟢 CREATE
+    // CREATE
     test("Add new Bank Bulk Payment", async ({ api }) => {
       apiObj.setUrl(`${accUrl}/api/BP`);
       
-      const placeholderDate = "1900-01-01T00:00:00";
+      const placeholderDate = `${currentDate}T00:00:00`;
       const { key, num, status, json } = await apiObj.create(
         {
-          OUKey: parseInt(createValues[0]) || 1,
-          OUCode: createValues[1] || null,
-          BPDate: `${currentDate}T00:00:00`,
-          Status: "OP",
-          BankKey: parseInt(createValues[2]) || 26,
-          CurrCode: createValues[3] || "MYR",
-          CreatedBy: 2841,
-          CreatedDate: currentDate,
-          UpdatedBy: 2841,
-          UpdatedDate: currentDate,
-          ApprovedBy: -1,
-          ApprovedDate: currentDate,
-          VoidBy: -1,
-          VoidDate: `${currentDate}T00:00:00`,
-          Reason: createValues[4] || "Initial bulk payment",
-          RowState: 1,
+          ...basePayloads,
+          OUCode: createValues[0],
+          BPDate: currentDate.toISOString(),
+          Status: createValues[1],
+          BankCode: createValues[2],
+          BankName: createValues[3],
+          CurrCode: createValues[4],
+          CreatedDate: currentDate.toISOString(),
+          UpdatedDate: currentDate.toISOString(),
+          ApprovedDate: currentDate.toISOString(),
+          VoidDate: currentDate.toISOString(),
           bpDetails: [
             {
-              TransHdrKey: 477663,
-              CurrCode: "MYR",
-              PymtType: "IBG",
-              BeneficiaryName: "AMR SONS (MALAYSIA) SDN. BHD.",
-              BankAccNum: "554044512659",
-              PaymentAmt: 660,
-              RowState: 1,
-            },
-          ],
+              TransHdrKey: createValues[5],
+              TransDetKey: createValues[6],
+              OUCode: createValues[7],
+              CurrCode: createValues[8],
+              PymtType: createValues[9],
+              PymtTypeid: createValues[10],
+              GLDate: createValues[11],
+              GLDesc: createValues[12],
+              BeneficiaryName: createValues[13],
+              BankAccNum: createValues[14],
+              PaymentAmt: createValues[15],
+              BankName: createValues[16],
+              Email: createValues[17],
+            }]
         },
         {
           key: "BPHdrKey",
@@ -82,7 +84,7 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
       DocNum = num;
     });
 
-    // 🔍 GET BY KEY
+    // GET BY KEY
     test("Get Bank Bulk Payment by HdrKey", async ({ api }) => {
       const keyToUse = BPHdrKey || savedKey;
 
@@ -92,7 +94,7 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
       await apiObj.getByKey();
     });
 
-    // 🔍 GET ALL
+    // GET ALL
     test("Get all Bank Bulk Payment transactions", async ({ api }) => {
       apiObj.setUrl(
         `${accUrl}/odata/BPHeader?$format=json&$orderby=BPDate desc,BPHdrKey&$select=BPHdrKey,OUCode,DocNum,BPDate,BankCode,BankName,CurrCode&$inlinecount=allpages&$top=20&$filter=OUCode eq 'UMBB'`
@@ -100,50 +102,63 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
       await apiObj.getAll();
     });
 
-    /* test("Update Bank Bulk Payment transaction", async ({ api }) => {
+    test("Update Bank Bulk Payment transaction", async ({ api }) => {
       const keyToUse = BPHdrKey || savedKey;      // Header key to update
       const docNoToUse = DocNum || savedDocNo;    // Doc number to update
     
-          apiObj.setUrl(`${accUrl}api/BP`);
-    
-          const updatedDetails = [
-          {
-            BPDetKey: 64697,
+          apiObj.setUrl(`${accUrl}/api/BP`);
+
+          const { status, json } = await apiObj.update("POST", {
+            ...basePayloads,
             BPHdrKey: keyToUse,
-            TransHdrKey: 443644,
-            TransDetKey: 4326829,
-            ClientKey: -1,
-            OUKey: -1,
-            OUCode: "",
-            DocNum: "BV24010006",
-            CurrCode: "",
-            PymtType: "IBG",
-            PymtTypeid: 10,
-            GLDate: "2024-01-03T16:00:00Z",
-            GLDesc: "<HO>RENTAL FOR CHAIRPERSON OFFICE - JANUARY 2024",
-            BeneficiaryName: "NIRA SDN BHD",
-            BankAccNum: "8000866934",
-            PaymentAmt: 8000.0,
-            BankName: "CIMB Bank Berhad",
-            ICNO: "",
-            BRNO: "",
-            PoliceArmyPassNO: "",
-            Email: "dummy@dummy.com",
-            PurposeCode: "",
-            PurposeCodeText: "",
-            RowState: 1
-          }
-        ];
-            const { status, json } = await apiObj.update("POST", {
-              ...basePayloads,        // Keep all existing values
+            DocNum: docNoToUse,
+            OUCode: editValues[0],
+            Status: editValues[1],
+            BankCode: editValues[2],
+            BankName: editValues[3],
+            CurrCode: editValues[4],
+            BPDate: currentDate.toISOString(),
+            ApprovedDate: currentDate.toISOString(),
+            VoidDate: currentDate.toISOString(),
+            RowState: 2,
+            bpDetails: [
+            {
               BPHdrKey: keyToUse,
-              DocNum: docNoToUse,
-              RowState: 2,            // Update header RowState if needed
-              bpDetails: updatedDetails
-          });
-            // Expect a successful update
-            expect(status).toBe(200);
-            console.log("Update response:", json);
-        });*/
+              TransHdrKey: editValues[5],
+              TransDetKey: editValues[6],
+            }]  
+        });     
+  });
+      
+    test("Delete Bank Bulk Payment transaction", async ({ api }) => {
+      const keyToUse = BPHdrKey || savedKey;
+
+      const deleteUrl = `${accUrl}/api/BP/Delete?BPHdrKey=${keyToUse}`;
+
+      const response = await api.post(deleteUrl, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+      });
+
+        const status = response.status();
+        let json = {};
+        try {
+          json = await response.json();
+        } catch {
+          console.log("No JSON response (204 No Content)");
+        }
+
+        console.log("Delete Response:", json);
+
+        // Expect successful delete
+        expect([200, 204]).toContain(status);
+
+        if (status === 200 && json?.Message) {
+          console.log(json.Message);
+        } else {
+          console.log("Bank Bulk Payment deleted successfully.");
+        }
+      });
   });
 });

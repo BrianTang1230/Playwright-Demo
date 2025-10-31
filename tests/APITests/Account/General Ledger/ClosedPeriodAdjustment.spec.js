@@ -18,12 +18,12 @@ let createdRecord;
 
 const accUrl = ACC_API_URL;
 const sheetName = "ACCAPI_Data";
-const formName = "General Journal";
-const basePayloads = AccountPayloads.GeneralJournal;
-const savedKey = ID.GeneralJournal.TransHdrKey;
-const savedDocNo = ID.GeneralJournal.num;
+const formName = "Closed Period Adjustment";
+const basePayloads = AccountPayloads.ClosedPeriodAdjustment;
+const savedKey = ID.ClosedPeriodAdjustment.TransHdrKey;
+const savedDocNo = ID.ClosedPeriodAdjustment.num;
 
-test.describe.serial("General Journal API Test", () => {
+test.describe.serial("Closed Period Adjustment API Test", () => {
   test.beforeAll(async ({ excel }) => {
     await excel.init(false); // force API mode
     // Read Excel data once
@@ -41,43 +41,46 @@ test.describe.serial("General Journal API Test", () => {
   });
 
   test.describe("CRUD Operation Testing", () => {
-    test("Add new General Journal transaction", async ({ api }) => {
+    test("Add new Close Period Adjustment", async ({ api }) => {
     apiObj.setUrl(
-      `${accUrl}/api/GL?form=%27GL%27&Environment=qaa&AttachmentID=""`
+      `${accUrl}/api/GL?form=%27AJ%27&Environment=qaa&AttachmentID=""`
     );
+
+      const payloadToSend = JSON.parse(JSON.stringify(basePayloads));
+      payloadToSend.OUCode = createValues[0];
+      payloadToSend.OUDesc = createValues[1];
+      payloadToSend.GLDate = currentDate.toISOString();
+      payloadToSend.GLDesc = createValues[2];
+      payloadToSend.InvoiceDate = currentDate.toISOString();
+      payloadToSend.CreatedDate = currentDate.toISOString();
+      payloadToSend.UpdatedDate = currentDate.toISOString();
+
+      if (payloadToSend.glDetails && payloadToSend.glDetails[0]){
+        const detail1 = payloadToSend.glDetails[0];
+        detail1.AccNum = createValues[3];
+        detail1.AccDesc = createValues[4];
+        detail1.OUCode = createValues[5];
+        detail1.Remarks = createValues[6];
+        detail1.CCID = createValues[7];
+        detail1.AccNumAccDesc = createValues[8];
+        detail1.CCIDCodeCCIDDesc = createValues[9];
+        detail1.rowid = createValues[10];
+      }
+
+      if (payloadToSend.glDetails && payloadToSend.glDetails[1]){
+        const detail2 = payloadToSend.glDetails[1];
+        detail2.AccNum = createValues[11];
+        detail2.AccDesc = createValues[12];
+        detail2.OUCode = createValues[13];
+        detail2.Remarks = createValues[14];
+        detail2.CCID = createValues[15];
+        detail2.AccNumAccDesc = createValues[16];
+        detail2.CCIDCodeCCIDDesc = createValues[17];
+        detail2.rowid = createValues[18];
+      }
+
       const { HdrKey, num, status, json } = await apiObj.create(
-        {
-          ...basePayloads,
-          OUCode: createValues[0],
-          OUDesc: createValues[1],
-          GLDate: currentDate.toISOString(),
-          GLDesc: createValues[2],
-          InvoiceDate: currentDate.toISOString(),
-          CreatedDate: currentDate.toISOString(),
-          UpdatedDate: currentDate.toISOString(),
-          glDetails: [
-            {
-              AccNum: createValues[3],
-              AccDesc: createValues[4],
-              OUCode: createValues[5],
-              Remarks: createValues[6],
-              CCID: createValues[7],
-              AccNumAccDesc: createValues[8],
-              CCIDCodeCCIDDesc: createValues[9],
-              rowid: createValues[10],
-            },
-            {
-              AccNum: createValues[11],
-              AccDesc: createValues[12],
-              OUCode: createValues[13],
-              Remarks: createValues[14],
-              CCID: createValues[15],
-              AccNumAccDesc: createValues[16],
-              CCIDCodeCCIDDesc: createValues[17],
-              rowid: createValues[18],
-            }
-          ]
-        },
+          payloadToSend,
         {
           HdrKey: "TransHdrKey",
           num: "DocNum",
@@ -91,7 +94,7 @@ test.describe.serial("General Journal API Test", () => {
     });
 
     // GET BY KEY
-    test("Get General Journal transaction by HdrKey", async ({ api }) => {
+    test("Get Closed Period Adjustment by HdrKey", async ({ api }) => {
       const keyToUse = TransHdrKey || savedKey;
         apiObj.setUrl(
           `${accUrl}/odata/GLHeader?TransHdrKey=${keyToUse}&$format=json`
@@ -100,29 +103,30 @@ test.describe.serial("General Journal API Test", () => {
         });
 
     // GET ALL
-    test("Get all General Journal transactions", async ({ api }) => {
+    test("Get all Closed Period Adjustment", async ({ api }) => {
         apiObj.setUrl(
-          `${accUrl}/odata/GLHeader?$expand=glDetails&$format=json&$orderby=GLDate%20desc,TransHdrKey&$select=TransHdrKey,OUCode,DocNum,Source,DocType,GLDate,FY,Period,InvNum,PayTermCode,DueDate,GLStatusDesc,GLDesc,CurrCode,DocAmt,Reason,CreatedByCode,UpdatedByCode,L1ApprovedByName,L1ApprovedDate,L2ApprovedByName,L2ApprovedDate,L3ApprovedByName,L3ApprovedDate,LastApprovedByCode,VoidByCode,IsSelect,glDetails/TransDetKey,glDetails/AccNum,glDetails/AccDesc,glDetails/CCID,glDetails/Remarks,glDetails/CurrCode,glDetails/OrigTransAmt,glDetails/ExRateFunc,glDetails/FuncTransAmt&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(FY%20eq%202026%20and%20Period%20eq%206)&DocType=GJ`
+          `${accUrl}/odata/GLHeader?$expand=glDetails&$format=json&$orderby=GLDate%20desc,TransHdrKey&$select=TransHdrKey,OUCode,DocNum,Source,DocType,GLDate,FY,Period,InvNum,PayTermCode,DueDate,GLStatusDesc,GLDesc,CurrCode,DocAmt,Reason,CreatedByCode,UpdatedByCode,L1ApprovedByName,L1ApprovedDate,L2ApprovedByName,L2ApprovedDate,L3ApprovedByName,L3ApprovedDate,LastApprovedByCode,VoidByCode,IsContainAttach,IsSelect,glDetails/TransDetKey,glDetails/AccNum,glDetails/AccDesc,glDetails/CCID,glDetails/Remarks,glDetails/CurrCode,glDetails/OrigTransAmt,glDetails/ExRateFunc,glDetails/FuncTransAmt&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(FY%20eq%202026%20and%20Period%20eq%206)&DocType=AJ`
         );
           await apiObj.getAll();
     });
 
     // UPDATE
-    test("Update General Journal transaction", async ({ api }) => {
+    test("Update Closed Period Adjustment", async ({ api }) => {
       const keyToUse = TransHdrKey || savedKey;
       const docNoToUse = DocNum || savedDocNo;
       expect(createdRecord, "The 'createdRecord' is not available. Ensure the create test ran successfully.").toBeDefined();
       
-      apiObj.setUrl(`${accUrl}/api/GL?form=%27GL%27&Environment=qaa&AttachmentID=""`);
+      apiObj.setUrl(`${accUrl}/api/GL?form=%27AJ%27&Environment=qaa&AttachmentID=""`);
 
+    // --- UPDATE PAYLOAD ---
     // Use the captured 'createdRecord' to build the correct update payload.
     const updatePayload = JSON.parse(JSON.stringify(createdRecord));
 
     // Apply changes to the main header fields
     updatePayload.TransHdrKey = keyToUse;
     updatePayload.DocNum = keyToUse;
-    updatePayload.RowState = 2;
-    updatePayload.DocAmt = editValues[0];
+    updatePayload.RowState = 2; 
+    updatePayload.DocAmt = editValues[0]; 
 
     // Modify the *first* object inside the glDetails array
     if (updatePayload.glDetails && updatePayload.glDetails[0]) {
@@ -133,7 +137,7 @@ test.describe.serial("General Journal API Test", () => {
         detail1.LocalTransAmt = editValues[3];
         detail1.OrigTransAmt = editValues[4];
         detail1.InclusiveTransAmt = editValues[5];
-        detail1.OrigDrAmt = editValues[6];
+        detail1.OrigCrAmt = editValues[6]; 
         detail1.DetRevAmt = editValues[7];
     }
 
@@ -146,7 +150,7 @@ test.describe.serial("General Journal API Test", () => {
         detail2.LocalTransAmt = editValues[10];
         detail2.OrigTransAmt = editValues[11];
         detail2.InclusiveTransAmt = editValues[12];
-        detail2.OrigCrAmt = editValues[13];
+        detail2.OrigDrAmt = editValues[13]; 
         detail2.DetRevAmt = editValues[14];
     }
 
@@ -157,7 +161,7 @@ test.describe.serial("General Journal API Test", () => {
     expect(status).toBe(200);
   });
 
-    test("Delete General Journal Transaction using SQL(Clean Up)", async () => {
+    test("Delete Closed Period Adjustment using SQL(Clean Up)", async () => {
       // Ensure we have a key from the 'create' step to delete
       expect(TransHdrKey, "TransHdrKey is not available. The 'create' test must have run successfully.").toBeDefined();
 
@@ -171,6 +175,6 @@ test.describe.serial("General Journal API Test", () => {
         // Fail the test if the SQL cleanup throws an error
         throw new Error(`Database cleanup failed for TransHdrKey ${TransHdrKey}. Reason: ${error.message}`);
       }
-    });
+    })
   });
 });

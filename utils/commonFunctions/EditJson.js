@@ -2,8 +2,6 @@ import fs from "fs";
 import path from "path";
 
 export default async function editJson(json, formName, value, isUi = true) {
-  if (value === null) throw new Error("Value to write in JSON is null");
-  if (value === "") throw new Error("Value to write in JSON is empty");
   const jsonPath = path.resolve(json);
   let content;
 
@@ -17,10 +15,7 @@ export default async function editJson(json, formName, value, isUi = true) {
 
   const key = formName.split(" ").join("");
   if (!isUi) {
-    content.ID[key] = {
-      ...(content.ID[key] || {}),
-      ...value,
-    };
+    content.ID[key] = value;
   } else {
     content.DocNo[key] = value;
   }

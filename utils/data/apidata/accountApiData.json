@@ -2,8 +2,13 @@
   "AccountJsonPath": "utils/data/apidata/accountApiData.json",
   "ACC_API_URL": "/financeapi",
   "ID": {
-    "GeneralJournal": {}
+    "GeneralJournal": {},
+    "BankBulkPayment": {
+      "key": 3099,
+      "num": "BP00000639"
+    }
   },
+  
   "AccountPayloads": {
     "GeneralJournal": {
       "TransHdrKey": 759072,
@@ -347,7 +352,47 @@
       "IsDisable": false,
       "IsRefund": false,
       "BulkPaymentRemarks": ""
-    }
+    },
+    "BankBulkPayment": {
+      "ClientKey": 1,
+      "BPHdrKey": 3080,
+      "OUKey": 1,
+      "OUCode": "UMBB",
+      "DocNum": "BP00000632",
+      "BPDate": "2025-10-06T00:00:00Z",
+      "Status": "OP",
+      "BankKey": 26,
+      "BankCode": "BMYRUMB02",
+      "BankName": "OCBC Bank Berhad",
+      "CurrCode": "MYR",
+      "CreatedBy": 2841,
+      "CreatedByCode": "JIAHONG",
+      "UpdatedBy": 2841,
+      "UpdatedByCode": "JIAHONG",
+      "Reason": "",
+      "RowState": 1,
+      "bpDetails": [
+        {
+          "TransHdrKey": 477663,
+          "TransDetKey": 4885856,
+          "ClientKey": 1,
+          "OUKey": 1,
+          "OUCode": "UMBB",
+          "DocNum": "BV24050003",
+          "CurrCode": "MYR",
+          "PymtType": "IBG",
+          "PymtTypeid": 10,
+          "GLDate": "2025-10-06T15:49:42.6361441",
+          "GLDesc": "Payment for invoice AMR0001UMB",
+          "BeneficiaryName": "AMR SONS (MALAYSIA) SDN. BHD.",
+          "BankAccNum": "554044512659",
+          "PaymentAmt": 660,
+          "BankName": "Malayan Banking Berhad",
+          "Email": "dummy@dummy.com",
+          "RowState": 1
+          
+        }
+      ]
   },
   "InterOUVehicleRunningDistributionLoanTo": {
     "IntRunDistHdrKey": 11039,
@@ -440,4 +485,4 @@
     ],
     "sRunDistDetails": []
   }
-}
+}}

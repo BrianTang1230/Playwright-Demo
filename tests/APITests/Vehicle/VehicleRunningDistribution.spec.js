@@ -100,18 +100,35 @@ test.describe.serial("Vehicle Running Distribution API Test", () => {
         `${vehUrl}/odata/PRunDistDetail?&$filter=RunDistHdrKey+eq+${keyToUse}&&OUKey+eq+${ouToUse}&%24inlinecount=allpages`
       );
 
-      const { gridId, status, json } = await apiObj.getByKey(true, {
-        gridId: "PRunDistDetKey",
-      });
-
-      gridKey = gridId;
+      await apiObj.getByKey();
     });
+
+    test("Get Vehicle Running Distribution details & summary by HdrKey", async ({
+      api,
+    }) => {
+      const keyToUse = runDistHdrKey || savedKey;
+      const ouToUse = ouKey || savedOUKey;
+
+      apiObj.setUrl(
+        `${vehUrl}/odata/PRunDistDetail?Summary=true&RunDistHdrKey=${keyToUse}&&OUKey+eq+${ouToUse}&$expand=PSumRunDistDetail&%24inlinecount=allpages`
+      );
+      await apiObj.getByKey();
+    });
+
+    // test("Get all Pre Nursery Seed Received transaction", async ({ api }) => {
+    //   const ouToUse = ouKey || savedOUKey;
+    //   const vehToUse = vehKey || savedVehKey;
+
+    //   apiObj.setUrl(
+    //     `${vehUrl}/odata/RunDistHeader?Date=29%2F09%2F2025&OUKey=${ouToUse}&VehKey=${vehToUse}`
+    //   );
+    //   await apiObj.getAll();
+    // });
 
     test("Update Vehicle Running Distribution transaction", async ({ api }) => {
       const keyToUse = runDistHdrKey || savedKey;
       const docNoToUse = runDistNum || savedDocNo;
       const vehToUse = vehKey || savedVehKey;
-      const gridToUse = gridKey || savedGridKey;
 
       apiObj.setUrl(`${vehUrl}/api/RunDist`);
 
@@ -125,7 +142,7 @@ test.describe.serial("Vehicle Running Distribution API Test", () => {
         RowState: 2,
         pRunDistDetails: [
           {
-            PRunDistDetKey: gridToUse,
+            PRunDistDetKey: -1,
             RunDistHdrKey: keyToUse,
             ActExpAccKey: editValues[1],
             CCIDKey: editValues[2],
@@ -144,8 +161,7 @@ test.describe.serial("Vehicle Running Distribution API Test", () => {
 
     test("Delete Vehicle Running Distribution transaction", async ({ api }) => {
       const keyToUse = runDistHdrKey || savedKey;
-
-      apiObj.setUrl(`${vehUrl}/api/RunDist?key=${keyToUse}`);
+      apiObj.setUrl(`${nurUrl}api/RunDist?key=${keyToUse}`);
 
       await apiObj.delete();
     });

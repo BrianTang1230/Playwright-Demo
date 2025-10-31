@@ -11,7 +11,7 @@ export async function MainNurserySoldCreate(
   values,
   ou
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await sideMenu.btnCreateNewForm();
 
   await SelectOU(
     page,
@@ -24,7 +24,7 @@ export async function MainNurserySoldCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -47,7 +47,7 @@ export async function MainNurserySoldEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.clickBtnSave();
+  await sideMenu.btnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -57,5 +57,6 @@ export async function MainNurserySoldEdit(
 export async function MainNurserySoldDelete(page, sideMenu, values, ou, docNo) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
-  await sideMenu.clickBtnDelete();
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
 }

@@ -22,7 +22,6 @@ export const test = base.extend({
     },
     { scope: "worker" },
   ],
-
   api: async ({}, use) => {
     const authContext = await request.newContext();
 

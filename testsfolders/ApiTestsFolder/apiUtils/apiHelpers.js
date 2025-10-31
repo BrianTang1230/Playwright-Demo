@@ -104,4 +104,3 @@ export async function handleJson(
   }
   return { status, json };
 }
-

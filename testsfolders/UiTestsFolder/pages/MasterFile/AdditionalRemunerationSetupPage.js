@@ -3,7 +3,8 @@ import {
   InputGridValuesSameCols,
 } from "@UiFolder/functions/InputValues";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
-import { getUiValues } from "@UiFolder/functions/GetValues";
+import getValues from "@UiFolder/functions/GetValues";
+
 // Create Function
 export async function AddRemSetupCreate(
   page,
@@ -19,14 +20,15 @@ export async function AddRemSetupCreate(
   await sideMenu.btnNew.click();
 
   // Input data
-  if (paths.length !== columns.length && columns.length !== values.length) {
+  if (paths.length == columns.length && columns.length == values.length) {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], values[i]);
+    }
+  } else {
     console.error(paths, columns, values);
     throw new Error("Paths, columns, and values do not match in length.");
   }
 
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
-  }
   // Click to add new item
   await page.locator("#btnNewItem").click();
 
@@ -105,5 +107,6 @@ export async function AddRemSetupDelete(page, sideMenu, newValues) {
   await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
-  await sideMenu.clickBtnDelete();
+  await sideMenu.btnDelete.click();
+  await sideMenu.confirmDelete.click();
 }

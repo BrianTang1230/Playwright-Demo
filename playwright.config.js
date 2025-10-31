@@ -33,12 +33,13 @@ module.exports = defineConfig({
     ["html", { outputFolder: "playwright-report", open: "never" }],
   ] /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */,
 
-  timeout: 300000,
+  timeout: 180000,
   expect: { timeout: 10000 },
 
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://localhost:3000',
+
     baseURL: "https://qa.quarto.cloud",
     extraHTTPHeaders: {
       Accept: "application/json, */*",

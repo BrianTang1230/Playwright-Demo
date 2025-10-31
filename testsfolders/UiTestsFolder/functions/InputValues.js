@@ -87,6 +87,10 @@ export async function InputGridValuesSameCols(
       continue;
     }
 
+    if (vals[i] === "RW" || vals[i] === "PR" || vals[i] === "NW") {
+      await input.fill("");
+    }
+
     await input.press("Backspace");
     await input.type(vals[i]);
     await input.press("Enter");

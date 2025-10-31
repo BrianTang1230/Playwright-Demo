@@ -7,7 +7,7 @@ import {
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
-export async function DailyPieceRateWorkCreate(
+export async function InterOUDailyContractWorkCreate(
   page,
   sideMenu,
   paths,
@@ -20,13 +20,25 @@ export async function DailyPieceRateWorkCreate(
 ) {
   const region = process.env.REGION || Login.Region;
 
+  const tabLocator =
+    region === "IND" ? "#tabstripworkDet li" : "#interouTabstripworkDet li";
+
   await sideMenu.clickBtnCreateNewForm();
+
+  await page.waitForTimeout(2000);
 
   await SelectOU(
     page,
-    "#divComboOU .k-dropdown .k-select",
-    "#ddlOU_listbox span",
+    "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
+    "#ddlFromOU_listbox li span",
     ou[0]
+  );
+
+  await SelectOU(
+    page,
+    "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
+    "#ddlToOU_listbox li span",
+    ou[1]
   );
 
   for (let i = 0; i < paths.length; i++) {
@@ -38,7 +50,7 @@ export async function DailyPieceRateWorkCreate(
   for (let i = 0; i < gridPaths.length; i++) {
     if (i === 1) await page.locator("#btnNewDWItem").click();
     if (i === 2) {
-      await page.locator("#tabstripworkDet li").nth(1).click();
+      await page.locator(tabLocator).nth(1).click();
       await page.locator("#btnNewPRWItem").click();
     }
     await InputGridValuesSameCols(
@@ -51,18 +63,21 @@ export async function DailyPieceRateWorkCreate(
 
   await sideMenu.clickBtnSave();
 
-  await page.locator("#tabstripworkDet li").first().click();
+  await page.locator(tabLocator).first().click();
+
   const uiVals = await getUiValues(
     page,
     region === "IND" ? paths.slice(0, 3) : paths
   );
+
   const gridVals1 = await getGridValues(
     page,
     gridPaths.slice(0, 2),
     cellsIndex.slice(0, 2)
   );
 
-  await page.locator("#tabstripworkDet li").nth(1).click();
+  await page.locator(tabLocator).nth(1).click();
+
   const gridVals2 = await getGridValues(
     page,
     gridPaths.slice(2, 3),
@@ -74,7 +89,7 @@ export async function DailyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkEdit(
+export async function InterOUDailyContractWorkEdit(
   page,
   sideMenu,
   paths,
@@ -89,7 +104,10 @@ export async function DailyPieceRateWorkEdit(
 ) {
   const region = process.env.REGION || Login.Region;
 
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+  const tabLocator =
+    region === "IND" ? "#tabstripworkDet li" : "#interouTabstripworkDet li";
+
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -102,11 +120,11 @@ export async function DailyPieceRateWorkEdit(
 
   for (let i = 0; i < gridPaths.length; i++) {
     if (i === 1) {
-      await page.locator("#tabstripworkDet li").first().click();
+      await page.locator(tabLocator).first().click();
       await page.locator("#btnNewDWItem").click();
     }
     if (i === 2) {
-      await page.locator("#tabstripworkDet li").nth(1).click();
+      await page.locator(tabLocator).nth(1).click();
       await page.locator("#btnNewPRWItem").click();
     }
     await InputGridValuesSameCols(
@@ -119,7 +137,7 @@ export async function DailyPieceRateWorkEdit(
 
   await sideMenu.clickBtnSave();
 
-  await page.locator("#tabstripworkDet li").first().click();
+  await page.locator(tabLocator).first().click();
   const uiVals = await getUiValues(
     page,
     region === "IND" ? paths.slice(0, 3) : paths
@@ -130,7 +148,7 @@ export async function DailyPieceRateWorkEdit(
     cellsIndex.slice(0, 2)
   );
 
-  await page.locator("#tabstripworkDet li").nth(1).click();
+  await page.locator(tabLocator).nth(1).click();
   const gridVals2 = await getGridValues(
     page,
     gridPaths.slice(2, 3),
@@ -142,15 +160,14 @@ export async function DailyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkDelete(
+export async function InterOUDailyContractWorkDelete(
   page,
   sideMenu,
   values,
-  newValues,
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

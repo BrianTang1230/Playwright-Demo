@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  DailyPieceRateWorkCreate,
-  DailyPieceRateWorkDelete,
-  DailyPieceRateWorkEdit,
-} from "@UiFolder/pages/Checkroll/DailyPieceRateWork";
+  InterOUDailyContractWorkCreate,
+  InterOUDailyContractWorkEdit,
+  InterOUDailyContractWorkDelete,
+} from "@UiFolder/pages/Checkroll/InterOUDailyContractWork";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -38,11 +38,11 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_Data";
+const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Attendance";
-const formName = "Daily Piece Rate Work";
-const keyName = formName.split(" ").join("");
+const formName = "Inter-OU Daily Contract Work (Loan To)";
+const keyName = "InterOUDailyContractWork";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
@@ -56,9 +56,10 @@ const cellsIndexIND = [
   [1, 2, 3, 4, 5, 6],
   [1, 3, 4, 6, 9],
 ];
-const dwCellIndex = Login.Region === "IND" ? cellsIndexIND : cellsIndex;
+const interDWCellIndex = Login.Region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe.skip("Daily Piece Rate Work Tests", () => {
+test.describe
+  .skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -78,7 +79,7 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -87,13 +88,13 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Daily Piece Rate Work", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
-    });
+  test("Create New Inter-OU Daily Contract Work (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await DailyPieceRateWorkCreate(
+    const { uiVals, gridVals } = await InterOUDailyContractWorkCreate(
       page,
       sideMenu,
       paths,
@@ -101,32 +102,37 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
       createValues,
       gridPaths,
       gridCreateValues,
-      dwCellIndex,
+      interDWCellIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
-      formName,
-      await page.locator("#txtATRNum").inputValue()
+      keyName,
+      await page.locator("#txtICWNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
+    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
+    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
+      [...createValues, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -138,8 +144,8 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Piece Rate Work", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyPieceRateWorkEdit(
+  test("Edit Inter-OU Daily Contract Work (Loan To)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await InterOUDailyContractWorkEdit(
       page,
       sideMenu,
       paths,
@@ -148,7 +154,7 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
       editValues,
       gridPaths,
       gridEditValues,
-      dwCellIndex,
+      interDWCellIndex,
       ou,
       docNo
     );
@@ -157,18 +163,23 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
       DocNo: docNo,
       OU: ou[0],
     });
+    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
+    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
+      [...editValues, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -179,29 +190,31 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
     );
   });
 
-  // ---------------- Delete Test ----------------
-  test("Delete Daily Piece Rate Work", async ({ page, db }) => {
-    await DailyPieceRateWorkDelete(
-      page,
-      sideMenu,
-      createValues,
-      editValues,
-      ou,
-      docNo
-    );
+  // // ---------------- Delete Test ----------------
+  // test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
+  //   page,
+  //   db,
+  // }) => {
+  //   await InterOUDailyContractWorkDelete(
+  //     page,
+  //     sideMenu,
+  //     createValues,
+  //     ou,
+  //     docNo
+  //   );
 
-    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
-      OU: ou[0],
-    });
+  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+  //     DocNo: docNo,
+  //     OU: ou[0],
+  //   });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
-  });
+  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+  // });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    console.log(`End Running: ${formName}`);
-  });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

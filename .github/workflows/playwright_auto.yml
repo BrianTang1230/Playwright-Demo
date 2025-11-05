@@ -14,7 +14,7 @@ on:
       browser:   # 👈 add browser as an input
         description: "Browser to run tests on"
         required: false
-        default: "msedge"
+        default: "chrome"
         type: string
     
 jobs:

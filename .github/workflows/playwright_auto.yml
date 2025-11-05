@@ -50,6 +50,7 @@ jobs:
       TEST_CLIENTID: ${{ secrets.TEST_CLIENTID }}
       REGION: ${{ inputs.testType == 'UI Tests' && inputs.region || '' }}
       BROWSER: ${{ inputs.browser }}
+      MSEDGE_PATH: "C:\\tools\\edge\\msedge.exe"
       
     steps:
       - uses: actions/checkout@v5.0.0

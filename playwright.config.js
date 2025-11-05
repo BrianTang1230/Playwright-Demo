@@ -95,6 +95,10 @@ module.exports = defineConfig({
         headless: !!process.env.CI,
         browserName: "chromium",
         channel: process.env.BROWSER || "chrome",
+        executablePath:
+          process.env.BROWSER === "msedge"
+            ? process.env.MSEDGE_PATH
+            : undefined,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
           slowMo: 1200,

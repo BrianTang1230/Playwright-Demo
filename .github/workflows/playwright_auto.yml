@@ -78,8 +78,8 @@ jobs:
         env:
           BROWSER: ${{ inputs.browser }}   # <-- mandatory
         run: |
-          echo "Running Playwright using browser: $BROWSER"
-          npx playwright install $BROWSER --with-deps
+          echo "Running Playwright using browser: $env:BROWSER"
+          npx playwright install $env:BROWSER --with-deps
           npx playwright test --project="${{ inputs.testType }}" | tee test-output.txt
 
      # ✅ Then add the summary extraction step right after:

@@ -61,17 +61,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Microsoft Edge (Winget)
-        if: ${{ inputs.browser == 'msedge' }}
-        shell: powershell
-        run: |
-          winget install --id Microsoft.Edge `
-            --accept-package-agreements `
-            --accept-source-agreements `
-            --silent
-
       - name: Install Playwright Browsers
-        run: npx playwright install ${{ inputs.browser }} --with-deps
+        run: npx playwright install --with-deps
         
     # ✅ Replace the existing test step with this:
       - name: Run Playwright tests and capture summary

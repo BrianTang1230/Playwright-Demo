@@ -93,7 +93,6 @@ module.exports = defineConfig({
         video: { mode: "on", size: { width: 1920, height: 1080 } },
         screenshot: "on",
         headless: !!process.env.CI,
-        browserName: "chromium",
         channel: process.env.BROWSER || "chrome",
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],

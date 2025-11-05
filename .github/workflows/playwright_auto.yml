@@ -61,20 +61,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      # Install Edge only if browser input = msedge
-      - name: Install Microsoft Edge
+      # Install Edge only if msedge is selected
+      - name: Install Microsoft Edge (Enterprise MSI)
         if: ${{ inputs.browser == 'msedge' }}
         run: |
           powershell -Command "Start-Process 'msiexec.exe' -ArgumentList '/i https://msedge.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/latest/MicrosoftEdgeEnterpriseX64.msi /quiet /norestart' -Wait"
-    
+      
+      # Install Playwright browsers AFTER Edge exists
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-        
+
     # ✅ Replace the existing test step with this:
       - name: Run Playwright tests and capture summary
         id: run-tests
         continue-on-error: true
+        env:
+          BROWSER: ${{ inputs.browser }}   # <-- mandatory
         run: |
+          echo "Running Playwright using browser: $BROWSER"
+          npx playwright install $BROWSER --with-deps
           npx playwright test --project="${{ inputs.testType }}" | tee test-output.txt
 
      # ✅ Then add the summary extraction step right after:

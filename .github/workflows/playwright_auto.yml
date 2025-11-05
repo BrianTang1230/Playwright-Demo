@@ -62,7 +62,7 @@ jobs:
         run: npm ci
         
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install ${{ inputs.browser }} --with-deps
         
     # ✅ Replace the existing test step with this:
       - name: Run Playwright tests and capture summary

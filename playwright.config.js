@@ -48,7 +48,7 @@ module.exports = defineConfig({
     },
     headless: !!process.env.CI, // true in CI, false locally
     video: {
-      mode: "on", // or "retain-on-failure"
+      mode: process.env.CI ? "retain-on-failure" : "on", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
     },
     screenshot: "on",
@@ -58,7 +58,7 @@ module.exports = defineConfig({
     },
     viewport: process.env.CI ? { width: 1920, height: 1080 } : null, // fixed size in CI
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "off",
   },
 
   /* Configure projects for major browsers */

@@ -9,14 +9,16 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import {
+  payrollSQLCommand,
+  payrollGridSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
   StaffPreviousEmploymentTaxDeductionCreate,
@@ -128,10 +130,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
+  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
     const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,

@@ -9,14 +9,16 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import {
+  payrollSQLCommand,
+  payrollGridSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
   StaffIncomeDeclarationCreate,
@@ -73,10 +75,7 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Income Declaration (EA Form)", async ({
-    page,
-    db,
-  }) => {
+  test("Create Staff Income Declaration (EA Form)", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     const { uiVals, gridVals } = await StaffIncomeDeclarationCreate(

@@ -18,8 +18,6 @@ import {
   FFBUnitCostAdjustmentEdit,
 } from "@UiFolder/pages/FFBProcurement/10_FFBUnitCostAdjustment";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

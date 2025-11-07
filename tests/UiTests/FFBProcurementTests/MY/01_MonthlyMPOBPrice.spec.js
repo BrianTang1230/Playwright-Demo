@@ -18,8 +18,6 @@ import {
   MonthlyMPOBPriceEdit,
 } from "@UiFolder/pages/FFBProcurement/01_MonthlyMPOBPrice";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

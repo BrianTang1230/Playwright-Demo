@@ -18,8 +18,6 @@ import {
   DailyMPOBPriceEdit,
 } from "@UiFolder/pages/FFBProcurement/02_DailyMPOBPrice";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

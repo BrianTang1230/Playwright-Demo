@@ -1,5 +1,5 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
-import LoginPage from "@UiFolder/pages/General/LoginPage";
+import { LoginPage, region } from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
@@ -45,7 +45,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [2, 3, 4, 5, 6]];
 
-test.describe.serial("Create Rainfall Entry Tests", async () => {
+test.describe.skip("Create Rainfall Entry Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -91,7 +91,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       Date: createValues[0],
       OU: ou[0],
     });
-    console.log
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),

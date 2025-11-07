@@ -5,7 +5,7 @@ import {
   InputValues,
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
-import Login from "@utils/data/uidata/loginData.json";
+import { region } from "@UiFolder/pages/General/LoginPage";
 
 export async function DailyPieceRateWorkCreate(
   page,
@@ -18,8 +18,6 @@ export async function DailyPieceRateWorkCreate(
   cellsIndex,
   ou
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await sideMenu.clickBtnCreateNewForm();
 
   await SelectOU(
@@ -52,6 +50,7 @@ export async function DailyPieceRateWorkCreate(
   await sideMenu.clickBtnSave();
 
   await page.locator("#tabstripworkDet li").first().click();
+
   const uiVals = await getUiValues(
     page,
     region === "IND" ? paths.slice(0, 3) : paths
@@ -63,6 +62,7 @@ export async function DailyPieceRateWorkCreate(
   );
 
   await page.locator("#tabstripworkDet li").nth(1).click();
+
   const gridVals2 = await getGridValues(
     page,
     gridPaths.slice(2, 3),
@@ -87,8 +87,6 @@ export async function DailyPieceRateWorkEdit(
   ou,
   docNo
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {

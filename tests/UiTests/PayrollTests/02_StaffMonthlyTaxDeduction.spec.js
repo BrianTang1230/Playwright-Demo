@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -26,8 +26,6 @@ import {
   StaffMonthlyTaxDeductionEdit,
 } from "@UiFolder/pages/Payroll/02_StaffMonthlyTaxDeduction";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;
@@ -53,7 +51,7 @@ const cellsIndex = [
 test.describe.serial("Staff Monthly Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (Login.Region === "IND") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [

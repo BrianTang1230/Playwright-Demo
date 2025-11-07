@@ -1,6 +1,8 @@
 import { parse } from "path";
 import Data from "@utils/data/uidata/loginData.json";
 
+const region = process.env.REGION || Data.Region;
+
 export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
     if (inputValues[i] === "NA" || uiValues[i] === "NA") continue;
@@ -70,9 +72,9 @@ export async function ValidateGridValues(eValues, gValues) {
 
 function normalizeNumber(raw) {
   let cleaned = raw;
-  if (Data.Region === "MY") {
+  if (region === "MY") {
     cleaned = cleaned.replace(",", "");
-  } else if (Data.Region === "IND") {
+  } else if (region === "IND") {
     cleaned = cleaned.replace(".", "").replace(",", ".");
   }
   return Number(cleaned);

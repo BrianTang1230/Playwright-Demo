@@ -18,8 +18,6 @@ import {
   TransportProcessingChargesEdit,
 } from "@UiFolder/pages/FFBProcurement/05_Transport&ProcessingCharges";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

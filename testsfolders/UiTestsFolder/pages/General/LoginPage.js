@@ -3,6 +3,7 @@ require("dotenv").config();
 import Login from "@utils/data/uidata/loginData.json";
 
 const region = process.env.REGION || Login.Region;
+
 export default class LoginPage {
   constructor(page) {
     this.page = page;

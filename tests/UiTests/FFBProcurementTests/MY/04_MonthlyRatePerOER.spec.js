@@ -1,5 +1,5 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
-import LoginPage from "@UiFolder/pages/General/LoginPage";
+import { LoginPage, region } from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
@@ -18,8 +18,6 @@ import {
   MonthlyRatePerOEREdit,
 } from "@UiFolder/pages/FFBProcurement/04_MonthlyRatePerOER";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;
@@ -35,7 +33,9 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Monthly Rate Per OER Tests", () => {
-  if (Login.Region === "IND") test.skip(true);
+  if (region === "IND") test.skip(true);
+
+  // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(

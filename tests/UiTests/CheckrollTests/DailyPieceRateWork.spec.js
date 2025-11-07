@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -27,8 +27,6 @@ import {
   DailyPieceRateWorkEdit,
 } from "@UiFolder/pages/Checkroll/DailyPieceRateWork";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -56,7 +54,7 @@ const cellsIndexIND = [
   [1, 2, 3, 4, 5, 6],
   [1, 3, 4, 6, 9],
 ];
-const dwCellIndex = Login.Region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
 test.describe.skip("Daily Piece Rate Work Tests", () => {
   // ---------------- Before All ----------------

@@ -60,10 +60,10 @@
     "InterOUDailyContractWork": "ICW0000007",
     "MonthlyPieceRateWork": "MPR0000003",
     "InterOUMonthlyPieceRateWork": "IPR0000015",
-    "WorkerAdhocAllowance": "AHA0001132",
+    "WorkerAdhocAllowance": "AHA0000036",
     "WorkerAdhocDeduction": "AHD0000096",
     "WorkerAdhocReimbursement": "AHR0000023",
-    "WorkerAdditionalRemuneration": "ADR0000060",
+    "WorkerAdditionalRemuneration": "ADR0000059",
     "WorkerCP38": "ADT0000029",
     "WorkerPrecedingTax": "PTX0000007",
     "WorkerAdvancePayment": "WAP0000003"

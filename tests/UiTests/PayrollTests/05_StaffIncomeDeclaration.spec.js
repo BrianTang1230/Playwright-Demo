@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { region, test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -49,7 +49,7 @@ const cellsIndex = [[1], [1, 2, 3, 4, 5, 6, 7]];
 test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [

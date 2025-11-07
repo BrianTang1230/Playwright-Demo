@@ -1,5 +1,5 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
-import LoginPage from "@UiFolder/pages/General/LoginPage";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { LoginPage } from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
@@ -28,8 +28,6 @@ import {
   MonthlyPieceRateWorkDelete,
 } from "@UiFolder/pages/Checkroll/MonthlyPieceRateWork";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -52,7 +50,7 @@ const cellsIndex = [[1, 2, 4, 5, 6, 7, 9, 13]];
 test.describe.serial("Monthly Piece Rate Work Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [

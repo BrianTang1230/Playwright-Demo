@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -27,8 +27,6 @@ import {
   InterOUDailyContractWorkDelete,
 } from "@UiFolder/pages/Checkroll/InterOUDailyContractWork";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -56,10 +54,9 @@ const cellsIndexIND = [
   [1, 2, 3, 4, 5, 6],
   [1, 3, 4, 6, 9],
 ];
-const interDWCellIndex = Login.Region === "IND" ? cellsIndexIND : cellsIndex;
+const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe
-  .skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
+test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

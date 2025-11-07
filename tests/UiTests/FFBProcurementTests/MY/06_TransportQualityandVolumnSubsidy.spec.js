@@ -18,8 +18,6 @@ import {
   TransportQualityandVolumnSubsidyEdit,
 } from "@UiFolder/pages/FFBProcurement/06_TransportQualityandVolumnSubsidy";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

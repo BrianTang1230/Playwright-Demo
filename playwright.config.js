@@ -83,9 +83,14 @@ module.exports = defineConfig({
       testDir: "tests/UiTests",
       testIgnore: [
         ...(region === "IND"
-          ? ["tests/UiTests/LabTests/**", "tests/UiTests/FFBTests/MY/**"]
+          ? [
+              "tests/UiTests/LabTests/**",
+              "tests/UiTests/FFBProcurementTests/MY/**",
+            ]
           : []),
-        ...(region === "MY" ? ["tests/UiTests/FFBTests/IND/**"] : []),
+        ...(region === "MY"
+          ? ["tests/UiTests/FFBProcurementTests/IND/**"]
+          : []),
       ], // IND side ignore Lab tests temporarily
       use: {
         ...device,

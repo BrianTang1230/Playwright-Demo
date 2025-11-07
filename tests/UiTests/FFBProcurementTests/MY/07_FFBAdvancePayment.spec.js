@@ -23,8 +23,6 @@ import {
   FFBAdvancePaymentEdit,
 } from "@UiFolder/pages/FFBProcurement/07_FFBAdvancePayment";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;

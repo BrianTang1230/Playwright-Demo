@@ -18,8 +18,6 @@ import {
   DailyRatePerOEREdit,
 } from "@UiFolder/pages/FFBProcurement/03_DailyRatePerOER";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

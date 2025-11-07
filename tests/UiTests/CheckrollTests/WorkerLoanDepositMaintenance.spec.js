@@ -48,7 +48,6 @@ const cellsIndex = [[1], [1, 4, 6]];
 test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-
     // Load Excel values
     [
       createValues,

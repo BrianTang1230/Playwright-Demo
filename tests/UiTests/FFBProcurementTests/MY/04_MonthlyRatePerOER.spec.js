@@ -16,7 +16,7 @@ import {
   MonthlyRatePerOERCreate,
   MonthlyRatePerOERDelete,
   MonthlyRatePerOEREdit,
-} from "@UiFolder/pages/FFBProcurement/04_MonthlyRatePerOER";
+} from "@UiFolder/pages/FFBProcurement/MY/04_MonthlyRatePerOER";
 
 // ---------------- Set Global Variables ----------------
 let ou;

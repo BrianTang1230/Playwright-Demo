@@ -10,22 +10,18 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
-import {
-  JsonPath,
-  InputPath,
-  GridPath,
-  DocNo,
-} from "@utils/data/uidata/ffbData.json";
+import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
-  FFBAdvancePaymentCreate,
-  FFBAdvancePaymentDelete,
-  FFBAdvancePaymentEdit,
-} from "@UiFolder/pages/FFBProcurement/MY/07_FFBAdvancePayment";
+  DailyRatebyPalmAgeCreate,
+  DailyRatebyPalmAgeDelete,
+  DailyRatebyPalmAgeEdit,
+} from "@UiFolder/pages/FFBProcurement/IND/01_DailyRatebyPalmAge";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -35,14 +31,18 @@ let gridEditValues;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
-const formName = "FFB Advance Payment";
+const formName = "Daily Rate by Palm Age";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [3, 5, 6, 12, 13, 14, 15]];
+const cellsIndex = [[1, 2]];
 
-test.describe.serial("FFB Advance Payment Tests", () => {
+// select * from FPS_DailyRatePAgeHdr
+// select * from FPS_DailyRatePAgeDet
+
+test.describe.serial("Daily Rate by Palm Age Tests", () => {
+  test.skip(true, "Working in progress");
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -57,8 +57,6 @@ test.describe.serial("FFB Advance Payment Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -71,13 +69,14 @@ test.describe.serial("FFB Advance Payment Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New FFB Advance Payment", async ({ page, db }) => {
-    if (docNo)
-      await db.deleteData(deleteSQL, {
-        DocNo: docNo,
-      });
+  test("Create New Daily Rate by Palm Age", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      OU: ou[0],
+      Region: createValues[1],
+    });
 
-    const { uiVals, gridVals } = await FFBAdvancePaymentCreate(
+    const { uiVals, gridVals } = await DailyRatebyPalmAgeCreate(
       page,
       sideMenu,
       paths,
@@ -89,20 +88,18 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#AdvPayNo").inputValue()
-    );
-
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
+      Region: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
+        OU: ou[0],
+        Region: createValues[1],
       }
     );
 
@@ -123,8 +120,8 @@ test.describe.serial("FFB Advance Payment Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit FFB Advance Payment", async ({ page, db }) => {
-    const { uiVals, gridVals } = await FFBAdvancePaymentEdit(
+  test("Edit Daily Rate by Palm Age", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyRatebyPalmAgeEdit(
       page,
       sideMenu,
       paths,
@@ -132,21 +129,23 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       createValues,
       editValues,
       gridPaths,
-      gridCreateValues,
       gridEditValues,
       cellsIndex,
-      ou,
-      docNo
+      ou
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
+      Region: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
+        OU: ou[0],
+        Region: createValues[1],
       }
     );
 
@@ -167,31 +166,21 @@ test.describe.serial("FFB Advance Payment Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete FFB Advance Payment", async ({ page, db }) => {
-    await FFBAdvancePaymentDelete(
-      page,
-      sideMenu,
-      createValues,
-      gridEditValues,
-      ou,
-      docNo
-    );
+  test("Delete Daily Rate by Palm Age", async ({ page, db }) => {
+    await DailyRatebyPalmAgeDelete(page, sideMenu, createValues, ou);
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      OU: ou[0],
+      Region: createValues[1],
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting FFB Advance Payment failed");
+      throw new Error("Deleting Daily Rate by Palm Age failed");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo)
-      await db.deleteData(deleteSQL, {
-        DocNo: docNo,
-      });
-
     console.log(`End Running: ${formName}`);
   });
 });

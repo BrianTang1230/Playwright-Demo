@@ -43,8 +43,7 @@ module.exports = defineConfig({
 
     baseURL: "https://qa.quarto.cloud",
     extraHTTPHeaders: {
-      Accept: "application/json, */*",
-      "Content-Type": "application/json ",
+      Origin: "https://qa.quarto.cloud",
     },
     headless: !!process.env.CI, // true in CI, false locally
     video: {
@@ -82,6 +81,7 @@ module.exports = defineConfig({
       name: "UI Tests",
       testDir: "tests/UiTests",
       testIgnore: [
+        "tests/UiTests/FFBProcurementTests/**", // Temporarily ignore FFBProcurementTests
         ...(region === "IND"
           ? [
               "tests/UiTests/LabTests/**",

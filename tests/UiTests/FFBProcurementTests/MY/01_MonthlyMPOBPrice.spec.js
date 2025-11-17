@@ -16,7 +16,7 @@ import {
   MonthlyMPOBPriceCreate,
   MonthlyMPOBPriceDelete,
   MonthlyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/01_MonthlyMPOBPrice";
+} from "@UiFolder/pages/FFBProcurement/MY/01_MonthlyMPOBPrice";
 
 // ---------------- Set Global Variables ----------------
 let ou;

@@ -16,7 +16,7 @@ import {
   TransportProcessingChargesCreate,
   TransportProcessingChargesDelete,
   TransportProcessingChargesEdit,
-} from "@UiFolder/pages/FFBProcurement/05_Transport&ProcessingCharges";
+} from "@UiFolder/pages/FFBProcurement/MY/05_Transport&ProcessingCharges";
 
 // ---------------- Set Global Variables ----------------
 let ou;

@@ -16,7 +16,7 @@ import {
   FFBUnitCostAdjustmentCreate,
   FFBUnitCostAdjustmentDelete,
   FFBUnitCostAdjustmentEdit,
-} from "@UiFolder/pages/FFBProcurement/10_FFBUnitCostAdjustment";
+} from "@UiFolder/pages/FFBProcurement/MY/10_FFBUnitCostAdjustment";
 
 // ---------------- Set Global Variables ----------------
 let ou;

@@ -25,7 +25,7 @@ export async function MonthlyMPOBPriceCreate(
   await SelectOU(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#comboBoxOU_listbox",
     ou[0]
   );
 

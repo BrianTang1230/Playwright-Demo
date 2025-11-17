@@ -18,7 +18,9 @@
     "FFBUnitCostAdjustmentPath": "#monthPicker,#Remarks",
     "FFBUnitCostAdjustmentColumn": "Month date,Remarks text",
     "FFBUnitCostAdjustment(Block)Path": "#monthPicker,#Remarks",
-    "FFBUnitCostAdjustment(Block)Column": "Month date,Remarks text"
+    "FFBUnitCostAdjustment(Block)Column": "Month date,Remarks text",
+    "DailyRatebyPalmAgePath": "#dpFromDate,#dpToDate,Region_input,#Remarks",
+    "DailyRatebyPalmAgeColumn": "FromDate date,ToDate date,Region dropdown,Remarks text"
   },
   "GridPath": {
     "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
@@ -28,9 +30,10 @@
     "Transport,QualityandVolumeSubsidyGrid": "#TransSubDetGrid > .k-grid-content > .k-selectable > tbody,#VolSubGrid > .k-grid-content > .k-selectable > tbody",
     "FFBAdvancePaymentGrid": "#EstateDetGrid > .k-grid-content-locked,#EstateDetGrid > .k-grid-content.k-auto-scrollable",
     "FFBUnitCostAdjustmentGrid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
-    "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody"
+    "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
+    "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody"
   },
   "DocNo": {
-    "FFBAdvancePayment": "ADV2510013"
+    "FFBAdvancePayment": "ADV2510027"
   }
 }

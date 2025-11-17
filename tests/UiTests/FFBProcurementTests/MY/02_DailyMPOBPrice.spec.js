@@ -16,7 +16,7 @@ import {
   DailyMPOBPriceCreate,
   DailyMPOBPriceDelete,
   DailyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/02_DailyMPOBPrice";
+} from "@UiFolder/pages/FFBProcurement/MY/02_DailyMPOBPrice";
 
 // ---------------- Set Global Variables ----------------
 let ou;

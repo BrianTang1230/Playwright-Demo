@@ -45,7 +45,7 @@ module.exports = defineConfig({
     extraHTTPHeaders: {
       Origin: "https://qa.quarto.cloud",
     },
-    headless: !!process.env.CI, // true in CI, false locally
+    headless: false, // true in CI, false locally
     video: {
       mode: process.env.CI ? "retain-on-failure" : "on", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
@@ -70,7 +70,7 @@ module.exports = defineConfig({
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
         video: { mode: "on", size: { width: 1920, height: 1080 } },
         screenshot: "on",
-        headless: !!process.env.CI,
+        headless: false,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
           slowMo: 1300,

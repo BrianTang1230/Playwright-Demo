@@ -56,7 +56,7 @@ const cellsIndexIND = [
 ];
 const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe.skip("Daily Piece Rate Work Tests", () => {
+test.describe.serial("Daily Piece Rate Work Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -169,6 +169,7 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
@@ -198,8 +199,8 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
     }
   });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    console.log(`End Running: ${formName}`);
-  });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

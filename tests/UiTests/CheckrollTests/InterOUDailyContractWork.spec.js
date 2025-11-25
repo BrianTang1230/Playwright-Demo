@@ -56,7 +56,8 @@ const cellsIndexIND = [
 ];
 const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
+test.describe
+  .serial("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -113,7 +114,6 @@ test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
       DocNo: docNo,
       OU: ou[0],
     });
-    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -122,7 +122,6 @@ test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
         OU: ou[0],
       }
     );
-    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -169,7 +168,6 @@ test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
         OU: ou[0],
       }
     );
-    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -187,31 +185,31 @@ test.describe.skip("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
     );
   });
 
-  // // ---------------- Delete Test ----------------
-  // test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
-  //   page,
-  //   db,
-  // }) => {
-  //   await InterOUDailyContractWorkDelete(
-  //     page,
-  //     sideMenu,
-  //     createValues,
-  //     ou,
-  //     docNo
-  //   );
+  // ---------------- Delete Test ----------------
+  test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await InterOUDailyContractWorkDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
-  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-  //     DocNo: docNo,
-  //     OU: ou[0],
-  //   });
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-  // });
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+  });
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-  //   console.log(`End Running: ${formName}`);
-  // });
+    console.log(`End Running: ${formName}`);
+  });
 });

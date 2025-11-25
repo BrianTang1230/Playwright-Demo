@@ -29,8 +29,7 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
     if (inputValues[i] === "NA" || inputCols[i].includes("button")) continue;
     if (inputCols[i].includes("numeric")) {
-      inputValues[i] = Number(inputValues[i]);
-      dbValues[i] = Number(dbValues[i]);
+      inputValues[i] = normalizeNumber(inputValues[i]);
     }
 
     if (String(dbValues[colName]).trim() !== String(inputValues[i]).trim()) {

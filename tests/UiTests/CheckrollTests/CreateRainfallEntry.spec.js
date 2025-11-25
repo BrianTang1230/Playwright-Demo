@@ -1,5 +1,5 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
-import { LoginPage, region } from "@UiFolder/pages/General/LoginPage";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
@@ -45,7 +45,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [2, 3, 4, 5, 6]];
 
-test.describe.skip("Create Rainfall Entry Tests", async () => {
+test.describe.serial("Create Rainfall Entry Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -162,10 +162,17 @@ test.describe.skip("Create Rainfall Entry Tests", async () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Create Rainfall Entry", async ({ page, db }) => {
-    await CreateRainfallEntryDelete(page, sideMenu, createValues, ou);
+    await CreateRainfallEntryDelete(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      editValues,
+      ou
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      Date: editValues[0],
       OU: ou[0],
     });
 

@@ -66,7 +66,7 @@ export async function CreateRainfallEntryEdit(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputValues(page, paths[i], columns[i], values[i]);
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
@@ -86,13 +86,24 @@ export async function CreateRainfallEntryEdit(
   return { uiVals, gridVals };
 }
 
-export async function CreateRainfallEntryDelete(page, sideMenu, values, ou) {
+export async function CreateRainfallEntryDelete(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  ou
+) {
   await SelectOU(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
     "#comboBoxOU_listbox span",
     ou[0]
   );
+
+  for (let i = 0; i < paths.length; i++) {
+    await InputValues(page, paths[i], columns[i], values[i]);
+  }
 
   await sideMenu.clickBtnDelete();
 }

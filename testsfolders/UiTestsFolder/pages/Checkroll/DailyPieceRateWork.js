@@ -5,7 +5,7 @@ import {
   InputValues,
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
-import { region } from "@UiFolder/pages/General/LoginPage";
+import Login from "@utils/data/uidata/loginData.json";
 
 export async function DailyPieceRateWorkCreate(
   page,
@@ -18,6 +18,8 @@ export async function DailyPieceRateWorkCreate(
   cellsIndex,
   ou
 ) {
+  const region = process.env.REGION || Login.Region;
+
   await sideMenu.clickBtnCreateNewForm();
 
   await SelectOU(
@@ -87,6 +89,8 @@ export async function DailyPieceRateWorkEdit(
   ou,
   docNo
 ) {
+  const region = process.env.REGION || Login.Region;
+
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {

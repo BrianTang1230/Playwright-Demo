@@ -293,6 +293,44 @@ function checkrollSQLCommand(formName) {
         WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
+    case "Crop Harvesting":
+      sqlCommand = `
+        SELECT FORMAT(A.FFBHarDate, 'dd/MM/yyyy') AS HarDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remark,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
+        D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
+        E.EmpyID + ' - ' + E.EmpyName AS Checker,
+        G.BlockCode + ' - ' + G.BlockDesc AS Block,
+        H.OUCode + ' - ' + H.OUDesc AS OU
+        FROM CR_FFBHarHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.HarvMan1Key = C.EmpyKey
+        LEFT JOIN GMS_EmpyPerMas D ON A.HarvMan2Key = D.EmpyKey
+        LEFT JOIN GMS_EmpyPerMas E ON A.FFBCheckerKey = E.EmpyKey
+        LEFT JOIN CR_FFBHarBlkDet F ON A.FFBHarHdrKey = F.FFBHarHdrKey
+        LEFT JOIN GMS_BlockStp G ON F.BlockKey = G.BlockKey
+        LEFT JOIN GMS_OUStp H ON A.OUKey = H.OUKey
+        WHERE A.FFBHarNum = @DocNo 
+        AND A.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
+        AND H.OUCode + ' - ' + H.OUDesc = @OU`;
+      break;
+
+    case "Contract Crop Despatch Rate":
+      sqlCommand = `
+        SELECT FORMAT(A.CDRateDate, 'MMMM yyyy') AS YrMth,
+        B.ContactCode + ' - ' + B.ContactDesc AS Transporter,
+        C.MillCode + ' - ' + C.MillDesc AS Mill,
+        A.Remarks AS Remark,
+        D.OUCode + ' - ' + D.OUDesc AS OU
+        FROM CR_ContractCDRateHdr A
+        LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
+        LEFT JOIN GMS_MillStp C ON A.MillKey = C.MillKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        WHERE A.DocNum = @DocNo
+        AND D.OUCode + ' - ' + D.OUDesc = @OU`;
+      break;
+
     case "Mill CPO and PK":
       sqlCommand = `
         SELECT A.FY AS FiscYear,
@@ -791,6 +829,41 @@ function checkrollGridSQLCommand(formName) {
         )`;
       break;
 
+    case "Crop Harvesting":
+      sqlCommand = `
+        SELECT 
+        C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.WrkDayType AS WorkDayType,
+        B.MD AS ManDaynumeric,
+        D.Ripe AS RipeAmt,
+        D.Others AS OthersAmt,
+        D.Penalty AS PenaltyAmt
+        FROM CR_FFBHarDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN CR_FFBHarBlkDet D ON B.FFBHarDetKey = D.FFBHarDetKey
+        WHERE B.FFBHarHdrKey IN (
+          SELECT FFBHarHdrKey FROM CR_FFBHarHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.FFBHarNum = @DocNo
+          AND F.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Contract Crop Despatch Rate":
+      sqlCommand = `
+        SELECT C.BlockCode AS Block,
+        B.CDRate AS Rate
+        FROM CR_ContractCDRateDet B
+        LEFT JOIN GMS_BlockStp C ON B.BlockKey = C.BlockKey
+        WHERE B.CDRateHdrKey IN (
+          SELECT CDRateHdrKey FROM CR_ContractCDRateHdr D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+          WHERE D.DocNum = @DocNo
+          AND E.OUCode + ' - ' + E.OUDesc = @OU 
+        )`;
+      break;
+
     case "Mill CPO and PK":
       sqlCommand = `
         SELECT C.MillCode + ' - ' + C.MillDesc AS Mill,
@@ -806,6 +879,7 @@ function checkrollGridSQLCommand(formName) {
         AND DivCode + ' - ' + DivDesc = @Div
         AND OUCode + ' - ' + OUDesc = @OU`;
       break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

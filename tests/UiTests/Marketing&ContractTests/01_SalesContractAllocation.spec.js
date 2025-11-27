@@ -24,6 +24,8 @@ import {
   SalesContractAllocationEdit,
 } from "@UiFolder/pages/Marketing&Contract/01_SalesContractAllocation";
 
+import Login from "@utils/data/uidata/loginData.json";
+
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -50,7 +52,11 @@ test.describe.serial("Sales Contract Allocation Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
+    if (Login.Region === "IND") {
+      docNo = DocNo[keyName + "IND"];
+    } else {
+      docNo = DocNo[keyName];
+    }
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
@@ -75,9 +81,11 @@ test.describe.serial("Sales Contract Allocation Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#ContractSID").inputValue();
-
-    await editJson(JsonPath, formName, docNo);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#ContractSID").inputValue()
+    );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
@@ -119,12 +127,7 @@ test.describe.serial("Sales Contract Allocation Tests", async () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Sales Contract Allocation", async ({ page, db }) => {
-    await SalesContractAllocationDelete(
-      page,
-      sideMenu,
-      editValues,
-      ou
-    );
+    await SalesContractAllocationDelete(page, sideMenu, editValues, ou);
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,

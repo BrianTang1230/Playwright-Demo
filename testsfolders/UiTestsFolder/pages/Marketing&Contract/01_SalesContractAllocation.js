@@ -91,6 +91,7 @@ export async function SalesContractAllocationEdit(
       await page.getByRole("tab", { name: "Remarks" }).click();
     }
   }
+
   return { uiVals };
 }
 

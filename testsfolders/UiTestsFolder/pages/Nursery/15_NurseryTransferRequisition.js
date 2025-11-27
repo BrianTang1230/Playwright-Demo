@@ -20,8 +20,6 @@ export async function NurseryTransferRequisitionCreate(
     ou[0]
   );
 
-  // await sideMenu.confirmDelete.click();
-
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }

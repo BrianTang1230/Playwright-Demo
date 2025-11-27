@@ -16,7 +16,7 @@
 //   DocNo,
 // } from "@utils/data/uidata/procurementData.json";
 
-// import {} from "@UiFolder/pages/Procurement/CapitalExpenditureRequisition";
+// import {CapitalExpenditureRequisitionCreate,CapitalExpenditureRequisitionEdit,CapitalExpenditureRequisitionDelete} from "@UiFolder/pages/Procurement/02_CapitalExpenditureRequisition";
 
 // // ---------------- Set Global Variables ----------------
 // let ou;

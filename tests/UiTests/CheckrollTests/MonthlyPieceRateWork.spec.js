@@ -1,5 +1,5 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
-import { LoginPage } from "@UiFolder/pages/General/LoginPage";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";

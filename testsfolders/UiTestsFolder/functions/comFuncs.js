@@ -4,7 +4,16 @@ export async function checkLength(paths, columns, createValues, editValues) {
     columns.length !== createValues.length ||
     createValues.length !== editValues.length
   ) {
-    console.error(paths, columns, createValues, editValues);
+    console.error(
+      paths,
+      paths.length,
+      columns,
+      columns.length,
+      createValues,
+      createValues.length,
+      editValues,
+      editValues.length
+    );
     throw new Error("Paths, columns, and values do not match in length.");
   }
 }

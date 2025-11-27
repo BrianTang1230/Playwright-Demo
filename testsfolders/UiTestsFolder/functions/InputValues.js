@@ -11,7 +11,7 @@ export async function InputValues(page, path, col, value) {
   else await element.focus();
 
   if (col.includes("k-drop")) {
-    await element.first().click();
+    await element.click();
     await page
       .locator(`${path}_listbox li`, { hasText: value })
       .first()

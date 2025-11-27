@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { region, test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -11,22 +11,22 @@ import {
 } from "@UiFolder/functions/ValidateValues";
 
 import {
-  payrollGridSQLCommand,
   payrollSQLCommand,
+  payrollGridSQLCommand,
 } from "@UiFolder/queries/PayrollQuery";
+
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
 } from "@utils/data/uidata/payrollData.json";
+
 import {
   StaffPrecedingTaxCreate,
   StaffPrecedingTaxEdit,
   StaffPrecedingTaxDelete,
 } from "@UiFolder/pages/Payroll/08_StaffPrecedingTax";
-
-import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -50,7 +50,7 @@ const cellsIndex = [[1, 2, 3, 4, 5]];
 test.describe.serial("Staff Preceding Tax (PPh 21) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "MY") test.skip(true);
+    if (region === "MY") test.skip(true);
 
     // Load Excel values
     [
@@ -190,6 +190,8 @@ test.describe.serial("Staff Preceding Tax (PPh 21) Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

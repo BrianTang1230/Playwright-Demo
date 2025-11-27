@@ -16,9 +16,7 @@ import {
   MonthlyMPOBPriceCreate,
   MonthlyMPOBPriceDelete,
   MonthlyMPOBPriceEdit,
-} from "@UiFolder/pages/FFBProcurement/01_MonthlyMPOBPrice";
-
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/FFBProcurement/MY/01_MonthlyMPOBPrice";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -89,6 +87,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
       OU: ou[0],
       Region: createValues[1],
     });
+    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
@@ -98,6 +97,7 @@ test.describe.serial("Monthly MPOB Price Tests", () => {
         Region: createValues[1],
       }
     );
+    console.log(gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 

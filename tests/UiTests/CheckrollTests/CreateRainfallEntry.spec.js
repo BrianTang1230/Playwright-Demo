@@ -91,7 +91,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       Date: createValues[0],
       OU: ou[0],
     });
-    console.log
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -163,10 +162,17 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Create Rainfall Entry", async ({ page, db }) => {
-    await CreateRainfallEntryDelete(page, sideMenu, createValues, ou);
+    await CreateRainfallEntryDelete(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      editValues,
+      ou
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      Date: editValues[0],
       OU: ou[0],
     });
 

@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -9,22 +9,22 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import {
+  payrollSQLCommand,
+  payrollGridSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
   StaffPreviousEmploymentTaxDeductionCreate,
   StaffPreviousEmploymentTaxDeductionDelete,
   StaffPreviousEmploymentTaxDeductionEdit,
 } from "@UiFolder/pages/Payroll/03_StaffPreviousEmploymentTaxDeduction";
-
-import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -51,7 +51,7 @@ const cellsIndex = [
 test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [
@@ -128,10 +128,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
+  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
     const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,

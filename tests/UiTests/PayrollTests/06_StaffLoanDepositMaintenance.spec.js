@@ -9,14 +9,16 @@ import {
   ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
-import { payrollSQLCommand } from "@UiFolder/queries/PayrollQuery";
+import {
+  payrollSQLCommand,
+  payrollGridSQLCommand,
+} from "@UiFolder/queries/PayrollQuery";
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/payrollData.json";
-import { payrollGridSQLCommand } from "@UiFolder/queries/PayrollQuery";
 
 import {
   StaffLoanDepositMaintenanceCreate,

@@ -16,9 +16,7 @@ import {
   TransportQualityandVolumnSubsidyCreate,
   TransportQualityandVolumnSubsidyDelete,
   TransportQualityandVolumnSubsidyEdit,
-} from "@UiFolder/pages/FFBProcurement/06_TransportQualityandVolumnSubsidy";
-
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/FFBProcurement/MY/06_TransportQualityandVolumnSubsidy";
 
 // ---------------- Set Global Variables ----------------
 let ou;

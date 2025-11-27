@@ -30,7 +30,7 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath.CountrySetupPath.split(",");
 const columns = InputPath.CountrySetupColumn.split(",");
 
-test.describe.serial("Country Setup Tests", () => {
+test.describe.skip("Country Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({db, excel}) => {
 

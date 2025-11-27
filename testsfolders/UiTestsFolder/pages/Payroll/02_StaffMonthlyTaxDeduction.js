@@ -46,13 +46,11 @@ export async function StaffMonthlyTaxDeductionCreate(
     );
   }
 
-  await sideMenu.btnSave.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await sideMenu.clickBtnSave();
 
   await page.locator("#prTabstripworkDet li").first().click();
   const uiVals = await getUiValues(page, paths);
-  const gridVals = await getGridValues(
+  const gridVals1 = await getGridValues(
     page,
     gridPaths.slice(0, 2),
     cellsIndex.slice(0, 2)
@@ -65,7 +63,9 @@ export async function StaffMonthlyTaxDeductionCreate(
     cellsIndex.slice(2, 3)
   );
 
-  return [uiVals, [...gridVals, ...gridVals2]];
+  const gridVals = [...gridVals1, ...gridVals2];
+
+  return { uiVals, gridVals };
 }
 
 export async function StaffMonthlyTaxDeductionEdit(
@@ -91,7 +91,7 @@ export async function StaffMonthlyTaxDeductionEdit(
 
   await sideMenu.confirmDelete.click();
 
-  await page.locator("#btnNewItem").click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     if (i === 1) await page.locator("#btnNewBIK").click();
@@ -107,13 +107,11 @@ export async function StaffMonthlyTaxDeductionEdit(
     );
   }
 
-  await sideMenu.btnSave.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await sideMenu.clickBtnSave();
 
   await page.locator("#prTabstripworkDet li").first().click();
   const uiVals = await getUiValues(page, paths);
-  const gridVals = await getGridValues(
+  const gridVals1 = await getGridValues(
     page,
     gridPaths.slice(0, 2),
     cellsIndex.slice(0, 2)
@@ -126,7 +124,9 @@ export async function StaffMonthlyTaxDeductionEdit(
     cellsIndex.slice(2, 3)
   );
 
-  return [uiVals, [...gridVals, ...gridVals2]];
+  const gridVals = [...gridVals1, ...gridVals2];
+
+  return { uiVals, gridVals };
 }
 
 export async function StaffMonthlyTaxDeductionDelete(
@@ -138,8 +138,5 @@ export async function StaffMonthlyTaxDeductionDelete(
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], newValues[2], 5);
 
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await sideMenu.clickBtnDelete();
 }

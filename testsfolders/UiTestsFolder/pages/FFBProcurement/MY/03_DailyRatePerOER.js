@@ -4,17 +4,17 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import {
-  FilterRecordByOU,
-  FilterRecordByOUAndDate,
-} from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyRatePerOERCreate(
+export async function DailyRatePerOERCreate(
   page,
   sideMenu,
   paths,
   columns,
   values,
+  gridPaths,
+  gridValues,
+  cellsIndex,
   ou
 ) {
   await sideMenu.clickBtnCreateNewForm();
@@ -30,21 +30,37 @@ export async function MonthlyRatePerOERCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
+  await page.getByRole("button", { name: " Populate Day" }).click();
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
+  }
+
   await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-  return { uiVals };
+  return { uiVals, gridVals };
 }
 
-export async function MonthlyRatePerOEREdit(
+export async function DailyRatePerOEREdit(
   page,
   sideMenu,
   paths,
   columns,
   values,
   newValues,
-  ou
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
 
@@ -52,14 +68,24 @@ export async function MonthlyRatePerOEREdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
+  for (let i = 0; i < gridPaths.length; i++) {
+    await InputGridValuesSameCols(
+      page,
+      gridPaths[i],
+      gridValues[i],
+      cellsIndex[i]
+    );
+  }
+
   await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
-  return { uiVals };
+  return { uiVals, gridVals };
 }
 
-export async function MonthlyRatePerOERDelete(page, sideMenu, values, ou) {
+export async function DailyRatePerOERDelete(page, sideMenu, values, ou) {
   await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
 
   await sideMenu.clickBtnDelete();

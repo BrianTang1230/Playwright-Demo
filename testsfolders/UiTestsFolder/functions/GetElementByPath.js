@@ -12,12 +12,12 @@ export default async function GetElementByPath(page, path) {
     // If role[1] is not a number lets find the element by name, else find by index
     if (role[1] || role[1].trim() !== "") {
       if (isNaN(Number(role[1]))) {
-        element = page.getByRole(role[0], { name: role[1] });
-      } else element = page.getByRole(role[0]).nth(Number(role[1]));
+        element = page.getByRole(role[0], { name: role[1] }).first();
+      } else element = page.getByRole(role[0]).nth(Number(role[1])).first();
     }
   } else {
     // If path does not start with any symbols, use .locator with name
-    element = page.locator(`[name='${path}']`);
+    element = page.locator(`[name='${path}']`).first();
   }
   return element;
 }

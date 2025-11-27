@@ -61,7 +61,7 @@
 //   test("Create Purchase Order", async ({ page, db }) => {
 //     await db.deleteData(deleteSQL, { DocNo: docNo });
 
-//     const { uiVals,gridVals } = await PurchaseOrderCreate(
+//     const { uiVals, gridVals } = await PurchaseOrderCreate(
 //       page,
 //       sideMenu,
 //       paths,
@@ -75,8 +75,6 @@
 //       formName,
 //       await page.locator("#txtHeaderDataPONum").inputValue()
 //     );
-
-    
 
 //     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
 //       DocNo: docNo,

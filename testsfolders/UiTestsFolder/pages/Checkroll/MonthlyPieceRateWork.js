@@ -4,12 +4,9 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import {
-  FilterRecordByOU,
-  FilterRecordByOUAndDate,
-} from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyMPOBPriceCreate(
+export async function MonthlyPieceRateWorkCreate(
   page,
   sideMenu,
   paths,
@@ -25,15 +22,20 @@ export async function MonthlyMPOBPriceCreate(
   await SelectOU(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#ddlOU-list span",
     ou[0]
   );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
+
+    if (i === 0) {
+      // If Month is the first field
+      await page.waitForTimeout(1000);
+    }
   }
 
-  await page.getByRole("button", { name: " Populate Month" }).click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -52,7 +54,7 @@ export async function MonthlyMPOBPriceCreate(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyMPOBPriceEdit(
+export async function MonthlyPieceRateWorkEdit(
   page,
   sideMenu,
   paths,
@@ -65,11 +67,16 @@ export async function MonthlyMPOBPriceEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
+
+  await page.locator("#isSelectGrid").check();
+  await page.locator("#btnDeleteItem").click();
+  await sideMenu.confirmDelete.click();
+  await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -88,14 +95,14 @@ export async function MonthlyMPOBPriceEdit(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyMPOBPriceDelete(
+export async function MonthlyPieceRateWorkDelete(
   page,
   sideMenu,
   values,
   ou,
   docNo
 ) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();
 }

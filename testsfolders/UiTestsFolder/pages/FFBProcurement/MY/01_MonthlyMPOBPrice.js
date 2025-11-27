@@ -9,7 +9,7 @@ import {
   FilterRecordByOUAndDate,
 } from "@UiFolder/functions/OpenRecord";
 
-export async function DailyRatePerOERCreate(
+export async function MonthlyMPOBPriceCreate(
   page,
   sideMenu,
   paths,
@@ -25,7 +25,7 @@ export async function DailyRatePerOERCreate(
   await SelectOU(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#comboBoxOU_listbox",
     ou[0]
   );
 
@@ -33,7 +33,7 @@ export async function DailyRatePerOERCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.getByRole("button", { name: " Populate Day" }).click();
+  await page.getByRole("button", { name: " Populate Month" }).click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -52,7 +52,7 @@ export async function DailyRatePerOERCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOEREdit(
+export async function MonthlyMPOBPriceEdit(
   page,
   sideMenu,
   paths,
@@ -65,7 +65,7 @@ export async function DailyRatePerOEREdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -88,8 +88,14 @@ export async function DailyRatePerOEREdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatePerOERDelete(page, sideMenu, values, ou) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+export async function MonthlyMPOBPriceDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
 
   await sideMenu.clickBtnDelete();
 }

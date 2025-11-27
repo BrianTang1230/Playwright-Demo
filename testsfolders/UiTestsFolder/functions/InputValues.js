@@ -11,7 +11,7 @@ export async function InputValues(page, path, col, value) {
   else await element.focus();
 
   if (col.includes("k-drop")) {
-    await element.first().click();
+    await element.click();
     await page
       .locator(`${path}_listbox li`, { hasText: value })
       .first()
@@ -85,6 +85,10 @@ export async function InputGridValuesSameCols(
     } else if (vals[i].toLowerCase() === "false") {
       await input.uncheck();
       continue;
+    }
+
+    if (vals[i] === "RW" || vals[i] === "PR" || vals[i] === "NW") {
+      await input.fill("");
     }
 
     await input.press("Backspace");

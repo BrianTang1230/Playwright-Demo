@@ -13,7 +13,7 @@ export async function PreNurserySeedReceivedCreate(
   ou
 ) {
   // Click "Create New Form" button
-  await sideMenu.btnCreateNewForm();
+  await sideMenu.clickBtnCreateNewForm();
 
   // Select OU
   await SelectOU(
@@ -27,7 +27,7 @@ export async function PreNurserySeedReceivedCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -53,7 +53,7 @@ export async function PreNurserySeedReceivedEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await sideMenu.btnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
 
@@ -71,6 +71,5 @@ export async function PreNurserySeedReceivedDelete(
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   // Delete record
-  await sideMenu.btnDelete.click();
-  await sideMenu.confirmDelete.click();
+  await sideMenu.clickBtnDelete();
 }

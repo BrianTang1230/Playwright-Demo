@@ -34,6 +34,10 @@ function marketingSQLCommand(formName) {
           else A.TradeTerm
         end as TradeTerm,
         upper(A.PriceBasis) as PriceBasis,
+        case
+          when A.DeliveryType = 'L' then 'LOCO'
+          when A.DeliveryType = 'F' then 'FRANCO'
+        end as DeliveryType,
         E.PayTermCode + ' - ' + E.PayTermDesc as PayTerm,
         case 
           when A.WeightBasis = 'D' then 'DELIVERED WEIGHT'

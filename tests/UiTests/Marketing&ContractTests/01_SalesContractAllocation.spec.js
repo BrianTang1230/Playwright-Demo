@@ -81,11 +81,19 @@ test.describe.serial("Sales Contract Allocation Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#ContractSID").inputValue()
-    );
+    if (Login.Region === "IND") {
+      docNo = await editJson(
+        JsonPath,
+        formName + "IND",
+        await page.locator("#ContractSID").inputValue()
+      );
+    } else {
+      docNo = await editJson(
+        JsonPath,
+        formName,
+        await page.locator("#ContractSID").inputValue()
+      );
+    }
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
@@ -140,7 +148,7 @@ test.describe.serial("Sales Contract Allocation Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

@@ -81,11 +81,19 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#ContractDOSID").inputValue()
-    );
+    if (Login.Region === "IND") {
+      docNo = await editJson(
+        JsonPath,
+        formName + "IND",
+        await page.locator("#ContractDOSID").inputValue()
+      );
+    } else {
+      docNo = await editJson(
+        JsonPath,
+        formName,
+        await page.locator("#ContractDOSID").inputValue()
+      );
+    }
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,

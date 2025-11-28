@@ -331,6 +331,78 @@ function checkrollSQLCommand(formName) {
         AND D.OUCode + ' - ' + D.OUDesc = @OU`;
       break;
 
+    case "Daily Contract Crop Harvesting and Loose Fruit Collection":
+      sqlCommand = `
+        SELECT FORMAT(A.FLHarDate, 'dd/MM/yyyy') AS CHLFDate,
+        B.ContactCode + ' - ' + B.ContactDesc AS Contractor,
+        A.Remarks AS Remark,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_DlyFLHarHdr A
+        LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.FLHarNum = @DocNo
+        AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Monthly Contract Crop Harvesting and Loose Fruit Collection":
+      sqlCommand = `
+        SELECT FORMAT(A.FLHarDate, 'MM/yyyy') AS MthCHLFDate,
+        B.DivCode + ' - ' + B.DivDesc AS Division,
+        A.Remarks AS Remark,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM CR_FLHarHdr A
+        LEFT JOIN GMS_DivStp B ON A.DivKey = B.DivKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.FLHarNum = @DocNo
+        AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Inter-OU Crop Harvesting (Loan To)":
+      sqlCommand = `
+        SELECT FORMAT(A.FFBHarDate, 'dd/MM/yyyy') AS InterHarDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remark,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
+        D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
+        E.EmpyID + ' - ' + E.EmpyName AS Checker,
+        G.BlockCode + ' - ' + G.BlockDesc AS Block,
+        H.OUCode + ' - ' + H.OUDesc AS OU,
+        I.OUCode + ' - ' + I.OUDesc AS LoanToOU
+        FROM CR_InterFFBHarHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.HarvMan1Key = C.EmpyKey
+        LEFT JOIN GMS_EmpyPerMas D ON A.HarvMan2Key = D.EmpyKey
+        LEFT JOIN GMS_EmpyPerMas E ON A.FFBCheckerKey = E.EmpyKey
+        LEFT JOIN CR_FFBHarBlkDet F ON A.FFBHarHdrKey = F.FFBHarHdrKey
+        LEFT JOIN GMS_BlockStp G ON F.BlockKey = G.BlockKey
+        LEFT JOIN GMS_OUStp H ON A.FromOUKey = H.OUKey
+        LEFT JOIN GMS_OUStp I ON A.ToOUKey = I.OUKey
+        WHERE A.FFBHarNum = @DocNo 
+        AND A.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
+        AND H.OUCode + ' - ' + H.OUDesc = @OU`;
+      break;
+
+    case "Inter-OU Loose Fruit Collection (Loan To)":
+      sqlCommand = `
+        SELECT FORMAT(A.LFDate, 'dd/MM/yyyy') AS InterLFCDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remark,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
+        E.BlockCode + ' - ' + E.BlockDesc AS Block,
+        F.OUCode + ' - ' + F.OUDesc AS OU,
+        G.OUCode + ' - ' + G.OUDesc AS LoanToOU
+        FROM CR_InterLFHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.LFManKey = C.EmpyKey
+        LEFT JOIN CR_InterLFDetBlock D ON A.LFHdrKey = D.LFHdrKey
+        LEFT JOIN GMS_BlockStp E ON D.BlockKey = E.BlockKey
+        LEFT JOIN GMS_OUStp F ON A.FromOUKey = F.OUKey
+        LEFT JOIN GMS_OUStp G ON A.ToOUKey = G.OUKey
+        WHERE A.LFNum = @DocNo
+        AND F.OUCode + ' - ' + F.OUDesc = @OU
+        AND A.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')`;
+      break;
+
     case "Mill CPO and PK":
       sqlCommand = `
         SELECT A.FY AS FiscYear,
@@ -861,6 +933,96 @@ function checkrollGridSQLCommand(formName) {
           LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
           WHERE D.DocNum = @DocNo
           AND E.OUCode + ' - ' + E.OUDesc = @OU 
+        )`;
+      break;
+
+    case "Daily Contract Crop Harvesting and Loose Fruit Collection":
+      sqlCommand = `
+        SELECT D.BlockCode + ' - ' + D.BlockDesc AS BlockFFB,
+        B.MD AS ManDayFFBnumeric,
+        B.Bch AS Bunches,
+        E.BlockCode + ' - ' + E.BlockDesc AS BlockLF,
+        C.MD AS ManDayLFnumeric,
+        C.Bag AS Bag
+        FROM CR_DlyFLHarDet B
+        LEFT JOIN CR_DlyFLLFDet C ON B.FLHarHdrKey = C.FLHarHdrKey
+        LEFT JOIN GMS_BlockStp D ON B.BlockKey = D.BlockKey
+        LEFT JOIN GMS_BlockStp E ON C.BlockKey = E.BlockKey
+        WHERE B.FLHarHdrKey IN (
+          SELECT FLHarHdrKey FROM CR_DlyFLHarHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.FLHarNum = @DocNo
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Monthly Contract Crop Harvesting and Loose Fruit Collection":
+      sqlCommand = `
+        SELECT D.BlockCode + ' - ' + D.BlockDesc AS FFBBlock,
+        B.B1 AS FFBB1,
+        B.M1 AS FFBM1,
+        B.B2 AS FFBB2,
+        B.M2 AS FFBM2,
+        B.B3 AS FFBB3,
+        B.M3 AS FFBM3,
+        B.B4 AS FFBB4,
+        B.M4 AS FFBM4,
+        E.BlockCode + ' - ' + E.BlockDesc AS LFBlock,
+        C.L1 AS LFL1,
+        C.M1 AS LFM1,
+        C.L2 AS LFL2,
+        C.M2 AS LFM2,
+        C.L3 AS LFL3,
+        C.M3 AS LFM3,
+        C.L4 AS LFL4,
+        C.M4 AS LFM4
+        FROM CR_FLHarDet B
+        LEFT JOIN CR_FLLFDet C ON B.FLHarHdrKey = C.FLHarHdrKey
+        LEFT JOIN GMS_BlockStp D ON B.BlockKey = D.BlockKey
+        LEFT JOIN GMS_BlockStp E ON C.BlockKey = E.BlockKey
+        WHERE B.FLHarHdrKey IN (
+          SELECT FLHarHdrKey FROM CR_FLHarHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.FLHarNum = @DocNo
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Inter-OU Crop Harvesting (Loan To)":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.WrkDayType AS WorkDayType,
+        B.MD AS ManDaynumeric,
+        D.Ripe AS RipeAmt,
+        D.Others AS OthersAmt,
+        D.Penalty AS PenaltyAmt
+        FROM CR_InterFFBHarDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN CR_InterFFBHarBlkDet D ON B.FFBHarDetKey = D.FFBHarDetKey
+        WHERE B.FFBHarHdrKey IN (
+          SELECT FFBHarHdrKey FROM CR_InterFFBHarHdr F
+          LEFT JOIN GMS_OUStp G ON F.FromOUKey = G.OUKey
+          WHERE F.FFBHarNum = @DocNo
+          AND F.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Inter-OU Loose Fruit Collection (Loan To)":
+      sqlCommand = `
+        SELECT D.EmpyID + ' - ' + D.EmpyName AS Employee,
+        B.WrkDayType AS WorkDayType,
+        B.MD AS ManDaynumeric,
+        C.Bag AS BagAmt
+        FROM CR_InterLFDet B
+        LEFT JOIN CR_InterLFDetBlock C ON B.LFDetKey = C.LFDetKey
+        LEFT JOIN GMS_EmpyPerMas D ON B.EmpyKey = D.EmpyKey
+        WHERE B.LFHdrKey IN (
+          SELECT LFHdrKey FROM CR_InterLFHdr E
+          LEFT JOIN GMS_OUStp F ON E.FromOUKey = F.OUKey
+          WHERE E.LFNum = @DocNo
+          AND F.OUCode + ' - ' + F.OUDesc = @OU 
+          AND E.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
         )`;
       break;
 

@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function CropHarvestingCreate(
+export async function InterOUCropHarvestingCreate(
   page,
   sideMenu,
   paths,
@@ -21,9 +21,16 @@ export async function CropHarvestingCreate(
 
   await SelectOU(
     page,
-    "#divComboOU .k-dropdown .k-select",
+    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=0",
     "ul[aria-hidden='false'] li span",
     ou[0]
+  );
+
+  await SelectOU(
+    page,
+    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=1",
+    "ul[aria-hidden='false'] li span",
+    ou[1]
   );
 
   for (let i = 0; i < paths.slice(0, 6).length; i++) {
@@ -52,7 +59,7 @@ export async function CropHarvestingCreate(
   return { uiVals, gridVals };
 }
 
-export async function CropHarvestingEdit(
+export async function InterOUCropHarvestingEdit(
   page,
   sideMenu,
   paths,
@@ -93,7 +100,13 @@ export async function CropHarvestingEdit(
   return { uiVals, gridVals };
 }
 
-export async function CropHarvestingDelete(page, sideMenu, values, ou, docNo) {
+export async function InterOUCropHarvestingDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   await sideMenu.clickBtnDelete();

@@ -37,6 +37,14 @@
     "CropHarvestingColumn": "HarDate date,Gang dropdown,Remark text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,Block dropdown",
     "ContractCropDespatchRatePath": "#ContractCDRMonth,comboBoxContact_input,comboBoxMill_input,#txtRemarks",
     "ContractCropDespatchRateColumn": "YrMth Date,Transporter dropdown,Mill dropdown,Remark text",
+    "DailyContractCropHarvestingandLooseFruitCollectionPath": "#FLHarDatePicker,comboContact_input,#txtRemarks",
+    "DailyContractCropHarvestingandLooseFruitCollectionColumn": "CHLFDate date,Contractor dropdown,Remark text",
+    "MonthlyContractCropHarvestingandLooseFruitCollectionPath": "#ContractCHCollectionMonth,comboBoxDiv_input,#txtRemarks",
+    "MonthlyContractCropHarvestingandLooseFruitCollectionColumn": "MthCHLFDate date,Division dropdown,Remark text",
+    "InterOUCropHarvestingPath": "#InterOUCropHarDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxMandor2_input,comboBoxChecker_input,comboBoxBlock_input",
+    "InterOUCropHarvestingColumn": "InterHarDate date,Gang dropdown,Remark text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,Block dropdown",
+    "InterOULooseFruitCollectionPath": "#LFCollectionDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxBlock_input",
+    "InterOULooseFruitCollectionColumn": "InterLFCDate date,Gang dropdown,Remark text,Mandor1 dropdown,Block dropdown",
     "MillCPOandPKPath": "listbox*1,listbox*2,comboBoxDivision_input",
     "MillCPOandPKColumn": "FiscYear combobox,Period combobox,Division dropdown"
   },
@@ -59,6 +67,10 @@
     "WorkerAdvancePaymentGrid": "//*[@id=\"advPayDetGrid\"]/div[3]/table",
     "CropHarvestingGrid": "//*[@id=\"ffbhdetailGrid\"]/div[3]/table,//*[@id=\"ffbhdetailGrid\"]/div[4]/table",
     "ContractCropDespatchRateGrid": "//*[@id=\"cdrdetailGrid\"]/div[3]/table",
+    "DailyContractCropHarvestingandLooseFruitCollectionGrid": "//*[@id=\"hardetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[3]/table",
+    "MonthlyContractCropHarvestingandLooseFruitCollectionGrid": "//*[@id=\"hardetailGrid\"]/div[3]/table,//*[@id=\"hardetailGrid\"]/div[4]/table,//*[@id=\"lfdetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[4]/table",
+    "InterOUCropHarvestingGrid": "//*[@id=\"interffbhdetailGrid\"]/div[3]/table,//*[@id=\"interffbhdetailGrid\"]/div[4]/table",
+    "InterOULooseFruitCollectionGrid": "//*[@id=\"interlfdetailGrid\"]/div[3]/table,//*[@id=\"interlfdetailGrid\"]/div[4]/table",
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
@@ -74,6 +86,7 @@
     "WorkerPrecedingTax": "PTX0000007",
     "WorkerAdvancePayment": "WAP0000003",
     "CropHarvesting": "HAR0014296",
-    "ContractCropDespatchRate": "CDR2500007"
+    "ContractCropDespatchRate": "CDR2500008",
+    "InterOUCropHarvesting": "ICH0000019"
   }
 }

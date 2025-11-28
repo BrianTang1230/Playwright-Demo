@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  CropHarvestingCreate,
-  CropHarvestingEdit,
-  CropHarvestingDelete,
-} from "@UiFolder/pages/Checkroll/CropHarvesting";
+  InterOUCropHarvestingCreate,
+  InterOUCropHarvestingEdit,
+  InterOUCropHarvestingDelete,
+} from "@UiFolder/pages/Checkroll/InterOUCropHarvesting";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,8 +39,8 @@ let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Crop";
-const formName = "Crop Harvesting";
-const keyName = formName.split(" ").join("");
+const formName = "Inter-OU Crop Harvesting (Loan To)";
+const keyName = "InterOUCropHarvesting";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
@@ -49,7 +49,10 @@ const cellsIndex = [
   [0, 2, 3, 4],
 ];
 
-test.describe.skip("Crop Harvesting Tests", async () => {
+// Due to backend getting wrong data, need to check with Anny as well
+//![Dropdown](../../../utils/images/Bugs1.png)
+
+test.describe.skip("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -78,10 +81,13 @@ test.describe.skip("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Crop Harvesting", async ({ page, db }) => {
+  test("Create New Inter-OU Crop Harvesting (Loan To)", async ({
+    page,
+    db,
+  }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await CropHarvestingCreate(
+    const { uiVals, gridVals } = await InterOUCropHarvestingCreate(
       page,
       sideMenu,
       paths,
@@ -95,8 +101,8 @@ test.describe.skip("Crop Harvesting Tests", async () => {
 
     docNo = await editJson(
       JsonPath,
-      formName,
-      await page.locator("#txtCropHarNum").inputValue()
+      keyName,
+      await page.locator("#txtInterOUCropHarNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -116,8 +122,8 @@ test.describe.skip("Crop Harvesting Tests", async () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
+      [...createValues, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -129,8 +135,8 @@ test.describe.skip("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Crop Harvesting", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CropHarvestingEdit(
+  test("Edit Inter-OU Crop Harvesting (Loan To)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await InterOUCropHarvestingEdit(
       page,
       sideMenu,
       paths,
@@ -161,8 +167,8 @@ test.describe.skip("Crop Harvesting Tests", async () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
+      [...editValues, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -174,8 +180,8 @@ test.describe.skip("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Crop Harvesting", async ({ page, db }) => {
-    await CropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Inter-OU Crop Harvesting (Loan To)", async ({ page, db }) => {
+    await InterOUCropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -185,10 +191,10 @@ test.describe.skip("Crop Harvesting Tests", async () => {
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    console.log(`End Running: ${formName}`);
-  });
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

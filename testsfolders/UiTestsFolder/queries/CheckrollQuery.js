@@ -97,6 +97,18 @@ function checkrollSQLCommand(formName) {
         AND D.OUCode + ' - ' + D.OUDesc = @OU`;
       break;
 
+    case "Monthly Standard Borong & Tall Palm Rate":
+      sqlCommand = `
+        SELECT FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID') AS STDMonth,
+        A.Remarks AS Remark,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM CR_StdBorong_IND A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID') = @Date
+        AND A.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
+        AND B.OUCode + ' - ' + B.OUDesc = @OU`;
+      break;
+
     case "Worker Ad hoc Allowance":
       sqlCommand = `
         SELECT
@@ -146,6 +158,17 @@ function checkrollSQLCommand(formName) {
             SELECT OUKey FROM GMS_OUStp
             WHERE OUCode + ' - ' + OUDesc = @OU
         )`;
+      break;
+
+    case "Mandor & Checker Penalty":
+      sqlCommand = `
+        SELECT FORMAT(A.MdrChkPenaltyDate, 'MMMM yyyy', 'id-ID') AS MdrChkDate,
+        A.Remarks AS Remark,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM CR_MdrChkPenalty_IND A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        WHERE A.MdrChkPenaltyNum = @DocNo
+        AND B.OUCode + ' - ' + B.OUDesc = @OU`;
       break;
 
     case "Worker Additional Remuneration":
@@ -346,7 +369,7 @@ function checkrollSQLCommand(formName) {
 
     case "Monthly Contract Crop Harvesting and Loose Fruit Collection":
       sqlCommand = `
-        SELECT FORMAT(A.FLHarDate, 'MM/yyyy') AS MthCHLFDate,
+        SELECT FORMAT(A.FLHarDate, 'MMMM yyyy') AS MthCHLFDate,
         B.DivCode + ' - ' + B.DivDesc AS Division,
         A.Remarks AS Remark,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -373,7 +396,7 @@ function checkrollSQLCommand(formName) {
         LEFT JOIN GMS_EmpyPerMas C ON A.HarvMan1Key = C.EmpyKey
         LEFT JOIN GMS_EmpyPerMas D ON A.HarvMan2Key = D.EmpyKey
         LEFT JOIN GMS_EmpyPerMas E ON A.FFBCheckerKey = E.EmpyKey
-        LEFT JOIN CR_FFBHarBlkDet F ON A.FFBHarHdrKey = F.FFBHarHdrKey
+        LEFT JOIN CR_InterFFBHarBlkDet F ON A.FFBHarHdrKey = F.FFBHarHdrKey
         LEFT JOIN GMS_BlockStp G ON F.BlockKey = G.BlockKey
         LEFT JOIN GMS_OUStp H ON A.FromOUKey = H.OUKey
         LEFT JOIN GMS_OUStp I ON A.ToOUKey = I.OUKey
@@ -616,6 +639,27 @@ function checkrollGridSQLCommand(formName) {
         )`;
       break;
 
+    case "Monthly Standard Borong & Tall Palm Rate":
+      sqlCommand = `
+        SELECT C.BlockCode + ' - ' + C.BlockDesc AS Block,
+        B.StdBorong AS StdBorang,
+        B.BasicBorong AS BasicBorang,
+        B.FFBRate AS PremiumMoreBasicBorang,
+        B.RDFFBRate AS RDPremiumRate,
+        B.LFRate AS LFRate,
+        B.RDLFRate AS RDLFRate,
+        B.TPRate AS TallPalmRate
+        FROM CR_StdBorongDet_IND B
+        LEFT JOIN GMS_BlockStp C ON B.BlockKey = C.BlockKey
+        WHERE B.StdBorongKey IN (
+          SELECT StdBorongKey FROM CR_StdBorong_IND D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+          WHERE FORMAT(DATEFROMPARTS(D.Yr, D.Mth, 1), 'MMMM yyyy', 'id-ID') = @Date
+          AND D.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
+          AND E.OUCode + ' - ' + E.OUDesc = @OU
+        )`;
+      break;
+
     case "Worker Ad hoc Allowance":
       sqlCommand = `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
@@ -682,6 +726,29 @@ function checkrollGridSQLCommand(formName) {
             SELECT OUKey FROM GMS_OUStp
             WHERE OUCode + ' - ' + OUDesc = @OU
           )
+        )`;
+      break;
+
+    case "Mandor & Checker Penalty":
+      sqlCommand = `
+        SELECT CASE B.Type 
+        WHEN 1 THEN 'Mandor 1'
+        WHEN 2 THEN 'Mandor 2'
+        WHEN 3 THEN 'Checker'
+        END AS Type,
+        C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        D.BlockCode + ' - ' + D.BlockDesc AS Block,
+        E.CropPenaltyCode + ' - ' + E.CropPenaltyDesc AS CropPenalty,
+        B.Quantity AS Qty
+        FROM CR_MdrChkPenaltyDet_IND B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN GMS_BlockStp D ON B.BlockKey = D.BlockKey
+        LEFT JOIN GMS_CropPenaltyStp E ON B.PenaltyKey = E.CropPenaltyKey
+        WHERE B.MdrChkPenaltyHdrKey IN (
+          SELECT MdrChkPenaltyHdrKey FROM CR_MdrChkPenalty_IND F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.MdrChkPenaltyNum = @DocNo
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
         )`;
       break;
 

@@ -15,6 +15,8 @@
     "WorkerAdhocDeductionColumn": "DeductMonth date,Remarks text",
     "WorkerAdhocReimbursementPath": "#AdHocReimburseMonth,#txtRemarks",
     "WorkerAdhocReimbursementColumn": "ReimburseMonth date,Remarks text",
+    "Mandor&CheckerPenaltyPath": "#MdrChkPenaltyDatePicker,#Remarks",
+    "Mandor&CheckerPenaltyColumn": "MdrChkDate date,Remark text",
     "WorkerAdditionalRemunerationPath": "#AddRemMonth,cboGang_input,#txtRemarks",
     "WorkerAdditionalRemunerationColumn": "AddRemMonth date,Gang dropdown,Remarks text",
     "WorkerMonthlyTaxDeductionPath": "#MTDMonth,cboGang_input,#txtRemarks",
@@ -43,6 +45,8 @@
     "MonthlyContractCropHarvestingandLooseFruitCollectionColumn": "MthCHLFDate date,Division dropdown,Remark text",
     "InterOUCropHarvestingPath": "#InterOUCropHarDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxMandor2_input,comboBoxChecker_input,comboBoxBlock_input",
     "InterOUCropHarvestingColumn": "InterHarDate date,Gang dropdown,Remark text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,Block dropdown",
+    "MonthlyStandardBorong&TallPalmRatePath": "#stdBorongMonth,#txtRemarks",
+    "MonthlyStandardBorong&TallPalmRateColumn": "STDMonth date,Remark text",
     "InterOULooseFruitCollectionPath": "#LFCollectionDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxBlock_input",
     "InterOULooseFruitCollectionColumn": "InterLFCDate date,Gang dropdown,Remark text,Mandor1 dropdown,Block dropdown",
     "MillCPOandPKPath": "listbox*1,listbox*2,comboBoxDivision_input",
@@ -56,6 +60,7 @@
     "WorkerAdhocAllowanceGrid": "//*[@id=\"ahallowdetailGrid\"]/div[3]/table",
     "WorkerAdhocDeductionGrid": "//*[@id=\"ahdeductdetailGrid\"]/div[3]/table",
     "WorkerAdhocReimbursementGrid": "//*[@id=\"ahreimbursementdetailGrid\"]/div[3]/table",
+    "Mandor&CheckerPenaltyGrid": "//*[@id=\"mdrChkPenaltyGrid\"]/div[3]/table",
     "WorkerAdditionalRemunerationGrid": "//*[@id=\"ardetailGrid\"]/div[3]/table,//*[@id=\"remdetailGrid\"]/div[3]/table",
     "WorkerMonthlyTaxDeductionGrid": "//*[@id=\"pcbDetGrid\"]/div[3]/table,//*[@id=\"bikDetGrid\"]/div[3]/table,//*[@id=\"deductDetGrid\"]/div[3]/table",
     "WorkerPreviousEmploymentTaxDeductionGrid": "//*[@id=\"preEmpDetGrid\"]/div[3]/table,//*[@id=\"preEmpBIKDetGrid\"]/div[3]/table,//*[@id=\"preEmpDctDetGrid\"]/div[3]/table",
@@ -71,11 +76,12 @@
     "MonthlyContractCropHarvestingandLooseFruitCollectionGrid": "//*[@id=\"hardetailGrid\"]/div[3]/table,//*[@id=\"hardetailGrid\"]/div[4]/table,//*[@id=\"lfdetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[4]/table",
     "InterOUCropHarvestingGrid": "//*[@id=\"interffbhdetailGrid\"]/div[3]/table,//*[@id=\"interffbhdetailGrid\"]/div[4]/table",
     "InterOULooseFruitCollectionGrid": "//*[@id=\"interlfdetailGrid\"]/div[3]/table,//*[@id=\"interlfdetailGrid\"]/div[4]/table",
+    "MonthlyStandardBorong&TallPalmRateGrid": "//*[@id=\"stdBrgTPGrid\"]/div[3]/table",
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
     "DailyPieceRateWork": "ATR0005743",
-    "InterOUDailyContractWork": "ICW0000007",
+    "InterOUDailyContractWork": "ICW0000017",
     "MonthlyPieceRateWork": "MPR0000003",
     "InterOUMonthlyPieceRateWork": "IPR0000018",
     "WorkerAdhocAllowance": "AHA0000036",
@@ -87,6 +93,8 @@
     "WorkerAdvancePayment": "WAP0000003",
     "CropHarvesting": "HAR0014296",
     "ContractCropDespatchRate": "CDR2500008",
-    "InterOUCropHarvesting": "ICH0000019"
+    "InterOUCropHarvesting": "ICH0000021",
+    "Mandor&CheckerPenalty": "MCP0000029",
+    "MonthlyContractCropHarvestingandLooseFruitCollection": "FL00000010"
   }
 }

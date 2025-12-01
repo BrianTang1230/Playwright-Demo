@@ -13,19 +13,17 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
-
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
-
 import {
-  InterOUDailyContractWorkCreate,
-  InterOUDailyContractWorkEdit,
-  InterOUDailyContractWorkDelete,
-} from "@UiFolder/pages/Checkroll/InterOUDailyContractWork";
+  MandorAndCheckerPenaltyCreate,
+  MandorAndCheckerPenaltyEdit,
+  MandorAndCheckerPenaltyDelete,
+} from "@UiFolder/pages/Checkroll/Mandor&CheckerPenalty";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,28 +36,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Attendance";
-const formName = "Inter-OU Daily Contract Work (Loan To)";
-const keyName = "InterOUDailyContractWork";
+const submodule = "Allowance & Deduction";
+const formName = "Mandor & Checker Penalty";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 4],
-  [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 9, 12, 15],
-];
-const cellsIndexIND = [
-  [1, 4, 5, 6, 8],
-  [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 6, 9],
-];
-const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const cellsIndex = [[1, 2, 3, 4, 6]];
 
-test.describe
-  .serial("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
+test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -86,13 +75,13 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Daily Contract Work (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create New Mandor & Checker Penalty", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await InterOUDailyContractWorkCreate(
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyCreate(
       page,
       sideMenu,
       paths,
@@ -100,14 +89,14 @@ test.describe
       createValues,
       gridPaths,
       gridCreateValues,
-      interDWCellIndex,
+      cellsIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
-      keyName,
-      await page.locator("#txtICWNum").inputValue()
+      formName,
+      await page.locator("#MdrChkPenaltyNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -127,8 +116,8 @@ test.describe
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...createValues, ou[0]],
+      [...columns, "OU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -140,8 +129,8 @@ test.describe
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Daily Contract Work (Loan To)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await InterOUDailyContractWorkEdit(
+  test("Edit Mandor & Checker Penalty", async ({ page, db }) => {
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit(
       page,
       sideMenu,
       paths,
@@ -150,7 +139,7 @@ test.describe
       editValues,
       gridPaths,
       gridEditValues,
-      interDWCellIndex,
+      cellsIndex,
       ou,
       docNo
     );
@@ -172,8 +161,8 @@ test.describe
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...editValues, ou[0]],
+      [...columns, "OU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -185,11 +174,8 @@ test.describe
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await InterOUDailyContractWorkDelete(
+  test("Delete Mandor & Checker Penalty", async ({ page, db }) => {
+    await MandorAndCheckerPenaltyDelete(
       page,
       sideMenu,
       createValues,

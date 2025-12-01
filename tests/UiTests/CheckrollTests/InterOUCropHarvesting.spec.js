@@ -49,10 +49,7 @@ const cellsIndex = [
   [0, 2, 3, 4],
 ];
 
-// Due to backend getting wrong data, need to check with Anny as well
-//![Dropdown](../../../utils/images/Bugs1.png)
-
-test.describe.skip("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
+test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -191,10 +188,10 @@ test.describe.skip("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-  //   console.log(`End Running: ${formName}`);
-  // });
+    console.log(`End Running: ${formName}`);
+  });
 });

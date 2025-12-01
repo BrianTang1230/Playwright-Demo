@@ -33,9 +33,12 @@ export async function MonthlyCCHandLFCCreate(
   for (let i = 0; i < gridPaths.length; i++) {
     console.log("Loop index:", i);
 
-    i === 0
-      ? await page.locator("#btnNewFFB").click()
-      : await page.locator("#btnNewLF").click();
+    if (i === 0) {
+      await page.locator("#btnNewFFB").click();
+    } else if (i === 2) {
+      await page.locator("#btnNewLF").click();
+    }
+
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -72,9 +75,6 @@ export async function MonthlyCCHandLFCEdit(
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
-    if (i === 1) {
-      await page.locator("#btnNewLF").click();
-    }
     await InputGridValuesSameCols(
       page,
       gridPaths[i],

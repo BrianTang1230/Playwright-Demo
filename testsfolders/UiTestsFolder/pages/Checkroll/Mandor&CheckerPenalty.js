@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function InterOUCropHarvestingCreate(
+export async function MandorAndCheckerPenaltyCreate(
   page,
   sideMenu,
   paths,
@@ -15,32 +15,23 @@ export async function InterOUCropHarvestingCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
+  docNo
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
   await SelectOU(
     page,
-    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=0",
-    "ul[aria-hidden='false'] li span",
+    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+    "#comboBoxOU_listbox span",
     ou[0]
   );
 
-  await SelectOU(
-    page,
-    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=1",
-    "ul[aria-hidden='false'] li span",
-    ou[1]
-  );
-
-  for (let i = 0; i < paths.slice(0, 6).length; i++) {
+  for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
-  await page.locator('[name="comboBoxBlock_input"]').type(values[6]);
-  await page.keyboard.press("Tab");
-  await page.locator("#btnAddBlock").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -59,7 +50,7 @@ export async function InterOUCropHarvestingCreate(
   return { uiVals, gridVals };
 }
 
-export async function InterOUCropHarvestingEdit(
+export async function MandorAndCheckerPenaltyEdit(
   page,
   sideMenu,
   paths,
@@ -78,11 +69,6 @@ export async function InterOUCropHarvestingEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await page.locator("#IsEmpySelect").check();
-  await page.locator("#btnDeleteItem").click();
-  await sideMenu.confirmDelete.click();
-  await sideMenu.btnAddNewItem.click();
-
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
       page,
@@ -100,7 +86,7 @@ export async function InterOUCropHarvestingEdit(
   return { uiVals, gridVals };
 }
 
-export async function InterOUCropHarvestingDelete(
+export async function MandorAndCheckerPenaltyDelete(
   page,
   sideMenu,
   values,

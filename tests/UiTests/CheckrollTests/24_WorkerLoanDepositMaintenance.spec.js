@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  CreateRainfallEntryCreate,
-  CreateRainfallEntryEdit,
-  CreateRainfallEntryDelete,
-} from "@UiFolder/pages/Checkroll/CreateRainfallEntry";
+  WorkerLoanDepositMaintenanceCreate,
+  WorkerLoanDepositMaintenanceEdit,
+  WorkerLoanDepositMaintenanceDelete,
+} from "@UiFolder/pages/Checkroll/24_WorkerLoanDepositMaintenance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -35,19 +35,19 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
 const submodule = "Miscellaneous";
-const formName = "Create Rainfall Entry";
-const keyName = formName.split(" ").join("");
+const formName = "Worker Loan/Deposit Maintenance";
+const keyName = "WorkerLoanDepositMaintenance";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [2, 3, 4, 5, 6]];
+const cellsIndex = [[1], [1, 4, 6]];
 
-test.describe.serial("Create Rainfall Entry Tests", async () => {
+test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
     [
       createValues,
@@ -63,7 +63,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -72,10 +72,14 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Create Rainfall Entry", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+  test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      RecType: createValues[1],
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await CreateRainfallEntryCreate(
+    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceCreate(
       page,
       sideMenu,
       paths,
@@ -89,6 +93,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
+      RecType: createValues[1],
       OU: ou[0],
     });
 
@@ -96,6 +101,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
+        RecType: createValues[1],
         OU: ou[0],
       }
     );
@@ -104,7 +110,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0]],
+      [...createValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -117,8 +123,8 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Create Rainfall Entry", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CreateRainfallEntryEdit(
+  test("Edit Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceEdit(
       page,
       sideMenu,
       paths,
@@ -128,11 +134,12 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      gridCreateValues[0] // need to add keyword to identify the record
     );
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
+      RecType: createValues[1],
       OU: ou[0],
     });
 
@@ -140,6 +147,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
+        RecType: createValues[1],
         OU: ou[0],
       }
     );
@@ -148,7 +156,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0]],
+      [...editValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -161,28 +169,28 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Create Rainfall Entry", async ({ page, db }) => {
-    await CreateRainfallEntryDelete(
+  test("Delete Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+    await WorkerLoanDepositMaintenanceDelete(
       page,
       sideMenu,
-      paths,
-      columns,
-      editValues,
-      ou
+      createValues,
+      ou,
+      gridEditValues[0]
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: editValues[0],
+      Date: createValues[0],
+      RecType: createValues[1],
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting ${formName} failed`);
+    }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

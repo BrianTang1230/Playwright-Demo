@@ -25,7 +25,7 @@ import {
   InterOUDailyContractWorkCreate,
   InterOUDailyContractWorkEdit,
   InterOUDailyContractWorkDelete,
-} from "@UiFolder/pages/Checkroll/InterOUDailyContractWork";
+} from "@UiFolder/pages/Checkroll/03_InterOUDailyContractWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;

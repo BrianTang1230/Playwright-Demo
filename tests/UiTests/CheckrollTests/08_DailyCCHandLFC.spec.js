@@ -22,13 +22,14 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerLoanDepositMaintenanceCreate,
-  WorkerLoanDepositMaintenanceEdit,
-  WorkerLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Checkroll/WorkerLoanDepositMaintenance";
+  DailyCCHandLFCCreate,
+  DailyCCHandLFCDelete,
+  DailyCCHandLFCEdit,
+} from "@UiFolder/pages/Checkroll/08_DailyCCHandLFC";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -37,15 +38,20 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Worker Loan/Deposit Maintenance";
-const keyName = "WorkerLoanDepositMaintenance";
+const submodule = "Crop";
+const formName = "Daily Contract Crop Harvesting and Loose Fruit Collection";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 4, 6]];
+const cellsIndex = [
+  [1, 3, 4],
+  [1, 3, 4],
+];
 
-test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
+// Due to DocNo have duplicate IDs, need to check with Siew Sheng
+test.describe
+  .serial("Daily Contract Crop Harvesting and Loose Fruit Collection Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
@@ -60,6 +66,8 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`Start Running: ${formName}`);
   });
 
@@ -72,14 +80,13 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
-    });
+  test("Create Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceCreate(
+    const { uiVals, gridVals } = await DailyCCHandLFCCreate(
       page,
       sideMenu,
       paths,
@@ -91,21 +98,24 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtRefNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
-        RecType: createValues[1],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -123,8 +133,11 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceEdit(
+  test("Edit Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await DailyCCHandLFCEdit(
       page,
       sideMenu,
       paths,
@@ -135,23 +148,21 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      docNo
     );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
-        RecType: createValues[1],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -169,18 +180,14 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    await WorkerLoanDepositMaintenanceDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      gridEditValues[0]
-    );
+  test("Delete Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
+    await DailyCCHandLFCDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
@@ -189,8 +196,10 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
     }
   });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    console.log(`End Running: ${formName}`);
-  });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

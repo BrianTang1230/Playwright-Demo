@@ -1,13 +1,12 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -23,35 +22,32 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerPrecedingTaxCreate,
-  WorkerPrecedingTaxEdit,
-  WorkerPrecedingTaxDelete,
-} from "@UiFolder/pages/Checkroll/WorkerPrecedingTax";
+  MonthlyStandardBorongAndTallPalmRateCreate,
+  MonthlyStandardBorongAndTallPalmRateEdit,
+  MonthlyStandardBorongAndTallPalmRateDelete,
+} from "@UiFolder/pages/Checkroll/12_MonthlyStandardBorong&TallPalmRate";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Preceding Tax (PPh 21)";
-const keyName = "WorkerPrecedingTax";
+const submodule = "Crop";
+const formName = "Monthly Standard Borong & Tall Palm Rate";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5]];
+const cellsIndex = [[1, 5, 6, 7, 8, 9, 10, 11]];
 
-test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
+test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "MY") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -64,12 +60,10 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -78,36 +72,34 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerPrecedingTaxCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      gridPaths,
-      gridCreateValues,
-      cellsIndex,
-      ou
-    );
-
-    docNo = await editJson(
-      JsonPath,
-      keyName,
-      await page.locator("#PreTaxSubNum").inputValue()
-    );
+    const { uiVals, gridVals } =
+      await MonthlyStandardBorongAndTallPalmRateCreate(
+        page,
+        sideMenu,
+        paths,
+        columns,
+        createValues,
+        gridPaths,
+        gridCreateValues,
+        cellsIndex,
+        ou
+      );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -116,7 +108,7 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0]],
+      [...createValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -129,8 +121,11 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxEdit(
+  test("Edit Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await MonthlyStandardBorongAndTallPalmRateEdit(
       page,
       sideMenu,
       paths,
@@ -141,29 +136,26 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
     );
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0]],
+      [...editValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -176,15 +168,26 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
-    await WorkerPrecedingTaxDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    await MonthlyStandardBorongAndTallPalmRateDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      gridEditValues[0].split(";")[0]
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting ${formName} failed`);
+    }
   });
 
   // ---------------- After All ----------------

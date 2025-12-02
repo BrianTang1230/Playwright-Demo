@@ -2,7 +2,6 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -14,22 +13,21 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
-
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
-
 import {
-  MillCPOandPKCreate,
-  MillCPOandPKEdit,
-  MillCPOandPKDelete,
-} from "@UiFolder/pages/Checkroll/MillCPOandPK";
+  WorkerAdhocDeductionCreate,
+  WorkerAdhocDeductionEdit,
+  WorkerAdhocDeductionDelete,
+} from "@UiFolder/pages/Checkroll/14_WorkerAdhocDeduction";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -38,17 +36,17 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Mill CPO and PK";
+const submodule = "Allowance & Deduction";
+const formName = "Worker Ad hoc Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3]];
+const cellsIndex = [[1, 3, 4, 5, 6, 7, 9]];
 
-test.describe.skip("Mill CPO and PK Tests", async () => {
+test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -60,6 +58,8 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -73,15 +73,10 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mill CPO and PK", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
-      OU: ou[0],
-    });
+  test("Create New Worker Ad hoc Deduction", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await MillCPOandPKCreate(
+    const { uiVals, gridVals } = await WorkerAdhocDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -93,19 +88,21 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtAdHocNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        FYear: createValues[0],
-        Period: createValues[1],
-        Div: createValues[2],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
@@ -127,8 +124,8 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mill CPO and PK", async ({ page, db }) => {
-    await MillCPOandPKEdit(
+  test("Edit Worker Ad hoc Deduction", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdhocDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -139,28 +136,22 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0]
+      docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        FYear: createValues[0],
-        Period: createValues[1],
-        Div: createValues[2],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -177,20 +168,23 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
     );
   });
 
-  // // ---------------- Delete Test ----------------
-  // test("Delete Mill CPO and PK", async ({ page, db }) => {
-  //   await MillCPOandPKDelete(page, sideMenu, createValues, ou, docNo);
+  // ---------------- Delete Test ----------------
+  test("Delete Worker Ad hoc Deduction", async ({ page, db }) => {
+    await WorkerAdhocDeductionDelete(page, sideMenu, createValues, ou, docNo);
 
-  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-  //     DocNo: docNo,
-  //     OU: ou[0],
-  //   });
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-  // });
+    if (dbValues.length > 0)
+      throw new Error(`Deleting ${formName} failed`);
+  });
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   console.log(`End Running: ${formName}`);
-  // });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+    console.log(`End Running: ${formName}`);
+  });
 });

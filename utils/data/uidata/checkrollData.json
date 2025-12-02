@@ -37,6 +37,8 @@
     "WorkerAdvancePaymentColumn": "ADVMonth date,Remarks text",
     "CropHarvestingPath": "#CropHarDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxMandor2_input,comboBoxChecker_input,comboBoxBlock_input",
     "CropHarvestingColumn": "HarDate date,Gang dropdown,Remark text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,Block dropdown",
+    "LooseFruitCollectionPath": "#LFCollectionDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxBlock_input",
+    "LooseFruitCollectionColumn": "LooseFruitDate date,Gang dropdown,Remark text,Mandor1 dropdown,Block dropdown",
     "ContractCropDespatchRatePath": "#ContractCDRMonth,comboBoxContact_input,comboBoxMill_input,#txtRemarks",
     "ContractCropDespatchRateColumn": "YrMth Date,Transporter dropdown,Mill dropdown,Remark text",
     "DailyContractCropHarvestingandLooseFruitCollectionPath": "#FLHarDatePicker,comboContact_input,#txtRemarks",
@@ -71,6 +73,7 @@
     "WorkerLoanDepositMaintenanceGrid": "//*[@id=\"omdetailGrid\"]/div[3]/table,//*[@id=\"deductdetailGrid\"]/div[3]/table",
     "WorkerAdvancePaymentGrid": "//*[@id=\"advPayDetGrid\"]/div[3]/table",
     "CropHarvestingGrid": "//*[@id=\"ffbhdetailGrid\"]/div[3]/table,//*[@id=\"ffbhdetailGrid\"]/div[4]/table",
+    "LooseFruitCollectionGrid": "//*[@id=\"lfdetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[4]/table",
     "ContractCropDespatchRateGrid": "//*[@id=\"cdrdetailGrid\"]/div[3]/table",
     "DailyContractCropHarvestingandLooseFruitCollectionGrid": "//*[@id=\"hardetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[3]/table",
     "MonthlyContractCropHarvestingandLooseFruitCollectionGrid": "//*[@id=\"hardetailGrid\"]/div[3]/table,//*[@id=\"hardetailGrid\"]/div[4]/table,//*[@id=\"lfdetailGrid\"]/div[3]/table,//*[@id=\"lfdetailGrid\"]/div[4]/table",
@@ -95,6 +98,8 @@
     "ContractCropDespatchRate": "CDR2500008",
     "InterOUCropHarvesting": "ICH0000021",
     "Mandor&CheckerPenalty": "MCP0000029",
-    "MonthlyContractCropHarvestingandLooseFruitCollection": "FL00000010"
+    "MonthlyContractCropHarvestingandLooseFruitCollection": "FL00000010",
+    "LooseFruitCollection": "LF00001963",
+    "InterOULooseFruitCollection": ""
   }
 }

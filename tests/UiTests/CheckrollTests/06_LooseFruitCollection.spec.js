@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -15,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  DailyCCHandLFCCreate,
-  DailyCCHandLFCDelete,
-  DailyCCHandLFCEdit,
-} from "@UiFolder/pages/Checkroll/DailyCCHandLFC";
+  LooseFruitCollectionCreate,
+  LooseFruitCollectionEdit,
+  LooseFruitCollectionDelete,
+} from "@UiFolder/pages/Checkroll/06_LooseFruitCollection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,24 +36,22 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_Data";
+const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Crop";
-const formName = "Daily Contract Crop Harvesting and Loose Fruit Collection";
+const formName = "Loose Fruit Collection";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 3, 4],
-  [1, 3, 4],
+  [1, 2],
+  [0, 3],
 ];
 
-// Due to DocNo have duplicate IDs, need to check with Siew Sheng
-test.describe
-  .serial("Daily Contract Crop Harvesting and Loose Fruit Collection Tests", () => {
+test.describe.serial("Loose Fruit Collection Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -71,7 +69,7 @@ test.describe
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -80,13 +78,10 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
-    page,
-    db,
-  }) => {
+  test("Create New Loose Fruit Collection", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await DailyCCHandLFCCreate(
+    const { uiVals, gridVals } = await LooseFruitCollectionCreate(
       page,
       sideMenu,
       paths,
@@ -101,7 +96,7 @@ test.describe
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtRefNum").inputValue()
+      await page.locator("#txtLFCollectionNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -116,11 +111,12 @@ test.describe
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -133,11 +129,8 @@ test.describe
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await DailyCCHandLFCEdit(
+  test("Edit Loose Fruit Collection", async ({ page, db }) => {
+    const { uiVals, gridVals } = await LooseFruitCollectionEdit(
       page,
       sideMenu,
       paths,
@@ -163,11 +156,12 @@ test.describe
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -180,26 +174,21 @@ test.describe
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
-    page,
-    db,
-  }) => {
-    await DailyCCHandLFCDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Loose Fruit Collection", async ({ page, db }) => {
+    await LooseFruitCollectionDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-  //   console.log(`End Running: ${formName}`);
-  // });
+    console.log(`End Running: ${formName}`);
+  });
 });

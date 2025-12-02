@@ -339,6 +339,25 @@ function checkrollSQLCommand(formName) {
         AND H.OUCode + ' - ' + H.OUDesc = @OU`;
       break;
 
+    case "Loose Fruit Collection":
+      sqlCommand = `
+        SELECT FORMAT(A.LFDate, 'dd/MM/yyyy') AS LooseFruitDate,
+        B.GangCode + ' - ' + B.GangDesc AS Gang,
+        A.Remarks AS Remark,
+        C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
+        D.OUCode + ' - ' + D.OUDesc AS OU,
+        G.BlockCode + ' - ' + G.BlockDesc AS Block
+        FROM CR_LFHdr A
+        LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
+        LEFT JOIN GMS_EmpyPerMas C ON A.LFManKey = C.EmpyKey
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        LEFT JOIN CR_LFDet E ON A.LFHdrKey = E.LFHdrKey
+        LEFT JOIN CR_LFDetBlock F ON E.LFDetKey = F.LFDetKey
+        LEFT JOIN GMS_BlockStp G ON F.BlockKey = G.BlockKey
+        WHERE A.LFNum = @DocNo
+        AND D.OUCode + ' - ' + D.OUDesc = @OU`;
+      break;
+
     case "Contract Crop Despatch Rate":
       sqlCommand = `
         SELECT FORMAT(A.CDRateDate, 'MMMM yyyy') AS YrMth,
@@ -986,6 +1005,23 @@ function checkrollGridSQLCommand(formName) {
           WHERE F.FFBHarNum = @DocNo
           AND F.Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
           AND G.OUCode + ' - ' + G.OUDesc = @OU
+        )`;
+      break;
+
+    case "Loose Fruit Collection":
+      sqlCommand = `
+        SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        B.WrkDayType AS WrkDay,
+        B.MD AS ManDaynumeric,
+        D.Bag AS BagAmt
+        FROM CR_LFDet B
+        LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+        LEFT JOIN CR_LFDetBlock D ON B.LFDetKey = D.LFDetKey
+        WHERE B.LFHdrKey IN (
+          SELECT LFHdrKey FROM CR_LFHdr E
+          LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
+          WHERE E.LFNum = @DocNo
+          AND F.OUCode + ' - ' + F.OUDesc = @OU
         )`;
       break;
 

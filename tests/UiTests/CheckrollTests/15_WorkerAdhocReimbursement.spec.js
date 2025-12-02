@@ -1,4 +1,4 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -20,10 +20,10 @@ import {
   DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 import {
-  MandorAndCheckerPenaltyCreate,
-  MandorAndCheckerPenaltyEdit,
-  MandorAndCheckerPenaltyDelete,
-} from "@UiFolder/pages/Checkroll/Mandor&CheckerPenalty";
+  WorkerAdhocReimbursementCreate,
+  WorkerAdhocReimbursementEdit,
+  WorkerAdhocReimbursementDelete,
+} from "@UiFolder/pages/Checkroll/15_WorkerAdhocReimbursement";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -37,18 +37,16 @@ let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Allowance & Deduction";
-const formName = "Mandor & Checker Penalty";
+const formName = "Worker Ad hoc Reimbursement";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 6]];
+const cellsIndex = [[1, 3, 4, 5, 6, 7, 9]];
 
-test.describe.serial("Mandor & Checker Penalty Tests", async () => {
+test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "MY") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -75,13 +73,13 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mandor & Checker Penalty", async ({ page, db }) => {
+  test("Create New Worker Ad hoc Reimbursement", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    const { uiVals, gridVals } = await MandorAndCheckerPenaltyCreate(
+    const { uiVals, gridVals } = await WorkerAdhocReimbursementCreate(
       page,
       sideMenu,
       paths,
@@ -96,7 +94,7 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#MdrChkPenaltyNum").inputValue()
+      await page.locator("#txtAdHocNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -129,8 +127,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mandor & Checker Penalty", async ({ page, db }) => {
-    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit(
+  test("Edit Worker Ad hoc Reimbursement", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdhocReimbursementEdit(
       page,
       sideMenu,
       paths,
@@ -174,8 +172,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Mandor & Checker Penalty", async ({ page, db }) => {
-    await MandorAndCheckerPenaltyDelete(
+  test("Delete Worker Ad hoc Reimbursement", async ({ page, db }) => {
+    await WorkerAdhocReimbursementDelete(
       page,
       sideMenu,
       createValues,
@@ -188,7 +186,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0)
+      throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

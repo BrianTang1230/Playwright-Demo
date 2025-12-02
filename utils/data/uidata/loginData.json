@@ -1,5 +1,5 @@
 {
-  "Client": "QTAUTO - QUARTO AUTOMATION",
+  "Client": "QTAUTO - BENTA WAWASAN SDN BHD",
   "ClientIND": "QTAUTOIND - WILIAN PERKASA",
   "LaunchUrl": "https://qa.quarto.cloud/",
 
@@ -15,5 +15,5 @@
     "Port": 14336,
     "Database": "LONE_QTAUTOIND"
   },
-  "Region": "MY"
+  "Region": "IND"
 }

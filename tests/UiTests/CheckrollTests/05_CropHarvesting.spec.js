@@ -1,8 +1,7 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -16,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerCP38Create,
-  WorkerCP38Edit,
-  WorkerCP38Delete,
-} from "@UiFolder/pages/Checkroll/WorkerCP38";
+  CropHarvestingCreate,
+  CropHarvestingEdit,
+  CropHarvestingDelete,
+} from "@UiFolder/pages/Checkroll/05_CropHarvesting";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,19 +38,20 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker CP38";
+const submodule = "Crop";
+const formName = "Crop Harvesting";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2]];
+const cellsIndex = [
+  [1, 2],
+  [0, 2, 3, 4],
+];
 
-test.describe.serial("Worker CP38 Tests", async () => {
+test.describe.serial("Crop Harvesting Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "IND") test.skip(true);
-
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -78,10 +78,10 @@ test.describe.serial("Worker CP38 Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker CP38", async ({ page, db }) => {
+  test("Create New Crop Harvesting", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerCP38Create(
+    const { uiVals, gridVals } = await CropHarvestingCreate(
       page,
       sideMenu,
       paths,
@@ -96,7 +96,7 @@ test.describe.serial("Worker CP38 Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtATDNum").inputValue()
+      await page.locator("#txtCropHarNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -129,8 +129,8 @@ test.describe.serial("Worker CP38 Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker CP38", async ({ page, db }) => {
-    await WorkerCP38Edit(
+  test("Edit Crop Harvesting", async ({ page, db }) => {
+    const { uiVals, gridVals } = await CropHarvestingEdit(
       page,
       sideMenu,
       paths,
@@ -144,9 +144,6 @@ test.describe.serial("Worker CP38 Tests", async () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
@@ -159,6 +156,7 @@ test.describe.serial("Worker CP38 Tests", async () => {
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -176,8 +174,8 @@ test.describe.serial("Worker CP38 Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker CP38", async ({ page, db }) => {
-    await WorkerCP38Delete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Crop Harvesting", async ({ page, db }) => {
+    await CropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -189,6 +187,8 @@ test.describe.serial("Worker CP38 Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

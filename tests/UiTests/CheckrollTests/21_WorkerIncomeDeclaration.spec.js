@@ -25,7 +25,7 @@ import {
   WorkerIncomeDeclarationCreate,
   WorkerIncomeDeclarationEdit,
   WorkerIncomeDeclarationDelete,
-} from "@UiFolder/pages/Checkroll/WorkerIncomeDeclaration";
+} from "@UiFolder/pages/Checkroll/21_WorkerIncomeDeclaration";
 
 // ---------------- Set Global Variables ----------------
 let ou;

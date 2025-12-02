@@ -25,7 +25,7 @@ import {
   DailyPieceRateWorkCreate,
   DailyPieceRateWorkDelete,
   DailyPieceRateWorkEdit,
-} from "@UiFolder/pages/Checkroll/DailyPieceRateWork";
+} from "@UiFolder/pages/Checkroll/01_DailyPieceRateWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;

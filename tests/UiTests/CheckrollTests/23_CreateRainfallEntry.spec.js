@@ -13,21 +13,22 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  ContractCropDespatchRateCreate,
-  ContractCropDespatchRateEdit,
-  ContractCropDespatchRateDelete,
-} from "@UiFolder/pages/Checkroll/ContractCropDespatchRate";
+  CreateRainfallEntryCreate,
+  CreateRainfallEntryEdit,
+  CreateRainfallEntryDelete,
+} from "@UiFolder/pages/Checkroll/23_CreateRainfallEntry";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -36,15 +37,15 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Crop";
-const formName = "Contract Crop Despatch Rate";
+const submodule = "Miscellaneous";
+const formName = "Create Rainfall Entry";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 4]];
+const cellsIndex = [[1], [2, 3, 4, 5, 6]];
 
-test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
+test.describe.serial("Create Rainfall Entry Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -59,8 +60,6 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -73,10 +72,10 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Contract Crop Despatch Rate", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create New Create Rainfall Entry", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } = await ContractCropDespatchRateCreate(
+    const { uiVals, gridVals } = await CreateRainfallEntryCreate(
       page,
       sideMenu,
       paths,
@@ -88,21 +87,15 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#txtCDRNum").inputValue()
-    );
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -124,8 +117,8 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Contract Crop Despatch Rate", async ({ page, db }) => {
-    const { uiVals, gridVals } = await ContractCropDespatchRateEdit(
+  test("Edit Create Rainfall Entry", async ({ page, db }) => {
+    const { uiVals, gridVals } = await CreateRainfallEntryEdit(
       page,
       sideMenu,
       paths,
@@ -135,19 +128,18 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou,
-      docNo
+      ou
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        DocNo: docNo,
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -169,17 +161,18 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Contract Crop Despatch Rate", async ({ page, db }) => {
-    await ContractCropDespatchRateDelete(
+  test("Delete Create Rainfall Entry", async ({ page, db }) => {
+    await CreateRainfallEntryDelete(
       page,
       sideMenu,
-      createValues,
-      ou,
-      docNo
+      paths,
+      columns,
+      editValues,
+      ou
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: editValues[0],
       OU: ou[0],
     });
 
@@ -188,7 +181,7 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

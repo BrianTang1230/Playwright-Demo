@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -53,6 +53,8 @@ test.describe
   .serial("Inter-OU Loose Fruit Collection (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -107,7 +109,6 @@ test.describe
       DocNo: docNo,
       OU: ou[0],
     });
-    console.log("DB Values:", dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -116,7 +117,6 @@ test.describe
         OU: ou[0],
       }
     );
-    console.log("Grid DB Values:", gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 

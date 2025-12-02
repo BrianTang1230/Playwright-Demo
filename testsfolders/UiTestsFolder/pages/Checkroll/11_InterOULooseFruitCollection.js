@@ -51,7 +51,7 @@ export async function InterOULooseFruitCollectionCreate(
     );
   }
 
-  // await sideMenu.clickBtnSave();
+  await sideMenu.clickBtnSave();
 
   const uiVals = await getUiValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);

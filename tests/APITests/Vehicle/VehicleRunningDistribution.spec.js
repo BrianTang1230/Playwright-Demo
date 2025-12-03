@@ -161,7 +161,7 @@ test.describe.serial("Vehicle Running Distribution API Test", () => {
 
     test("Delete Vehicle Running Distribution transaction", async ({ api }) => {
       const keyToUse = runDistHdrKey || savedKey;
-      apiObj.setUrl(`${nurUrl}api/RunDist?key=${keyToUse}`);
+      apiObj.setUrl(`${vehUrl}api/RunDist?key=${keyToUse}`);
 
       await apiObj.delete();
     });

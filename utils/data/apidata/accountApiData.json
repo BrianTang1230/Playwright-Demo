@@ -1,49 +1,53 @@
 {
   "AccountJsonPath": "utils/data/apidata/accountApiData.json",
-  "ACC_API_URL": "/financeapi",
+  "ACC_API_URL": "https://qaappgw.quarto.cloud/financeapi",
   "ID": {
     "GeneralJournal": {
-      "HdrKey": 501770,
-      "num": "JV25100038"
+      "HdrKey": 501892,
+      "num": "JV25110001"
     },
     "ClosedPeriodAdjustment": {
-      "HdrKey": 501769,
-      "num": "JV24050025"
+      "HdrKey": 501891,
+      "num": "JV24050026"
     },
     "TransactionClearing": {
-      "HdrKey": 501771,
+      "HdrKey": 501893,
       "num": "CT25100001"
     },
     "BankPayment": {
-      "HdrKey": 501765,
-      "num": "BV25100063"
+      "HdrKey": 501887,
+      "num": "BV25110005"
     },
     "BankReceipt": {
-      "HdrKey": 501766,
-      "num": "CVR2510029"
+      "HdrKey": 501888,
+      "num": "CVR2511001"
     },
     "CashPayment": {
-      "HdrKey": 501767,
-      "num": "CV25100045"
+      "HdrKey": 501889,
+      "num": "CV25100046"
     },
     "BankReconciliation": {
-      "HdrKey": 21
+      "HdrKey": 22
     },
     "CreditNote": {
-      "key": 501781,
-      "num": "CN25100047"
+      "key": 501904,
+      "num": "CN25120001"
     },
     "CreditorPayment": {
-      "key": 501845,
+      "key": 501885,
       "num": "BV25110003"
     },
     "PurchaseInvoice": {
-      "key": 501873,
+      "key": 501881,
       "num": "PI25110001"
     },
+    "DebitNote": {
+      "key": 501886,
+      "num": "DN25110006"
+    },
     "BankBulkPayment": {
-      "key": 3185,
-      "num": "BP00000692"
+      "key": 3186,
+      "num": "BP00000693"
     }
   },
   "AccountPayloads": {
@@ -495,105 +499,78 @@
     },
     "CreditNote": {
       "ClientKey": 1,
-      "OUKey": 1,
-      "OUCode": "UMBB",
-      "CompKey": 1,
       "Source": "CN",
       "DocType": "CN",
-      "GLDesc": "Test Credit Note",
       "FY": 2026,
-      "Period": 6,
+      "Period": 7,
       "CurrKey": 100,
       "CurrCode": "MYR",
       "ExRateToFunc": 1,
       "ExRateToLocal": 1,
       "Status": "OP",
-      "DocAmt": 1250,
-      "ReverseTransHdrKey": "",
+      "DocAmt": 10000,
+      "RecurSchCode": 0,
+      "ReverseTransHdrKey": null,
       "PayTermKey": 4,
+      "CreatedBy": 2841,
+      "CreatedByCode": "JIAHONG",
+      "UpdatedBy": 2841,
+      "UpdatedByCode": "JIAHONG",
+      "PAPercent": 0,
       "CDType": "GEN",
-      "IssueType": "SUP",
-      "RefNo": "12345",
       "RowState": 1,
       "glDetails": [
         {
           "TransDetKey": 0,
-          "AccKey": 4699,
-          "AccNum": "32981210",
-          "AccDesc": "OTHER CREDITOR CONTRACTOR - PEN",
-          "OUKey": 1,
-          "OUCode": "UMBB",
-          "Remarks": "Test Credit Note",
-          "FuncTransAmt": -1250,
-          "LocalTransAmt": -1250,
-          "OrigTransAmt": -1250,
-          "OrigCrAmt": 1250,
-          "CurrKey": 100,
-          "CCIDKey": 925,
-          "CurrCode": "MYR",
-          "ExRateFunc": 1,
-          "ExRateLocal": 1,
-          "CCID": "OCCPENA003",
-          "Ind": "V",
-          "RowState": 1,
-          "AOSGLDate": "1900-01-01T00:00:00",
-          "InvoiceDate": "1900-01-01T00:00:00",
-          "DeliveredDate": "1900-01-01T00:00:00",
-          "BuyerReceivedDate": "1900-01-01T00:00:00",
-          "SIDate": "1900-01-01T00:00:00"
-        },
-        {
-          "TransDetKey": 0,
-          "AccKey": 3281,
-          "AccNum": "12921010",
-          "AccDesc": "DEPOSITS (GENERAL)",
-          "OUKey": 1,
-          "OUCode": "UMBB",
-          "Remarks": "Test",
-          "FuncTransAmt": 1250,
-          "LocalTransAmt": 1250,
-          "OrigTransAmt": 1250,
-          "TaxableTransAmt": 0,
-          "InclusiveTransAmt": 1250,
-          "OrigDrAmt": 1250,
-          "OrigCrAmt": 0,
+          "TransHdrKey": 0,
           "DetRevAmt": 0,
           "CurrKey": 100,
-          "CCIDKey": 225,
           "CurrCode": "MYR",
-          "SeqNo": 1,
+          "SeqNo": 0,
           "ExRateFunc": 1,
           "ExRateLocal": 1,
-          "CCID": "ODHDPO999",
-          "Qty": 1,
-          "UOMKey": 1,
-          "UOM": "ACRE",
-          "UnitPrice": 1,
-          "Ind": "O",
+          "Qty": 0,
+          "UnitPrice": 0,
+          "Ind": "V",
           "TaxPer": 0,
-          "CCIDType": "",
           "Discount": 0,
           "DiscountTemp": 0,
           "GrossAmt": 0,
           "OpenAmt": 0,
           "RowState": 1,
-          "AccNumAccDesc": "12921010 - DEPOSITS (GENERAL)",
-          "CCIDCodeCCIDDesc": "ODHDPO999 - DEPOSIT - OTHERS",
-          "IsRequiredCCID": true,
-          "AOSGLDate": "2025-10-27T01:43:42.745Z",
           "AOSTransAmt": 0,
           "AdjAmount": 0,
           "AppliedAmt": 0,
-          "rowid": "95103ffc-5992-4bd3-9390-d6e42e4ccc4d",
-          "InvoiceDate": "1900-01-01T00:00:00",
           "DiscountAmt": 0,
-          "DeliveredDate": "1900-01-01T00:00:00",
-          "BuyerReceivedDate": "1900-01-01T00:00:00",
-          "SIDate": "2025-10-27T01:43:42.745Z",
           "OpenQty": 0,
           "RetentionPer": 0
+        },
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "CurrKey": 100,
+          "CurrCode": "MYR",
+          "SeqNo": 1,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "Qty": 1,
+          "Ind": "O",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "IsRequiredCCID": true,
+          "AOSTransAmt": 0,
+          "DiscountAmt": 0,
+          "RetentionPer": 0
         }
-      ]
+      ],
+      "CompKey": 2,
+      "ForeignExRate": 0,
+      "ForeignExRateLocal": 0,
+      "IssueType": "SUP"
     },
     "CreditorPayment": {
       "ClientKey": 1,
@@ -1062,6 +1039,68 @@
       "CompKey": 1,
       "ForeignExRate": 0,
       "ForeignExRateLocal": 0
+    },
+    "DebitNote": {
+      "ClientKey": 1,
+      "OUKey": 4,
+      "OUCode": "LHSE",
+      "CompKey": 2,
+      "Source": "DN",
+      "DocType": "DN",
+      "GLDate": "2025-11-26T16:00:00.000Z",
+      "GLDesc": "Test",
+      "FY": 2026,
+      "Period": 7,
+      "CurrKey": 100,
+      "ExRateToFunc": 1,
+      "ExRateToLocal": 1,
+      "Status": "OP",
+      "DocAmt": 10000,
+      "PayTermKey": 4,
+      "InvoiceDate": "2025-11-26T16:00:00.000Z",
+      "CDType": "GEN",
+      "IssueType": "CUS",
+      "RefNo": "A123468",
+      "RowState": 1,
+      "ReverseTransHdrKey": "",
+      "glDetails": [
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "AccKey": 4701,
+          "OUKey": 4,
+          "OUCode": "LHSE",
+          "Remarks": "Test",
+          "OrigDrAmt": 10000,
+          "OrigCrAmt": 0,
+          "CurrKey": 100,
+          "CCIDKey": 1959,
+          "CCID": "OCCLHS001",
+          "SeqNo": 0,
+          "Ind": "V",
+          "RowState": 1
+        },
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "AccKey": 3256,
+          "OUKey": 4,
+          "OUCode": "LHSE",
+          "Remarks": "Test",
+          "OrigDrAmt": 0,
+          "OrigCrAmt": 10000,
+          "CurrKey": 100,
+          "CCIDKey": 2000,
+          "CCID": "OCCLHSA001",
+          "SeqNo": 1,
+          "Ind": "O",
+          "RowState": 1
+        }
+      ],
+      "glDetailsAPAR": [],
+      "transDetBC": [],
+      "attaches": [],
+      "ouAllocDetails": []
     },
     "BankBulkPayment": {
       "ClientKey": 1,

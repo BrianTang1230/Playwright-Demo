@@ -1,10 +1,10 @@
 {
   "VehicleJsonPath": "utils/data/apidata/vehicleApiData.json",
-  "VEH_API_URL": "/nurseryapi/veh",
+  "VEH_API_URL": "https://qaappgw.quarto.cloud/nurseryapi/veh",
   "ID": {
     "VehicleRunningDistribution": {
-      "key": 35978,
-      "num": "VEH0000742",
+      "key": 36002,
+      "num": "VEH0000750",
       "ou": 16,
       "vehId": 310
     }

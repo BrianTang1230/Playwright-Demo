@@ -52,41 +52,66 @@ test.describe.serial("Credit Note API Test", () => {
             );
 
             const payloadToSend = JSON.parse(JSON.stringify(basePayloads));
-
-            payloadToSend.OUCode = createValues[0];
-            payloadToSend.OUDesc =  createValues[1];
+            payloadToSend.OUKey = 4;
+            payloadToSend.OUCode = "LHSE";
+            payloadToSend.OUDesc = "LEONG HIN SAN ESTATE";
+            payloadToSend.GLDesc = "Test Credit Note";
             payloadToSend.GLDate = currentDate.toISOString();
+            payloadToSend.DocAmt = 10000;
             payloadToSend.DueDate = dueDate.toISOString();
             payloadToSend.InvoiceDate = currentDate.toISOString();
+            payloadToSend.createdDate = currentDate.toISOString();
             payloadToSend.CreatedDate = currentDate.toISOString();
             payloadToSend.UpdatedDate = currentDate.toISOString();
+            payloadToSend.RefNo = "A1234561";
 
             if (payloadToSend.glDetails && payloadToSend.glDetails[0]) {
                 const detail1 = payloadToSend.glDetails[0];
-                detail1.AccKey = createValues[2];
-                detail1.AccNum = createValues[3];
-                detail1.AccDesc =  createValues[4];
-                detail1.OUCode = createValues[5];
-                detail1.Remarks = createValues[6];
-                detail1.FuncTransAmt = createValues[7];
-                detail1.LocalTransAmt = createValues[8];
-                detail1.OrigTransAmt = createValues[9];
-                detail1.OrigCrAmt = createValues[10];
-                detail1.CurrKey = createValues[11];
-                detail1.CCIDKey = createValues[12];
+                detail1.AccKey = 4701;
+                detail1.AccNum = "32981310";
+                detail1.AccDesc = "OTHER CREDITOR CONTRACTOR - LHS";
+                detail1.OUKey = 4;
+                detail1.OUCode = "LHSE";
+                detail1.Remarks = "Test Credit Note";
+                detail1.FuncTransAmt = -10000;
+                detail1.LocalTransAmt = -10000;
+                detail1.OrigTransAmt = -10000;
+                detail1.TaxableTransAmt = 0;
+                detail1.InclusiveTransAmt = 0;
+                detail1.OrigDrAmt = 0;
+                detail1.OrigCrAmt = 10000;
+                detail1.DetRevAmt = 0;
+                detail1.CCIDKey = 1959;
+                detail1.CCID = "OCCLHS001";
             }
 
             if (payloadToSend.glDetails && payloadToSend.glDetails[1]) {
                 const detail2 = payloadToSend.glDetails[1];
-                detail2.AccKey = createValues[13];
-                detail2.AccNum = createValues[14];
-                detail2.AccDesc = createValues[15];
-                detail2.OUKey = 1;
-                detail2.OUCode = createValues[16];
-                detail2.Remarks = createValues[17];
-                detail2.FuncTransAmt = createValues[18];
-                detail2.LocalTransAmt = createValues[19];
-                detail2.OrigTransAmt = createValues[20];
+                detail2.AccKey = 3256;
+                detail2.AccNum = "12011010";
+                detail2.AccDesc = "PAYMENT ADVANCE - PI";
+                detail2.OUKey = 4;
+                detail2.OUCode = "LHSE";
+                detail2.Remarks = "Test Credit Note";
+                detail2.FuncTransAmt = 10000;
+                detail2.LocalTransAmt = 10000;
+                detail2.OrigTransAmt = 10000;
+                detail2.TaxableTransAmt = 0;
+                detail2.InclusiveTransAmt = 10000;
+                detail2.OrigDrAmt = 10000;
+                detail2.TaxableTransAmt = 0;
+                detail2.InclusiveTransAmt = 10000;
+                detail2.OrigDrAmt = 10000;
+                detail2.OrigCrAmt = 0;
+                detail2.DetRevAmt = 0;
+                detail2.CCIDKey = 2000;
+                detail2.CCID = "OCCLHSA001";
+                detail2.UnitPrice = 10000;
+                detail2.AccNumAccDesc = "12011010 - PAYMENT ADVANCE - PI";
+                detail2.CCIDCodeCCIDDesc = "OCCLHSA001 - ACS PLANTATION SDN. BHD.";
+                detail2.AOSGLDate = currentDate.toISOString();
+                detail2.rowid = "ec9bd51a-fc18-4920-a862-43318489baf8";
+                detail2.SIDate = currentDate.toISOString();
             }
 
             const { key, num, status, json } = await apiObj.create(
@@ -137,35 +162,38 @@ test.describe.serial("Credit Note API Test", () => {
             updatePayload.TransHdrKey = keyToUse;
             updatePayload.DocNum = docNoToUse;
             updatePayload.GLDesc = "Update Credit Note"
+            updatePayload.DocAmt = 15000;
             updatePayload.RowState = 2; 
-            updatePayload.DocAmt = 2500;
 
             if (updatePayload.glDetails && updatePayload.glDetails[0]) {
                 const detail1 = updatePayload.glDetails[0];
                 detail1.TransHdrKey = keyToUse;
                 detail1.Remarks = "Update Credit Note";
-                detail1.FuncTransAmt = -2500;
-                detail1.LocalTransAmt = -2500;
-                detail1.OrigTransAmt = -2500;
+                detail1.FuncTransAmt = -15000;
+                detail1.LocalTransAmt = -15000;
+                detail1.OrigTransAmt = -15000;
                 detail1.TaxableTransAmt = 0;
-                detail1.InclusiveTransAmt = -2;
+                detail1.InclusiveTransAmt = -10000;
                 detail1.OrigDrAmt = 0;
-                detail1.OrigCrAmt = 2500;
-                detail1.DetRevAmt = 2;
+                detail1.OrigCrAmt = 15000;
+                detail1.DetRevAmt = 10000;
+                detail1.SetupPrimaryKey = 2011;
             }
 
             if (updatePayload.glDetails && updatePayload.glDetails[1]) {
                 const detail2 = updatePayload.glDetails[1];
                 detail2.TransHdrKey = keyToUse;
                 detail2.Remarks = "Update Credit Note";
-                detail2.FuncTransAmt = 2500;
-                detail2.LocalTransAmt = 2500;
-                detail2.OrigTransAmt = 2500.;
+                detail2.FuncTransAmt = 15000;
+                detail2.LocalTransAmt = 15000;
+                detail2.OrigTransAmt = 15000;
                 detail2.TaxableTransAmt = 0;
-                detail2.InclusiveTransAmt =  2500;
-                detail2.OrigDrAmt = 2500;
+                detail2.InclusiveTransAmt = 15000;
+                detail2.OrigDrAmt = 15000;
                 detail2.OrigCrAmt = 0;
-                detail2.DetRevAmt = -2;
+                detail2.DetRevAmt = -10000;
+                detail2.SetupPrimaryKey = 2052;
+                detail2.UnitPrice = 7500;
             }
 
             // --- END OF PAYLOAD ---
@@ -191,4 +219,4 @@ test.describe.serial("Credit Note API Test", () => {
             }
         })
     });
-})
+});

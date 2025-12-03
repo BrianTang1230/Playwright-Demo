@@ -28,7 +28,7 @@ export const test = base.extend({
   api: async ({}, use) => {
     const authContext = await request.newContext();
 
-    const response = await authContext.post("/zmasterapi/token", {
+    const response = await authContext.post("https://qaappgw.quarto.cloud/zmasterapi/token", {
       form: {
         grant_type: "password",
         client_id: process.env.TEST_CLIENTID,

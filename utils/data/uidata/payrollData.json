@@ -29,9 +29,9 @@
     "StaffPrecedingTaxGrid": "//*[@id='staffPreTaxSubDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000072",
+    "StaffAdditionalRemuneration": "ADR0000073",
     "StaffCP38": "ADT0000027",
-    "StaffAdvancePayment": "SAP0000004",
-    "StaffPrecedingTax": "PT00000014"
+    "StaffAdvancePayment": "SAP0000015",
+    "StaffPrecedingTax": "PT00000020"
   }
 }

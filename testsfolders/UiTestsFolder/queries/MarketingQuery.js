@@ -4,26 +4,40 @@ function marketingSQLCommand(formName) {
   switch (formName) {
     case "Sales Contract Allocation":
       sqlCommand = `
-        select A.ContractNo, 
-        FORMAT(A.ContractDate,'dd/MM/yyyy') as ContractDate, 
-        FORMAT(A.ContractExpDate,'dd/MM/yyyy') as ContractExpDate, 
+        select A.ContractNo,
+        IIF(@region = 'IND',
+          FORMAT(A.ContractDate,'dd/MM/yyyy','id-ID'),
+          FORMAT(A.ContractDate,'dd/MM/yyyy','en-US')
+        ) as ContractDate, 
+        IIF(@region = 'IND',
+          FORMAT(A.ContractExpDate,'dd/MM/yyyy','id-ID'),
+          FORMAT(A.ContractExpDate,'dd/MM/yyyy','en-US')
+        ) as ContractExpDate, 
         B.WgItemCode + ' - ' + B.WgItemDesc as Item,
         C.CertCode + ' - ' + C.CertDesc as Certification,
-        FORMAT(A.MthOfCollection,'MMMM yyyy') as MthOfCollection,
+        IIF(@region = 'IND',
+          FORMAT(A.MthOfCollection,'MMMM yyyy','id-ID'),
+          FORMAT(A.MthOfCollection,'MMMM yyyy','en-US')
+        ) as MthOfCollection,
         D.ContactCode + ' - ' + D.ContactDesc as Customer,
         case 
           when A.FullyBilled = 0 then 'False'
           when A.FullyBilled = 1 then 'True'
         end as FullBill,
-        A.Qty as Qty,
-        A.Tolerance as Tolerance,
-        A.UnitPrice as UnitPrice,
+        A.Qty,
+        A.Tolerance,
+        A.UnitPrice,
         A.PremiumUnitPrice as PremiumPrice,
         case 
-          when A.TradeTerm = 'CIF' then A.TradeTerm + ' - ' + 'COST, INSURANCE AND FREIGHT'
-          when A.TradeTerm = 'FOB' then A.TradeTerm + ' - ' + 'FREE ON BOARD'
+          when A.TradeTerm = 'CIF' then A.TradeTerm + ' - COST, INSURANCE AND FREIGHT'
+          when A.TradeTerm = 'FOB' then A.TradeTerm + ' - FREE ON BOARD'
+          else A.TradeTerm
         end as TradeTerm,
         upper(A.PriceBasis) as PriceBasis,
+        case
+          when A.DeliveryType = 'L' then 'LOCO'
+          when A.DeliveryType = 'F' then 'FRANCO'
+        end as DeliveryType,
         E.PayTermCode + ' - ' + E.PayTermDesc as PayTerm,
         case 
           when A.WeightBasis = 'D' then 'DELIVERED WEIGHT'
@@ -61,8 +75,14 @@ function marketingSQLCommand(formName) {
           when A.DOType = 'E' then 'EXTERNAL DELIVERY ORDER'
           when A.DOType = 'I' then 'INTERNAL DELIVERY ORDER'
         end as DOType,
-        FORMAT(A.DODate,'dd/MM/yyyy') as DODate,
-        FORMAT(A.DeliveryDate,'dd/MM/yyyy') as DeliveryDate,
+        IIF(@region = 'IND',
+          FORMAT(A.DODate,'dd/MM/yyyy','id-ID'),
+          FORMAT(A.DODate,'dd/MM/yyyy','en-US')
+        ) as DODate,
+         IIF(@region = 'IND',
+          FORMAT(A.DeliveryDate,'dd/MM/yyyy','id-ID'),
+          FORMAT(A.DeliveryDate,'dd/MM/yyyy','en-US')
+        ) as DeliveryDate,
         B.OUCode + ' - ' + B.OUDesc as Despatcher,
         C.RCVDesc as Recv,
         A.DOQty,
@@ -76,7 +96,10 @@ function marketingSQLCommand(formName) {
         H.ContactCode + ' - ' + H.ContactDesc as Buyer,
         I.TranspDesc as Transp,
         A.TranspRefNo,
-        FORMAT(A.TranspDODate,'dd/MM/yyyy') as TranspDODate,
+        IIF(@region = 'IND',
+          FORMAT(A.TranspDODate,'dd/MM/yyyy','id-ID'),
+          FORMAT(A.TranspDODate,'dd/MM/yyyy','en-US')
+        ) as TranspDODate,
         J.OUCode + ' - ' + J.OUDesc as OU
         from MKT_ContractDO A
         left join GMS_OUStp B on A.RecvOUKey = B.OUKey

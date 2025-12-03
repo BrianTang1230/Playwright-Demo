@@ -24,6 +24,8 @@ import {
   SalesContractDeliveryOrderEdit,
 } from "@UiFolder/pages/Marketing&Contract/02_SalesContractDeliveryOrder";
 
+import Login from "@utils/data/uidata/loginData.json";
+
 // ---------------- Set Global Variables ----------------
 let ou;
 let docNo;
@@ -50,7 +52,11 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
+    if (Login.Region === "IND") {
+      docNo = DocNo[keyName + "IND"];
+    } else {
+      docNo = DocNo[keyName];
+    }
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
@@ -75,22 +81,31 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#ContractDOSID").inputValue();
-    console.log(`Created Document No: ${docNo}`);
-    await editJson(JsonPath, formName, docNo);
+    if (Login.Region === "IND") {
+      docNo = await editJson(
+        JsonPath,
+        formName + "IND",
+        await page.locator("#ContractDOSID").inputValue()
+      );
+    } else {
+      docNo = await editJson(
+        JsonPath,
+        formName,
+        await page.locator("#ContractDOSID").inputValue()
+      );
+    }
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
-    
+
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
-    
   });
 
   // ---------------- Edit Test ----------------
@@ -109,7 +124,6 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       DocNo: docNo,
       OU: ou[0],
     });
-
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(

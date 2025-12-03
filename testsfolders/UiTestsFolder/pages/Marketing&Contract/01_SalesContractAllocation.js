@@ -24,7 +24,7 @@ export async function SalesContractAllocationCreate(
       await page
         .getByRole("tab", { name: "Payment Terms and Delivery" })
         .click();
-    } else if (i === 17) {
+    } else if (i === 18) {
       await page.getByRole("tab", { name: "Remarks" }).click();
     }
   }
@@ -42,7 +42,7 @@ export async function SalesContractAllocationCreate(
       await page
         .getByRole("tab", { name: "Payment Terms and Delivery" })
         .click();
-    } else if (i === 17) {
+    } else if (i === 18) {
       await page.getByRole("tab", { name: "Remarks" }).click();
     }
   }
@@ -69,7 +69,7 @@ export async function SalesContractAllocationEdit(
       await page
         .getByRole("tab", { name: "Payment Terms and Delivery" })
         .click();
-    } else if (i === 17) {
+    } else if (i === 18) {
       await page.getByRole("tab", { name: "Remarks" }).click();
     }
   }
@@ -87,10 +87,11 @@ export async function SalesContractAllocationEdit(
       await page
         .getByRole("tab", { name: "Payment Terms and Delivery" })
         .click();
-    } else if (i === 17) {
+    } else if (i === 18) {
       await page.getByRole("tab", { name: "Remarks" }).click();
     }
   }
+
   return { uiVals };
 }
 

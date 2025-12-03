@@ -33,6 +33,10 @@
     "WorkerLoanDepositMaintenanceColumn": "LoanDepMonth date,RecType dropdown,Remarks text",
     "WorkerAdvancePaymentPath": "#advPayMonthPicker,#Remarks",
     "WorkerAdvancePaymentColumn": "ADVMonth date,Remarks text",
+    "CropHarvestingPath": "#CropHarDate,comboBoxGang_input,#txtRemarks,comboBoxMandor1_input,comboBoxMandor2_input,comboBoxChecker_input,comboBoxBlock_input",
+    "CropHarvestingColumn": "HarDate date,Gang dropdown,Remark text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,Block dropdown",
+    "ContractCropDespatchRatePath": "#ContractCDRMonth,comboBoxContact_input,comboBoxMill_input,#txtRemarks",
+    "ContractCropDespatchRateColumn": "YrMth Date,Transporter dropdown,Mill dropdown,Remark text",
     "MillCPOandPKPath": "listbox*1,listbox*2,comboBoxDivision_input",
     "MillCPOandPKColumn": "FiscYear combobox,Period combobox,Division dropdown"
   },
@@ -53,6 +57,8 @@
     "CreateRainfallEntryGrid": "//*[@id=\"raindistdetailGrid\"]/div[3]/table,//*[@id=\"raindistdetailGrid\"]/div[4]/table",
     "WorkerLoanDepositMaintenanceGrid": "//*[@id=\"omdetailGrid\"]/div[3]/table,//*[@id=\"deductdetailGrid\"]/div[3]/table",
     "WorkerAdvancePaymentGrid": "//*[@id=\"advPayDetGrid\"]/div[3]/table",
+    "CropHarvestingGrid": "//*[@id=\"ffbhdetailGrid\"]/div[3]/table,//*[@id=\"ffbhdetailGrid\"]/div[4]/table",
+    "ContractCropDespatchRateGrid": "//*[@id=\"cdrdetailGrid\"]/div[3]/table",
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
@@ -66,6 +72,8 @@
     "WorkerAdditionalRemuneration": "ADR0000059",
     "WorkerCP38": "ADT0000029",
     "WorkerPrecedingTax": "PTX0000007",
-    "WorkerAdvancePayment": "WAP0000021"
+    "WorkerAdvancePayment": "WAP0000003",
+    "CropHarvesting": "HAR0014296",
+    "ContractCropDespatchRate": "CDR2500007"
   }
 }

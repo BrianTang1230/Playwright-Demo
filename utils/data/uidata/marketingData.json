@@ -1,13 +1,15 @@
 {
   "JsonPath": "utils/data/uidata/marketingData.json",
   "InputPath": {
-    "SalesContractAllocationPath": "#ContractNo,#contractDatePicker,#contractExpDatePicker,Item_input,Certification_input,#mthOfCollection,Buyer_input,#isFullyBilled,spinbutton*0,spinbutton*1,spinbutton*3,spinbutton*4,TradeTerm_input,PriceBasis_input,PayTerm_input,WeightBasis_input,#BuyerRef,#BrokerRef,#Comodity,#QualitySpec,#QuantityRmks,#DeliveryRmks,#ReferenceRmks,#ValidityPeriod,#CollectionRmks,#QualityRmks,#PriceRmks,#PymtTerm,#OtherTerm,#CarbonCopy",
-    "SalesContractAllocationColumn": "ContractNo text,ContractDate date,ContractExpDate date,Item dropdown,Certification dropdown,MthOfCollection date,Customer dropdown,FullBill checkbox,Qty numeric,Tolerance numeric,UnitPrice numeric,PremiumPrice numeric,TradeTerm dropdown,PriceBasis dropdown,PayTerm dropdown,WeightBasis dropdown,BuyerRef text,BrokerRef text,Comodity text,QualitySpec text,QuantityRmks text,DeliveryRmks text,ReferenceRmks text,ValidityPeriod text,CollectionRmks text,QualityRmks text,PriceRmks text,PymtTerm text,OtherTerm text,CarbonCopy text",
+    "SalesContractAllocationPath": "#ContractNo,#contractDatePicker,#contractExpDatePicker,Item_input,Certification_input,#mthOfCollection,Buyer_input,#isFullyBilled,spinbutton*0,spinbutton*1,spinbutton*3,spinbutton*4,TradeTerm_input,PriceBasis_input,DeliveryType_input,PayTerm_input,WeightBasis_input,#BuyerRef,#BrokerRef,#Comodity,#QualitySpec,#QuantityRmks,#DeliveryRmks,#ReferenceRmks,#ValidityPeriod,#CollectionRmks,#QualityRmks,#PriceRmks,#PymtTerm,#OtherTerm,#CarbonCopy",
+    "SalesContractAllocationColumn": "ContractNo text,ContractDate date,ContractExpDate date,Item dropdown,Certification dropdown,MthOfCollection date,Customer dropdown,FullBill checkbox,Qty numeric,Tolerance numeric,UnitPrice numeric,PremiumPrice numeric,TradeTerm dropdown,PriceBasis dropdown,DeliveryType dropdown,PayTerm dropdown,WeightBasis dropdown,BuyerRef text,BrokerRef text,Comodity text,QualitySpec text,QuantityRmks text,DeliveryRmks text,ReferenceRmks text,ValidityPeriod text,CollectionRmks text,QualityRmks text,PriceRmks text,PymtTerm text,OtherTerm text,CarbonCopy text",
     "SalesContractDeliveryOrderPath": "#DONo,DOType_input,#doDatePicker,#deliveryDatePicker,RecvOU_input,Recv_input,spinbutton*1,ContractNo_input,Certification_input,Item_input,WeightBasis_input,Buyer_input,Transp_input,#TranspRefNo,#TranspDODatePicker",
     "SalesContractDeliveryOrderColumn": "DONo text,DOType dropdown,DODate date,DeliveryDate date,Despatcher dropdown,Recv dropdown,DOQty numeric,ContractNo dropdown,Certification text,Item dropdown,WeightBasis dropdown,Buyer dropdown,Transp text,TranspRefNo text,TranspDODate date"
   },
   "DocNo": {
-    "SalesContractAllocation": "MKT0000490",
-    "SalesContractDeliveryOrder": "MKT0000496"
+    "SalesContractAllocation": "MKT0000992",
+    "SalesContractAllocationIND": "MKT0000994",
+    "SalesContractDeliveryOrder": "MKT0000991",
+    "SalesContractDeliveryOrderIND": ""
   }
 }

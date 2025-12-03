@@ -16,7 +16,7 @@ import {
     FFBUnitCostAdjustmentBlockCreate,
     FFBUnitCostAdjustmentBlockDelete,
     FFBUnitCostAdjustmentBlockEdit,
-} from "@UiFolder/pages/FFBProcurement/11_FFBUnitCostAdjustmentBlock";
+} from "@UiFolder/pages/FFBProcurement/MY/11_FFBUnitCostAdjustmentBlock";
 
 import Login from "@utils/data/uidata/loginData.json";
 

@@ -3,6 +3,7 @@ require("dotenv").config();
 import Login from "@utils/data/uidata/loginData.json";
 
 const region = process.env.REGION || Login.Region;
+
 export default class LoginPage {
   constructor(page) {
     this.page = page;
@@ -35,14 +36,7 @@ export default class LoginPage {
 
     await test.step(`Navigate to ${formName}`, async () => {
       await this.page.locator(`//a[@id='side${module}']`).first().click();
-      // if (module.includes(" ")) {
-      //   await this.page
-      //     .getByRole("link", { name: ` ${module}` })
-      //     .first()
-      //     .click();
-      // } else {
-      //   await this.page.getByRole("link", { name: module }).first().click();
-      // }
+    
       // If submodule exists, select it
       if (submodule) {
         await this.page
@@ -54,6 +48,7 @@ export default class LoginPage {
       // Wait for loading
       await this.page
         .locator(".k-loading-image")
+        .first()
         .waitFor({ state: "detached" });
 
       await this.page.waitForTimeout(1500);

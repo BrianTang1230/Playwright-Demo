@@ -35,7 +35,7 @@ export default class SideMenuPage {
   }
 
   async clickBtnDelete() {
-    await this.page.locator("#btnDelete").first().click();
+    await this.page.locator("#btnDelete,#btnDelate").first().click();
     await this.confirmDelete.click();
     await this.page
       .locator(".k-loading-image")
@@ -54,7 +54,11 @@ export default class SideMenuPage {
   }
 
   get btnAddNewItem() {
-    return this.page.locator("#btnNewItem, #btnCreateNew,#btnCreate").first();
+    return this.page
+      .locator(
+        "#btnNewItem,#btnCreateNew,#btnCreate,#btnNewPRW,#btnNewDet,#btnNewSB"
+      )
+      .first();
   }
 
   get btnEditItem() {

@@ -21,9 +21,7 @@ import {
   FFBAdvancePaymentCreate,
   FFBAdvancePaymentDelete,
   FFBAdvancePaymentEdit,
-} from "@UiFolder/pages/FFBProcurement/07_FFBAdvancePayment";
-
-import Login from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/FFBProcurement/MY/07_FFBAdvancePayment";
 
 // ---------------- Set Global Variables ----------------
 let ou;

@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -14,6 +14,7 @@ import {
   payrollGridSQLCommand,
   payrollSQLCommand,
 } from "@UiFolder/queries/PayrollQuery";
+
 import {
   JsonPath,
   InputPath,
@@ -25,8 +26,6 @@ import {
   StaffCP38Edit,
   StaffCP38Delete,
 } from "@UiFolder/pages/Payroll/04_StaffCP38";
-
-import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -50,7 +49,7 @@ const cellsIndex = [[1, 2]];
 test.describe.serial("Staff CP38 Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Login.Region === "IND") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [

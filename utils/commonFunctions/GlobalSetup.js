@@ -3,6 +3,9 @@ import DBHelper from "@UiFolder/pages/General/DBHelper";
 import ConnectExcel from "@utils/excel/ConnectExcel";
 import { handleApiResponse } from "@ApiFolder/apiUtils/apiHelpers";
 require("dotenv").config();
+import Login from "@utils/data/uidata/loginData.json";
+
+export const region = process.env.REGION || Login.Region;
 
 export const test = base.extend({
   db: [

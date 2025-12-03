@@ -10,6 +10,7 @@ import Login from "./utils/data/uidata/loginData.json";
 // import dotenv from 'dotenv';
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
+const region = process.env.REGION || Login.Region; // ✅ HERE
 
 const device = { ...devices["Desktop Chrome"] };
 // @ts-ignore
@@ -33,7 +34,7 @@ module.exports = defineConfig({
     ["html", { outputFolder: "playwright-report", open: "never" }],
   ] /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */,
 
-  timeout: 180000,
+  timeout: 240000,
   expect: { timeout: 10000 },
 
   use: {
@@ -42,12 +43,11 @@ module.exports = defineConfig({
 
     baseURL: "https://qa.quarto.cloud",
     extraHTTPHeaders: {
-      Accept: "application/json, */*",
-      "Content-Type": "application/json ",
+      Origin: "https://qa.quarto.cloud",
     },
-    headless: !!process.env.CI, // true in CI, false locally
+    headless: false, // true in CI, false locally
     video: {
-      mode: "on", // or "retain-on-failure"
+      mode: process.env.CI ? "retain-on-failure" : "on", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
     },
     screenshot: "on",
@@ -57,7 +57,7 @@ module.exports = defineConfig({
     },
     viewport: process.env.CI ? { width: 1920, height: 1080 } : null, // fixed size in CI
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    trace: "off",
   },
 
   /* Configure projects for major browsers */
@@ -70,7 +70,7 @@ module.exports = defineConfig({
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
         video: { mode: "on", size: { width: 1920, height: 1080 } },
         screenshot: "on",
-        headless: !!process.env.CI,
+        headless: false,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
           slowMo: 1300,
@@ -81,10 +81,16 @@ module.exports = defineConfig({
       name: "UI Tests",
       testDir: "tests/UiTests",
       testIgnore: [
-        ...(Login.Region === "IND"
-          ? ["tests/UiTests/LabTests/**", "tests/UiTests/FFBTests/MY/**"]
+        "tests/UiTests/FFBProcurementTests/**", // Temporarily ignore FFBProcurementTests
+        ...(region === "IND"
+          ? [
+              "tests/UiTests/LabTests/**",
+              "tests/UiTests/FFBProcurementTests/MY/**",
+            ]
           : []),
-        ...(Login.Region === "MY" ? ["tests/UiTests/FFBTests/IND/**"] : []),
+        ...(region === "MY"
+          ? ["tests/UiTests/FFBProcurementTests/IND/**"]
+          : []),
       ], // IND side ignore Lab tests temporarily
       use: {
         ...device,

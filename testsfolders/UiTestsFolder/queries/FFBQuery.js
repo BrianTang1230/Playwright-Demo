@@ -349,6 +349,26 @@ function ffbSQLCommand(formName) {
       'MMMM yyyy') = @Date
       AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
+
+    case "Daily Rate by Palm Age":
+      sqlCommand = `
+      SELECT 
+      FORMAT(A.FormDate,
+      'MMMM yyyy','id-ID') AS FormDate,
+      FORMAT(A.ToDate,
+      'MMMM yyyy','id-ID') AS ToDate,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_FFBUPAdjBlkHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy') = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
   }
 
   return sqlCommand;
@@ -360,23 +380,24 @@ function ffbGridSQLCommand(formName) {
   switch (formName) {
     case "Monthly MPOB Price":
       sqlCommand = `
-        SELECT CPOPrice AS CPOnumeric,
-        PKPrice AS PKPnumeric,
-        FFBPrice AS FPnumeric,
-        RegionTax AS RTnumeric,
-        MPOBCess AS MPnumeric,
+        SELECT
+        A.CPOPrice AS CPOnumeric,
+        A.PKPrice AS PKPnumeric,
+        A.FFBPrice AS FPnumeric,
+        A.RegionTax AS RTnumeric,
+        A.MPOBCess AS MPnumeric,
         AddCess AS ACnumeric
-        FROM FPS_PriceDet
+        FROM FPS_PriceDet A
         WHERE PriceHdrKey IN (
-          SELECT PriceHdrKey
-          FROM FPS_PriceHdr A
-          LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
-          LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-          WHERE A.Mth = '1'
-          AND Yr = @Date
-          AND B.RegionCode + ' - ' + B.RegionDesc = @Region
-          AND C.OUCode + ' - ' + C.OUDesc = @OU
-        )`;
+            SELECT PriceHdrKey
+            FROM FPS_PriceHdr A
+            LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+            LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+            AND Yr = @Date
+            AND B.RegionCode + ' - ' + B.RegionDesc = @Region
+            AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )
+        AND A.Mth = '1'`;
       break;
 
     case "Daily MPOB Price":
@@ -590,6 +611,29 @@ function ffbGridSQLCommand(formName) {
       break;
 
     case "FFB Unit Cost Adjustment (Block)":
+      sqlCommand = `
+        SELECT
+        E.BlockCode + ' - ' + E.BlockDesc AS Block,
+        A.FromDay AS FDnumeric,
+        A.ToDay AS TDnumeric,
+        A.AdjAmt AS AAnumeric
+        FROM FPS_FFBUPAdjBlkDet A
+        LEFT JOIN GMS_BlockStp E ON A.BlockKey = E.BlockKey
+        WHERE A.FFBUPAdjHdrKey IN (
+          SELECT H.FFBUPAdjHdrKey
+          FROM FPS_FFBUPAdjBlkHdr H
+          LEFT JOIN GMS_OUStp C ON H.OUKey = C.OUKey
+          WHERE FORMAT(DATEFROMPARTS(
+            TRY_CAST(H.Yr AS int),
+            TRY_CAST(H.Mth AS int),
+            1
+          ),
+          'MMMM yyyy') = @Date
+          AND C.OUCode + ' - ' + C.OUDesc = @OU
+        )`;
+      break;
+
+    case "Daily Rate by Palm Age":
       sqlCommand = `
         SELECT
         E.BlockCode + ' - ' + E.BlockDesc AS Block,

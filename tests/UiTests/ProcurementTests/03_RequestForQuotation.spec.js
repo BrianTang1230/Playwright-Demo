@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -50,7 +50,7 @@ const cellsIndex = [[4, 5, 11, 12, 17, 18, 19]];
 test.describe.serial("Request for Quotation Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (Region === "MY") test.skip(true);
+    if (region === "MY") test.skip(true);
 
     // Load Excel values
     [

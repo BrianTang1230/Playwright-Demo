@@ -14,7 +14,7 @@ on:
       browser:   # 👈 add browser as an input
         description: "Browser to run tests on"
         required: false
-        default: "msedge"
+        default: "chrome"
         type: string
     
 jobs:
@@ -60,10 +60,11 @@ jobs:
           
       - name: Install dependencies
         run: npm ci
-        
+      
+      # Install Playwright browsers AFTER Edge exists
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
-        
+
     # ✅ Replace the existing test step with this:
       - name: Run Playwright tests and capture summary
         id: run-tests

@@ -21,10 +21,14 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 }
 
 /* 
-  type:
-      Default - use document number
-      Dropdown - use dropdown selection
-      Directly - directly apply filter with only OU and Date
+    Default - when need to use document number or typing keyword
+    //![Default](../../../utils/images/UQF_Default.png)
+
+    Dropdown - when need to use dropdown selection
+    //![Dropdown](../../../utils/images/UQF_Dropdown.png)
+
+    Directly - directly apply filter with only OU and Date
+    //![Dropdown](../../../utils/images/UQF_Directly.png)
  */
 export async function FilterRecordByOUAndDate(
   page,
@@ -34,13 +38,14 @@ export async function FilterRecordByOUAndDate(
   times = 1,
   type = "Default"
 ) {
+  const date = values[0];
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')
     .first()
     .fill(ou);
-  await page.getByRole("combobox").nth(3).fill(values[0]);
+  await page.getByRole("combobox").nth(3).fill(date);
   await page.getByRole("button", { name: "+", exact: true }).click();
-  await page.getByRole("combobox").nth(4).fill(values[0]);
+  await page.getByRole("combobox").nth(4).fill(date);
 
   if (type !== "Directly") {
     const seletor = await page

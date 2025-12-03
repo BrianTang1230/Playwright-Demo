@@ -1,0 +1,13 @@
+{
+  "JsonPath": "utils/data/uidata/inventoryData.json",
+  "InputPath": {
+    "StockReceiptPath": "#ReceiptDate,#chkWithPO,comboBoxPO_input,comboBoxVend_input,#txtDORefNum,#txtRemarks,comboBoxItem_input,#VendItemDesc,comboBoxStore_input,spinbutton*0,comboBoxStdUOM_input,spinbutton*2,spinbutton*3,comboBoxTranspCostTreatment_input",
+    "StockReceiptColumn": "RcvDate date,WithPO checkbox,PONo dropdown,Supplier dropdown,DORef text,Remarks text,Item dropdown,ItemDesc text,Store dropdown,Qty numeric,UOM dropdown,Amount numeric,TranspCost numeric,Treatment dropdown"
+  },
+  "GridPath": {
+    "StockReceiptGrid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
+  },
+  "DocNo": {
+    "StockReceipt": "SR00004910"
+  }
+}

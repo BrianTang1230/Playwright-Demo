@@ -19,7 +19,7 @@ export async function checkLength(paths, columns, createValues, editValues) {
 }
 
 export async function SelectOU(page, inputPath, dropdownPath, ou) {
-  await page.locator(inputPath).click();
+  await page.locator(inputPath).first().click();
   await page.locator(dropdownPath, { hasText: ou }).first().click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });

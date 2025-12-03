@@ -7,9 +7,9 @@
     "SalesContractDeliveryOrderColumn": "DONo text,DOType dropdown,DODate date,DeliveryDate date,Despatcher dropdown,Recv dropdown,DOQty numeric,ContractNo dropdown,Certification text,Item dropdown,WeightBasis dropdown,Buyer dropdown,Transp text,TranspRefNo text,TranspDODate date"
   },
   "DocNo": {
-    "SalesContractAllocation": "MKT0000992",
+    "SalesContractAllocation": "MKT0000493",
     "SalesContractAllocationIND": "MKT0000994",
-    "SalesContractDeliveryOrder": "MKT0000991",
+    "SalesContractDeliveryOrder": "MKT0000497",
     "SalesContractDeliveryOrderIND": ""
   }
 }

@@ -25,7 +25,7 @@ export async function DailyMPOBPriceCreate(
   await SelectOU(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
+    "#comboBoxOU_listbox li span",
     ou[0]
   );
 

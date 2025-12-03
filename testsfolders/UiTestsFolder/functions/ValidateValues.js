@@ -5,7 +5,12 @@ const region = process.env.REGION || Data.Region;
 
 export async function ValidateUiValues(inputValues, columns, uiValues) {
   for (let i = 0; i < inputValues.length; i++) {
-    if (inputValues[i] === "NA" || uiValues[i] === "NA") continue;
+    if (
+      inputValues[i] === "NA" ||
+      inputValues[i] === "AF" ||
+      uiValues[i] === "NA"
+    )
+      continue;
     if (columns[i].includes("numeric")) {
       const inpVal = normalizeNumber(String(inputValues[i]));
       const uiVal = normalizeNumber(String(uiValues[i]));
@@ -29,7 +34,7 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
-    if (inputValues[i] === "NA" || inputCols[i].includes("button")) continue;
+    if (inputValues[i] === "NA") continue;
     if (inputCols[i].includes("numeric")) {
       inputValues[i] = normalizeNumber(inputValues[i]);
     }
@@ -48,7 +53,6 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
 export async function ValidateGridValues(eValues, gValues) {
   if (eValues.length !== gValues.length) {
-    console.log(eValues, gValues);
     throw new Error("Mismatch length in Grid values.");
   }
 
@@ -74,9 +78,9 @@ export async function ValidateGridValues(eValues, gValues) {
 function normalizeNumber(raw) {
   let cleaned = raw;
   if (region === "MY") {
-    cleaned = cleaned.replace(",", "");
+    cleaned = cleaned.replaceAll(",", "");
   } else if (region === "IND") {
-    cleaned = cleaned.replace(".", "").replace(",", ".");
+    cleaned = cleaned.replaceAll(".", "").replace(",", ".");
   }
   return Number(cleaned);
 }

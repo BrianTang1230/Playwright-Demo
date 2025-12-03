@@ -6,6 +6,12 @@ function nurserySQLCommand(formName) {
       sqlCommand = `
         SELECT FORMAT(A.RcvDate, 'dd/MM/yyyy') AS RcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         A.Remarks,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
         A.RefNo,
@@ -13,7 +19,8 @@ function nurserySQLCommand(formName) {
         A.DelQty,
         A.DamQty,
         A.FocQty,
-        D.OUCode + ' - ' + D.OUDesc AS OU
+        A.RcvQty as NetQty,
+		    D.OUCode + ' - ' + D.OUDesc as OU
         FROM NUR_PRcv A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
@@ -23,46 +30,152 @@ function nurserySQLCommand(formName) {
 
     case "Pre Nursery Germinated":
       sqlCommand = `
-        SELECT FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
+        SELECT 
+        FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+            WHEN A.Status = 'O' THEN 'OPEN'
+            WHEN A.Status = 'C' THEN 'CLOSE'
+            WHEN A.Status = 'S' THEN 'SUBMITTED'
+            WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         A.Remarks,
         C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
+        (
+          SELECT ISNULL(SUM(E2.RcvQty), 0)
+          FROM NUR_PRcv E2
+          WHERE E2.NurBatchKey = A.NurBatchKey
+          AND E2.RcvDate <= A.DbtDate
+        )
+        - (
+            SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0)  
+            FROM NUR_PDoubleton A2
+            WHERE A2.NurBatchKey = A.NurBatchKey AND (A2.DbtDate = A.DbtDate and A2.DbtKey < A.DbtKey) OR A2.DbtDate < A.DbtDate
+        ) AS RcvQty,		
         A.SgtQty,
         A.DbtQty,
-        D.OUCode + ' - ' + D.OUDesc AS OU
+        F.OUCode + ' - ' + F.OUDesc AS OU
         FROM NUR_PDoubleton A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_PlantMateStp C ON A.PlantMateKey = C.PlantMateKey
-        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-        WHERE A.PDoubletonNum = @DocNo`;
+        LEFT JOIN GMS_NurBatchStp D ON A.NurBatchKey = D.NurBatchKey
+        LEFT JOIN NUR_PRcv E ON E.NurBatchKey = D.NurBatchKey
+        LEFT JOIN GMS_OUStp F ON A.OUKey = F.OUKey
+        WHERE A.PDoubletonNum = @DocNo
+        GROUP BY
+          A.DbtDate,
+          B.NurBatchCode, B.NurBatchDesc,
+          A.Status,
+          A.Remarks,
+          C.PlantMateCode, C.PlantMateDesc,
+          A.SgtQty,
+          A.DbtQty,
+           A.DbtKey,
+          F.OUCode, F.OUDesc,
+          A.NurBatchKey,
+          A.PDoubletonNum; `;
       break;
 
     case "Pre Nursery Doubleton Splitting":
       sqlCommand = `
         SELECT FORMAT(A.PDbtSplitDate, 'dd/MM/yyyy') AS PDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         A.Remarks,
+		    (
+          SELECT ISNULL(SUM(E.DbtQty), 0) 
+          FROM NUR_PDoubleton E
+          WHERE E.NurBatchKey = A.NurBatchKey AND FORMAT(E.DbtDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.SplitQty),0)
+          FROM NUR_PDbtSplit A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND (FORMAT(A2.PDbtSplitDate,'yyyyMM') = FORMAT(A.PDbtSplitDate,'yyyyMM') AND A2.PDbtSplitKey < A.PDbtSplitKey) OR (FORMAT(A2.PDbtSplitDate,'yyyyMM') < FORMAT(A.PDbtSplitDate,'yyyyMM'))
+        ) as DbtQty,
         A.SplitQty,
-        C.OUCode + ' - ' + C.OUDesc AS OU
+        E.OUCode + ' - ' + E.OUDesc AS OU
         FROM NUR_PDbtSplit A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
-        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.PDbtSplitNum = @DocNo`;
+        LEFT JOIN GMS_OUStp E ON A.OUKey = E.OUKey
+        WHERE A.PDbtSplitNum = @DocNo
+        GROUP BY
+        A.PDbtSplitDate,
+        B.NurBatchCode, B.NurBatchDesc,
+        A.Status,
+        A.Remarks,
+        A.PDbtSplitKey,
+        A.SplitQty,
+        E.OUCode, E.OUDesc,
+        A.NurBatchKey,
+        A.PDbtSplitNum`;
       break;
 
     case "Pre Nursery Culling":
       sqlCommand = `
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS CullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         A.Remarks,
+        (
+          SELECT ISNULL(SUM(E2.RcvQty), 0)
+          FROM NUR_PRcv E2
+          WHERE E2.NurBatchKey = A.NurBatchKey AND E2.RcvDate <= A.CullDate
+        ) - (
+          SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0) 
+          FROM NUR_PDoubleton A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.DbtDate <= A.CullDate
+        ) as AvlQty,
         A.PCullQty,
-        A.PCullSTQty,
-        A.PCullDTQty,
-        C.OUCode + ' - ' + C.OUDesc AS OU
-        FROM NUR_PCull A
-        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
-        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.PCullNum = @DocNo`;
+        (
+          SELECT ISNULL(SUM(A3.SgtQty), 0) 
+          FROM NUR_PDoubleton A3
+          WHERE A3.NurBatchKey = A.NurBatchKey AND A3.DbtDate <= A.CullDate
+        ) + (
+         (
+            SELECT ISNULL(SUM(E2.DbtQty), 0)
+            FROM NUR_PDoubleton E2
+            WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
+          ) - (
+           (
+              SELECT ISNULL(SUM(E2.DbtQty), 0)
+              FROM NUR_PDoubleton E2
+              WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
+		        ) - (
+              SELECT ISNULL(SUM(A2.SplitQty), 0)
+              FROM NUR_PDbtSplit A2
+              WHERE A2.NurBatchKey = A.NurBatchKey AND A2.PDbtSplitDate <= A.CullDate
+		        )
+          )
+        ) * 2 as AvlSTQty,
+      A.PCullSTQty,
+      (
+        SELECT ISNULL(SUM(E2.DbtQty), 0)
+        FROM NUR_PDoubleton E2
+        WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
+      ) - (
+        SELECT ISNULL(SUM(A2.SplitQty), 0)
+        FROM NUR_PDbtSplit A2
+        WHERE A2.NurBatchKey = A.NurBatchKey AND A2.PDbtSplitDate <= A.CullDate
+      ) - (
+        SELECT ISNULL(SUM(A2.PCullDTQty), 0)
+        FROM NUR_PCull A2
+        WHERE A2.NurBatchKey = A.NurBatchKey AND (A2.CullDate = A.CullDate AND A2.PCullKey < A.PCullKey) OR (A2.CullDate < A.CullDate)
+      ) AS AvlDTQty,
+      A.PCullDTQty,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM NUR_PCull A
+      LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.PCullNum = @DocNo`;
       break;
 
     case "Pre Nursery Adjustment":

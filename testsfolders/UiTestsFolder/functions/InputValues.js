@@ -1,7 +1,7 @@
 import GetElementByPath from "./GetElementByPath";
 
 export async function InputValues(page, path, col, value) {
-  if (value == "NA") {
+  if (value == "NA" || value == "AF") {
     return;
   }
 
@@ -72,7 +72,7 @@ export async function InputGridValuesSameCols(
   const row = table.locator("tr").nth(nRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
-    if (vals[i] === "NA") continue;
+    if (vals[i] === "NA" || vals[i] === "AF") continue;
     const cell = row.locator("td").nth(cellsIndex[i]);
 
     await cell.click();

@@ -12,6 +12,7 @@
   },
   "DocNo": {
     "VehicleRunningDistribution": "VEH0002998",
-    "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000069"
+    "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000069",
+    "StockReceipt": "SR00004888"
   }
 }

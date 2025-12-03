@@ -15,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOUMonthlyPieceRateWorkCreate,
-  InterOUMonthlyPieceRateWorkEdit,
-  InterOUMonthlyPieceRateWorkDelete,
-} from "@UiFolder/pages/Checkroll/InterOUMonthlyPieceRateWork";
+  InterOULooseFruitCollectionCreate,
+  InterOULooseFruitCollectionEdit,
+  InterOULooseFruitCollectionDelete,
+} from "@UiFolder/pages/Checkroll/11_InterOULooseFruitCollection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,15 +38,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Attendance";
-const formName = "Inter-OU Monthly Piece Rate Work";
-const keyName = "InterOUMonthlyPieceRateWork";
+const submodule = "Crop";
+const formName = "Inter-OU Loose Fruit Collection (Loan To)";
+const keyName = "InterOULooseFruitCollection";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 4, 5, 6, 7, 9, 13]];
+const cellsIndex = [
+  [1, 2],
+  [0, 3],
+];
 
-test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
+test.describe
+  .serial("Inter-OU Loose Fruit Collection (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     if (region === "IND") test.skip(true);
@@ -77,10 +81,13 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
+  test("Create New Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await InterOUMonthlyPieceRateWorkCreate(
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionCreate(
       page,
       sideMenu,
       paths,
@@ -95,7 +102,7 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
     docNo = await editJson(
       JsonPath,
       keyName,
-      await page.locator("#txtMPRNo").inputValue()
+      await page.locator("#txtLFCollectionNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -128,8 +135,11 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
-    const { uiVals, gridVals } = await InterOUMonthlyPieceRateWorkEdit(
+  test("Edit Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit(
       page,
       sideMenu,
       paths,
@@ -173,8 +183,11 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
-    await InterOUMonthlyPieceRateWorkDelete(
+  test("Delete Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await InterOULooseFruitCollectionDelete(
       page,
       sideMenu,
       createValues,

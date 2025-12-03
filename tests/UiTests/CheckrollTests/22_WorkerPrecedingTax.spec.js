@@ -2,11 +2,12 @@ import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -22,10 +23,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  DailyPieceRateWorkCreate,
-  DailyPieceRateWorkDelete,
-  DailyPieceRateWorkEdit,
-} from "@UiFolder/pages/Checkroll/DailyPieceRateWork";
+  WorkerPrecedingTaxCreate,
+  WorkerPrecedingTaxEdit,
+  WorkerPrecedingTaxDelete,
+} from "@UiFolder/pages/Checkroll/22_WorkerPrecedingTax";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,29 +37,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_Data";
+const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Attendance";
-const formName = "Daily Piece Rate Work";
-const keyName = formName.split(" ").join("");
+const submodule = "Income Tax";
+const formName = "Worker Preceding Tax (PPh 21)";
+const keyName = "WorkerPrecedingTax";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 4],
-  [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 9, 12, 15],
-];
-const cellsIndexIND = [
-  [1, 4, 5, 6, 8],
-  [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 6, 9],
-];
-const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const cellsIndex = [[1, 2, 3, 4, 5]];
 
-test.describe.serial("Daily Piece Rate Work Tests", () => {
+test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -76,7 +69,7 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -85,13 +78,10 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Daily Piece Rate Work", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
-    });
+  test("Create New Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await DailyPieceRateWorkCreate(
+    const { uiVals, gridVals } = await WorkerPrecedingTaxCreate(
       page,
       sideMenu,
       paths,
@@ -99,14 +89,14 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
       createValues,
       gridPaths,
       gridCreateValues,
-      dwCellIndex,
+      cellsIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
-      formName,
-      await page.locator("#txtATRNum").inputValue()
+      keyName,
+      await page.locator("#PreTaxSubNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -116,14 +106,17 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -136,8 +129,8 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Piece Rate Work", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyPieceRateWorkEdit(
+  test("Edit Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+    await WorkerPrecedingTaxEdit(
       page,
       sideMenu,
       paths,
@@ -146,10 +139,13 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
       editValues,
       gridPaths,
       gridEditValues,
-      dwCellIndex,
+      cellsIndex,
       ou,
       docNo
     );
+
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -158,18 +154,19 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
-
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
@@ -179,28 +176,19 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Piece Rate Work", async ({ page, db }) => {
-    await DailyPieceRateWorkDelete(
-      page,
-      sideMenu,
-      createValues,
-      editValues,
-      ou,
-      docNo
-    );
+  test("Delete Worker Preceding Tax (PPh 21)", async ({ page, db }) => {
+    await WorkerPrecedingTaxDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   console.log(`End Running: ${formName}`);
-  // });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    console.log(`End Running: ${formName}`);
+  });
 });

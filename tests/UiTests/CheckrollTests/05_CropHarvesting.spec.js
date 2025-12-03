@@ -1,12 +1,12 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -15,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerAdditionalRemunerationCreate,
-  WorkerAdditionalRemunerationDelete,
-  WorkerAdditionalRemunerationEdit,
-} from "@UiFolder/pages/Checkroll/WorkerAdditionalRemuneration";
+  CropHarvestingCreate,
+  CropHarvestingEdit,
+  CropHarvestingDelete,
+} from "@UiFolder/pages/Checkroll/05_CropHarvesting";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,19 +36,24 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_Data";
+const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Additional Remuneration";
-const formName = "Worker Additional Remuneration";
+const submodule = "Crop";
+const formName = "Crop Harvesting";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2]];
+const cellsIndex = [
+  [1, 2],
+  [0, 2, 3, 4],
+];
 
-test.describe.serial("Worker Additional Remuneration Tests", () => {
+test.describe.serial("Crop Harvesting Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -66,7 +71,7 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -75,10 +80,10 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Additional Remuneration", async ({ page, db }) => {
+  test("Create New Crop Harvesting", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdditionalRemunerationCreate(
+    const { uiVals, gridVals } = await CropHarvestingCreate(
       page,
       sideMenu,
       paths,
@@ -93,7 +98,7 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtQRFNum").inputValue()
+      await page.locator("#txtCropHarNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -108,11 +113,12 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou],
+      [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -125,8 +131,8 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Additional Remuneration", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerAdditionalRemunerationEdit(
+  test("Edit Crop Harvesting", async ({ page, db }) => {
+    const { uiVals, gridVals } = await CropHarvestingEdit(
       page,
       sideMenu,
       paths,
@@ -152,11 +158,12 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou],
+      [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -169,23 +176,15 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Additional Remuneration", async ({ page, db }) => {
-    await WorkerAdditionalRemunerationDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Crop Harvesting", async ({ page, db }) => {
+    await CropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

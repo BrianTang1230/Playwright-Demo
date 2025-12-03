@@ -1,29 +1,31 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  ContractCropDespatchRateCreate,
-  ContractCropDespatchRateEdit,
-  ContractCropDespatchRateDelete,
-} from "@UiFolder/pages/Checkroll/ContractCropDespatchRate";
+  MonthlyCCHandLFCCreate,
+  MonthlyCCHandLFCDelete,
+  MonthlyCCHandLFCEdit,
+} from "@UiFolder/pages/Checkroll/09_MonthlyCCHandLFC";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -34,19 +36,27 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
 const submodule = "Crop";
-const formName = "Contract Crop Despatch Rate";
+const formName = "Monthly Contract Crop Harvesting and Loose Fruit Collection";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 4]];
+const cellsIndex = [
+  [1],
+  [0, 1, 2, 3, 4, 5, 6, 7],
+  [1],
+  [0, 1, 2, 3, 4, 5, 6, 7],
+];
 
-test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
+test.describe
+  .serial("Monthly Contract Crop Harvesting and Loose Fruit Collection Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -64,7 +74,7 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -73,10 +83,13 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Contract Crop Despatch Rate", async ({ page, db }) => {
+  test("Create Monthly Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await ContractCropDespatchRateCreate(
+    const { uiVals, gridVals } = await MonthlyCCHandLFCCreate(
       page,
       sideMenu,
       paths,
@@ -91,7 +104,7 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtCDRNum").inputValue()
+      await page.locator("#txtRefNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -106,12 +119,11 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0]],
+      [...createValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -124,8 +136,11 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Contract Crop Despatch Rate", async ({ page, db }) => {
-    const { uiVals, gridVals } = await ContractCropDespatchRateEdit(
+  test("Edit Monthly Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await MonthlyCCHandLFCEdit(
       page,
       sideMenu,
       paths,
@@ -151,12 +166,11 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0]],
+      [...editValues, ou],
       [...columns, "OU"],
       dbValues[0]
     );
@@ -169,21 +183,20 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Contract Crop Despatch Rate", async ({ page, db }) => {
-    await ContractCropDespatchRateDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Monthly Contract Crop Harvesting and Loose Fruit Collection", async ({
+    page,
+    db,
+  }) => {
+    await MonthlyCCHandLFCDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting ${formName} failed`);
+    }
   });
 
   // ---------------- After All ----------------

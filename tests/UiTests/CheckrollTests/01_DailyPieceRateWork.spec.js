@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -22,13 +22,14 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerLoanDepositMaintenanceCreate,
-  WorkerLoanDepositMaintenanceEdit,
-  WorkerLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Checkroll/WorkerLoanDepositMaintenance";
+  DailyPieceRateWorkCreate,
+  DailyPieceRateWorkDelete,
+  DailyPieceRateWorkEdit,
+} from "@UiFolder/pages/Checkroll/01_DailyPieceRateWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -37,17 +38,27 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Worker Loan/Deposit Maintenance";
-const keyName = "WorkerLoanDepositMaintenance";
+const submodule = "Attendance";
+const formName = "Daily Piece Rate Work";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 4, 6]];
+const cellsIndex = [
+  [1, 4],
+  [1, 2, 3, 4, 5, 6],
+  [1, 3, 4, 9, 12, 15],
+];
+const cellsIndexIND = [
+  [1, 4, 5, 6, 8],
+  [1, 2, 3, 4, 5, 6],
+  [1, 3, 4, 6, 9],
+];
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
+test.describe.serial("Daily Piece Rate Work Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -59,6 +70,8 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -72,14 +85,13 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+  test("Create Daily Piece Rate Work", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceCreate(
+    const { uiVals, gridVals } = await DailyPieceRateWorkCreate(
       page,
       sideMenu,
       paths,
@@ -87,23 +99,24 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex,
+      dwCellIndex,
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtATRNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        RecType: createValues[1],
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -123,8 +136,8 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceEdit(
+  test("Edit Daily Piece Rate Work", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyPieceRateWorkEdit(
       page,
       sideMenu,
       paths,
@@ -133,23 +146,19 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex,
+      dwCellIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      docNo
     );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        RecType: createValues[1],
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -160,6 +169,7 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       [...columns, "OU"],
       dbValues[0]
     );
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
@@ -169,18 +179,18 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    await WorkerLoanDepositMaintenanceDelete(
+  test("Delete Daily Piece Rate Work", async ({ page, db }) => {
+    await DailyPieceRateWorkDelete(
       page,
       sideMenu,
       createValues,
+      editValues,
       ou,
-      gridEditValues[0]
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      RecType: createValues[1],
+      DocNo: docNo,
       OU: ou[0],
     });
 
@@ -189,8 +199,8 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
     }
   });
 
-  // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    console.log(`End Running: ${formName}`);
-  });
+  // // ---------------- After All ----------------
+  // test.afterAll(async ({ db }) => {
+  //   console.log(`End Running: ${formName}`);
+  // });
 });

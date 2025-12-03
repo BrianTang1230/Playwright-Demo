@@ -71,11 +71,6 @@ export async function CropHarvestingEdit(
     await InputValues(page, paths[i], columns[i], newValues[i]);
   }
 
-  await page.locator("#IsEmpySelect").check();
-  await page.locator("#btnDeleteItem").click();
-  await sideMenu.confirmDelete.click();
-  await sideMenu.btnAddNewItem.click();
-
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
       page,

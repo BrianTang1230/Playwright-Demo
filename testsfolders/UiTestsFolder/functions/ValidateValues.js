@@ -4,6 +4,8 @@ import Data from "@utils/data/uidata/loginData.json";
 const region = process.env.REGION || Data.Region;
 
 export async function ValidateUiValues(inputValues, columns, uiValues) {
+  console.log("\nUI Values:\n" + "-".repeat(74));
+
   for (let i = 0; i < inputValues.length; i++) {
     if (
       inputValues[i] === "NA" ||
@@ -17,6 +19,7 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
       inputValues[i] = String(inpVal);
       uiValues[i] = String(uiVal);
     }
+
     if (inputValues[i].trim() !== String(uiValues[i]).trim()) {
       throw new Error(
         `Mismatch UI values of ${columns[i]}: ${inputValues[i]} !== ${uiValues[i]}`
@@ -30,6 +33,8 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
 }
 
 export async function ValidateDBValues(inputValues, inputCols, dbValues) {
+  console.log("\nDB Values:\n" + "-".repeat(74));
+
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
@@ -55,6 +60,8 @@ export async function ValidateGridValues(eValues, gValues) {
   if (eValues.length !== gValues.length) {
     throw new Error("Mismatch length in Grid values.");
   }
+
+  console.log("\nGrid Values:\n" + "-".repeat(74));
 
   for (let i = 0; i < gValues.length; i++) {
     let expected = eValues[i];

@@ -83,10 +83,10 @@
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "DailyPieceRateWork": "ATR0005743",
-    "InterOUDailyContractWork": "ICW0000017",
-    "MonthlyPieceRateWork": "MPR0000003",
-    "InterOUMonthlyPieceRateWork": "IPR0000018",
+    "DailyPieceRateWork": "ATR0043684",
+    "InterOUDailyContractWork": "ICW0000022",
+    "MonthlyPieceRateWork": "MPR0000005",
+    "InterOUMonthlyPieceRateWork": "IPR0000010",
     "WorkerAdhocAllowance": "AHA0000036",
     "WorkerAdhocDeduction": "AHD0000096",
     "WorkerAdhocReimbursement": "AHR0000023",
@@ -94,12 +94,12 @@
     "WorkerCP38": "ADT0000029",
     "WorkerPrecedingTax": "PTX0000007",
     "WorkerAdvancePayment": "WAP0000003",
-    "CropHarvesting": "HAR0014296",
+    "CropHarvesting": "HAR0016186",
     "ContractCropDespatchRate": "CDR2500008",
     "InterOUCropHarvesting": "ICH0000021",
     "Mandor&CheckerPenalty": "MCP0000029",
     "MonthlyContractCropHarvestingandLooseFruitCollection": "FL00000010",
-    "LooseFruitCollection": "LF00001963",
+    "LooseFruitCollection": "LF00001978",
     "InterOULooseFruitCollection": "ICL0000001"
   }
 }

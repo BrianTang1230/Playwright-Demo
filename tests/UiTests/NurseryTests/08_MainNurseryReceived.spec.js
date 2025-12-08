@@ -105,11 +105,7 @@ test.describe.serial("Main Nursery Received Tests", () => {
     });
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function DailyCCHandLFCCreate(
+export async function CropHarvestingAndCollectionCreate(
   page,
   sideMenu,
   paths,
@@ -26,14 +26,16 @@ export async function DailyCCHandLFCCreate(
     ou[0]
   );
 
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.slice(0, 7).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
+  await sideMenu.btnAddNewItem.click();
+  await page.locator('[name="comboBoxBlock_input"]').type(values[7]);
+  await page.keyboard.press("Tab");
+  await page.locator("#btnAddBlock").click();
+
   for (let i = 0; i < gridPaths.length; i++) {
-    i === 0
-      ? await page.locator("#btnNewFFB").click()
-      : await page.locator("#btnNewLF").click();
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -50,7 +52,7 @@ export async function DailyCCHandLFCCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyCCHandLFCEdit(
+export async function CropHarvestingAndCollectionEdit(
   page,
   sideMenu,
   paths,
@@ -86,7 +88,13 @@ export async function DailyCCHandLFCEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyCCHandLFCDelete(page, sideMenu, values, ou, docNo) {
+export async function CropHarvestingAndCollectionDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
 
   await sideMenu.clickBtnDelete();

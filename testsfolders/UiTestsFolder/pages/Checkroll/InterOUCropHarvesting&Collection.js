@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function DailyCCHandLFCCreate(
+export async function InterOUCropHarvestingAndCollectionCreate(
   page,
   sideMenu,
   paths,
@@ -21,19 +21,28 @@ export async function DailyCCHandLFCCreate(
 
   await SelectOU(
     page,
-    "#divComboOU .k-dropdown .k-select",
+    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=0",
     "ul[aria-hidden='false'] li span",
     ou[0]
   );
 
-  for (let i = 0; i < paths.length; i++) {
+  await SelectOU(
+    page,
+    "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=1",
+    "ul[aria-hidden='false'] li span",
+    ou[1]
+  );
+
+  for (let i = 0; i < paths.slice(0, 7).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
+  await sideMenu.btnAddNewItem.click();
+  await page.locator('[name="comboBoxBlock_input"]').type(values[7]);
+  await page.keyboard.press("Tab");
+  await page.locator("#btnAddBlock").click();
+
   for (let i = 0; i < gridPaths.length; i++) {
-    i === 0
-      ? await page.locator("#btnNewFFB").click()
-      : await page.locator("#btnNewLF").click();
     await InputGridValuesSameCols(
       page,
       gridPaths[i],
@@ -50,7 +59,7 @@ export async function DailyCCHandLFCCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyCCHandLFCEdit(
+export async function InterOUCropHarvestingAndCollectionEdit(
   page,
   sideMenu,
   paths,
@@ -63,7 +72,7 @@ export async function DailyCCHandLFCEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -86,8 +95,14 @@ export async function DailyCCHandLFCEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyCCHandLFCDelete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+export async function InterOUCropHarvestingAndCollectionDelete(
+  page,
+  sideMenu,
+  values,
+  ou,
+  docNo
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   await sideMenu.clickBtnDelete();
 }

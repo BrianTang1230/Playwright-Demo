@@ -1,9 +1,15 @@
 function nurserySQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+   DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         ELSE 'AGT - AGATHIS ESTATE'
+    END;
+  `;
 
   switch (formName) {
     case "Pre Nursery Seed Received":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.RcvDate, 'dd/MM/yyyy') AS RcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE
@@ -25,19 +31,19 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
         LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-        WHERE A.PRcvNum = @DocNo`;
+        WHERE A.PRcvNum = @DocNo AND D.OUCode + ' - ' + D.OUDesc = @OU`;
       break;
 
     case "Pre Nursery Germinated":
-      sqlCommand = `
+      sqlCommand += `
         SELECT 
         FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE
-            WHEN A.Status = 'O' THEN 'OPEN'
-            WHEN A.Status = 'C' THEN 'CLOSE'
-            WHEN A.Status = 'S' THEN 'SUBMITTED'
-            WHEN A.Status = 'A' THEN 'APPROVED'
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
@@ -45,39 +51,26 @@ function nurserySQLCommand(formName) {
           SELECT ISNULL(SUM(E2.RcvQty), 0)
           FROM NUR_PRcv E2
           WHERE E2.NurBatchKey = A.NurBatchKey
-          AND E2.RcvDate <= A.DbtDate
-        )
-        - (
-            SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0)  
-            FROM NUR_PDoubleton A2
-            WHERE A2.NurBatchKey = A.NurBatchKey AND (A2.DbtDate = A.DbtDate and A2.DbtKey < A.DbtKey) OR A2.DbtDate < A.DbtDate
-        ) AS RcvQty,		
+          AND FORMAT(E2.RcvDate,'yyyyMM') <= FORMAT(A.DbtDate,'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0)  
+          FROM NUR_PDoubleton A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND FORMAT(A2.DbtDate,'yyyyMM') <= FORMAT(A.DbtDate,'yyyyMM')
+        ) + (
+          A.SgtQty + A.DbtQty
+        )AS RcvQty,
         A.SgtQty,
         A.DbtQty,
         F.OUCode + ' - ' + F.OUDesc AS OU
         FROM NUR_PDoubleton A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_PlantMateStp C ON A.PlantMateKey = C.PlantMateKey
-        LEFT JOIN GMS_NurBatchStp D ON A.NurBatchKey = D.NurBatchKey
-        LEFT JOIN NUR_PRcv E ON E.NurBatchKey = D.NurBatchKey
         LEFT JOIN GMS_OUStp F ON A.OUKey = F.OUKey
-        WHERE A.PDoubletonNum = @DocNo
-        GROUP BY
-          A.DbtDate,
-          B.NurBatchCode, B.NurBatchDesc,
-          A.Status,
-          A.Remarks,
-          C.PlantMateCode, C.PlantMateDesc,
-          A.SgtQty,
-          A.DbtQty,
-           A.DbtKey,
-          F.OUCode, F.OUDesc,
-          A.NurBatchKey,
-          A.PDoubletonNum; `;
+        WHERE A.PDoubletonNum = @DocNo AND F.OUCode + ' - ' + F.OUDesc = @OU`;
       break;
 
     case "Pre Nursery Doubleton Splitting":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PDbtSplitDate, 'dd/MM/yyyy') AS PDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE
@@ -90,32 +83,24 @@ function nurserySQLCommand(formName) {
 		    (
           SELECT ISNULL(SUM(E.DbtQty), 0) 
           FROM NUR_PDoubleton E
-          WHERE E.NurBatchKey = A.NurBatchKey AND FORMAT(E.DbtDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+          WHERE E.NurBatchKey = A.NurBatchKey AND E.Status = 'O'
+          AND FORMAT(E.DbtDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.SplitQty),0)
           FROM NUR_PDbtSplit A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND (FORMAT(A2.PDbtSplitDate,'yyyyMM') = FORMAT(A.PDbtSplitDate,'yyyyMM') AND A2.PDbtSplitKey < A.PDbtSplitKey) OR (FORMAT(A2.PDbtSplitDate,'yyyyMM') < FORMAT(A.PDbtSplitDate,'yyyyMM'))
-        ) as DbtQty,
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.PDbtSplitDate,'yyyyMM') <= FORMAT(A.PDbtSplitDate,'yyyyMM')
+        ) + A.SplitQty as DbtQty,
         A.SplitQty,
         E.OUCode + ' - ' + E.OUDesc AS OU
         FROM NUR_PDbtSplit A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_OUStp E ON A.OUKey = E.OUKey
-        WHERE A.PDbtSplitNum = @DocNo
-        GROUP BY
-        A.PDbtSplitDate,
-        B.NurBatchCode, B.NurBatchDesc,
-        A.Status,
-        A.Remarks,
-        A.PDbtSplitKey,
-        A.SplitQty,
-        E.OUCode, E.OUDesc,
-        A.NurBatchKey,
-        A.PDbtSplitNum`;
+        WHERE A.PDbtSplitNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU`;
       break;
 
     case "Pre Nursery Culling":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS CullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE
@@ -126,78 +111,158 @@ function nurserySQLCommand(formName) {
         END AS Status,
         A.Remarks,
         (
-          SELECT ISNULL(SUM(E2.RcvQty), 0)
-          FROM NUR_PRcv E2
-          WHERE E2.NurBatchKey = A.NurBatchKey AND E2.RcvDate <= A.CullDate
+          SELECT ISNULL(SUM(X.RcvQty), 0)
+          FROM NUR_PRcv X
+          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+		      AND FORMAT(X.RcvDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0) 
-          FROM NUR_PDoubleton A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.DbtDate <= A.CullDate
-        ) as AvlQty,
+          SELECT ISNULL(SUM(Y.SgtQty), 0) + ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+		      AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.PCullQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + A.PCullQty AS AvlQty,
         A.PCullQty,
         (
-          SELECT ISNULL(SUM(A3.SgtQty), 0) 
-          FROM NUR_PDoubleton A3
-          WHERE A3.NurBatchKey = A.NurBatchKey AND A3.DbtDate <= A.CullDate
+          SELECT ISNULL(SUM(Y.SgtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + (
-         (
-            SELECT ISNULL(SUM(E2.DbtQty), 0)
-            FROM NUR_PDoubleton E2
-            WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
-          ) - (
-           (
-              SELECT ISNULL(SUM(E2.DbtQty), 0)
-              FROM NUR_PDoubleton E2
-              WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
-		        ) - (
-              SELECT ISNULL(SUM(A2.SplitQty), 0)
-              FROM NUR_PDbtSplit A2
-              WHERE A2.NurBatchKey = A.NurBatchKey AND A2.PDbtSplitDate <= A.CullDate
-		        )
-          )
-        ) * 2 as AvlSTQty,
-      A.PCullSTQty,
-      (
-        SELECT ISNULL(SUM(E2.DbtQty), 0)
-        FROM NUR_PDoubleton E2
-        WHERE E2.NurBatchKey = A.NurBatchKey AND E2.DbtDate <= A.CullDate
-      ) - (
-        SELECT ISNULL(SUM(A2.SplitQty), 0)
-        FROM NUR_PDbtSplit A2
-        WHERE A2.NurBatchKey = A.NurBatchKey AND A2.PDbtSplitDate <= A.CullDate
-      ) - (
-        SELECT ISNULL(SUM(A2.PCullDTQty), 0)
-        FROM NUR_PCull A2
-        WHERE A2.NurBatchKey = A.NurBatchKey AND (A2.CullDate = A.CullDate AND A2.PCullKey < A.PCullKey) OR (A2.CullDate < A.CullDate)
-      ) AS AvlDTQty,
-      A.PCullDTQty,
-      C.OUCode + ' - ' + C.OUDesc AS OU
-      FROM NUR_PCull A
-      LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
-      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-      WHERE A.PCullNum = @DocNo`;
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) * 2 - (
+          SELECT ISNULL(SUM(A2.PCullSTQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + A.PCullSTQty AS AvlSTQty,
+        A.PCullSTQty,
+        (
+          SELECT ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.PCullDTQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + A.PCullDTQty AS AvlDTQty,
+        A.PCullDTQty,
+        C.OUCode + ' - ' + C.OUDesc AS OU
+        FROM NUR_PCull A
+        LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        WHERE A.PCullNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Pre Nursery Adjustment":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS PAdjDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         A.Remarks,
+        (
+          SELECT ISNULL(SUM(X.RcvQty), 0)
+          FROM NUR_PRcv X
+          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          AND FORMAT(X.RcvDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(Y.SgtQty), 0) + ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(W.PCullQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+        AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(A2.NGQty), 0)
+          FROM NUR_PAdjustment A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - A.NGQty AS AvlQty,
         A.NGQty,
+        (
+          SELECT ISNULL(SUM(Y.SgtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) * 2 - (
+          SELECT ISNULL(SUM(A2.PCullSTQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(A2.STQty), 0)
+          FROM NUR_PAdjustment A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - A.STQty AS AvlSTQty,
         A.STQty,
+        (
+          SELECT ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.PCullDTQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(A2.DTQty), 0)
+          FROM NUR_PAdjustment A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - A.DTQty AS AvlDTQty,
         A.DTQty,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM NUR_PAdjustment A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.AdjNum = @DocNo`;
+        WHERE A.AdjNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Pre Nursery Transfer/Sold/Loss":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS PreNurTransDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         CASE 
           WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
           WHEN A.TransTypeKey = 2 THEN 'Transfer Out'
@@ -208,6 +273,58 @@ function nurserySQLCommand(formName) {
         F.AccNum + ' - ' + F.AccDesc AS TrnOut,
         D.CCIDCode + ' - ' + D.CCIDDesc AS CCID,
         A.Remarks,
+        (
+          SELECT ISNULL(SUM(Y.SgtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) * 2 - (
+          SELECT ISNULL(SUM(W.PCullSTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.STQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey AND V.Status = 'O'
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + A.TrnQty AS AvlTrnQty,
+        (
+          SELECT ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(W.PCullDTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.DTQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey AND V.Status = 'O'
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.DbtQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + A.DbtQty AS AvlDbtQty,
         A.TrnQty,
         A.DbtQty,
         G.OUCode + ' - ' + G.OUDesc AS OU
@@ -218,13 +335,19 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_NurBatchStp E ON A.TrnToBatchKey = E.NurBatchKey
         LEFT JOIN GMS_AccMas F ON A.SoldToAccKey = F.AccKey
         LEFT JOIN GMS_OUStp G ON A.OUKey = G.OUKey
-        WHERE A.PTrnNum = @DocNo`;
+        WHERE A.PTrnNum = @DocNo AND G.OUCode + ' - ' + G.OUDesc = @OU`;
       break;
 
     case "Inter-OU Pre Nursery Transfer To":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         CASE 
           WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
           WHEN A.TransTypeKey = 2 THEN 'Transfer Out'
@@ -238,6 +361,10 @@ function nurserySQLCommand(formName) {
         F.AccNum + ' - ' + F.AccDesc AS Account,
         D.CCIDCode + ' - ' + D.CCIDDesc AS CCID,
         E.NurBatchCode + ' - ' + E.NurBatchDesc AS TrnToBatch,
+        CASE
+          WHEN A.UnitPriceType = 'SD' THEN 'Self-Defined Unit Price'
+          ELSE 'Unknown'
+        END AS UnitPriceType,
         A.UnitPrice,
         A.Remarks,
         A.STQty,
@@ -253,19 +380,25 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_OUStp G ON A.FromOUKey = G.OUKey
         LEFT JOIN GMS_OUStp H ON A.ToOUKey = H.OUKey
         LEFT JOIN GMS_PlantMateStp I ON A.PlantMateKey = I.PlantMateKey
-        WHERE A.IPTrnNum = @DocNo`;
+        WHERE A.IPTrnNum = @DocNo AND G.OUCode + ' - ' + G.OUDesc = @OU`;
       break;
 
     case "Main Nursery Received":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.MRcvDate, 'dd/MM/yyyy') AS MRcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
+        CASE
+          WHEN A.Status = 'O' THEN 'OPEN'
+          WHEN A.Status = 'C' THEN 'CLOSE'
+          WHEN A.Status = 'S' THEN 'SUBMITTED'
+          WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status, 
         A.Remarks,
         CASE
           WHEN A.MRcvInd = 'SUP' THEN 'Supplier'
           WHEN A.MRcvInd = 'OTH' THEN 'Other Batches/Parties'
           ELSE 'Pre-Nursery'
-          END AS RcvFrm,
+        END AS RcvFrm,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
         A.RefNo,
         A.PreNTrnNo,
@@ -276,11 +409,11 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_PlantSourceStp C ON A.PlantSourceKey = C.PlantSourceKey
         LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-        WHERE A.MRcvNum = @DocNo`;
+        WHERE A.MRcvNum = @DocNo AND D.OUCode + ' - ' + D.OUDesc = @OU`;
       break;
 
     case "Main Nursery Doubleton Splitting":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.MDbtSplitDate, 'dd/MM/yyyy') AS MDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -289,11 +422,11 @@ function nurserySQLCommand(formName) {
         FROM NUR_MDbtSplit A
         LEFT JOIN GMS_NurBatchStp B ON A.NurBatchKey = B.NurBatchKey
         LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-        WHERE A.MDbtSplitNum = @DocNo`;
+        WHERE A.MDbtSplitNum = @DocNo AND D.OUCode + ' - ' + D.OUDesc = @OU`;
       break;
 
     case "Main Nursery Culling":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS MCullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -307,7 +440,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Main Nursery Adjustment":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS MAdjDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -321,7 +454,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Main Nursery Transfer/Loss":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.MTrnDate,'dd/MM/yyyy') AS MTDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -342,7 +475,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Main Nursery Sold":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -361,7 +494,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Inter-OU Main Nursery Transfer To":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         A.Remarks,
@@ -389,7 +522,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Nursery Transfer Requisition":
-      sqlCommand = `
+      sqlCommand += `
           SELECT FORMAT(A.TransferDate, 'dd/MM/yyyy') AS TransferDate,
           A.Remark AS Remarks,
           A.ReferenceNum AS RefNo,
@@ -414,7 +547,7 @@ function nurserySQLCommand(formName) {
       break;
 
     case "Nursery Sales Requisition":
-      sqlCommand = `
+      sqlCommand += `
           SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
           A.Remark AS Remarks,
           A.ReferenceNum AS RefNo,
@@ -444,7 +577,7 @@ function nurseryGridSQLCommand(formName) {
 
   switch (formName) {
     case "Nursery Sales Requisition":
-      sqlCommand = `
+      sqlCommand += `
        SELECT B.OUCode + ' - ' + B.OUDesc AS OU,
         A.Qty AS Quantity,
         FORMAT(A.ExpStartDeliveryDate, 'dd/MM/yyyy') AS ExpStartDate,

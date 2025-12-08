@@ -62,7 +62,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Pre Nursery Germinated", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await PreNurseryGerminatedCreate(
       page,
@@ -124,7 +124,7 @@ test.describe.serial("Pre Nursery Germinated Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     await editJson(JsonPath, formName, "");
 

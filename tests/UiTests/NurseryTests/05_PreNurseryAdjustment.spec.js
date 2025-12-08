@@ -65,7 +65,7 @@ test.describe.serial("Pre Nursery Adjustment Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Pre Nursery Adjustment", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await PreNurseryAdjustmentCreate(
       page,
@@ -88,11 +88,7 @@ test.describe.serial("Pre Nursery Adjustment Tests", () => {
     });
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -113,11 +109,7 @@ test.describe.serial("Pre Nursery Adjustment Tests", () => {
     });
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -135,7 +127,7 @@ test.describe.serial("Pre Nursery Adjustment Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     await editJson(JsonPath, formName, "");
 

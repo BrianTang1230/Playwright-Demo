@@ -62,7 +62,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await PreNurseryTransferToCreate(
       page,
@@ -85,7 +85,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0], ou[1]],
+      [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0]
     );
@@ -110,7 +110,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0], ou[1]],
+      [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0]
     );
@@ -131,10 +131,10 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-    
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     await editJson(JsonPath, formName, "");
-    
+
     console.log(`End Running: ${formName}`);
   });
 });

@@ -9,6 +9,7 @@ import {
   AccountPayloads,
 } from "@utils/data/apidata/accountApiData.json";
 import { deleteBankPaymentById } from "testsfolders/ApiTestsFolder/queries/AccountQuery"; 
+import { create } from "domain";
 
 let apiObj;
 let createValues, editValues;
@@ -52,89 +53,139 @@ test.describe.serial("Creditor Payment API Test", () => {
             );
 
             const payloadToSend = JSON.parse(JSON.stringify(basePayloads));
-            payloadToSend.OUCode = createValues[0];
-            payloadToSend.OUDesc = createValues[1];
-            payloadToSend.DocNum = createValues[2];
+            payloadToSend.OUKey = createValues[0];
+            payloadToSend.OUCode = createValues[1];
+            payloadToSend.OUDesc = createValues[2];
+            payloadToSend.DocNum = createValues[3];
             payloadToSend.GLDate = currentDate.toISOString();
-            payloadToSend.GLDescription = createValues[3];
-            payloadToSend.DocAmt = createValues[4];
+            payloadToSend.GLDesc = createValues[4];
+            payloadToSend.DocAmt = createValues[5];
             payloadToSend.InvoiceDate = currentDate.toISOString();
             payloadToSend.CreatedDate = currentDate.toISOString();
             payloadToSend.UpdatedDate = currentDate.toISOString();
-            payloadToSend.Remarks = createValues[5];
+            payloadToSend.Remarks = createValues[6];
+            payloadToSend.RefNo = createValues[7];
+            payloadToSend.BankDueDate = dueDate.toISOString();
 
             if (payloadToSend.glDetails && payloadToSend.glDetails[0]) {
                 const detail1 = payloadToSend.glDetails[0];
-                detail1.AccKey=  createValues[6];
-                detail1.AccNum = createValues[7];
-                detail1.Remarks = createValues[8];
-                detail1.FuncTransAmt = createValues[9];
-                detail1.OrigTransAmt = createValues[10];
-                detail1.OrigDrAmt = createValues[11];
-                detail1.CCIDKey = createValues[12];
-                detail1.CCID = createValues[13];
+                detail1.AccKey = createValues[8];
+                detail1.AccNum = createValues[9];
+                detail1.AccDesc = createValues[10];
+                detail1.OUKey = createValues[11];
+                detail1.Remarks = createValues[12];
+                detail1.FuncTransAmt = createValues[13];
+                detail1.LocalTransAmt = createValues[14];
+                detail1.OrigTransAmt = createValues[15];
+                detail1.TaxableTransAmt = createValues[16];
+                detail1.InclusiveTransAmt = createValues[17];
+                detail1.OrigDrAmt = createValues[18];
+                detail1.OrigCrAmt = createValues[19];
+                detail1.DetRevAmt = createValues[20];
+                detail1.CCIDKey = createValues[21]; 
+                detail1.CCID = createValues[22];
             }
 
             if (payloadToSend.glDetails && payloadToSend.glDetails[1]) {
                 const detail2 = payloadToSend.glDetails[1];
-                detail2.AccKey = createValues[14];
-                detail2.AccNum = createValues[15];
-                detail2.AccDesc = createValues[16];
-                detail2.Remarks = createValues[17];
-                detail2.FuncTransAmt = createValues[18];
-                detail2.LocalTransAmt = createValues[19];
-                detail2.OrigTransAmt = createValues[20];
-                detail2.OrigCrAmt = createValues[21];
-                detail2.CCIDKey = createValues[22];
-                detail2.CCID = createValues[23];
+                detail2.AccKey = createValues[23];
+                detail2.AccNum = createValues[24];
+                detail2.OUKey = createValues[25];
+                detail2.Remarks = createValues[26];
+                detail2.FuncTransAmt = createValues[27];
+                detail2.LocalTransAmt = createValues[28];
+                detail2.OrigTransAmt = createValues[29];
+                detail2.TaxableTransAmt = createValues[30];
+                detail2.InclusiveTransAmt = createValues[31];
+                detail2.OrigDrAmt = createValues[32];
+                detail2.OrigCrAmt = createValues[33];
+                detail2.DetRevAmt = createValues[34];
+                detail2.CCIDKey = createValues[35];
+                detail2.CCID = createValues[36];
             }
 
             if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[0]) {
                 const detail3 = payloadToSend.glDetailsAPAR[0];
-                detail3.Acckey = createValues[24];
-                detail3.AccNum = createValues[25];
-                detail3.OUCode = createValues[26];
-                detail3.Remarks = createValues[27];
-                detail3.FuncTransAmt = createValues[28];
-                detail3.LocalTransAmt = createValues[29];
-                detail3.OrigTransAmt = createValues[30];
-                detail3.CCIDKey = createValues[31];
-                detail3.APARRefTransDetKey = createValues[32];
-                detail3.APARRefTransHdrKey = createValues[33];
-                detail3.CCID = createValues[34];
-                detail3.GLDate = createValues[35];
-                detail3.GLDesc = createValues[36];
-                detail3.OpenAmt = createValues[37];
-                detail3.AppliedAmt = createValues[38];
-            }
-
-            if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[1]) {
-                const detail3 = payloadToSend.glDetailsAPAR[1];
-                detail3.Acckey = createValues[39];
-                detail3.AccNum = createValues[40];
-                detail3.OUCode = createValues[41];
-                detail3.Remarks = createValues[42];
-                detail3.FuncTransAmt = createValues[43];
-                detail3.LocalTransAmt = createValues[44];
-                detail3.OrigTransAmt = createValues[45];
-                detail3.CCIDKey = createValues[46];
+                detail3.AccKey = createValues[37];
+                detail3.AccNum = createValues[38];
+                detail3.OUKey = createValues[39];
+                detail3.OUCode = createValues[40];
+                detail3.Remarks = createValues[41];
+                detail3.FuncTransAmt = createValues[42];
+                detail3.LocalTransAmt = createValues[43];
+                detail3.OrigTransAmt = createValues[44];
+                detail3.CCIDKey = createValues[45];
+                detail3.CCID = createValues[46];
                 detail3.APARRefTransDetKey = createValues[47];
                 detail3.APARRefTransHdrKey = createValues[48];
-                detail3.CCID = createValues[49];
-                detail3.DocNum = createValues[50];
-                detail3.GLDate = createValues[51];
+                detail3.DocNum = createValues[49];
+                detail3.GLDate = createValues[50];
+                detail3.DueDate = createValues[51];
                 detail3.GLDesc = createValues[52];
                 detail3.OpenAmt = createValues[53];
                 detail3.AppliedAmt = createValues[54];
-                detail3.TaxableAmt = createValues[55];
+                detail3.Discount = createValues[55];
+                detail3.TaxAmt = createValues[56];
+                detail3.TaxableAmt = createValues[57];
+            }
+
+            if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[1]) {
+                const detail4 = payloadToSend.glDetailsAPAR[1];
+                detail4.AccKey = createValues[58];
+                detail4.AccNum = createValues[59];
+                detail4.OUKey = createValues[60];
+                detail4.OUCode = createValues[61];
+                detail4.Remarks = createValues[62];
+                detail4.FuncTransAmt = createValues[63];
+                detail4.LocalTransAmt = createValues[64];
+                detail4.OrigTransAmt = createValues[65];
+                detail4.CCID = createValues[66];
+                detail4.CCID = createValues[67];
+                detail4.APARRefTransDetKey = createValues[68];
+                detail4.APARRefTransHdrKey = createValues[69];
+                detail4.DocNum = createValues[70];
+                detail4.InvNum = createValues[71];
+                detail4.GLDate = createValues[72];
+                detail4.DueDate = createValues[73];
+                detail4.GLDesc = createValues[74];
+                detail4.OpenAmt = createValues[75];
+                detail4.AppliedAmt = createValues[76];
+                detail4.Discount = createValues[77];
+                detail4.TaxAmt = createValues[78];
+                detail4.TaxableAmt = createValues[79];
+            }
+
+                if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[2]) {
+                const detail5 = payloadToSend.glDetailsAPAR[2];
+                detail5.AccKey = createValues[80];
+                detail5.AccNum = createValues[81];
+                detail5.OUKey = createValues[82];
+                detail5.OUCode = createValues[83];
+                detail5.Remarks = createValues[84];
+                detail5.FuncTransAmt = createValues[85];
+                detail5.LocalTransAmt = createValues[86];
+                detail5.OrigTransAmt = createValues[87];
+                detail5.CCID = createValues[88];
+                detail5.CCID = createValues[89];
+                detail5.APARRefTransDetKey = createValues[90];
+                detail5.APARRefTransHdrKey = createValues[91];
+                detail5.DocNum = createValues[92];
+                detail5.InvNum = createValues[93];
+                detail5.GLDate = createValues[94];
+                detail5.DueDate = createValues[95];
+                detail5.GLDesc = createValues[96];
+                detail5.OpenAmt = createValues[97];
+                detail5.AppliedAmt = createValues[98];
+                detail5.Discount = createValues[99];
+                detail5.TaxAmt = createValues[100];
+                detail5.TaxableAmt = createValues[101];
             }
 
             if (payloadToSend.transDetBC && payloadToSend.transDetBC[0]) {
-                const detail4 = payloadToSend.transDetBC[0];
-                detail4.TransDetBCKey = createValues[56];
-                detail4.PayTo = createValues[57];
-                detail4.TransferNo = createValues[58];
-                detail4.BenKey = createValues[59];
+                const detail6 = payloadToSend.transDetBC[0];
+                detail6.TransDetBC = createValues[102];
+                detail6.PayTo = createValues[103];
+                detail6.TransferNo = createValues[104];
             }
 
             const { key, num, status, json } = await apiObj.create(
@@ -184,88 +235,18 @@ test.describe.serial("Creditor Payment API Test", () => {
             // Main Header Field
             updatePayload.TransHdrKey = keyToUse;
             updatePayload.DocNum = docNoToUse;
-            updatePayload.DocAmt = editValues[0];
-            updatePayload.Remarks = editValues[1];
             updatePayload.RowState = 2;
+            updatePayload.Remarks = editValues[0];
 
             if (updatePayload.glDetails && updatePayload.glDetails[0]) {
                 const detail1 = updatePayload.glDetails[0];
-                detail1.TransDetKey = editValues[2];
-                detail1.AccKey = editValues[3];
-                detail1.AccNum = editValues[4];
-                detail1.AccDesc = editValues[5];
-                detail1.OUCode = editValues[6];
-                detail1.Remarks = editValues[7];
-                detail1.FuncTransAmt = editValues[8];
-                detail1.LocalTransAmt = editValues[9];
-                detail1.OrigTransAmt = editValues[10];
-                detail1.TaxableTransAmt = editValues[11];
-                detail1.InclusiveTransAmt = editValues[12];
-                detail1.OrigDrAmt = editValues[13];
-                detail1.OrignCrAmt = editValues[14];
-                detail1.DetRevAmt = editValues[15];
-                detail1.CCIDKey = editValues[16];
-                detail1.SetupPrimaryKey = editValues[17];
-                detail1.CCID = editValues[18];
-                detail1.AccNumAccDesc = editValues[19];
-                detail1.CCIDCodeCCIDDesc = editValues[20];
+                detail1.Remarks = editValues[1];
             }
 
             if (updatePayload.glDetails && updatePayload.glDetails[1]) {
                 const detail2 = updatePayload.glDetails[1];
-                detail2.AccKey = editValues[21];
-                detail2.AccNum = editValues[22];
-                detail2.Remarks = editValues[23];
-                detail2.FuncTransAmt = editValues[24];
-                detail2.LocalTransAmt = editValues[25];
-                detail2.OrigTransAmt = editValues[26];
-                detail2.TaxableTransAmt = editValues[27];
-                detail2.InclusiveTransAmt = editValues[28];
-                detail2.OrigDrAmt = editValues[29];
-                detail2.OrigCrAmt = editValues[30];
-                detail2.DetRevAmt = editValues[31];
-                detail2.CCIDKey = editValues[32];
-                detail2.CCID = editValues[33];
+                detail2.Remarks = editValues[2];
             }
-
-            if (updatePayload.glDetails && updatePayload.glDetails[2]) {
-                const detail3 = updatePayload.glDetails[2];
-                detail3.TransDetKey = editValues[34];
-                detail3.TransHdrKey = keyToUse;
-                detail3.AccKey = editValues[35];
-                detail3.AccNum = editValues[36];
-                detail3.AccDesc = editValues[37];
-                detail3.OUCode = editValues[38];
-                detail3.Remarks = editValues[39];
-                detail3.FuncTransAmt = editValues[40];
-                detail3.LocalTransAmt = editValues[41];
-                detail3.OrigTransAmt = editValues[42];
-                detail3.TaxableTransAmt = editValues[43];
-                detail3.InclusiveTransAmt = editValues[44];
-                detail3.OrigDrAmt = editValues[45];
-                detail3.OrigCrAmt = editValues[46];
-                detail3.DetRevAmt = editValues[47];
-                detail3.CCIDKey = editValues[48];
-                detail3.SetupPrimaryKey = editValues[49];
-                detail3.CCID = editValues[50];
-                detail3.AccNumAccDesc = editValues[51];
-                detail3.CCIDCodeCCIDDesc = editValues[52];
-            }
-
-            if (updatePayload.glDetailsAPAR && updatePayload.glDetailsAPAR[0]) {
-                const detail4 = updatePayload.glDetailsAPAR[0];
-                detail4.TransDetAPARKey = editValues[53];
-                detail4.TransDetKey = editValues[54];
-                detail4.TransHdrKey = editValues[55];
-            }
-
-            if (updatePayload.glDetailsAPAR && updatePayload.glDetailsAPAR[1]) {
-                const detail5 = updatePayload.glDetailsAPAR[1];
-                detail5.TransDetAPARKey = editValues[56];
-                detail5.TransDetKey = editValues[57];
-                detail5.TransHdrKey = editValues[58];
-            }
-
             
             if (updatePayload.transDetBC && updatePayload.transDetBC[0]) {
                 const detail6 = updatePayload.transDetBC[0];

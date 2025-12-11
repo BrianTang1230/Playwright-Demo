@@ -2,7 +2,13 @@ import Login from "@utils/data/uidata/loginData.json";
 const region = process.env.REGION || Login.Region;
 
 function checkrollSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+   DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         ELSE 'BNG - BINUANG ESTATE'
+    END;
+  `;
 
   switch (formName) {
     case "Daily Piece Rate Work":
@@ -367,10 +373,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Loose Fruit Collection":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.LFDate, 'dd/MM/yyyy') AS LooseFruitDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
+        CASE
+        WHEN A.Status = 'O' THEN 'OPEN'
+        WHEN A.Status = 'C' THEN 'CLOSE'
+        WHEN A.Status = 'S' THEN 'SUBMITTED'
+        WHEN A.Status = 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         D.OUCode + ' - ' + D.OUDesc AS OU,
         G.BlockCode + ' - ' + G.BlockDesc AS Block
@@ -1089,11 +1101,15 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Loose Fruit Collection":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
         B.WrkDayType AS WrkDay,
         B.MD AS ManDaynumeric,
-        D.Bag AS BagAmt
+        D.GrossAmt AS TotalAmt,
+        D.Bag AS BagAmt,
+        D.Weight AS Weight,
+        D.Rate AS RateBag,
+        D.GrossAmt AS Amount
         FROM CR_LFDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN CR_LFDetBlock D ON B.LFDetKey = D.LFDetKey

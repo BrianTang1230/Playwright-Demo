@@ -20,7 +20,7 @@ delete device.deviceScaleFactor;
  */
 module.exports = defineConfig({
   testDir: "./tests",
-  /* Run tests in files in parallel */
+  /* Run tests in files in parallel */  
   fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
@@ -103,7 +103,7 @@ module.exports = defineConfig({
         channel: process.env.BROWSER || "chrome",
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
-          slowMo: 1200,
+          slowMo: 1000,
         },
       },
     },

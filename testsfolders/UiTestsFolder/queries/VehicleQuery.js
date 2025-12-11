@@ -10,6 +10,13 @@ function vehicleSQLCommand(formName) {
       ) AS RunDistDate,
       B.VehID + ' - ' + B.VehDesc AS VehicleId,
       A.Remarks,
+      CASE
+        WHEN A.Status = 'O' THEN 'OPEN'
+        WHEN A.Status = 'C' THEN 'CLOSE'
+        WHEN A.Status = 'S' THEN 'SUBMITTED'
+        WHEN A.Status = 'A' THEN 'APPROVED'
+      END AS Status,
+      A.
       C.OUCode + ' - ' + C.OUDesc AS OU
       FROM VEH_RunDistHdr A
       LEFT JOIN GMS_VehStp B ON A.VehKey = B.VehKey
@@ -49,6 +56,7 @@ function vehicleGridSQLCommand(formName) {
         ELSE C.CCIDCode + ' - ' + C.CCIDDesc
       END AS CCID,
       A.Remarks,
+      A.Day01 + A.Day02 + A.Day03 + A.Day04 + A.Day05 AS Totnumeric,
       A.Day01 AS D1numeric,
       A.Day02 AS D2numeric,
       A.Day03 AS D3numeric,
@@ -64,7 +72,8 @@ function vehicleGridSQLCommand(formName) {
         SELECT OUKey
         FROM GMS_OUStp
         WHERE OUCode + ' - ' + OUDesc = @OU
-  ))`;
+        )
+      )`;
       break;
 
     case "Inter-OU Vehicle Running Distribution (Loan To)":

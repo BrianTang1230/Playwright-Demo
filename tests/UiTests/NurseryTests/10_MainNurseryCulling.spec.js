@@ -62,7 +62,7 @@ test.describe.serial("Main Nursery Culling Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Main Nursery Culling", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await MainNurseryCullingCreate(
       page,
@@ -83,12 +83,8 @@ test.describe.serial("Main Nursery Culling Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(page, paths, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -109,11 +105,7 @@ test.describe.serial("Main Nursery Culling Tests", () => {
     });
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -131,10 +123,10 @@ test.describe.serial("Main Nursery Culling Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     await editJson(JsonPath, formName, "");
-    
+
     console.log(`End Running: ${formName}`);
   });
 });

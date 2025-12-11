@@ -96,28 +96,25 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
+      OU2: ou[0],
     });
+    console.log("DB Values:", dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       nurseryGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
+      gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0]
     );
@@ -141,28 +138,24 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
+      OU2: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       nurseryGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
+      gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0]
     );

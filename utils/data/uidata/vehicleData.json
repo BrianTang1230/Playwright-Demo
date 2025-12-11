@@ -1,8 +1,8 @@
 {
   "JsonPath": "utils/data/uidata/vehicleData.json",
   "InputPath": {
-    "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks",
-    "VehicleRunningDistributionColumn": "RunDistDate date,VehicleId dropdown,Remarks text",
+    "VehicleRunningDistributionPath": "#VehRunDistDate,cboVehicle_input,#txtRemarks,#txtStatus,#txtRegNo",
+    "VehicleRunningDistributionColumn": "RunDistDate date,VehicleId dropdown,Remarks text,Status text,RegNo text",
     "Inter-OUVehicleRunningDistribution(LoanTo)Path": "#InterOUVehRunDistDate,cboVehicle_input,#txtRemarks",
     "Inter-OUVehicleRunningDistribution(LoanTo)Column": "RunDistDate date,VehicleId dropdown,Remarks text"
   },
@@ -11,7 +11,7 @@
     "Inter-OUVehicleRunningDistribution(LoanTo)Grid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
   },
   "DocNo": {
-    "VehicleRunningDistribution": "VEH0002998",
+    "VehicleRunningDistribution": "",
     "Inter-OUVehicleRunningDistribution(LoanTo)": "IRD0000069",
     "StockReceipt": "SR00004888"
   }

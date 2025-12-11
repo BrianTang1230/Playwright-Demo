@@ -1,3 +1,5 @@
+import { allure } from "allure-playwright";
+
 export async function checkLength(paths, columns, createValues, editValues) {
   if (
     paths.length !== columns.length ||
@@ -23,4 +25,10 @@ export async function SelectOU(page, inputPath, dropdownPath, ou) {
   await page.locator(dropdownPath, { hasText: ou }).first().click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+}
+
+export async function runStep(stepName, callback) {
+  return await allure.step(stepName, async () => {
+    return await callback();
+  });
 }

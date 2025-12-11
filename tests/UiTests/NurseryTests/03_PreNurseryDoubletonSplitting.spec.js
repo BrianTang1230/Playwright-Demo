@@ -62,7 +62,7 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Pre Nursery Doubleton Splitting", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     
     const { uiVals } = await PreNurseryDoubletonSplittingCreate(
       page,
@@ -130,7 +130,7 @@ test.describe.serial("Pre Nursery Doubleton Splitting Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     
     await editJson(JsonPath, formName, "");
 

@@ -26,12 +26,12 @@ export async function LooseFruitCollectionCreate(
     ou[0]
   );
 
-  for (let i = 0; i < paths.slice(0, 4).length; i++) {
+  for (let i = 0; i < paths.slice(0, 5).length; i++) {
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
-  await page.locator('[name="comboBoxBlock_input"]').type(values[4]);
+  await page.locator('[name="comboBoxBlock_input"]').type(values[5]);
   await page.keyboard.press("Tab");
   await page.locator("#btnAddBlock").click();
 

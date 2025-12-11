@@ -19,6 +19,7 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
       inputValues[i] = String(inpVal);
       uiValues[i] = String(uiVal);
     }
+
     if (inputValues[i] !== uiValues[i]) {
       throw new Error(
         `Mismatch UI values of ${columns[i]}: ${inputValues[i]} !== ${uiValues[i]}`

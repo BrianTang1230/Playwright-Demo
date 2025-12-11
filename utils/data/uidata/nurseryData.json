@@ -29,30 +29,30 @@
     "MainNurserySoldColumn": "SoldDate date,NurBatch dropdown,Status text,Remarks text,SoldToAccount dropdown,CCID dropdown,RefContact dropdown,AvlQty numeric,SoldQty numeric",
     "Inter-OUMainNurseryTransferToPath": "#MainNurTransDate,cboNurseryBatch_input,#txtStatus,#remarkTextMInterTrn,cboMainTransType_input,cboPlantSource_input,cboAcc_input,cboCCID_input,cboTrnToBatch_input,cboInterOUMainApplyUP_input,spinbutton*0,spinbutton*2",
     "Inter-OUMainNurseryTransferToColumn": "InterTrnDate date,NurBatch dropdown,Status text,Remarks text,TransType dropdown,PlantSource dropdown,Account dropdown,CCID dropdown,TrnToBatch dropdown,UnitPriceType text,UnitPrice numeric,STQty numeric",
-    "NurseryTransferRequisitionPath": "#TransferDatePicker,#txtTransfer,Remark,#txtRefNo,cboTargetOU_input,cboContact_input,spinbutton*0,spinbutton*1,#StartDeliveryDatePicker,#EndDeliveryDatePicker,cboNurseryType_input,cboPlantMaterial_input",
-    "NurseryTransferRequisitionColumn": "TransferDate date,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,TransQty numeric,ExpStartDate date,ExpEndDate date,NurType dropdown,PlantMaterial dropdown",
-    "NurserySalesRequisitionPath": "#SoldDatePicker,#txtSoldRemark,#txtRefNo,cboContact_input,spinbutton*0,cboNurseryType_input,cboPlantMaterial_input",
-    "NurserySalesRequisitionColumn": "SoldDate date,Remarks text,RefNo text,Contact dropdown,UnitPrice numeric,NurType dropdown,PlantMaterial dropdown"
+    "NurseryTransferRequisitionPath": "#TransferDatePicker,#txtTransferStatus,#txtTransferRemark,#txtRefNo,cboTargetOU_input,cboContact_input,spinbutton*0,spinbutton*1,#StartDeliveryDatePicker,#EndDeliveryDatePicker,cboNurseryType_input,cboPlantMaterial_input",
+    "NurseryTransferRequisitionColumn": "TransferDate date,Status text,Remarks text,RefNo text,ToOU dropdown,Contact dropdown,UnitPrice numeric,TransQty numeric,ExpStartDate date,ExpEndDate date,NurType dropdown,PlantMaterial dropdown",
+    "NurserySalesRequisitionPath": "#SoldDatePicker,#txtSoldStatus,#txtSoldRemark,#txtRefNo,cboContact_input,spinbutton*0,#numericSoldQty,cboNurseryType_input,cboPlantMaterial_input",
+    "NurserySalesRequisitionColumn": "SoldDate date,Status text,Remarks text,RefNo text,Contact dropdown,UnitPrice numeric,TotalQty numeric,NurType dropdown,PlantMaterial dropdown"
   },
   "GridPath": {
     "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
   "DocNo": {
     "PreNurserySeedReceived": "",
-    "PreNurseryGerminated": "",
-    "PreNurseryDoubletonSplitting": "",
+    "PreNurseryGerminated": "PG00000124",
+    "PreNurseryDoubletonSplitting": "PDS0000088",
     "PreNurseryCulling": "",
     "PreNurseryAdjustment": "",
     "PreNurseryTransfer/Sold/Loss": "",
     "Inter-OUPreNurseryTransferTo": "",
     "MainNurseryReceived": "",
-    "MainNurseryDoubletonSplitting": "",
-    "MainNurseryCulling": "",
-    "MainNurseryAdjustment": "MNA0000007",
-    "MainNurseryTransfer/Loss": "",
-    "MainNurserySold": "",
-    "Inter-OUMainNurseryTransferTo": "",
-    "NurseryTransferRequisition": "RNT0000042",
-    "NurserySalesRequisition": "RNS0000036"
+    "MainNurseryDoubletonSplitting": "NDS0000051",
+    "MainNurseryCulling": "NC00000050",
+    "MainNurseryAdjustment": "MNA0000023",
+    "MainNurseryTransfer/Loss": "NT00000056",
+    "MainNurserySold": "MS00000050",
+    "Inter-OUMainNurseryTransferTo": "IMT0000059",
+    "NurseryTransferRequisition": "RNT0000014",
+    "NurserySalesRequisition": ""
   }
 }

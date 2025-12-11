@@ -743,47 +743,51 @@ function nurserySQLCommand(formName) {
 
     case "Nursery Transfer Requisition":
       sqlCommand += `
-          SELECT FORMAT(A.TransferDate, 'dd/MM/yyyy') AS TransferDate,
-          A.Remark AS Remarks,
-          A.ReferenceNum AS RefNo,
-          C.OUCode + ' - ' + C.OUDesc AS ToOU,
-          D.ContactCode + ' - ' + D.ContactDesc AS Contact,
-          A.Price AS UnitPrice,
-          A.Qty AS TransQty,
-          FORMAT(A.ExpStartDeliveryDate, 'dd/MM/yyyy') AS ExpStartDate,
-          FORMAT(A.ExpEndDeliveryDate, 'dd/MM/yyyy') AS ExpEndDate,
-          CASE 
-          WHEN A.Type = 1 THEN 'Pre Nursery'
-          WHEN A.Type = 2 THEN 'Main Nursery'
-          END AS NurType,
-          E.PlantMateCode + ' - ' + E.PlantMateDesc AS PlantMaterial,
-          B.OUCode + ' - ' + B.OUDesc AS OU
-          FROM NUR_TransferHdr A
-          LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-          LEFT JOIN GMS_OUStp C ON A.FromOUKey = C.OUKey
-          LEFT JOIN GMS_ContactStp D ON A.ContactKey = D.ContactKey
-          LEFT JOIN GMS_PlantMateStp E ON A.PlantMateKey = E.PlantMateKey
-          WHERE A.TransferNum = @DocNo`;
+        SELECT FORMAT(A.TransferDate, 'dd/MM/yyyy') AS TransferDate,
+        CASE A.Status WHEN 'OP' THEN 'OPEN' END AS Status,
+        A.Remark AS Remarks,
+        A.ReferenceNum AS RefNo,
+        C.OUCode + ' - ' + C.OUDesc AS ToOU,
+        D.ContactCode + ' - ' + D.ContactDesc AS Contact,
+        A.Price AS UnitPrice,
+        A.Qty AS TransQty,
+        FORMAT(A.ExpStartDeliveryDate, 'dd/MM/yyyy') AS ExpStartDate,
+        FORMAT(A.ExpEndDeliveryDate, 'dd/MM/yyyy') AS ExpEndDate,
+        CASE 
+        WHEN A.Type = 1 THEN 'Pre Nursery'
+        WHEN A.Type = 2 THEN 'Main Nursery'
+        END AS NurType,
+        E.PlantMateCode + ' - ' + E.PlantMateDesc AS PlantMaterial,
+        B.OUCode + ' - ' + B.OUDesc AS OU
+        FROM NUR_TransferHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN GMS_OUStp C ON A.FromOUKey = C.OUKey
+        LEFT JOIN GMS_ContactStp D ON A.ContactKey = D.ContactKey
+        LEFT JOIN GMS_PlantMateStp E ON A.PlantMateKey = E.PlantMateKey
+        WHERE A.TransferNum = @DocNo AND B.OUCode + ' - ' + B.OUDesc = @OU`;
       break;
 
     case "Nursery Sales Requisition":
       sqlCommand += `
-          SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
-          A.Remark AS Remarks,
-          A.ReferenceNum AS RefNo,
-          B.ContactCode + ' - ' + B.ContactDesc AS Contact,
-          A.Price AS UnitPrice,
-          CASE 
-            WHEN A.Type = 1 THEN 'Pre Nursery'
-            WHEN A.Type = 2 THEN 'Main Nursery'
-          END AS NurType,
-          C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
-          D.OUCode + ' - ' + D.OUDesc AS OU
-          FROM NUR_SoldHdr A
-          LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
-          LEFT JOIN GMS_PlantMateStp C ON A.PlantMateKey = C.PlantMateKey
-          LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-          WHERE A.SoldNum = @DocNo`;
+        SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
+        CASE A.Status WHEN 'OP' THEN 'OPEN' END AS Status,
+        A.Remark AS Remarks,
+        A.ReferenceNum AS RefNo,
+        B.ContactCode + ' - ' + B.ContactDesc AS Contact,
+        A.Price AS UnitPrice,
+        D.Qty AS TotalQty,
+        CASE 
+        WHEN A.Type = 1 THEN 'Pre Nursery'
+        WHEN A.Type = 2 THEN 'Main Nursery'
+        END AS NurType,
+        C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
+        E.OUCode + ' - ' + E.OUDesc AS OU
+        FROM NUR_SoldHdr A
+        LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
+        LEFT JOIN GMS_PlantMateStp C ON A.PlantMateKey = C.PlantMateKey
+        LEFT JOIN NUR_SoldDet D ON A.SoldHdrKey = D.SoldHdrKey
+        LEFT JOIN GMS_OUStp E ON A.OUKey = E.OUKey
+        WHERE A.SoldNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU2`;
       break;
     default:
       throw new Error(`Unknown formName: ${formName}`);
@@ -793,23 +797,27 @@ function nurserySQLCommand(formName) {
 }
 
 function nurseryGridSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+   DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         ELSE 'BWHO - HEAD OFFICE'
+    END;
+  `;
 
   switch (formName) {
     case "Nursery Sales Requisition":
       sqlCommand += `
-       SELECT B.OUCode + ' - ' + B.OUDesc AS OU,
+        SELECT B.OUCode + ' - ' + B.OUDesc AS OU,
         A.Qty AS Quantity,
         FORMAT(A.ExpStartDeliveryDate, 'dd/MM/yyyy') AS ExpStartDate,
         FORMAT(A.ExpEndDeliveryDate, 'dd/MM/yyyy') AS ExpEndDate
         FROM NUR_SoldDet A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-        WHERE SoldHdrKey IN(
-        SELECT SoldHdrKey FROM NUR_SoldHdr
-        WHERE SoldNum = @DocNo AND OUKey IN (
-          SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+        WHERE A.SoldHdrKey IN(
+          SELECT SoldHdrKey FROM NUR_SoldHdr C
+          LEFT JOIN GMS_OUStp D ON C.OUKey = D.OUKey
+          WHERE C.SoldNum = @DocNo AND D.OUCode + ' - ' + D.OUDesc = @OU
         )`;
       break;
     default:

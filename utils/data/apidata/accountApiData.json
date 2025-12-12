@@ -26,6 +26,10 @@
       "HdrKey": 502130,
       "num": "CV25100055"
     },
+    "CashReceipt": {
+      "HdrKey": 502222,
+      "num": "CVR2512011"
+    },
     "BankReconciliation": {
       "HdrKey": 29
     },
@@ -53,9 +57,16 @@
       "key": 502182,
       "num": "BVR2512013"
     },
+    "UncultivatedArea": {
+      "key": 17
+    },
     "BankBulkPayment": {
       "key": 3193,
       "num": "BP00000700"
+    },
+    "AccountMigrationJournal": {
+      "key": 502194,
+      "num": "DM25120010"
     }
   },
   "AccountPayloads": {
@@ -482,6 +493,116 @@
           "RowState": 1
         }
       ]
+    },
+    "CashReceipt": {
+      "ClientKey": 1,
+      "Source": "CR",
+      "DocType": "CVR",
+      "FY": 2026,
+      "Period": 8,
+      "CurrKey": 100,
+      "CurrCode": "MYR",
+      "CurrDesc": "MYR - Ringgit Malaysia",
+      "ExRateToFunc": 1,
+      "ExRateToLocal": 1,
+      "Status": "OP",
+      "RecurSchCode": 0,
+      "ReverseTransHdrKey": "",
+      "PAPercent": 0,
+      "RowState": 1,
+      "AprLvl": 0,
+      "glDetails": [
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "CurrKey": 100,
+          "CurrCode": "MYR",
+          "SeqNo": 1,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "Qty": 1,
+          "UnitPrice": 0,
+          "Ind": "V",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "IsRequiredCCID": true,
+          "AOSTransAmt": 0,
+          "AdjAmount": 0,
+          "AppliedAmt": 0,
+          "DiscountAmt": 0,
+          "OpenQty": 0,
+          "RetentionPer": 0
+        },
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "CurrKey": 100,
+          "CurrCode": "MYR",
+          "SeqNo": 2,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "UnitPrice": 0,
+          "Ind": "V",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "IsRequiredCCID": true,
+          "AOSTransAmt": 0,
+          "AdjAmount": 0,
+          "AppliedAmt": 0,
+          "DiscountAmt": 0,
+          "OpenQty": 0,
+          "RetentionPer": 0
+        },
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "CurrKey": 100,
+          "CurrCode": "MYR",
+          "SeqNo": 0,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "Qty": 0,
+          "UnitPrice": 0,
+          "Ind": "M",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "AOSTransAmt": 0,
+          "IsInclusive": false,
+          "AdjAmount": 0,
+          "AppliedAmt": 0,
+          "DiscountAmt": 0,
+          "OpenQty": 0,
+          "RetentionPer": 0
+        }
+      ],
+      "glDetailsAPAR": [],
+      "transDetBC": [
+        {
+          "TransHdrKey": 0,
+          "ClientKey": 1,
+          "PaymentCategory": "D",
+          "PayTo": "BANGUNAN KWSP K.K",
+          "ExRateFC": 0,
+          "BuyingExRateFC": 0,
+          "RowState": 1
+        }
+      ],
+      "CompKey": 2,
+      "RefNo": "A123469",
+      "ForeignExRate": 0,
+      "ForeignExRateLocal": 0
     },
     "BankReconciliation": {
       "ClientKey": 1,
@@ -1467,6 +1588,23 @@
       "ForeignExRate": 0,
       "ForeignExRateLocal": 0
     },
+    "UncultivatedArea": {
+      "ClientKey": 0,
+      "Period": 8,
+      "Yr": 2026,
+      "FY": 0,
+      "DivKey": 3,
+      "DisplayYr": "0001-01-01T00:00:00",
+      "CreatedBy": 2841,
+      "UpdatedBy": 2841,
+      "RowState": 1,
+      "addUnculAreaDetails": [
+        {
+          "ClientKey": 0,
+          "RowState": 1
+        }
+      ]
+    },
     "BankBulkPayment": {
       "ClientKey": 1,
       "OUKey": 1,
@@ -1484,6 +1622,128 @@
           "RowState": 1
         }
       ]
+    },
+    "AccountMigrationJournal": {
+      "ClientKey": 1,
+      "OUKey": 4,
+      "OUCode": "LHSE",
+      "OUDesc": "LEONG HIN SAN ESTATE",
+      "Source": "DM",
+      "DocType": "DM",
+      "GLDate": "2025-12-11T06:41:47.217Z",
+      "GLDesc": "Test Account Migration Journal",
+      "FY": 2026,
+      "Period": 8,
+      "CurrKey": 100,
+      "CurrCode": "MYR",
+      "ExRateToFunc": 1,
+      "ExRateToLocal": 1,
+      "Status": "OP",
+      "DocAmt": 1250,
+      "ReverseTransHdrKey": "",
+      "RecurSchCode": 0,
+      "DueDate": "2999-12-30T16:00:00Z",
+      "InvoiceDate": "2025-12-11T06:41:47.217Z",
+      "CreatedDate": "2025-12-11T06:43:25.0284852Z",
+      "UpdatedDate": "2025-12-11T06:43:25.0284852Z",
+      "PAPercent": 0,
+      "RowState": 1,
+      "AprLvl": 0,
+      "glDetails": [
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "AccKey": 3256,
+          "AccNum": "12011010",
+          "AccDesc": "PAYMENT ADVANCE - PI",
+          "ClientKey": 0,
+          "OUKey": 4,
+          "OUCode": "LHSE",
+          "Remarks": "Test Account Migration Journal",
+          "FuncTransAmt": 1250,
+          "LocalTransAmt": 1250,
+          "OrigTransAmt": 1250,
+          "TaxableTransAmt": 0,
+          "InclusiveTransAmt": 0,
+          "OrigDrAmt": 1250,
+          "OrigCrAmt": 0,
+          "DetRevAmt": 0,
+          "CurrKey": 100,
+          "CCIDKey": 2000,
+          "CurrCode": "MYR",
+          "SeqNo": 1,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "CCID": "OCCLHSA001",
+          "Qty": 2,
+          "UnitPrice": 0,
+          "Ind": "O",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "AccNumAccDesc": "12011010 - PAYMENT ADVANCE - PI",
+          "CCIDCodeCCIDDesc": "OCCLHSA001 - ACS PLANTATION SDN. BHD.",
+          "IsRequiredCCID": true,
+          "AOSTransAmt": 0,
+          "AdjAmount": 0,
+          "AppliedAmt": 0,
+          "rowid": "a6ad59f2-3d8f-4f70-9a68-a910689bc1b7",
+          "DiscountAmt": 0,
+          "OpenQty": 0,
+          "RetentionPer": 0
+        },
+        {
+          "TransDetKey": 0,
+          "TransHdrKey": 0,
+          "AccKey": 3281,
+          "AccNum": "12921010",
+          "AccDesc": "DEPOSITS (GENERAL)",
+          "ClientKey": 0,
+          "OUKey": 4,
+          "OUCode": "LHSE",
+          "Remarks": "Test Account Migration Journal",
+          "FuncTransAmt": -1250,
+          "LocalTransAmt": -1250,
+          "OrigTransAmt": -1250,
+          "TaxableTransAmt": 0,
+          "InclusiveTransAmt": 0,
+          "OrigDrAmt": 0,
+          "OrigCrAmt": 1250,
+          "DetRevAmt": 0,
+          "CurrKey": 100,
+          "CCIDKey": 225,
+          "CurrCode": "MYR",
+          "SeqNo": 2,
+          "ExRateFunc": 1,
+          "ExRateLocal": 1,
+          "CCID": "ODHDPO999",
+          "Qty": 4,
+          "UnitPrice": 0,
+          "Ind": "O",
+          "TaxPer": 0,
+          "Discount": 0,
+          "DiscountTemp": 0,
+          "GrossAmt": 0,
+          "OpenAmt": 0,
+          "RowState": 1,
+          "AccNumAccDesc": "12921010 - DEPOSITS (GENERAL)",
+          "CCIDCodeCCIDDesc": "ODHDPO999 - DEPOSIT - OTHERS",
+          "IsRequiredCCID": true,
+          "AOSTransAmt": 0,
+          "AdjAmount": 0,
+          "AppliedAmt": 0,
+          "rowid": "8ba29fa2-7e4b-432a-815e-e26aa13b6fbe",
+          "DiscountAmt": 0,
+          "OpenQty": 0,
+          "RetentionPer": 0
+        }
+      ],
+      "CompKey": 2,
+      "ForeignExRate": 0,
+      "ForeignExRateLocal": 0
     }
   }
 }

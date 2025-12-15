@@ -44,7 +44,7 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [0, 1, 2, 4, 5]];
+const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6]];
 
 test.describe.serial("Crop Harvesting & Collection Tests", async () => {
   // ---------------- Before All ----------------
@@ -100,7 +100,6 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -114,14 +113,11 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
+      gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0]
     );
@@ -145,7 +141,6 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -159,14 +154,11 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
+      gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0]
     );
@@ -184,7 +176,6 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);

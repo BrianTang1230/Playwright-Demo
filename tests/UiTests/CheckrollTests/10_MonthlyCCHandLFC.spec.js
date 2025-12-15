@@ -29,7 +29,7 @@ import {
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
+let docNo; 
 let sideMenu;
 let createValues;
 let editValues;

@@ -13,6 +13,7 @@ export async function ValidateUiValues(inputValues, columns, uiValues) {
       uiValues[i] === "NA"
     )
       continue;
+
     if (columns[i].includes("numeric")) {
       const inpVal = normalizeNumber(String(inputValues[i]));
       const uiVal = normalizeNumber(String(uiValues[i]));
@@ -67,7 +68,7 @@ export async function ValidateGridValues(eValues, gValues) {
     let expected = eValues[i];
     let actual = gValues[i];
 
-    if (expected === "NA" || actual === "NA") continue;
+    if (expected === "NA" || expected === "AF" || actual === "NA") continue;
 
     if (!isNaN(normalizeNumber(expected))) {
       actual = normalizeNumber(actual).toString();

@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -17,37 +17,54 @@ export async function CropHarvestingCreate(
   cellsIndex,
   ou
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Create new transaction", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown .k-select",
-    "ul[aria-hidden='false'] li span",
-    ou[0]
-  );
-
-  for (let i = 0; i < paths.slice(0, 6).length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
-  }
-
-  await sideMenu.btnAddNewItem.click();
-  await page.locator('[name="comboBoxBlock_input"]').type(values[6]);
-  await page.keyboard.press("Tab");
-  await page.locator("#btnAddBlock").click();
-
-  for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
+  await runStep("Select OU", async () => {
+    await SelectOU(
       page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i]
+      "#divComboOU .k-dropdown .k-select",
+      "ul[aria-hidden='false'] li span",
+      ou[0]
     );
-  }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.slice(0, 7).length; i++) {
+      await InputValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  const uiVals = await getUiValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Add grid and block code", async () => {
+    await sideMenu.btnAddNewItem.click();
+    await page.locator('[name="comboBoxBlock_input"]').type(values[7]);
+    await page.keyboard.press("Tab");
+    await page.locator("#btnAddBlock").click();
+  });
+
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await InputGridValuesSameCols(
+        page,
+        gridPaths[i],
+        gridValues[i],
+        cellsIndex[i]
+      );
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get created UI values", async () => {
+    return await getUiValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -65,31 +82,48 @@ export async function CropHarvestingEdit(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i]
-    );
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await InputGridValuesSameCols(
+        page,
+        gridPaths[i],
+        gridValues[i],
+        cellsIndex[i]
+      );
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save edited transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getUiValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getUiValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
 
 export async function CropHarvestingDelete(page, sideMenu, values, ou, docNo) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

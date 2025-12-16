@@ -61,7 +61,7 @@ export async function DailyTotalCropReceiptByCropSupplierEdit(
   cellsIndex,
   ou
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 3);
+  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);

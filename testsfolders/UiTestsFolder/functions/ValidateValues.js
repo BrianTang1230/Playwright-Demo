@@ -59,6 +59,8 @@ export async function ValidateDBValues(inputValues, inputCols, dbValues) {
 
 export async function ValidateGridValues(eValues, gValues) {
   if (eValues.length !== gValues.length) {
+    console.log(eValues, eValues.length);
+    console.log(gValues, gValues.length);
     throw new Error("Mismatch length in Grid values.");
   }
 

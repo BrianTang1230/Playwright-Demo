@@ -42,7 +42,10 @@ const keyName = "StaffLoanDepositMaintenance";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 4, 6]];
+const cellsIndex = [
+  [1, 2, 5],
+  [1, 4, 6],
+];
 
 test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
@@ -74,7 +77,6 @@ test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
   test("Create Staff Loan/Deposit Maintenance", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
-      RecType: createValues[1],
       OU: ou[0],
     });
 
@@ -92,33 +94,21 @@ test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        RecType: createValues[1],
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -134,37 +124,25 @@ test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
     );
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        RecType: createValues[1],
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -174,13 +152,11 @@ test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0]
+      gridEditValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

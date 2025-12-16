@@ -30,6 +30,7 @@ import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -44,7 +45,10 @@ const keyName = "StaffIncomeDeclarationEAForm";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2, 3, 4, 5, 6, 7]];
+const cellsIndex = [
+  [1, 2, 3, 4, 5],
+  [1, 2, 3, 4, 5, 6, 7],
+];
 
 test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
   // ---------------- Before All ----------------
@@ -63,6 +67,8 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`Start Running: ${formName}`);
   });
 
@@ -76,7 +82,12 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Staff Income Declaration (EA Form)", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+    if (docNo)
+      await db.deleteData(deleteSQL, {
+        DocNo: docNo,
+        Date: createValues[0],
+        OU: ou[0],
+      });
 
     const { uiVals, gridVals } = await StaffIncomeDeclarationCreate(
       page,
@@ -90,33 +101,31 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtARSNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+      DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
+        DocNo: docNo,
         Date: createValues[0],
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -132,35 +141,28 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
     );
+
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+      DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
+        DocNo: docNo,
         Date: createValues[0],
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -170,12 +172,12 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0]
+      gridEditValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+      DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {
@@ -185,6 +187,15 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo)
+      await db.deleteData(deleteSQL, {
+        DocNo: docNo,
+        Date: createValues[0],
+        OU: ou[0],
+      });
+
+    await editJson(JsonPath, formName, "");
+
     console.log(`End Running: ${formName}`);
   });
 });

@@ -101,31 +101,21 @@ test.describe.serial("Staff CP38 Tests", async () => {
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -150,30 +140,21 @@ test.describe.serial("Staff CP38 Tests", async () => {
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
+        Date: createValues[0],
       }
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -183,7 +164,6 @@ test.describe.serial("Staff CP38 Tests", async () => {
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       Date: createValues[0],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error("Deleting Staff CP38 failed");
@@ -191,6 +171,10 @@ test.describe.serial("Staff CP38 Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+    await editJson(JsonPath, formName, "");
+
     console.log(`End Running: ${formName}`);
   });
 });

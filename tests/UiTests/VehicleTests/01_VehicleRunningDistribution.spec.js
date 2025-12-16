@@ -80,7 +80,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- Create Test ----------------
   test("Create New Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionCreate(
+    const { uiVals, gridVals } = await VehicleRunningDistributionCreate(
       page,
       sideMenu,
       paths,
@@ -92,22 +92,20 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       ou
     );
 
-    docNo = await page.locator("#txtVEHNum").inputValue();
-    await editJson(JsonPath, formName, docNo);
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtVEHNum").inputValue()
+    );
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
@@ -116,11 +114,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -144,14 +138,12 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       }
     );
 
@@ -160,11 +152,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -179,7 +167,6 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0)

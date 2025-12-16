@@ -1,9 +1,37 @@
 function vehicleSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+  DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+         ELSE 'BNG - BINUANG ESTATE'
+    END;
+  `;
 
   switch (formName) {
     case "Vehicle Running Distribution":
-      sqlCommand = `
+      sqlCommand += `
+      SELECT IIF(@region = 'IND',
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'id-ID'),
+        FORMAT(A.RunDistDate, 'MMMM yyyy', 'en-US')
+      ) AS RunDistDate,
+      B.VehID + ' - ' + B.VehDesc AS VehicleId,
+      A.Remarks,
+      CASE  
+        WHEN A.Status = 'O' THEN 'OPEN'
+        WHEN A.Status = 'C' THEN 'CLOSE'
+        WHEN A.Status = 'S' THEN 'SUBMITTED'
+        WHEN A.Status = 'A' THEN 'APPROVED'
+      END AS Status,
+      B.RegNo,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM VEH_RunDistHdr A
+      LEFT JOIN GMS_VehStp B ON A.VehKey = B.VehKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.RunDistNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Inter-OU Vehicle Running Distribution (Loan To)":
+      sqlCommand += `
       SELECT IIF(@region = 'IND',
         FORMAT(A.RunDistDate, 'MMMM yyyy', 'id-ID'),
         FORMAT(A.RunDistDate, 'MMMM yyyy', 'en-US')
@@ -16,22 +44,8 @@ function vehicleSQLCommand(formName) {
         WHEN A.Status = 'S' THEN 'SUBMITTED'
         WHEN A.Status = 'A' THEN 'APPROVED'
       END AS Status,
-      A.
-      C.OUCode + ' - ' + C.OUDesc AS OU
-      FROM VEH_RunDistHdr A
-      LEFT JOIN GMS_VehStp B ON A.VehKey = B.VehKey
-      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-      WHERE A.RunDistNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
-      break;
-
-    case "Inter-OU Vehicle Running Distribution (Loan To)":
-      sqlCommand = `
-      SELECT IIF(@region = 'IND',
-        FORMAT(A.RunDistDate, 'MMMM yyyy', 'id-ID'),
-        FORMAT(A.RunDistDate, 'MMMM yyyy', 'en-US')
-      ) AS RunDistDate,
-      B.VehID + ' - ' + B.VehDesc AS VehicleId,
-      A.Remarks,
+      B.RegNo,
+	    A.PriUnitRate AS UnitRate,
       C.OUCode + ' - ' + C.OUDesc AS OU,
       D.OUCode + ' - ' + D.OUDesc AS ToOU
       FROM VEH_IntRunDistHdr A
@@ -46,11 +60,17 @@ function vehicleSQLCommand(formName) {
 }
 
 function vehicleGridSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+  DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+         ELSE 'BNG - BINUANG ESTATE'
+    END;
+  `;
 
   switch (formName) {
     case "Vehicle Running Distribution":
-      sqlCommand = `
+      sqlCommand += `
       SELECT B.AccNum + ' - ' + B.AccDesc AS Account,
         CASE WHEN A.CCIDKey = -1 THEN 'NA'
         ELSE C.CCIDCode + ' - ' + C.CCIDDesc
@@ -65,24 +85,20 @@ function vehicleGridSQLCommand(formName) {
       FROM VEH_PRunDistDet A
       LEFT JOIN GMS_AccMas B ON A.ActExpAccKey = B.AccKey
       LEFT JOIN V_SYC_CCIDMapping C ON A.CCIDKey = C.CCIDKey
-      WHERE A.RunDistHdrKey IN (
-        SELECT RunDistHdrKey
-        FROM VEH_RunDistHdr 
-        WHERE RunDistNum = @DocNo AND OUKey IN (
-        SELECT OUKey
-        FROM GMS_OUStp
-        WHERE OUCode + ' - ' + OUDesc = @OU
-        )
-      )`;
+      LEFT JOIN VEH_RunDistHdr D ON A.RunDistHdrKey = D.RunDistHdrKey
+	    LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+      WHERE D.RunDistNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU`;
       break;
 
     case "Inter-OU Vehicle Running Distribution (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
       SELECT B.AccNum + ' - ' + B.AccDesc AS Account,
         CASE WHEN A.CCIDKey = -1 THEN 'NA'
         ELSE C.CCIDCode + ' - ' + C.CCIDDesc
       END AS CCID,
       A.Remarks,
+      A.Day01 + A.Day02 + A.Day03 + A.Day04 + A.Day05 AS TUnitnumeric,
+      (A.Day01 + A.Day02 + A.Day03 + A.Day04 + A.Day05) * D.PriUnitRate AS TCostnumeric,
       A.Day01 AS D1numeric,
       A.Day02 AS D2numeric,
       A.Day03 AS D3numeric,
@@ -91,14 +107,9 @@ function vehicleGridSQLCommand(formName) {
       FROM VEH_IntPRunDistDet A
       LEFT JOIN GMS_AccMas B ON A.ActExpAccKey = B.AccKey
       LEFT JOIN V_SYC_CCIDMapping C ON A.CCIDKey = C.CCIDKey
-      WHERE A.IntRunDistHdrKey IN (
-        SELECT IntRunDistHdrKey
-        FROM VEH_IntRunDistHdr 
-        WHERE IRunDistNum = @DocNo AND OUKey IN (
-        SELECT OUKey
-        FROM GMS_OUStp
-        WHERE OUCode + ' - ' + OUDesc = @OU
-  ))`;
+      LEFT JOIN VEH_IntRunDistHdr D ON A.IntRunDistHdrKey = D.IntRunDistHdrKey
+	    LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+      WHERE D.IRunDistNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU`;
       break;
   }
 

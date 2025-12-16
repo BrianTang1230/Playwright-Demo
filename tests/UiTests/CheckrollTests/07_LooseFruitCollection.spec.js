@@ -49,7 +49,7 @@ const cellsIndex = [
   [0, 1, 3, 4, 5, 6],
 ];
 
-test.describe.skip("Loose Fruit Collection Tests", async () => {
+test.describe.serial("Loose Fruit Collection Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     if (region === "IND") test.skip(true);
@@ -103,9 +103,7 @@ test.describe.skip("Loose Fruit Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    console.log("DB Values:", dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -114,7 +112,6 @@ test.describe.skip("Loose Fruit Collection Tests", async () => {
         OU: ou[0],
       }
     );
-    console.log("DB Values:", gridDbValues);
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -147,7 +144,6 @@ test.describe.skip("Loose Fruit Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -161,14 +157,11 @@ test.describe.skip("Loose Fruit Collection Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
+      gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0]
     );
@@ -180,7 +173,6 @@ test.describe.skip("Loose Fruit Collection Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);

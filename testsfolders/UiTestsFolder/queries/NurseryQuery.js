@@ -12,11 +12,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.RcvDate, 'dd/MM/yyyy') AS RcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
@@ -39,11 +39,11 @@ function nurserySQLCommand(formName) {
         SELECT 
         FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
@@ -73,11 +73,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.PDbtSplitDate, 'dd/MM/yyyy') AS PDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
 		    (
@@ -103,11 +103,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS CullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -172,11 +172,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS PAdjDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -257,11 +257,11 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS PreNurTransDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         CASE 
           WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
@@ -342,11 +342,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         CASE 
           WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
@@ -387,11 +387,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.MRcvDate, 'dd/MM/yyyy') AS MRcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status, 
         A.Remarks,
         CASE
@@ -416,11 +416,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.MDbtSplitDate, 'dd/MM/yyyy') AS MDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -446,11 +446,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS MCullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -498,11 +498,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS MAdjDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -560,11 +560,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.MTrnDate,'dd/MM/yyyy') AS MTDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-		    CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         CASE
@@ -613,11 +613,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-		    CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         E.AccNum + ' - ' + E.AccDesc AS SoldToAccount,
@@ -669,11 +669,11 @@ function nurserySQLCommand(formName) {
       sqlCommand += `
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
-        CASE
-          WHEN A.Status = 'O' THEN 'OPEN'
-          WHEN A.Status = 'C' THEN 'CLOSE'
-          WHEN A.Status = 'S' THEN 'SUBMITTED'
-          WHEN A.Status = 'A' THEN 'APPROVED'
+        CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         CASE 

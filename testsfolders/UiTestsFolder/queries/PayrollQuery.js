@@ -110,14 +110,20 @@ function payrollSQLCommand(formName) {
 
     case "Staff Loan/Deposit Maintenance":
       sqlCommand += `
-        SELECT FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID') AS OMMonth,
+        SELECT  IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) AS OMMonth,
         B.RecTypeCode + ' - ' + B.RecTypeDesc AS RecType,
         A.Remarks AS Remarks,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM PR_OutsMaintHdr A
         LEFT JOIN GMS_RecTypeStp B ON A.RecTypeKey = B.RecTypeKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID') = @Date
+        WHERE IIF(@region = 'IND',
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
+        ) = @Date
         AND C.OUCode + ' - ' + C.OUDesc = @OU
         AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')`;
       break;
@@ -334,6 +340,10 @@ function payrollGridSQLCommand(formName) {
         C.Amt AS Amtnumeric,
         D.PayCode + ' - ' + D.PayDesc AS DeductionCode,
         C.Amt AS Amt2numeric,
+        CASE C.IsTransfer
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS IsTransfer,
         C.Remarks AS Remarks
         FROM PR_OutsMaintDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey

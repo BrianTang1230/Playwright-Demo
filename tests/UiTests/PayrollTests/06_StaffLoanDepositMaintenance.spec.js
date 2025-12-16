@@ -44,7 +44,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 2, 5],
-  [1, 4, 6],
+  [1, 4, 5, 6],
 ];
 
 test.describe.serial("Staff Loan/Deposit Maintenance Tests", () => {

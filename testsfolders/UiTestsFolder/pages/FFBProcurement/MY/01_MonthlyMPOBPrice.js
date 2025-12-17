@@ -62,8 +62,7 @@ export async function MonthlyMPOBPriceEdit(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou,
-  docNo
+  ou
 ) {
   await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
 

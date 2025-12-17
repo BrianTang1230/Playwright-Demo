@@ -82,7 +82,7 @@ module.exports = defineConfig({
       name: "UI Tests",
       testDir: "tests/UiTests",
       testIgnore: [
-        "tests/UiTests/FFBProcurementTests/**", // Temporarily ignore FFBProcurementTests
+        // "tests/UiTests/FFBProcurementTests/**", // Temporarily ignore FFBProcurementTests
         ...(region === "IND"
           ? [
               "tests/UiTests/LabTests/**",

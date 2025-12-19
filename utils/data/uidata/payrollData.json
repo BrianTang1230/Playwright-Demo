@@ -1,22 +1,22 @@
 {
   "JsonPath": "utils/data/uidata/payrollData.json",
   "InputPath": {
-    "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks",
-    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department dropdown,Remarks text",
-    "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks",
-    "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text",
-    "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks",
-    "StaffPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Department dropdown,Remarks text",
-    "StaffCP38Path": "#prAddTaxMonthPicker,#txtRemarks",
-    "StaffCP38Column": "AddTaxMonth date,Remarks text",
+    "StaffAdditionalRemunerationPath": "#StaffAddRemMonth,cboDept_input,#txtRemarks,#txtStatus",
+    "StaffAdditionalRemunerationColumn": "StaffAddRemDate date,Department dropdown,Remarks text,Status text",
+    "StaffMonthlyTaxDeductionPath": "#PCBMonth,comboDepartment_input,#txtRemarks,#txtStatus",
+    "StaffMonthlyTaxDeductionColumn": "PCBMonth date,Department dropdown,Remarks text,Status text",
+    "StaffPreviousEmploymentTaxDeductionPath": "#StaffPCBMonth,comboDepartment_input,#txtRemarks,#txtStatus",
+    "StaffPreviousEmploymentTaxDeductionColumn": "PreEmpMonth date,Department dropdown,Remarks text,Status text",
+    "StaffCP38Path": "#prAddTaxMonthPicker,#txtRemarks,#txtStatus",
+    "StaffCP38Column": "AddTaxMonth date,Remarks text,Status text",
     "StaffIncomeDeclarationEAFormPath": "#yrPicker,#txtRemarks",
     "StaffIncomeDeclarationEAFormColumn": "YearDeclared date,Remarks text",
-    "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks",
-    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text",
+    "StaffAdvancePaymentPath": "#prAdvPayMonthPicker,#Remarks,#StatusDesc",
+    "StaffAdvancePaymentColumn": "ADVMonth date,Remarks text,Status text",
     "StaffLoanDepositMaintenancePath": "#omMonthPicker,cboRecType_input,#Remarks",
     "StaffLoanDepositMaintenanceColumn": "OMMonth date,RecType dropdown,Remarks text",
-    "StaffPrecedingTaxPath": "#monthPicker,#Remarks",
-    "StaffPrecedingTaxColumn": "PrecedingMonth date,Remarks text"
+    "StaffPrecedingTaxPath": "#monthPicker,#Remarks,#StatusDesc",
+    "StaffPrecedingTaxColumn": "PrecedingMonth date,Remarks text,Status text"
   },
   "GridPath": {
     "StaffAdditionalRemunerationGrid": "//*[@id='ardetailGrid']/div[3]/table,//*[@id='remdetailGrid']/div[3]/table",
@@ -29,9 +29,11 @@
     "StaffPrecedingTaxGrid": "//*[@id='staffPreTaxSubDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000073",
-    "StaffCP38": "ADT0000027",
-    "StaffAdvancePayment": "SAP0000015",
-    "StaffPrecedingTax": "PT00000020"
+    "StaffAdditionalRemuneration": "ADR0000033",
+    "StaffCP38": "",
+    "StaffIncomeDeclarationEAForm": "EAF0000020",
+    "StaffAdvancePayment": "",
+    "StaffPrecedingTax": "PT00000007",
+    "StaffIncomeDeclaration(EAForm)": ""
   }
 }

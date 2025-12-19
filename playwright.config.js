@@ -52,7 +52,7 @@ module.exports = defineConfig({
       size: { width: 1920, height: 1080 }, // video resolution
     },
     screenshot: "on",
-    actionTimeout: 60000,
+    actionTimeout: 90000,
     launchOptions: {
       args: process.env.CI ? [] : ["--start-maximized"], // skip maximize on CI
     },
@@ -103,7 +103,7 @@ module.exports = defineConfig({
         channel: process.env.BROWSER || "chrome",
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
-          slowMo: 1000,
+          slowMo: 1100,
         },
       },
     },

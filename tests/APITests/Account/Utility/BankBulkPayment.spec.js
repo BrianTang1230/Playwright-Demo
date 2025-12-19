@@ -58,6 +58,7 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
           VoidDate: currentDate.toISOString(),
           bpDetails: [
             {
+              ...basePayloads.bpDetails[0],
               TransHdrKey: createValues[5],
               TransDetKey: createValues[6],
               OUCode: createValues[7],
@@ -123,6 +124,7 @@ test.describe.serial("Bank Bulk Payment API Test", () => {
             RowState: 2,
             bpDetails: [
             {
+              ...basePayloads.bpDetails[0],
               BPHdrKey: keyToUse,
               TransHdrKey: editValues[5],
               TransDetKey: editValues[6],

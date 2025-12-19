@@ -85,7 +85,7 @@ export default class ApiCallBase {
     return { status, json }; // <-- fallback return
   }
 
-  async delete(key, expectedStatus = [204]) {
+  async delete(expectedStatus = [204]) {
     return apiCall(this.api, "DELETE", this.url, {}, expectedStatus);
   }
 }

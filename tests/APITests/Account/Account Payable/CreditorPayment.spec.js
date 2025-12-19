@@ -1,3 +1,9 @@
+/*
+ * CREDITOR PAYMENT API AUTOMATION TEST
+ * * Purpose: Validates the CRUD (Create, Read, Update, Delete) lifecycle of the Creditor Payment form.
+ * Data Source: Excel Sheet 'ACCAPI_Data', Form 'Creditor Payment'
+ */
+
 import { test } from "@utils/commonFunctions/GlobalSetup";
 import { expect } from "@playwright/test";
 import ConnectExcel from "@utils/excel/ConnectExcel";
@@ -8,269 +14,278 @@ import {
   ID,
   AccountPayloads,
 } from "@utils/data/apidata/accountApiData.json";
-import { deleteBankPaymentById } from "testsfolders/ApiTestsFolder/queries/AccountQuery"; 
-import { create } from "domain";
+import { deleteBankPaymentById } from "testsfolders/ApiTestsFolder/queries/AccountQuery";
 
-let apiObj;
-let createValues, editValues;
-let TransHdrKey, DocNum;
-const currentDate = new Date();
-const dueDate = new Date(currentDate);
-dueDate.setDate(dueDate.getDate() + 30);
-
-// Declare a variable to hold the state of the created record.
-let createdRecord;
+// Global variables to maintain state across tests (Create -> Update -> Delete)
+let apiObj, createValues, editValues, TransHdrKey, DocNum, createdRecord;
 
 const accUrl = ACC_API_URL;
-const sheetName = "ACCAPI_Data";
-const formName = "Creditor Payment";
+const sheetName = "ACCAPI_Data", formName = "Creditor Payment";
 const basePayloads = AccountPayloads.CreditorPayment;
-const savedKey = ID.CreditorPayment.TransHdrKey;
+const savedKey = ID.CreditorPayment.TransHdrKey; // Fallback key if creation fails
 const savedDocNo = ID.CreditorPayment.num;
 
 test.describe.serial("Creditor Payment API Test", () => {
+    
+    // --- SETUP: Load Data & Initialize API Wrapper ---
     test.beforeAll(async ({ excel }) => {
-        await excel.init(false); // force API mode
-        // Read Excel data once
+        await excel.init(false); // force API mode (no UI interaction)
+        
+        // Load test data from Excel into arrays (createValues = Row 1, editValues = Row 2)
         [createValues, editValues] = await excel.loadExcelValues(
             sheetName,
             formName,
             { isUI: false }
         );
+        
+        // Initialize the API Page Object Model
         apiObj = new ApiCallBase(null, "", formName, AccountJsonPath);
     });
 
+    // Rebind the fresh API context before every individual test
     test.beforeEach(async ({ api }) => {
-        // rebind fresh api context before every test
         apiObj.api = api;
     });
 
     test.describe("CRUD Operation Testing", () => {
+        
+        // --- STEP 1: CREATE (POST) ---
         test("Add new Creditor Payment", async ({ api }) => {
+            const apiUrl = `${accUrl}/api/CP?form=%27CP%27&Environment=qaa&AttachmentID=""&InterCompTransHdrKey=0`;
+            apiObj.setUrl(apiUrl);
 
-            apiObj.setUrl(
-                `${accUrl}/api/CP?form=%27CP%27&Environment=qaa&AttachmentID=""&InterCompTransHdrKey=0`
-            );
+            // Dynamic Dates: Current date and Due Date (Current + 30 days)
+            const currentDate = new Date().toISOString();
+            const dueDate = new Date(); dueDate.setDate(dueDate.getDate() + 30);
 
-            const payloadToSend = JSON.parse(JSON.stringify(basePayloads));
-            payloadToSend.OUKey = createValues[0];
-            payloadToSend.OUCode = createValues[1];
-            payloadToSend.OUDesc = createValues[2];
-            payloadToSend.DocNum = createValues[3];
-            payloadToSend.GLDate = currentDate.toISOString();
-            payloadToSend.GLDesc = createValues[4];
-            payloadToSend.DocAmt = createValues[5];
-            payloadToSend.InvoiceDate = currentDate.toISOString();
-            payloadToSend.CreatedDate = currentDate.toISOString();
-            payloadToSend.UpdatedDate = currentDate.toISOString();
-            payloadToSend.Remarks = createValues[6];
-            payloadToSend.RefNo = createValues[7];
-            payloadToSend.BankDueDate = dueDate.toISOString();
+            // Construct Payload: Merging base template with Excel data
+            // We use Spread Syntax (...) for cleaner mapping of large objects
+            const payload = {
+                ...basePayloads,
+                OUKey: createValues[0],
+                OUCode: createValues[1],
+                OUDesc: createValues[2],
+                DocNum: createValues[3],
+                GLDate: currentDate,
+                GLDesc: createValues[4],
+                DocAmt: createValues[5],
+                InvoiceDate: currentDate,
+                CreatedDate: currentDate,
+                UpdatedDate: currentDate,
+                Remarks: createValues[6],
+                RefNo: createValues[7],
+                BankDueDate: dueDate.toISOString(),
+                
+                glDetails: [
+                    {
+                        ...basePayloads.glDetails[0],
+                        AccKey: createValues[8],
+                        AccNum: createValues[9],
+                        AccDesc: createValues[10],
+                        OUKey: createValues[11],
+                        Remarks: createValues[12],
+                        FuncTransAmt: createValues[13],
+                        LocalTransAmt: createValues[14],
+                        OrigTransAmt: createValues[15],
+                        TaxableTransAmt: createValues[16],
+                        InclusiveTransAmt: createValues[17],
+                        OrigDrAmt: createValues[18],
+                        OrigCrAmt: createValues[19],
+                        DetRevAmt: createValues[20],
+                        CCIDKey: createValues[21],
+                        CCID: createValues[22]
+                    },
+                    {
+                        ...basePayloads.glDetails[1],
+                        AccKey: createValues[23],
+                        AccNum: createValues[24],
+                        OUKey: createValues[25],
+                        Remarks: createValues[26],
+                        FuncTransAmt: createValues[27],
+                        LocalTransAmt: createValues[28],
+                        OrigTransAmt: createValues[29],
+                        TaxableTransAmt: createValues[30],
+                        InclusiveTransAmt: createValues[31],
+                        OrigDrAmt: createValues[32],
+                        OrigCrAmt: createValues[33],
+                        DetRevAmt: createValues[34],
+                        CCIDKey: createValues[35],
+                        CCID: createValues[36]
+                    }
+                ],
 
-            if (payloadToSend.glDetails && payloadToSend.glDetails[0]) {
-                const detail1 = payloadToSend.glDetails[0];
-                detail1.AccKey = createValues[8];
-                detail1.AccNum = createValues[9];
-                detail1.AccDesc = createValues[10];
-                detail1.OUKey = createValues[11];
-                detail1.Remarks = createValues[12];
-                detail1.FuncTransAmt = createValues[13];
-                detail1.LocalTransAmt = createValues[14];
-                detail1.OrigTransAmt = createValues[15];
-                detail1.TaxableTransAmt = createValues[16];
-                detail1.InclusiveTransAmt = createValues[17];
-                detail1.OrigDrAmt = createValues[18];
-                detail1.OrigCrAmt = createValues[19];
-                detail1.DetRevAmt = createValues[20];
-                detail1.CCIDKey = createValues[21]; 
-                detail1.CCID = createValues[22];
-            }
+                glDetailsAPAR: [
+                    {
+                        ...basePayloads.glDetailsAPAR[0],
+                        AccKey: createValues[37],
+                        AccNum: createValues[38],
+                        OUKey: createValues[39],
+                        OUCode: createValues[40],
+                        Remarks: createValues[41],
+                        FuncTransAmt: createValues[42],
+                        LocalTransAmt: createValues[43],
+                        OrigTransAmt: createValues[44],
+                        CCIDKey: createValues[45],
+                        CCID: createValues[46],
+                        APARRefTransDetKey: createValues[47],
+                        APARRefTransHdrKey: createValues[48],
+                        DocNum: createValues[49],
+                        GLDate: createValues[50],
+                        DueDate: createValues[51],
+                        GLDesc: createValues[52],
+                        OpenAmt: createValues[53],
+                        AppliedAmt: createValues[54],
+                        Discount: createValues[55],
+                        TaxAmt: createValues[56],
+                        TaxableAmt: createValues[57]
+                    },
+                    {
+                        ...basePayloads.glDetailsAPAR[1],
+                        AccKey: createValues[58],
+                        AccNum: createValues[59],
+                        OUKey: createValues[60],
+                        OUCode: createValues[61],
+                        Remarks: createValues[62],
+                        FuncTransAmt: createValues[63],
+                        LocalTransAmt: createValues[64],
+                        OrigTransAmt: createValues[65],
+                        CCID: createValues[67], 
+                        APARRefTransDetKey: createValues[68],
+                        APARRefTransHdrKey: createValues[69],
+                        DocNum: createValues[70],
+                        InvNum: createValues[71],
+                        GLDate: createValues[72],
+                        DueDate: createValues[73],
+                        GLDesc: createValues[74],
+                        OpenAmt: createValues[75],
+                        AppliedAmt: createValues[76],
+                        Discount: createValues[77],
+                        TaxAmt: createValues[78],
+                        TaxableAmt: createValues[79]
+                    },
+                    {
+                        ...basePayloads.glDetailsAPAR[2],
+                        AccKey: createValues[80],
+                        AccNum: createValues[81],
+                        OUKey: createValues[82],
+                        OUCode: createValues[83],
+                        Remarks: createValues[84],
+                        FuncTransAmt: createValues[85],
+                        LocalTransAmt: createValues[86],
+                        OrigTransAmt: createValues[87],
+                        CCID: createValues[89],
+                        APARRefTransDetKey: createValues[90],
+                        APARRefTransHdrKey: createValues[91],
+                        DocNum: createValues[92],
+                        InvNum: createValues[93],
+                        GLDate: createValues[94],
+                        DueDate: createValues[95],
+                        GLDesc: createValues[96],
+                        OpenAmt: createValues[97],
+                        AppliedAmt: createValues[98],
+                        Discount: createValues[99],
+                        TaxAmt: createValues[100],
+                        TaxableAmt: createValues[101]
+                    }
+                ],
 
-            if (payloadToSend.glDetails && payloadToSend.glDetails[1]) {
-                const detail2 = payloadToSend.glDetails[1];
-                detail2.AccKey = createValues[23];
-                detail2.AccNum = createValues[24];
-                detail2.OUKey = createValues[25];
-                detail2.Remarks = createValues[26];
-                detail2.FuncTransAmt = createValues[27];
-                detail2.LocalTransAmt = createValues[28];
-                detail2.OrigTransAmt = createValues[29];
-                detail2.TaxableTransAmt = createValues[30];
-                detail2.InclusiveTransAmt = createValues[31];
-                detail2.OrigDrAmt = createValues[32];
-                detail2.OrigCrAmt = createValues[33];
-                detail2.DetRevAmt = createValues[34];
-                detail2.CCIDKey = createValues[35];
-                detail2.CCID = createValues[36];
-            }
-
-            if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[0]) {
-                const detail3 = payloadToSend.glDetailsAPAR[0];
-                detail3.AccKey = createValues[37];
-                detail3.AccNum = createValues[38];
-                detail3.OUKey = createValues[39];
-                detail3.OUCode = createValues[40];
-                detail3.Remarks = createValues[41];
-                detail3.FuncTransAmt = createValues[42];
-                detail3.LocalTransAmt = createValues[43];
-                detail3.OrigTransAmt = createValues[44];
-                detail3.CCIDKey = createValues[45];
-                detail3.CCID = createValues[46];
-                detail3.APARRefTransDetKey = createValues[47];
-                detail3.APARRefTransHdrKey = createValues[48];
-                detail3.DocNum = createValues[49];
-                detail3.GLDate = createValues[50];
-                detail3.DueDate = createValues[51];
-                detail3.GLDesc = createValues[52];
-                detail3.OpenAmt = createValues[53];
-                detail3.AppliedAmt = createValues[54];
-                detail3.Discount = createValues[55];
-                detail3.TaxAmt = createValues[56];
-                detail3.TaxableAmt = createValues[57];
-            }
-
-            if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[1]) {
-                const detail4 = payloadToSend.glDetailsAPAR[1];
-                detail4.AccKey = createValues[58];
-                detail4.AccNum = createValues[59];
-                detail4.OUKey = createValues[60];
-                detail4.OUCode = createValues[61];
-                detail4.Remarks = createValues[62];
-                detail4.FuncTransAmt = createValues[63];
-                detail4.LocalTransAmt = createValues[64];
-                detail4.OrigTransAmt = createValues[65];
-                detail4.CCID = createValues[66];
-                detail4.CCID = createValues[67];
-                detail4.APARRefTransDetKey = createValues[68];
-                detail4.APARRefTransHdrKey = createValues[69];
-                detail4.DocNum = createValues[70];
-                detail4.InvNum = createValues[71];
-                detail4.GLDate = createValues[72];
-                detail4.DueDate = createValues[73];
-                detail4.GLDesc = createValues[74];
-                detail4.OpenAmt = createValues[75];
-                detail4.AppliedAmt = createValues[76];
-                detail4.Discount = createValues[77];
-                detail4.TaxAmt = createValues[78];
-                detail4.TaxableAmt = createValues[79];
-            }
-
-                if (payloadToSend.glDetailsAPAR && payloadToSend.glDetailsAPAR[2]) {
-                const detail5 = payloadToSend.glDetailsAPAR[2];
-                detail5.AccKey = createValues[80];
-                detail5.AccNum = createValues[81];
-                detail5.OUKey = createValues[82];
-                detail5.OUCode = createValues[83];
-                detail5.Remarks = createValues[84];
-                detail5.FuncTransAmt = createValues[85];
-                detail5.LocalTransAmt = createValues[86];
-                detail5.OrigTransAmt = createValues[87];
-                detail5.CCID = createValues[88];
-                detail5.CCID = createValues[89];
-                detail5.APARRefTransDetKey = createValues[90];
-                detail5.APARRefTransHdrKey = createValues[91];
-                detail5.DocNum = createValues[92];
-                detail5.InvNum = createValues[93];
-                detail5.GLDate = createValues[94];
-                detail5.DueDate = createValues[95];
-                detail5.GLDesc = createValues[96];
-                detail5.OpenAmt = createValues[97];
-                detail5.AppliedAmt = createValues[98];
-                detail5.Discount = createValues[99];
-                detail5.TaxAmt = createValues[100];
-                detail5.TaxableAmt = createValues[101];
-            }
-
-            if (payloadToSend.transDetBC && payloadToSend.transDetBC[0]) {
-                const detail6 = payloadToSend.transDetBC[0];
-                detail6.TransDetBC = createValues[102];
-                detail6.PayTo = createValues[103];
-                detail6.TransferNo = createValues[104];
-            }
+                transDetBC: [
+                    {
+                        ...basePayloads.transDetBC[0],
+                        TransDetBC: createValues[102],
+                        PayTo: createValues[103],
+                        TransferNo: createValues[104]
+                    }
+                ]
+            };
 
             const { key, num, status, json } = await apiObj.create(
-                payloadToSend,
-                {
-                    key: "TransHdrKey",
-                    num: "DocNum"
-                }
+                payload,
+                { key: "TransHdrKey", num: "DocNum" }
             );
 
             expect([200, 201]).toContain(status);
-            createdRecord = json;
             
+            // Store response for next steps (contains generated IDs)
+            createdRecord = json;
             TransHdrKey = key;
             DocNum = num;
         });
 
-        // GET BY KEY
+        // --- STEP 2: READ (GET) ---
         test("Get Creditor Payment by HdrKey", async ({ api }) => {
             const keyToUse = TransHdrKey || savedKey;
             apiObj.setUrl(`${accUrl}/odata/GLHeader?TransHdrKey=${keyToUse}&$format=json`);
             await apiObj.getByKey();
         });
-                    
-        // GET ALL
+
         test("Get all Creditor Payment", async ({ api }) => {
             apiObj.setUrl(
                 `${accUrl}/odata/GLHeader?$expand=glDetails&$format=json&$orderby=GLDate%20desc,TransHdrKey&$select=TransHdrKey,OUCode,OUKey,DocNum,RefNo,Source,CCIDCodeCCIDDesc,DocType,GLDate,FY,Period,GLStatusDesc,GLDesc,ChequeNo,TransferNo,CurrCode,DocAmt,CreatedByCode,UpdatedByCode,L1ApprovedByName,L1ApprovedDate,L2ApprovedByName,L2ApprovedDate,L3ApprovedByName,L3ApprovedDate,LastApprovedByCode,VoidByCode,IsSelect,IsContainAttach,FinalPayHdrKey,BankDueDate,glDetails/TransDetKey,glDetails/AccNum,glDetails/AccDesc,glDetails/CCID,glDetails/Remarks,glDetails/CurrCode,glDetails/OrigTransAmt,glDetails/ExRateFunc,glDetails/FuncTransAmt&%24inlinecount=allpages&%24format=json&%24top=20&%24filter=(FY%20eq%202026%20and%20Period%20eq%207)&DocType=CRP`
             );
-                await apiObj.getAll();
+            await apiObj.getAll();
         });
 
-        // UPDATE 
+        // --- STEP 3: UPDATE (POST) ---
         test("Update Creditor Payment", async ({ api }) => {
             const keyToUse = TransHdrKey || savedKey;
             const docNoToUse = DocNum || savedDocNo;
+            
+            // Ensure Create step passed before attempting update
             expect(createdRecord, "The 'createdRecord' is not available.").toBeDefined();
-        
+
             apiObj.setUrl(
                 `${accUrl}/api/CP?form=%27CP%27&Environment=qaa&AttachmentID=""&InterCompTransHdrKey=0`
             );
-        
-            // Update Payload
-            // copy the record from the server
-            const updatePayload = JSON.parse(JSON.stringify(createdRecord));
-        
-            // Main Header Field
-            updatePayload.TransHdrKey = keyToUse;
-            updatePayload.DocNum = docNoToUse;
-            updatePayload.RowState = 2;
-            updatePayload.Remarks = editValues[0];
 
-            if (updatePayload.glDetails && updatePayload.glDetails[0]) {
-                const detail1 = updatePayload.glDetails[0];
-                detail1.Remarks = editValues[1];
-            }
+            // Payload Construction:
+            // 1. Clone the record returned from the server (createdRecord)
+            // 2. Overwrite specific fields with new values from Excel (editValues)
+            const updatePayload = {
+                ...createdRecord,
+                TransHdrKey: keyToUse,
+                DocNum: docNoToUse,
+                RowState: 2, // 2 = Modified State
+                Remarks: editValues[0],
+                
+                // Update nested arrays using Object.assign to merge old data + new edits
+                glDetails: [
+                    Object.assign({}, createdRecord.glDetails[0], {
+                        Remarks: editValues[1]
+                    }),
+                    Object.assign({}, createdRecord.glDetails[1], {
+                        Remarks: editValues[2]
+                    })
+                ],
+                
+                // Preserve existing APAR details (no changes needed)
+                glDetailsAPAR: createdRecord.glDetailsAPAR,
+                
+                // Ensure TransHdrKey is linked correctly in Bank Details
+                transDetBC: [
+                    Object.assign({}, createdRecord.transDetBC[0], {
+                        TransHdrKey: keyToUse
+                    })
+                ]
+            };
 
-            if (updatePayload.glDetails && updatePayload.glDetails[1]) {
-                const detail2 = updatePayload.glDetails[1];
-                detail2.Remarks = editValues[2];
-            }
-            
-            if (updatePayload.transDetBC && updatePayload.transDetBC[0]) {
-                const detail6 = updatePayload.transDetBC[0];
-                detail6.TransHdrKey = keyToUse;
-            }
-            // --- END OF PAYLOAD ---
-                        
             const { status, json } = await apiObj.update("POST", updatePayload);
-                        
             expect(status).toBe(200);
         });
 
+        // --- STEP 4: DELETE (CLEANUP) ---
         test("Delete Creditor Payment using SQL(Clean Up)", async () => {
-            // Ensure we have a key from the 'create' step to delete
-            expect(TransHdrKey, "TransHdrKey is not available. The 'create' test must have run successfully.").toBeDefined();
-                
+            // Validate key exists to prevent accidental deletion of wrong records
+            expect(TransHdrKey, "TransHdrKey is not available.").toBeDefined();
+
             console.log(`Attempting to delete record with TransHdrKey: ${TransHdrKey}`);
-                
+
             try {
-                // Call the imported function and pass the key of the record created in this test run
+                // Execute direct SQL deletion to clean up test data
                 await deleteBankPaymentById(TransHdrKey);
                 console.log("SQL delete function executed successfully.");
             } catch (error) {
-                // Fail the test if the SQL cleanup throws an error
+                // Explicitly throw error to fail test if cleanup fails
                 throw new Error(`Database cleanup failed for TransHdrKey ${TransHdrKey}. Reason: ${error.message}`);
             }
         })

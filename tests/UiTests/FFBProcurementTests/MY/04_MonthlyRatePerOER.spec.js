@@ -1,5 +1,5 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
-import { LoginPage, region } from "@UiFolder/pages/General/LoginPage";
+import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
@@ -33,8 +33,6 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("Monthly Rate Per OER Tests", () => {
-  if (region === "IND") test.skip(true);
-
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -75,16 +73,11 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
       Nation: createValues[1],
     });
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -101,16 +94,11 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
       Nation: createValues[1],
     });
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -119,7 +107,6 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
       Nation: createValues[1],
     });
 

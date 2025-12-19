@@ -34,7 +34,10 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 3, 4], [3]];
+const cellsIndex = [
+  [1, 2, 3, 4],
+  [1, 2, 3, 4],
+];
 
 test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
   // ---------------- Before All ----------------
@@ -86,15 +89,12 @@ test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
-      Nation: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
         Estate: gridCreateValues[0].split(";")[0],
       }
     );
@@ -102,17 +102,9 @@ test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -133,14 +125,12 @@ test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
         Estate: gridEditValues[0].split(";")[0],
       }
     );
@@ -148,17 +138,9 @@ test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -173,7 +155,6 @@ test.describe.serial("Transport, Quality and Volume Subsidy Tests", () => {
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0)

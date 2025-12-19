@@ -110,7 +110,7 @@ function payrollSQLCommand(formName) {
 
     case "Staff Loan/Deposit Maintenance":
       sqlCommand += `
-        SELECT  IIF(@region = 'IND',
+        SELECT IIF(@region = 'IND',
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
         ) AS OMMonth,
@@ -359,7 +359,7 @@ function payrollGridSQLCommand(formName) {
         WHERE IIF(@region = 'IND',
           FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'en-US')
-        ) = @Date 
+        ) = @Date
         AND F.OUCode + ' - ' + F.OUDesc = @OU
         AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
         )`;

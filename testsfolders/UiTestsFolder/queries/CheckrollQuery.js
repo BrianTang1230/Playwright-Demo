@@ -11,6 +11,7 @@ function checkrollSQLCommand(formName) {
   `;
 
   switch (formName) {
+    case "Daily Attendance":
     case "Daily Piece Rate Work":
       if (region === "IND") {
         sqlCommand += `
@@ -678,7 +679,7 @@ function checkrollGridSQLCommand(formName) {
   let sqlCommand = "";
 
   switch (formName) {
-    case "Daily Piece Rate Work":
+    case "Daily Attendance":
       if (region === "IND") {
         sqlCommand += `
           SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
@@ -719,10 +720,10 @@ function checkrollGridSQLCommand(formName) {
           LEFT JOIN GMS_AccMas M ON H.ExpAccKey = M.AccKey
           LEFT JOIN GMS_UOMStp N ON H.UOMKey = N.UOMKey
           WHERE B.ATRHdrKey IN (
-              SELECT ATRHdrKey FROM CR_ATRHdr_IND K
-              LEFT JOIN GMS_OUStp L ON K.OUKey = L.OUKey
-              WHERE K.ATRNum = @DocNo
-              AND L.OUCode + ' - ' + L.OUDesc = @OU
+            SELECT ATRHdrKey FROM CR_ATRHdr_IND K
+            LEFT JOIN GMS_OUStp L ON K.OUKey = L.OUKey
+            WHERE K.ATRNum = @DocNo
+            AND L.OUCode + ' - ' + L.OUDesc = @OU
           )`;
       } else {
         sqlCommand += `
@@ -758,6 +759,82 @@ function checkrollGridSQLCommand(formName) {
           LEFT JOIN CR_ATRAllocDet E ON B.ATRDetKey = E.ATRDetKey
           LEFT JOIN GMS_AccMas F ON E.AccKey = F.AccKey
           LEFT JOIN V_SYC_CCIDMapping G On E.CCIDKey = G.CCIDKey 
+          LEFT JOIN CR_PieceRateDet H ON B.ATRDetKey = H.ATRDetKey
+          LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
+          LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey 
+          LEFT JOIN GMS_AccMas M ON H.AccKey = M.AccKey
+          LEFT JOIN GMS_UOMStp N ON H.UOMKey = N.UOMKey
+          WHERE B.ATRHdrKey IN (
+            SELECT ATRHdrKey FROM CR_ATRHdr K
+            LEFT JOIN GMS_OUStp L ON K.OUKey = L.OUKey
+            WHERE K.ATRNum = @DocNo
+            AND L.OUCode + ' - ' + L.OUDesc = @OU
+          )`;
+      }
+      break;
+
+    case "Daily Piece Rate Work":
+      if (region === "IND") {
+        sqlCommand += `
+          SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+          B.DRate AS DailyRatenumeric,
+          B.MD AS MDnumeric,
+          D.AttdCode AS AttendanceCode,
+          CONVERT(VARCHAR(5), B.TimeIn, 108) AS ClockIn,
+          CONVERT(VARCHAR(5), B.TimeOut, 108) AS ClockOut,
+          B.Work AS Worknumeric,
+          B.Rest AS Restnumeric,
+          B.Absent AS Absentnumeric,
+          (B.OTH1+ B.OTH2 + B.OTH3 + B.OTH4) AS OTHrnumeric,
+          B.Allowance AS TotalAllownumeric,
+          I.ACode + ' - ' + I.ACodeDesc AS ActivityCode, 
+          M.AccNum + ' - ' + M.AccDesc AS PRAccount,
+          J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
+          CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
+          H.Rate AS PayRatenumeric,
+          H.Qty AS PayQtynumeric,
+          N.UOMCode AS UOM,
+          H.GrossAmt AS TotalAmtnumeric,
+          H.Remarks AS PRRemarks
+          FROM CR_ATRDet_IND B
+          LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+          LEFT JOIN GMS_AttdCodeStp D ON B.AttdKey = D.AttdKey
+          LEFT JOIN CR_PieceRateDet_IND H ON B.ATRDetKey = H.ATRDetKey
+          LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
+          LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey
+          LEFT JOIN GMS_AccMas M ON H.ExpAccKey = M.AccKey
+          LEFT JOIN GMS_UOMStp N ON H.UOMKey = N.UOMKey
+          WHERE B.ATRHdrKey IN (
+            SELECT ATRHdrKey FROM CR_ATRHdr_IND K
+            LEFT JOIN GMS_OUStp L ON K.OUKey = L.OUKey
+            WHERE K.ATRNum = @DocNo
+            AND L.OUCode + ' - ' + L.OUDesc = @OU
+          )`;
+      } else {
+        sqlCommand += `
+          SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+          FORMAT(B.DRate, 'N2') AS DailyRate,
+          B.MD AS MDnumeric,
+          D.AttdCode AS AttendanceCode,
+          FORMAT((B.OTH1 + B.OTH2 + B.OTH3), 'N1') AS OTHr,
+          FORMAT(B.AllowAmt, 'N2') AS AllowanceAmt,
+          I.ACode + ' - ' + I.ACodeDesc AS ActivityCode,
+          M.AccNum + ' - ' + M.AccDesc AS PRAccount,
+          J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
+          CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
+          FORMAT(H.PayRate, 'N4') AS PRPayRate,
+          FORMAT(H.PayFactor, 'N2') AS PRPayFactor,
+          N.UOMCode AS UOM,
+          FORMAT(H.PayQty, 'N3') AS PayQty,
+          FORMAT(H.Weight, 'N3') AS PRWeight,
+          FORMAT(H.GrossAmt, 'N2') AS TotalAmt,
+          FORMAT(H.OTPayQty, 'N3') AS OvertimePay,
+          FORMAT(H.OTWt, 'N3') AS PROTWeight,
+          FORMAT(H.OTGrossAmt, 'N2') AS OTTotalAmt,
+          H.Remarks AS PRRemarks
+          FROM CR_ATRDet B
+          LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
+          LEFT JOIN GMS_AttdCodeStp D ON B.AttdKey = D.AttdKey
           LEFT JOIN CR_PieceRateDet H ON B.ATRDetKey = H.ATRDetKey
           LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
           LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey 

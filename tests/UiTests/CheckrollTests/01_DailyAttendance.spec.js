@@ -22,13 +22,14 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerIncomeDeclarationCreate,
-  WorkerIncomeDeclarationEdit,
-  WorkerIncomeDeclarationDelete,
-} from "@UiFolder/pages/Checkroll/23_WorkerIncomeDeclaration";
+  DailyAttendanceCreate,
+  DailyAttendanceDelete,
+  DailyAttendanceEdit,
+} from "@UiFolder/pages/Checkroll/01_DailyAttendance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -37,22 +38,30 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Income Declaration (EA Form)";
-const keyName = "WorkerIncomeDeclarationEAForm";
+const submodule = "Attendance";
+const formName = "Daily Attendance";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 5],
-  [1, 2, 3, 4, 5, 6, 7],
+  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
+];
+const cellsIndexIND = [
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
 
-test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
-  // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "IND") test.skip(true);
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
 
+test.describe.serial("Daily Attendance Tests", () => {
+  // ---------------- Before All ----------------
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
     [
       createValues,
@@ -63,7 +72,9 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -77,99 +88,108 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Income Declaration (EA Form)", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+  test("Create Daily Attendance", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await WorkerIncomeDeclarationCreate(
+    const { uiVals, gridVals } = await DailyAttendanceCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex,
+      dwCellIndex,
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtATRNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+    await ValidateUiValues(createValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Income Declaration (EA Form)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerIncomeDeclarationEdit(
+  test("Edit Daily Attendance", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyAttendanceEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex,
+      dwCellIndex,
       ou,
-      gridCreateValues.join(";").split(";")[0] // need to add keyword to identify the record
+      docNo
     );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+    await ValidateUiValues(editValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Income Declaration (EA Form)", async ({ page, db }) => {
-    await WorkerIncomeDeclarationDelete(
+  test("Delete Daily Attendance", async ({ page, db }) => {
+    await DailyAttendanceDelete(
       page,
       sideMenu,
       createValues,
+      editValues,
       ou,
-      gridEditValues.join(";").split(";")[0]
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
       throw new Error(`Deleting ${formName} failed`);
     }
+
+    console.log(`${formName} transaction deleted successfully`);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

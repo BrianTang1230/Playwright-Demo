@@ -25,7 +25,7 @@ import {
   LooseFruitCollectionCreate,
   LooseFruitCollectionEdit,
   LooseFruitCollectionDelete,
-} from "@UiFolder/pages/Checkroll/07_LooseFruitCollection";
+} from "@UiFolder/pages/Checkroll/08_LooseFruitCollection";
 
 // ---------------- Set Global Variables ----------------
 let ou;

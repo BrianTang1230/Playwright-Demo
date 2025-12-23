@@ -1,6 +1,8 @@
 {
   "JsonPath": "utils/data/uidata/checkrollData.json",
   "InputPath": {
+    "DailyAttendancePath": "#AtrDate,cboGang_input,#txtRemarks,#txtStatus,comboBoxMandor_input",
+    "DailyAttendanceColumn": "ATRDate date,Gang dropdown,Remarks text,Status text,Mandor dropdown",
     "DailyPieceRateWorkPath": "#AtrDate,cboGang_input,#txtRemarks,#txtStatus,comboBoxMandor_input",
     "DailyPieceRateWorkColumn": "ATRDate date,Gang dropdown,Remarks text,Status text,Mandor dropdown",
     "InterOUDailyContractWorkPath": "#InterOUAtrDate,comboBoxGang_input,#txtRemarks,#txtStatus,comboBoxMandor_input",
@@ -59,7 +61,8 @@
     "MillCPOandPKColumn": "FiscYear combobox,Period combobox,Division dropdown"
   },
   "GridPath": {
-    "DailyPieceRateWorkGrid": "//*[@id=\"atrdetailGrid\"]/div[3]/table,//*[@id=\"atrAllocDetGrid\"]/div[3]/table,//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
+    "DailyAttendanceGrid": "//*[@id=\"atrdetailGrid\"]/div[3]/table,//*[@id=\"atrAllocDetGrid\"]/div[3]/table,//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
+    "DailyPieceRateWorkGrid": "//*[@id=\"atrdetailGrid\"]/div[3]/table,//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
     "InterOUDailyContractWorkGrid": "//*[@id=\"atrdetailGrid\"]/div[3]/table,//*[@id=\"atrAllocDetGrid\"]/div[3]/table,//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
     "MonthlyPieceRateWorkGrid": "//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
     "InterOUMonthlyPieceRateWorkGrid": "//*[@id=\"pieceRateDetGrid\"]/div[3]/table",
@@ -89,7 +92,7 @@
     "MillCPOandPKGrid": "//*[@id=\"millGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "DailyPieceRateWork": "ATR0006170",
+    "DailyPieceRateWork": "ATR0006172",
     "InterOUDailyContractWork": "ICW0000004",
     "MonthlyPieceRateWork": "MPR0000011",
     "InterOUMonthlyPieceRateWork": "IPR0000014",
@@ -109,6 +112,7 @@
     "InterOULooseFruitCollection": "ICL0000008",
     "CropHarvesting&Collection": "HAR0001417",
     "InterOUCropHarvesting&Collection": "ICH0000009",
-    "DailyContractCropHarvestingandLooseFruitCollection": "FL00000001"
+    "DailyContractCropHarvestingandLooseFruitCollection": "FL00000001",
+    "DailyAttendance": "ATR0006177"
   }
 }

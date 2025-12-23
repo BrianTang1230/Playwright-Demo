@@ -1,4 +1,4 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -22,15 +22,14 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerMonthlyTaxDeductionCreate,
-  WorkerMonthlyTaxDeductionDelete,
-  WorkerMonthlyTaxDeductionEdit,
-} from "@UiFolder/pages/Checkroll/20_WorkerMonthlyTaxDeduction";
-
-import Login from "@utils/data/uidata/loginData.json";
+  WorkerAdditionalRemunerationCreate,
+  WorkerAdditionalRemunerationDelete,
+  WorkerAdditionalRemunerationEdit,
+} from "@UiFolder/pages/Checkroll/20_WorkerAdditionalRemuneration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -39,23 +38,20 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Monthly Tax Deduction";
+const submodule = "Additional Remuneration";
+const formName = "Worker Additional Remuneration";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 5, 6],
   [1, 2],
   [1, 2],
 ];
 
-test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
+test.describe.serial("Worker Additional Remuneration Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
-
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
     [
       createValues,
@@ -67,6 +63,8 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -80,14 +78,10 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Monthly Tax Deduction", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Gang: createValues[1],
-      OU: ou[0],
-    });
+  test("Create Worker Additional Remuneration", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionCreate(
+    const { uiVals, gridVals } = await WorkerAdditionalRemunerationCreate(
       page,
       sideMenu,
       paths,
@@ -99,16 +93,23 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtQRFNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -119,8 +120,8 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Monthly Tax Deduction", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionEdit(
+  test("Edit Worker Additional Remuneration", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdditionalRemunerationEdit(
       page,
       sideMenu,
       paths,
@@ -130,19 +131,21 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -153,18 +156,17 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Monthly Tax Deduction", async ({ page, db }) => {
-    await WorkerMonthlyTaxDeductionDelete(
+  test("Delete Worker Additional Remuneration", async ({ page, db }) => {
+    await WorkerAdditionalRemunerationDelete(
       page,
       sideMenu,
       createValues,
-      editValues,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
     if (dbValues.length > 0) {
@@ -174,6 +176,8 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

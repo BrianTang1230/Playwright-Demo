@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -22,10 +22,12 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerLoanDepositMaintenanceCreate,
-  WorkerLoanDepositMaintenanceEdit,
-  WorkerLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Checkroll/26_WorkerLoanDepositMaintenance";
+  WorkerMonthlyTaxDeductionCreate,
+  WorkerMonthlyTaxDeductionDelete,
+  WorkerMonthlyTaxDeductionEdit,
+} from "@UiFolder/pages/Checkroll/21_WorkerMonthlyTaxDeduction";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -37,20 +39,23 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Worker Loan/Deposit Maintenance";
-const keyName = "WorkerLoanDepositMaintenance";
+const submodule = "Income Tax";
+const formName = "Worker Monthly Tax Deduction";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 6],
-  [1, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2],
+  [1, 2],
 ];
 
-test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
+test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -75,13 +80,14 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
+  test("Create Worker Monthly Tax Deduction", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
+      Gang: createValues[1],
       OU: ou[0],
     });
 
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceCreate(
+    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -95,14 +101,12 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -115,8 +119,8 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerLoanDepositMaintenanceEdit(
+  test("Edit Worker Monthly Tax Deduction", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -126,19 +130,17 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou,
-      gridCreateValues.join(";").split(";")[0] // need to add keyword to identify the record
+      ou
     );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        Date: createValues[0],
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -151,17 +153,18 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Loan/Deposit Maintenance", async ({ page, db }) => {
-    await WorkerLoanDepositMaintenanceDelete(
+  test("Delete Worker Monthly Tax Deduction", async ({ page, db }) => {
+    await WorkerMonthlyTaxDeductionDelete(
       page,
       sideMenu,
       createValues,
-      ou,
-      gridEditValues.join(";").split(";")[0]
+      editValues,
+      ou
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
+      Gang: createValues[1],
     });
 
     if (dbValues.length > 0) {

@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -23,10 +23,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerAdvancePaymentCreate,
-  WorkerAdvancePaymentEdit,
-  WorkerAdvancePaymentDelete,
-} from "@UiFolder/pages/Checkroll/27_WorkerAdvancePayment";
+  WorkerCP38Create,
+  WorkerCP38Edit,
+  WorkerCP38Delete,
+} from "@UiFolder/pages/Checkroll/23_WorkerCP38";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,17 +39,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Worker Advance Payment";
+const submodule = "Income Tax";
+const formName = "Worker CP38";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3]];
+const cellsIndex = [[1, 2]];
 
-test.describe.serial("Worker Advance Payment Tests", async () => {
+test.describe.serial("Worker CP38 Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -76,10 +78,10 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Advance Payment", async ({ page, db }) => {
+  test("Create New Worker CP38", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdvancePaymentCreate(
+    const { uiVals, gridVals } = await WorkerCP38Create(
       page,
       sideMenu,
       paths,
@@ -94,7 +96,7 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.getByPlaceholder("Auto No.").inputValue()
+      await page.locator("#txtATDNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -119,8 +121,8 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Advance Payment", async ({ page, db }) => {
-    await WorkerAdvancePaymentEdit(
+  test("Edit Worker CP38", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerCP38Edit(
       page,
       sideMenu,
       paths,
@@ -133,9 +135,6 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       ou,
       docNo
     );
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -158,16 +157,14 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Advance Payment", async ({ page, db }) => {
-    await WorkerAdvancePaymentDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Worker CP38", async ({ page, db }) => {
+    await WorkerCP38Delete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-
-    console.log("\n" + `${formName} transaction deleted successfully` + "\n");
   });
 
   // ---------------- After All ----------------

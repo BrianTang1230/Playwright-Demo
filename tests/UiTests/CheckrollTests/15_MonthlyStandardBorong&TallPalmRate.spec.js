@@ -22,12 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerPreviousEmploymentTaxDeductionCreate,
-  WorkerPreviousEmploymentTaxDeductionDelete,
-  WorkerPreviousEmploymentTaxDeductionEdit,
-} from "@UiFolder/pages/Checkroll/21_WorkerPreviousEmploymentTaxDeduction";
-
-import Login from "@utils/data/uidata/loginData.json";
+  MonthlyStandardBorongAndTallPalmRateCreate,
+  MonthlyStandardBorongAndTallPalmRateEdit,
+  MonthlyStandardBorongAndTallPalmRateDelete,
+} from "@UiFolder/pages/Checkroll/15_MonthlyStandardBorong&TallPalmRate";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,22 +37,18 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Previous Employment Tax Deduction";
+const submodule = "Crop";
+const formName = "Monthly Standard Borong & Tall Palm Rate";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
-  [1, 2],
-  [1, 2],
-];
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]];
 
-test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
+test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "IND") test.skip(true);
+    if (region === "MY") test.skip(true);
 
     // Load Excel values
     [
@@ -80,18 +74,14 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Previous Employment Tax Deduction", async ({
+  test("Create Monthly Standard Borong & Tall Palm Rate", async ({
     page,
     db,
   }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Gang: createValues[1],
-      OU: ou[0],
-    });
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     const { uiVals, gridVals } =
-      await WorkerPreviousEmploymentTaxDeductionCreate(
+      await MonthlyStandardBorongAndTallPalmRateCreate(
         page,
         sideMenu,
         paths,
@@ -105,12 +95,14 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -123,11 +115,11 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Previous Employment Tax Deduction", async ({
+  test("Edit Monthly Standard Borong & Tall Palm Rate", async ({
     page,
     db,
   }) => {
-    const { uiVals, gridVals } = await WorkerPreviousEmploymentTaxDeductionEdit(
+    const { uiVals, gridVals } = await MonthlyStandardBorongAndTallPalmRateEdit(
       page,
       sideMenu,
       paths,
@@ -138,17 +130,18 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0]
+      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
     );
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -161,11 +154,11 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Previous Employment Tax Deduction", async ({
+  test("Delete Monthly Standard Borong & Tall Palm Rate", async ({
     page,
     db,
   }) => {
-    await WorkerPreviousEmploymentTaxDeductionDelete(
+    await MonthlyStandardBorongAndTallPalmRateDelete(
       page,
       sideMenu,
       createValues,
@@ -175,7 +168,6 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      Gang: createValues[1],
     });
 
     if (dbValues.length > 0) {

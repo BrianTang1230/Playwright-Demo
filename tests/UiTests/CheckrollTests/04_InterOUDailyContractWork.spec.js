@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOUMonthlyPieceRateWorkCreate,
-  InterOUMonthlyPieceRateWorkEdit,
-  InterOUMonthlyPieceRateWorkDelete,
-} from "@UiFolder/pages/Checkroll/04_InterOUMonthlyPieceRateWork";
+  InterOUDailyContractWorkCreate,
+  InterOUDailyContractWorkEdit,
+  InterOUDailyContractWorkDelete,
+} from "@UiFolder/pages/Checkroll/04_InterOUDailyContractWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,18 +39,30 @@ let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Attendance";
-const formName = "Inter-OU Monthly Piece Rate Work";
-const keyName = "InterOUMonthlyPieceRateWork";
+const formName = "Inter-OU Daily Contract Work (Loan To)";
+const keyName = "InterOUDailyContractWork";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]];
+const cellsIndex = [
+  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
+];
+const cellsIndexIND = [
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+];
 
-test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
+const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
+
+test.describe
+  .serial("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -61,7 +73,7 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
 
     docNo = DocNo[keyName];
 
@@ -77,25 +89,28 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
+  test("Create New Inter-OU Daily Contract Work (Loan To)", async ({
+    page,
+    db,
+  }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await InterOUMonthlyPieceRateWorkCreate(
+    const { uiVals, gridVals } = await InterOUDailyContractWorkCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex,
+      interDWCellIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
       keyName,
-      await page.locator("#txtMPRNo").inputValue()
+      await page.locator("#txtICWNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -115,7 +130,7 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...dwCols, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -123,17 +138,17 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
-    const { uiVals, gridVals } = await InterOUMonthlyPieceRateWorkEdit(
+  test("Edit Inter-OU Daily Contract Work (Loan To)", async ({ page, db }) => {
+    const { uiVals, gridVals } = await InterOUDailyContractWorkEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex,
+      interDWCellIndex,
       ou,
       docNo
     );
@@ -155,7 +170,7 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...dwCols, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -163,8 +178,11 @@ test.describe.serial("Inter-OU Monthly Piece Rate Work Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Monthly Piece Rate Work", async ({ page, db }) => {
-    await InterOUMonthlyPieceRateWorkDelete(
+  test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await InterOUDailyContractWorkDelete(
       page,
       sideMenu,
       createValues,

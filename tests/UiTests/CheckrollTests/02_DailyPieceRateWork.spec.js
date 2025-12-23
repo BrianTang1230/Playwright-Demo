@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -15,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOULooseFruitCollectionCreate,
-  InterOULooseFruitCollectionEdit,
-  InterOULooseFruitCollectionDelete,
-} from "@UiFolder/pages/Checkroll/13_InterOULooseFruitCollection";
+  DailyPieceRateWorkCreate,
+  DailyPieceRateWorkDelete,
+  DailyPieceRateWorkEdit,
+} from "@UiFolder/pages/Checkroll/02_DailyPieceRateWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,25 +36,30 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Crop";
-const formName = "Inter-OU Loose Fruit Collection (Loan To)";
-const keyName = "InterOULooseFruitCollection";
+const submodule = "Attendance";
+const formName = "Daily Piece Rate Work";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2],
-  [0, 1, 3, 4, 5, 6],
+  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
+];
+const cellsIndexIND = [
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
 
-test.describe
-  .serial("Inter-OU Loose Fruit Collection (Loan To) Tests", async () => {
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
+
+test.describe.serial("Daily Piece Rate Work Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -65,14 +70,14 @@ test.describe
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
 
     docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -81,28 +86,28 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create Daily Piece Rate Work", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await InterOULooseFruitCollectionCreate(
+    const { uiVals, gridVals } = await DailyPieceRateWorkCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex,
+      dwCellIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
-      keyName,
-      await page.locator("#txtLFCollectionNum").inputValue()
+      formName,
+      await page.locator("#txtATRNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -111,39 +116,34 @@ test.describe
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, dwCols, uiVals);
     await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...uiVals, ou[0]],
+      [...dwCols, "OU"], // need to add .slice for columns as IND dont have Mandor column
       dbValues[0]
     );
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit(
+  test("Edit Daily Piece Rate Work", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyPieceRateWorkEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex,
+      dwCellIndex,
       ou,
       docNo
     );
@@ -154,33 +154,25 @@ test.describe
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateUiValues(editValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await InterOULooseFruitCollectionDelete(
+  test("Delete Daily Piece Rate Work", async ({ page, db }) => {
+    await DailyPieceRateWorkDelete(
       page,
       sideMenu,
       createValues,
+      editValues,
       ou,
       docNo
     );
@@ -189,7 +181,11 @@ test.describe
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) {
+      throw new Error(`Deleting ${formName} failed`);
+    }
+
+    console.log("\n" + `${formName} transaction deleted successfully` + "\n");
   });
 
   // ---------------- After All ----------------

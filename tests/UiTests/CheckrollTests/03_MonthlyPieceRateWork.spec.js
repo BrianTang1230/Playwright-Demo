@@ -1,7 +1,8 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -15,16 +16,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  WorkerAdhocAllowanceCreate,
-  WorkerAdhocAllowanceEdit,
-  WorkerAdhocAllowanceDelete,
-} from "@UiFolder/pages/Checkroll/15_WorkerAdhocAllowance";
+  MonthlyPieceRateWorkCreate,
+  MonthlyPieceRateWorkEdit,
+  MonthlyPieceRateWorkDelete,
+} from "@UiFolder/pages/Checkroll/03_MonthlyPieceRateWork";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -37,17 +39,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Allowance & Deduction";
-const formName = "Worker Ad hoc Allowance";
+const submodule = "Attendance";
+const formName = "Monthly Piece Rate Work";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9]];
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]];
 
-test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
+test.describe.serial("Monthly Piece Rate Work Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -74,10 +78,10 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Ad hoc Allowance", async ({ page, db }) => {
+  test("Create New Monthly Piece Rate Work", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdhocAllowanceCreate(
+    const { uiVals, gridVals } = await MonthlyPieceRateWorkCreate(
       page,
       sideMenu,
       paths,
@@ -91,8 +95,8 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
 
     docNo = await editJson(
       JsonPath,
-      formName,
-      await page.locator("#txtAdHocNum").inputValue()
+      keyName,
+      await page.locator("#txtMPRNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -117,8 +121,8 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Ad hoc Allowance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerAdhocAllowanceEdit(
+  test("Edit Monthly Piece Rate Work", async ({ page, db }) => {
+    await MonthlyPieceRateWorkEdit(
       page,
       sideMenu,
       paths,
@@ -132,6 +136,9 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
       docNo
     );
 
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
@@ -143,7 +150,6 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -154,8 +160,8 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Ad hoc Allowance", async ({ page, db }) => {
-    await WorkerAdhocAllowanceDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Monthly Piece Rate Work", async ({ page, db }) => {
+    await MonthlyPieceRateWorkDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -166,8 +172,6 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

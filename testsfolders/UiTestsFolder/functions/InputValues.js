@@ -73,7 +73,7 @@ export async function InputGridValuesSameCols(
 
   for (let i = 0; i < cellsIndex.length; i++) {
     if (vals[i] === "NA" || vals[i] === "AF") continue;
-    
+
     const cell = row.locator("td").nth(cellsIndex[i]);
 
     await cell.click();
@@ -88,7 +88,12 @@ export async function InputGridValuesSameCols(
       continue;
     }
 
-    if (vals[i] === "RW" || vals[i] === "PR" || vals[i] === "NW") {
+    if (
+      vals[i] === "RW" ||
+      vals[i] === "PR" ||
+      vals[i] === "NW" ||
+      vals[i] === "HA"
+    ) {
       await input.fill("");
     }
 

@@ -1,12 +1,12 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -15,17 +15,17 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOUCropHarvestingCreate,
-  InterOUCropHarvestingEdit,
-  InterOUCropHarvestingDelete,
-} from "@UiFolder/pages/Checkroll/11_InterOUCropHarvesting";
+  WorkerAdditionalRemunerationCreate,
+  WorkerAdditionalRemunerationDelete,
+  WorkerAdditionalRemunerationEdit,
+} from "@UiFolder/pages/Checkroll/20_WorkerAdditionalRemuneration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,24 +36,22 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Crop";
-const formName = "Inter-OU Crop Harvesting (Loan To)";
-const keyName = "InterOUCropHarvesting";
+const submodule = "Additional Remuneration";
+const formName = "Worker Additional Remuneration";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 2],
-  [0, 2, 3, 4, 5, 6],
+  [1, 2],
 ];
 
-test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
+test.describe.serial("Worker Additional Remuneration Tests", () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
-
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
     [
       createValues,
@@ -71,7 +69,7 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -80,13 +78,10 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Crop Harvesting (Loan To)", async ({
-    page,
-    db,
-  }) => {
+  test("Create Worker Additional Remuneration", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await InterOUCropHarvestingCreate(
+    const { uiVals, gridVals } = await WorkerAdditionalRemunerationCreate(
       page,
       sideMenu,
       paths,
@@ -100,8 +95,8 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     docNo = await editJson(
       JsonPath,
-      keyName,
-      await page.locator("#txtInterOUCropHarNum").inputValue()
+      formName,
+      await page.locator("#txtQRFNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -115,22 +110,18 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Crop Harvesting (Loan To)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await InterOUCropHarvestingEdit(
+  test("Edit Worker Additional Remuneration", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdditionalRemunerationEdit(
       page,
       sideMenu,
       paths,
@@ -155,28 +146,32 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Crop Harvesting (Loan To)", async ({ page, db }) => {
-    await InterOUCropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Worker Additional Remuneration", async ({ page, db }) => {
+    await WorkerAdditionalRemunerationDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

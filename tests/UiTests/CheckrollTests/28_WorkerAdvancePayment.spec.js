@@ -2,6 +2,7 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
+import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -13,17 +14,19 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  WorkerAdhocDeductionCreate,
-  WorkerAdhocDeductionEdit,
-  WorkerAdhocDeductionDelete,
-} from "@UiFolder/pages/Checkroll/16_WorkerAdhocDeduction";
+  WorkerAdvancePaymentCreate,
+  WorkerAdvancePaymentEdit,
+  WorkerAdvancePaymentDelete,
+} from "@UiFolder/pages/Checkroll/28_WorkerAdvancePayment";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,17 +39,17 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Allowance & Deduction";
-const formName = "Worker Ad hoc Deduction";
+const submodule = "Miscellaneous";
+const formName = "Worker Advance Payment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9]];
+const cellsIndex = [[1, 2, 3]];
 
-test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
+test.describe.serial("Worker Advance Payment Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Load Excel values
     [
       createValues,
@@ -73,10 +76,10 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Ad hoc Deduction", async ({ page, db }) => {
+  test("Create New Worker Advance Payment", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdhocDeductionCreate(
+    const { uiVals, gridVals } = await WorkerAdvancePaymentCreate(
       page,
       sideMenu,
       paths,
@@ -91,7 +94,7 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtAdHocNum").inputValue()
+      await page.getByPlaceholder("Auto No.").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -116,8 +119,8 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Ad hoc Deduction", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerAdhocDeductionEdit(
+  test("Edit Worker Advance Payment", async ({ page, db }) => {
+    await WorkerAdvancePaymentEdit(
       page,
       sideMenu,
       paths,
@@ -131,6 +134,9 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
       docNo
     );
 
+    const uiVals = await getUiValues(page, paths);
+    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
@@ -142,7 +148,6 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
         OU: ou[0],
       }
     );
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -153,14 +158,16 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Ad hoc Deduction", async ({ page, db }) => {
-    await WorkerAdhocDeductionDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Worker Advance Payment", async ({ page, db }) => {
+    await WorkerAdvancePaymentDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully` + "\n");
   });
 
   // ---------------- After All ----------------

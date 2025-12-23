@@ -1,13 +1,12 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -23,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  MillCPOandPKCreate,
-  MillCPOandPKEdit,
-  MillCPOandPKDelete,
-} from "@UiFolder/pages/Checkroll/28_MillCPOandPK";
+  MonthlyStandardBorongAndTallPalmRateCreate,
+  MonthlyStandardBorongAndTallPalmRateEdit,
+  MonthlyStandardBorongAndTallPalmRateDelete,
+} from "@UiFolder/pages/Checkroll/15_MonthlyStandardBorong&TallPalmRate";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -36,19 +35,21 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Mill CPO and PK";
+const submodule = "Crop";
+const formName = "Monthly Standard Borong & Tall Palm Rate";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3]];
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]];
 
-test.describe.skip("Mill CPO and PK Tests", async () => {
+test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -64,7 +65,7 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -73,39 +74,33 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mill CPO and PK", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
-      OU: ou[0],
-    });
+  test("Create Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
-    const { uiVals, gridVals } = await MillCPOandPKCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      gridPaths,
-      gridCreateValues,
-      cellsIndex,
-      ou
-    );
+    const { uiVals, gridVals } =
+      await MonthlyStandardBorongAndTallPalmRateCreate(
+        page,
+        sideMenu,
+        paths,
+        columns,
+        createValues,
+        gridPaths,
+        gridCreateValues,
+        cellsIndex,
+        ou
+      );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
-      OU: ou[0],
+      Date: createValues[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        FYear: createValues[0],
-        Period: createValues[1],
-        Div: createValues[2],
+        Date: createValues[0],
         OU: ou[0],
       }
     );
@@ -113,22 +108,18 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mill CPO and PK", async ({ page, db }) => {
-    await MillCPOandPKEdit(
+  test("Edit Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await MonthlyStandardBorongAndTallPalmRateEdit(
       page,
       sideMenu,
       paths,
@@ -139,58 +130,53 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0]
+      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
     );
-
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
-      OU: ou[0],
+      Date: createValues[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        FYear: createValues[0],
-        Period: createValues[1],
-        Div: createValues[2],
+        Date: createValues[0],
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
-  // // ---------------- Delete Test ----------------
-  // test("Delete Mill CPO and PK", async ({ page, db }) => {
-  //   await MillCPOandPKDelete(page, sideMenu, createValues, ou, docNo);
+  // ---------------- Delete Test ----------------
+  test("Delete Monthly Standard Borong & Tall Palm Rate", async ({
+    page,
+    db,
+  }) => {
+    await MonthlyStandardBorongAndTallPalmRateDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      gridEditValues[0].split(";")[0]
+    );
 
-  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-  //     DocNo: docNo,
-  //     OU: ou[0],
-  //   });
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      Date: createValues[0],
+    });
 
-  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-  // });
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
 
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   console.log(`End Running: ${formName}`);
-  // });
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
+  });
+
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    console.log(`End Running: ${formName}`);
+  });
 });

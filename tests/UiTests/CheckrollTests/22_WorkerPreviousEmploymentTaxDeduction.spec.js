@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -22,14 +22,15 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  DailyCCHandLFCCreate,
-  DailyCCHandLFCDelete,
-  DailyCCHandLFCEdit,
-} from "@UiFolder/pages/Checkroll/09_DailyCCHandLFC";
+  WorkerPreviousEmploymentTaxDeductionCreate,
+  WorkerPreviousEmploymentTaxDeductionDelete,
+  WorkerPreviousEmploymentTaxDeductionEdit,
+} from "@UiFolder/pages/Checkroll/22_WorkerPreviousEmploymentTaxDeduction";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -38,21 +39,23 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Crop";
-const formName = "Daily Contract Crop Harvesting and Loose Fruit Collection";
+const submodule = "Income Tax";
+const formName = "Worker Previous Employment Tax Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 3, 4],
-  [1, 3, 4],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
+  [1, 2],
+  [1, 2],
 ];
 
-test.describe
-  .serial("Daily Contract Crop Harvesting and Loose Fruit Collection Tests", () => {
+test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -64,8 +67,6 @@ test.describe
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
-
-    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -79,41 +80,39 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+  test("Create Worker Previous Employment Tax Deduction", async ({
     page,
     db,
   }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Gang: createValues[1],
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await DailyCCHandLFCCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      gridPaths,
-      gridCreateValues,
-      cellsIndex,
-      ou
-    );
-
-    docNo = await editJson(
-      JsonPath,
-      formName,
-      await page.locator("#txtRefNum").inputValue()
-    );
+    const { uiVals, gridVals } =
+      await WorkerPreviousEmploymentTaxDeductionCreate(
+        page,
+        sideMenu,
+        paths,
+        columns,
+        createValues,
+        gridPaths,
+        gridCreateValues,
+        cellsIndex,
+        ou
+      );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -124,11 +123,11 @@ test.describe
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+  test("Edit Worker Previous Employment Tax Deduction", async ({
     page,
     db,
   }) => {
-    const { uiVals, gridVals } = await DailyCCHandLFCEdit(
+    const { uiVals, gridVals } = await WorkerPreviousEmploymentTaxDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -139,20 +138,19 @@ test.describe
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      gridCreateValues[0].split(";")[0]
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -163,25 +161,30 @@ test.describe
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Contract Crop Harvesting and Loose Fruit Collection", async ({
+  test("Delete Worker Previous Employment Tax Deduction", async ({
     page,
     db,
   }) => {
-    await DailyCCHandLFCDelete(page, sideMenu, createValues, ou, docNo);
+    await WorkerPreviousEmploymentTaxDeductionDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      gridEditValues[0].split(";")[0]
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
-  // // ---------------- After All ----------------
+  // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

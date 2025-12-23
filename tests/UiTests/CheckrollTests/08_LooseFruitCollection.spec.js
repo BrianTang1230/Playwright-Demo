@@ -22,10 +22,10 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOUCropHarvestingAndCollectionCreate,
-  InterOUCropHarvestingAndCollectionEdit,
-  InterOUCropHarvestingAndCollectionDelete,
-} from "@UiFolder/pages/Checkroll/12_InterOUCropHarvesting&Collection";
+  LooseFruitCollectionCreate,
+  LooseFruitCollectionEdit,
+  LooseFruitCollectionDelete,
+} from "@UiFolder/pages/Checkroll/08_LooseFruitCollection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,18 +39,20 @@ let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Crop";
-const formName = "Inter-OU Crop Harvesting & Collection (Loan To)";
-const keyName = "InterOUCropHarvesting&Collection";
+const formName = "Loose Fruit Collection";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6]];
+const cellsIndex = [
+  [1, 2],
+  [0, 1, 3, 4, 5, 6],
+];
 
-test.describe
-  .serial("Inter-OU Crop Harvesting & Collection (Loan To) Tests", async () => {
+test.describe.serial("Loose Fruit Collection Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "MY") test.skip(true);
+    if (region === "IND") test.skip(true);
 
     // Load Excel values
     [
@@ -78,13 +80,10 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Crop Harvesting & Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
+  test("Create New Loose Fruit Collection", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await InterOUCropHarvestingAndCollectionCreate(
+    const { uiVals, gridVals } = await LooseFruitCollectionCreate(
       page,
       sideMenu,
       paths,
@@ -98,8 +97,8 @@ test.describe
 
     docNo = await editJson(
       JsonPath,
-      keyName,
-      await page.locator("#txtCropHarNum").inputValue()
+      formName,
+      await page.locator("#txtLFCollectionNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -117,21 +116,15 @@ test.describe
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Crop Harvesting & Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await InterOUCropHarvestingAndCollectionEdit(
+  test("Edit Loose Fruit Collection", async ({ page, db }) => {
+    const { uiVals, gridVals } = await LooseFruitCollectionEdit(
       page,
       sideMenu,
       paths,
@@ -160,33 +153,23 @@ test.describe
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Crop Harvesting & Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await InterOUCropHarvestingAndCollectionDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou,
-      docNo
-    );
+  test("Delete Loose Fruit Collection", async ({ page, db }) => {
+    await LooseFruitCollectionDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

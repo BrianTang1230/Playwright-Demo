@@ -5,25 +5,27 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
-  JsonPath,
   InputPath,
-  GridPath,
+  JsonPath,
   DocNo,
+  GridPath,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
-  MandorAndCheckerPenaltyCreate,
-  MandorAndCheckerPenaltyEdit,
-  MandorAndCheckerPenaltyDelete,
-} from "@UiFolder/pages/Checkroll/18_Mandor&CheckerPenalty";
+  DailyAttendanceCreate,
+  DailyAttendanceDelete,
+  DailyAttendanceEdit,
+} from "@UiFolder/pages/Checkroll/01_DailyAttendance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -34,21 +36,32 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Allowance & Deduction";
-const formName = "Mandor & Checker Penalty";
+const submodule = "Attendance";
+const formName = "Daily Attendance";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8]];
+const cellsIndex = [
+  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
+];
+const cellsIndexIND = [
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [1, 2, 3, 4, 5, 6],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+];
 
-test.describe.serial("Mandor & Checker Penalty Tests", async () => {
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
+
+test.describe.serial("Daily Attendance Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "MY") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -59,14 +72,14 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
 
     docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -75,28 +88,28 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mandor & Checker Penalty", async ({ page, db }) => {
+  test("Create Daily Attendance", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       DocNo: docNo,
       OU: ou[0],
     });
 
-    const { uiVals, gridVals } = await MandorAndCheckerPenaltyCreate(
+    const { uiVals, gridVals } = await DailyAttendanceCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex,
+      dwCellIndex,
       ou
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#MdrChkPenaltyNum").inputValue()
+      await page.locator("#txtATRNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -105,33 +118,30 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await ValidateUiValues(createValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mandor & Checker Penalty", async ({ page, db }) => {
-    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit(
+  test("Edit Daily Attendance", async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyAttendanceEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex,
+      dwCellIndex,
       ou,
       docNo
     );
@@ -142,27 +152,25 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await ValidateUiValues(editValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Mandor & Checker Penalty", async ({ page, db }) => {
-    await MandorAndCheckerPenaltyDelete(
+  test("Delete Daily Attendance", async ({ page, db }) => {
+    await DailyAttendanceDelete(
       page,
       sideMenu,
       createValues,
+      editValues,
       ou,
       docNo
     );
@@ -172,6 +180,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

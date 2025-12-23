@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateGridValues,
   ValidateDBValues,
+  ValidateGridValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -22,47 +22,40 @@ import {
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  InterOUDailyContractWorkCreate,
-  InterOUDailyContractWorkEdit,
-  InterOUDailyContractWorkDelete,
-} from "@UiFolder/pages/Checkroll/03_InterOUDailyContractWork";
+  WorkerMonthlyTaxDeductionCreate,
+  WorkerMonthlyTaxDeductionDelete,
+  WorkerMonthlyTaxDeductionEdit,
+} from "@UiFolder/pages/Checkroll/21_WorkerMonthlyTaxDeduction";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Set Global Variables ----------------
 let ou;
-let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_DATA";
+const sheetName = "CR_Data";
 const module = "Checkroll";
-const submodule = "Attendance";
-const formName = "Inter-OU Daily Contract Work (Loan To)";
-const keyName = "InterOUDailyContractWork";
+const submodule = "Income Tax";
+const formName = "Worker Monthly Tax Deduction";
+const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 6, 7],
   [1, 2, 3, 4, 5, 6],
-  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
-];
-const cellsIndexIND = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-  [1, 2, 3, 4, 5, 6],
-  [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  [1, 2],
+  [1, 2],
 ];
 
-const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
-const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
-const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
-
-test.describe
-  .serial("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
+test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -73,14 +66,12 @@ test.describe
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(dwPaths, dwCols, createValues, editValues);
-
-    docNo = DocNo[keyName];
+    await checkLength(paths, columns, createValues, editValues);
 
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each  ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -89,118 +80,100 @@ test.describe
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Daily Contract Work (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create Worker Monthly Tax Deduction", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Gang: createValues[1],
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await InterOUDailyContractWorkCreate(
+    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionCreate(
       page,
       sideMenu,
-      dwPaths,
-      dwCols,
+      paths,
+      columns,
       createValues,
       gridPaths,
       gridCreateValues,
-      interDWCellIndex,
+      cellsIndex,
       ou
     );
 
-    docNo = await editJson(
-      JsonPath,
-      keyName,
-      await page.locator("#txtICWNum").inputValue()
-    );
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...dwCols, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Daily Contract Work (Loan To)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await InterOUDailyContractWorkEdit(
+  test("Edit Worker Monthly Tax Deduction", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionEdit(
       page,
       sideMenu,
-      dwPaths,
-      dwCols,
+      paths,
+      columns,
       createValues,
       editValues,
       gridPaths,
       gridEditValues,
-      interDWCellIndex,
-      ou,
-      docNo
+      cellsIndex,
+      ou
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      {
-        DocNo: docNo,
-        OU: ou[0],
-      }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0], ou[1]],
-      [...dwCols, "OU", "LoanToOU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Daily Contract Work (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    await InterOUDailyContractWorkDelete(
+  test("Delete Worker Monthly Tax Deduction", async ({ page, db }) => {
+    await WorkerMonthlyTaxDeductionDelete(
       page,
       sideMenu,
       createValues,
-      ou,
-      docNo
+      editValues,
+      ou
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      DocNo: docNo,
+      Date: createValues[0],
+      Gang: createValues[1],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     console.log(`End Running: ${formName}`);
   });
 });

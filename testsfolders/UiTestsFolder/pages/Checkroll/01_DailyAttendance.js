@@ -7,7 +7,7 @@ import {
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
-export async function DailyPieceRateWorkCreate(
+export async function DailyAttendanceCreate(
   page,
   sideMenu,
   paths,
@@ -100,7 +100,7 @@ export async function DailyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkEdit(
+export async function DailyAttendanceEdit(
   page,
   sideMenu,
   paths,
@@ -116,7 +116,7 @@ export async function DailyPieceRateWorkEdit(
   const region = process.env.REGION || Login.Region;
 
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Edit transaction", async () => {
@@ -191,7 +191,7 @@ export async function DailyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkDelete(
+export async function DailyAttendanceDelete(
   page,
   sideMenu,
   values,
@@ -200,7 +200,7 @@ export async function DailyPieceRateWorkDelete(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Delete transaction", async () => {

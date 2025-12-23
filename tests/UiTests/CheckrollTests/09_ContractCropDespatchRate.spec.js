@@ -1,8 +1,7 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
@@ -14,19 +13,17 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
-
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
-
 import {
-  WorkerAdvancePaymentCreate,
-  WorkerAdvancePaymentEdit,
-  WorkerAdvancePaymentDelete,
-} from "@UiFolder/pages/Checkroll/27_WorkerAdvancePayment";
+  ContractCropDespatchRateCreate,
+  ContractCropDespatchRateEdit,
+  ContractCropDespatchRateDelete,
+} from "@UiFolder/pages/Checkroll/09_ContractCropDespatchRate";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,17 +36,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Worker Advance Payment";
+const submodule = "Crop";
+const formName = "Contract Crop Despatch Rate";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3]];
+const cellsIndex = [[1, 2, 3, 4]];
 
-test.describe.serial("Worker Advance Payment Tests", async () => {
+test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "IND") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -76,10 +75,10 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Advance Payment", async ({ page, db }) => {
+  test("Create New Contract Crop Despatch Rate", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerAdvancePaymentCreate(
+    const { uiVals, gridVals } = await ContractCropDespatchRateCreate(
       page,
       sideMenu,
       paths,
@@ -94,7 +93,7 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.getByPlaceholder("Auto No.").inputValue()
+      await page.locator("#txtCDRNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -119,8 +118,8 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Advance Payment", async ({ page, db }) => {
-    await WorkerAdvancePaymentEdit(
+  test("Edit Contract Crop Despatch Rate", async ({ page, db }) => {
+    const { uiVals, gridVals } = await ContractCropDespatchRateEdit(
       page,
       sideMenu,
       paths,
@@ -134,9 +133,6 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       docNo
     );
 
-    const uiVals = await getUiValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
@@ -148,6 +144,7 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
         OU: ou[0],
       }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -158,8 +155,14 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Advance Payment", async ({ page, db }) => {
-    await WorkerAdvancePaymentDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Contract Crop Despatch Rate", async ({ page, db }) => {
+    await ContractCropDespatchRateDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
@@ -167,7 +170,7 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
 
-    console.log("\n" + `${formName} transaction deleted successfully` + "\n");
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

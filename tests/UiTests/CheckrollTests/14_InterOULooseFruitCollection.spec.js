@@ -5,8 +5,8 @@ import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
   ValidateUiValues,
-  ValidateDBValues,
   ValidateGridValues,
+  ValidateDBValues,
 } from "@UiFolder/functions/ValidateValues";
 
 import {
@@ -15,43 +15,42 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  WorkerMonthlyTaxDeductionCreate,
-  WorkerMonthlyTaxDeductionDelete,
-  WorkerMonthlyTaxDeductionEdit,
-} from "@UiFolder/pages/Checkroll/20_WorkerMonthlyTaxDeduction";
-
-import Login from "@utils/data/uidata/loginData.json";
+  InterOULooseFruitCollectionCreate,
+  InterOULooseFruitCollectionEdit,
+  InterOULooseFruitCollectionDelete,
+} from "@UiFolder/pages/Checkroll/14_InterOULooseFruitCollection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
-const sheetName = "CR_Data";
+const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Income Tax";
-const formName = "Worker Monthly Tax Deduction";
-const keyName = formName.split(" ").join("");
+const submodule = "Crop";
+const formName = "Inter-OU Loose Fruit Collection (Loan To)";
+const keyName = "InterOULooseFruitCollection";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 5, 6],
   [1, 2],
-  [1, 2],
+  [0, 1, 3, 4, 5, 6],
 ];
 
-test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
+test.describe
+  .serial("Inter-OU Loose Fruit Collection (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     if (region === "IND") test.skip(true);
@@ -68,10 +67,12 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+  // ---------------- Before Each  ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -80,14 +81,13 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Worker Monthly Tax Deduction", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      Gang: createValues[1],
-      OU: ou[0],
-    });
+  test("Create New Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionCreate(
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionCreate(
       page,
       sideMenu,
       paths,
@@ -99,28 +99,42 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      keyName,
+      await page.locator("#txtLFCollectionNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
-
+    await ValidateDBValues(
+      [...uiVals, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
+      dbValues[0]
+    );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Monthly Tax Deduction", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerMonthlyTaxDeductionEdit(
+  test("Edit Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit(
       page,
       sideMenu,
       paths,
@@ -130,50 +144,60 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
-
+    await ValidateDBValues(
+      [...uiVals, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
+      dbValues[0]
+    );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Monthly Tax Deduction", async ({ page, db }) => {
-    await WorkerMonthlyTaxDeductionDelete(
+  test("Delete Inter-OU Loose Fruit Collection (Loan To)", async ({
+    page,
+    db,
+  }) => {
+    await InterOULooseFruitCollectionDelete(
       page,
       sideMenu,
       createValues,
-      editValues,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
-      Gang: createValues[1],
+      DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -13,7 +13,6 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
-
 import {
   JsonPath,
   InputPath,
@@ -21,10 +20,10 @@ import {
   DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 import {
-  WorkerAdhocAllowanceCreate,
-  WorkerAdhocAllowanceEdit,
-  WorkerAdhocAllowanceDelete,
-} from "@UiFolder/pages/Checkroll/15_WorkerAdhocAllowance";
+  MandorAndCheckerPenaltyCreate,
+  MandorAndCheckerPenaltyEdit,
+  MandorAndCheckerPenaltyDelete,
+} from "@UiFolder/pages/Checkroll/19_Mandor&CheckerPenalty";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,16 +37,18 @@ let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Allowance & Deduction";
-const formName = "Worker Ad hoc Allowance";
+const formName = "Mandor & Checker Penalty";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9]];
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8]];
 
-test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
+test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -74,10 +75,13 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Worker Ad hoc Allowance", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test("Create New Mandor & Checker Penalty", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
 
-    const { uiVals, gridVals } = await WorkerAdhocAllowanceCreate(
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +96,7 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtAdHocNum").inputValue()
+      await page.locator("#MdrChkPenaltyNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -117,8 +121,8 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Worker Ad hoc Allowance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await WorkerAdhocAllowanceEdit(
+  test("Edit Mandor & Checker Penalty", async ({ page, db }) => {
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit(
       page,
       sideMenu,
       paths,
@@ -154,14 +158,22 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Ad hoc Allowance", async ({ page, db }) => {
-    await WorkerAdhocAllowanceDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Mandor & Checker Penalty", async ({ page, db }) => {
+    await MandorAndCheckerPenaltyDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo
+    );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

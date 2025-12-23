@@ -1,4 +1,4 @@
-import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -13,19 +13,17 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
-
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
 } from "@utils/data/uidata/checkrollData.json";
-
 import {
-  CropHarvestingCreate,
-  CropHarvestingEdit,
-  CropHarvestingDelete,
-} from "@UiFolder/pages/Checkroll/05_CropHarvesting";
+  WorkerAdhocDeductionCreate,
+  WorkerAdhocDeductionEdit,
+  WorkerAdhocDeductionDelete,
+} from "@UiFolder/pages/Checkroll/17_WorkerAdhocDeduction";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -38,22 +36,17 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Crop";
-const formName = "Crop Harvesting";
+const submodule = "Allowance & Deduction";
+const formName = "Worker Ad hoc Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [
-  [1, 2],
-  [0, 2, 3, 4, 5, 7],
-];
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8, 9]];
 
-test.describe.serial("Crop Harvesting Tests", async () => {
+test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
-
     // Load Excel values
     [
       createValues,
@@ -80,10 +73,10 @@ test.describe.serial("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Crop Harvesting", async ({ page, db }) => {
+  test("Create New Worker Ad hoc Deduction", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await CropHarvestingCreate(
+    const { uiVals, gridVals } = await WorkerAdhocDeductionCreate(
       page,
       sideMenu,
       paths,
@@ -98,7 +91,7 @@ test.describe.serial("Crop Harvesting Tests", async () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtCropHarNum").inputValue()
+      await page.locator("#txtAdHocNum").inputValue()
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -123,8 +116,8 @@ test.describe.serial("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Crop Harvesting", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CropHarvestingEdit(
+  test("Edit Worker Ad hoc Deduction", async ({ page, db }) => {
+    const { uiVals, gridVals } = await WorkerAdhocDeductionEdit(
       page,
       sideMenu,
       paths,
@@ -160,14 +153,16 @@ test.describe.serial("Crop Harvesting Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Crop Harvesting", async ({ page, db }) => {
-    await CropHarvestingDelete(page, sideMenu, createValues, ou, docNo);
+  test("Delete Worker Ad hoc Deduction", async ({ page, db }) => {
+    await WorkerAdhocDeductionDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

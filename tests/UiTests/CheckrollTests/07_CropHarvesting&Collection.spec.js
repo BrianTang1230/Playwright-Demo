@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
@@ -15,20 +15,21 @@ import {
 } from "@UiFolder/queries/CheckrollQuery";
 
 import {
-  InputPath,
   JsonPath,
-  DocNo,
+  InputPath,
   GridPath,
+  DocNo,
 } from "@utils/data/uidata/checkrollData.json";
 
 import {
-  CreateRainfallEntryCreate,
-  CreateRainfallEntryEdit,
-  CreateRainfallEntryDelete,
-} from "@UiFolder/pages/Checkroll/25_CreateRainfallEntry";
+  CropHarvestingAndCollectionCreate,
+  CropHarvestingAndCollectionEdit,
+  CropHarvestingAndCollectionDelete,
+} from "@UiFolder/pages/Checkroll/07_CropHarvesting&Collection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
@@ -37,17 +38,19 @@ let gridCreateValues;
 let gridEditValues;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
-const submodule = "Miscellaneous";
-const formName = "Create Rainfall Entry";
+const submodule = "Crop";
+const formName = "Crop Harvesting & Collection";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [2, 3, 4, 5, 6]];
+const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6]];
 
-test.describe.serial("Create Rainfall Entry Tests", async () => {
+test.describe.serial("Crop Harvesting & Collection Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    if (region === "MY") test.skip(true);
+
     // Load Excel values
     [
       createValues,
@@ -59,6 +62,8 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -72,10 +77,10 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Create Rainfall Entry", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+  test("Create New Crop Harvesting & Collection", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    const { uiVals, gridVals } = await CreateRainfallEntryCreate(
+    const { uiVals, gridVals } = await CropHarvestingAndCollectionCreate(
       page,
       sideMenu,
       paths,
@@ -87,14 +92,20 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       ou
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtCropHarNum").inputValue()
+    );
+
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
@@ -109,8 +120,8 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Create Rainfall Entry", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CreateRainfallEntryEdit(
+  test("Edit Crop Harvesting & Collection", async ({ page, db }) => {
+    const { uiVals, gridVals } = await CropHarvestingAndCollectionEdit(
       page,
       sideMenu,
       paths,
@@ -120,17 +131,18 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
       gridPaths,
       gridEditValues,
       cellsIndex,
-      ou
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: createValues[0],
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
-        Date: createValues[0],
+        DocNo: docNo,
         OU: ou[0],
       }
     );
@@ -145,26 +157,27 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Create Rainfall Entry", async ({ page, db }) => {
-    await CreateRainfallEntryDelete(
+  test("Delete Crop Harvesting & Collection", async ({ page, db }) => {
+    await CropHarvestingAndCollectionDelete(
       page,
       sideMenu,
-      paths,
-      columns,
-      editValues,
-      ou
+      createValues,
+      ou,
+      docNo
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-      Date: editValues[0],
+      DocNo: docNo,
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

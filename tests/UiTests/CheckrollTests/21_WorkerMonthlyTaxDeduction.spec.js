@@ -167,9 +167,9 @@ test.describe.serial("Worker Monthly Tax Deduction Tests", () => {
       Gang: createValues[1],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

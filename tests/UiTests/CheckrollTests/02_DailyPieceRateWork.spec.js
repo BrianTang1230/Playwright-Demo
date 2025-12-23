@@ -122,11 +122,7 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, dwCols, uiVals);
-    await ValidateDBValues(
-      [...uiVals, ou[0]],
-      [...dwCols, "OU"], // need to add .slice for columns as IND dont have Mandor column
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -181,11 +177,9 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
 
-    console.log("\n" + `${formName} transaction deleted successfully` + "\n");
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

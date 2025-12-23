@@ -170,6 +170,8 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
+
+    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
   });
 
   // ---------------- After All ----------------

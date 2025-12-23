@@ -3,14 +3,14 @@
   "VEH_API_URL": "https://qaappgw.quarto.cloud/nurseryapi/veh",
   "ID": {
     "VehicleRunningDistribution": {
-      "key": 36052,
-      "num": "VEH0000598",
+      "key": 36053,
+      "num": "VEH0000599",
       "ou": 4,
       "vehId": 334
     },
     "InterOUVehicleRunningDistribution(LoanTo)": {
-      "key": 11061,
-      "num": "IRD0000018",
+      "key": 11062,
+      "num": "IRD0000019",
       "ou": 4,
       "vehId": 333
     }

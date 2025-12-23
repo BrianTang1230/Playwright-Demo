@@ -25,7 +25,7 @@ import {
   WorkerAdditionalRemunerationCreate,
   WorkerAdditionalRemunerationDelete,
   WorkerAdditionalRemunerationEdit,
-} from "@UiFolder/pages/Checkroll/17_WorkerAdditionalRemuneration";
+} from "@UiFolder/pages/Checkroll/19_WorkerAdditionalRemuneration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -44,7 +44,10 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2]];
+const cellsIndex = [
+  [1, 2],
+  [1, 2],
+];
 
 test.describe.serial("Worker Additional Remuneration Tests", () => {
   // ---------------- Before All ----------------
@@ -98,7 +101,6 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -111,17 +113,10 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -142,7 +137,6 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -155,17 +149,10 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -180,7 +167,6 @@ test.describe.serial("Worker Additional Remuneration Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

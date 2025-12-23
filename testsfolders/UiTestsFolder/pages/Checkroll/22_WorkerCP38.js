@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyPieceRateWorkCreate(
+export async function WorkerCP38Create(
   page,
   sideMenu,
   paths,
@@ -24,8 +24,8 @@ export async function MonthlyPieceRateWorkCreate(
   await runStep("Select OU", async () => {
     await SelectOU(
       page,
-      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-      "#ddlOU-list span",
+      "#divComboOU .k-dropdown-wrap .k-select",
+      "#ddlOU_listbox span",
       ou[0]
     );
   });
@@ -71,7 +71,7 @@ export async function MonthlyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkEdit(
+export async function WorkerCP38Edit(
   page,
   sideMenu,
   paths,
@@ -85,7 +85,7 @@ export async function MonthlyPieceRateWorkEdit(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Edit transaction", async () => {
@@ -120,15 +120,9 @@ export async function MonthlyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkDelete(
-  page,
-  sideMenu,
-  values,
-  ou,
-  docNo
-) {
+export async function WorkerCP38Delete(page, sideMenu, values, ou, docNo) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Delete transaction", async () => {

@@ -23,7 +23,7 @@ import {
   MandorAndCheckerPenaltyCreate,
   MandorAndCheckerPenaltyEdit,
   MandorAndCheckerPenaltyDelete,
-} from "@UiFolder/pages/Checkroll/16_Mandor&CheckerPenalty";
+} from "@UiFolder/pages/Checkroll/18_Mandor&CheckerPenalty";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -117,11 +117,7 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -158,11 +154,7 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

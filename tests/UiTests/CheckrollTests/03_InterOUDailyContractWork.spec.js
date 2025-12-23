@@ -45,16 +45,19 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 4],
+  [1, 2, 3, 4, 6, 7],
   [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 9, 12, 15],
+  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
 ];
 const cellsIndexIND = [
-  [1, 4, 5, 6, 8],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
   [1, 2, 3, 4, 5, 6],
-  [1, 3, 4, 6, 9],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
+
 const interDWCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
 
 test.describe
   .serial("Inter-OU Daily Contract Work (Loan To) Tests", async () => {
@@ -70,7 +73,7 @@ test.describe
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
 
     docNo = DocNo[keyName];
 
@@ -95,8 +98,8 @@ test.describe
     const { uiVals, gridVals } = await InterOUDailyContractWorkCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
@@ -112,7 +115,6 @@ test.describe
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -127,16 +129,12 @@ test.describe
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...uiVals, ou[0], ou[1]],
+      [...dwCols, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -144,8 +142,8 @@ test.describe
     const { uiVals, gridVals } = await InterOUDailyContractWorkEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
@@ -157,7 +155,6 @@ test.describe
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -172,16 +169,12 @@ test.describe
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0], ou[1]],
-      [...columns, "OU", "LoanToOU"],
+      [...uiVals, ou[0], ou[1]],
+      [...dwCols, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -199,7 +192,6 @@ test.describe
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);

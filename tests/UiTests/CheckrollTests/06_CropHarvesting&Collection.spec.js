@@ -25,7 +25,7 @@ import {
   CropHarvestingAndCollectionCreate,
   CropHarvestingAndCollectionEdit,
   CropHarvestingAndCollectionDelete,
-} from "@UiFolder/pages/Checkroll/CropHarvesting&Collection";
+} from "@UiFolder/pages/Checkroll/06_CropHarvesting&Collection";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -116,11 +116,7 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -157,11 +153,7 @@ test.describe.serial("Crop Harvesting & Collection Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

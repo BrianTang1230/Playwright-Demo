@@ -25,7 +25,7 @@ import {
   WorkerIncomeDeclarationCreate,
   WorkerIncomeDeclarationEdit,
   WorkerIncomeDeclarationDelete,
-} from "@UiFolder/pages/Checkroll/21_WorkerIncomeDeclaration";
+} from "@UiFolder/pages/Checkroll/23_WorkerIncomeDeclaration";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -43,7 +43,10 @@ const keyName = "WorkerIncomeDeclarationEAForm";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 2, 3, 4, 5, 6, 7]];
+const cellsIndex = [
+  [1, 2, 3, 4, 5],
+  [1, 2, 3, 4, 5, 6, 7],
+];
 
 test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
   // ---------------- Before All ----------------
@@ -91,7 +94,6 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -105,17 +107,10 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -131,11 +126,10 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      gridCreateValues.join(";").split(";")[0] // need to add keyword to identify the record
     );
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -149,17 +143,10 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -169,12 +156,11 @@ test.describe.serial("Worker Income Declaration (EA Form) Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0]
+      gridEditValues.join(";").split(";")[0]
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

@@ -25,7 +25,7 @@ import {
   CreateRainfallEntryCreate,
   CreateRainfallEntryEdit,
   CreateRainfallEntryDelete,
-} from "@UiFolder/pages/Checkroll/23_CreateRainfallEntry";
+} from "@UiFolder/pages/Checkroll/25_CreateRainfallEntry";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -89,7 +89,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -103,17 +102,10 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -133,7 +125,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -147,17 +138,10 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -173,7 +157,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: editValues[0],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);

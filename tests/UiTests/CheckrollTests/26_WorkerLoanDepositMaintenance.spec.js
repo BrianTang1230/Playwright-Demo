@@ -25,7 +25,7 @@ import {
   WorkerLoanDepositMaintenanceCreate,
   WorkerLoanDepositMaintenanceEdit,
   WorkerLoanDepositMaintenanceDelete,
-} from "@UiFolder/pages/Checkroll/24_WorkerLoanDepositMaintenance";
+} from "@UiFolder/pages/Checkroll/26_WorkerLoanDepositMaintenance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -43,7 +43,10 @@ const keyName = "WorkerLoanDepositMaintenance";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [1, 4, 6]];
+const cellsIndex = [
+  [1, 2, 6],
+  [1, 4, 5, 6],
+];
 
 test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   // ---------------- Before All ----------------
@@ -75,7 +78,6 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
   test("Create Worker Loan/Deposit Maintenance", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
-      RecType: createValues[1],
       OU: ou[0],
     });
 
@@ -93,15 +95,12 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        RecType: createValues[1],
         OU: ou[0],
       }
     );
@@ -109,17 +108,10 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -135,19 +127,16 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0] // need to add keyword to identify the record
+      gridCreateValues.join(";").split(";")[0] // need to add keyword to identify the record
     );
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        RecType: createValues[1],
         OU: ou[0],
       }
     );
@@ -155,17 +144,10 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -175,13 +157,11 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0]
+      gridEditValues.join(";").split(";")[0]
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
-      RecType: createValues[1],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

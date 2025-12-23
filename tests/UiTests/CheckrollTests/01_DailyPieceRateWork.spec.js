@@ -54,9 +54,12 @@ const cellsIndexIND = [
   [1, 2, 3, 4, 5, 6],
   [1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
-const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 
-test.describe.skip("Daily Piece Rate Work Tests", () => {
+const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
+const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
+
+test.describe.serial("Daily Piece Rate Work Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -69,7 +72,7 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
       gridEditValues,
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(dwPaths, dwCols, createValues, editValues);
 
     docNo = DocNo[keyName];
 
@@ -94,8 +97,8 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
     const { uiVals, gridVals } = await DailyPieceRateWorkCreate(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       gridPaths,
       gridCreateValues,
@@ -111,9 +114,7 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    console.log(dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -122,10 +123,10 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateUiValues(createValues, dwCols, uiVals);
     await ValidateDBValues(
       [...uiVals, ou[0]],
-      [...columns.slice(0, 4), "OU"],
+      [...dwCols, "OU"], // need to add .slice for columns as IND dont have Mandor column
       dbValues[0]
     );
 
@@ -138,8 +139,8 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
     const { uiVals, gridVals } = await DailyPieceRateWorkEdit(
       page,
       sideMenu,
-      paths,
-      columns,
+      dwPaths,
+      dwCols,
       createValues,
       editValues,
       gridPaths,
@@ -151,7 +152,6 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -161,8 +161,8 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await ValidateUiValues(editValues, dwCols, uiVals);
+    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -181,18 +181,19 @@ test.describe.skip("Daily Piece Rate Work Tests", () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {
       throw new Error(`Deleting ${formName} failed`);
     }
+    
+    console.log(`${formName} transaction deleted successfully`);
   });
 
   // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+  test.afterAll(async ({ db }) => {
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-  //   console.log(`End Running: ${formName}`);
-  // });
+    console.log(`End Running: ${formName}`);
+  });
 });

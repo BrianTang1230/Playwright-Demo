@@ -25,7 +25,7 @@ import {
   DailyCCHandLFCCreate,
   DailyCCHandLFCDelete,
   DailyCCHandLFCEdit,
-} from "@UiFolder/pages/Checkroll/08_DailyCCHandLFC";
+} from "@UiFolder/pages/Checkroll/09_DailyCCHandLFC";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -120,11 +120,7 @@ test.describe
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -163,11 +159,7 @@ test.describe
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

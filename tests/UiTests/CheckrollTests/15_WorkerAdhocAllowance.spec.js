@@ -24,7 +24,7 @@ import {
   WorkerAdhocAllowanceCreate,
   WorkerAdhocAllowanceEdit,
   WorkerAdhocAllowanceDelete,
-} from "@UiFolder/pages/Checkroll/13_WorkerAdhocAllowance";
+} from "@UiFolder/pages/Checkroll/15_WorkerAdhocAllowance";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -113,11 +113,7 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -154,11 +150,7 @@ test.describe.serial("Worker Ad hoc Allowance Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

@@ -5,9 +5,8 @@ import {
   InputValues,
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
-import Login from "@utils/data/uidata/loginData.json";
 
-export async function DailyPieceRateWorkCreate(
+export async function WorkerMonthlyTaxDeductionCreate(
   page,
   sideMenu,
   paths,
@@ -18,8 +17,6 @@ export async function DailyPieceRateWorkCreate(
   cellsIndex,
   ou
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
@@ -28,7 +25,7 @@ export async function DailyPieceRateWorkCreate(
     await SelectOU(
       page,
       "#divComboOU .k-dropdown .k-select",
-      "#ddlOU_listbox span",
+      "ul[aria-hidden='false'] li span",
       ou[0]
     );
   });
@@ -45,12 +42,11 @@ export async function DailyPieceRateWorkCreate(
 
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) await page.locator("#btnNewDWItem").click();
+      if (i === 1) await page.locator("#btnNewBIK").click();
       if (i === 2) {
         await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
+        await page.locator("#btnNewDeduct").click();
       }
-
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -65,10 +61,7 @@ export async function DailyPieceRateWorkCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
-      page,
-      region === "IND" ? paths.slice(0, 4) : paths
-    );
+    return await getUiValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
@@ -100,7 +93,7 @@ export async function DailyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkEdit(
+export async function WorkerMonthlyTaxDeductionEdit(
   page,
   sideMenu,
   paths,
@@ -110,13 +103,10 @@ export async function DailyPieceRateWorkEdit(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou,
-  docNo
+  ou
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], values[2], 5);
   });
 
   await runStep("Edit transaction", async () => {
@@ -126,7 +116,7 @@ export async function DailyPieceRateWorkEdit(
   });
 
   await runStep("Delete and add new grid item", async () => {
-    await page.locator("#IsSelectGrid").check();
+    await page.locator("#IsEmpyGridSelect").check();
     await page.locator("#btnDeleteItem").click();
     await sideMenu.confirmDelete.click();
     await sideMenu.btnAddNewItem.click();
@@ -134,13 +124,10 @@ export async function DailyPieceRateWorkEdit(
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) {
-        await page.locator("#tabstripworkDet li").first().click();
-        await page.locator("#btnNewDWItem").click();
-      }
+      if (i === 1) await page.locator("#btnNewBIK").click();
       if (i === 2) {
         await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
+        await page.locator("#btnNewDeduct").click();
       }
       await InputGridValuesSameCols(
         page,
@@ -156,10 +143,7 @@ export async function DailyPieceRateWorkEdit(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
-      page,
-      region === "IND" ? paths.slice(0, 4) : paths
-    );
+    return await getUiValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
@@ -191,16 +175,15 @@ export async function DailyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkDelete(
+export async function WorkerMonthlyTaxDeductionDelete(
   page,
   sideMenu,
   values,
   newValues,
-  ou,
-  docNo
+  ou
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], newValues[2], 5);
   });
 
   await runStep("Delete transaction", async () => {

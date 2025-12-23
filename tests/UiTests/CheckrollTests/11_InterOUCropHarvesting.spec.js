@@ -25,7 +25,7 @@ import {
   InterOUCropHarvestingCreate,
   InterOUCropHarvestingEdit,
   InterOUCropHarvestingDelete,
-} from "@UiFolder/pages/Checkroll/10_InterOUCropHarvesting";
+} from "@UiFolder/pages/Checkroll/11_InterOUCropHarvesting";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -46,7 +46,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 2],
-  [0, 2, 3, 4],
+  [0, 2, 3, 4, 5, 6],
 ];
 
 test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
@@ -106,7 +106,6 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -121,16 +120,12 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     await ValidateUiValues(createValues, columns, uiVals);
     await ValidateDBValues(
-      [...createValues, ou[0], ou[1]],
+      [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -151,7 +146,6 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -166,16 +160,12 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     await ValidateUiValues(editValues, columns, uiVals);
     await ValidateDBValues(
-      [...editValues, ou[0], ou[1]],
+      [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "LoanToOU"],
       dbValues[0]
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -184,7 +174,6 @@ test.describe.serial("Inter-OU Crop Harvesting (Loan To) Tests", async () => {
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);

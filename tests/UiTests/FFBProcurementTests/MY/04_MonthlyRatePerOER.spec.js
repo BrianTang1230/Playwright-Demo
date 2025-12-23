@@ -111,7 +111,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
     });
 
     if (dbValues.length > 0)
-      throw new Error("Deleting Monthly Rate Per OER failed");
+      throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

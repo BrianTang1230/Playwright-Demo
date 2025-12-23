@@ -73,6 +73,7 @@ export async function InputGridValuesSameCols(
 
   for (let i = 0; i < cellsIndex.length; i++) {
     if (vals[i] === "NA" || vals[i] === "AF") continue;
+    
     const cell = row.locator("td").nth(cellsIndex[i]);
 
     await cell.click();

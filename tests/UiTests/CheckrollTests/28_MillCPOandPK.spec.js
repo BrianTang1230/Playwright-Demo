@@ -26,7 +26,7 @@ import {
   MillCPOandPKCreate,
   MillCPOandPKEdit,
   MillCPOandPKDelete,
-} from "@UiFolder/pages/Checkroll/26_MillCPOandPK";
+} from "@UiFolder/pages/Checkroll/28_MillCPOandPK";
 
 // ---------------- Set Global Variables ----------------
 let ou;

@@ -13,7 +13,7 @@ function checkrollSQLCommand(formName) {
   switch (formName) {
     case "Daily Piece Rate Work":
       if (region === "IND") {
-        sqlCommand = `
+        sqlCommand += `
           SELECT FORMAT(A.ATRDate, 'dd/MM/yyyy') AS ATRDate,
           B.GangCode + ' - ' + B.GangDesc AS Gang,
           A.Remarks AS Remarks,
@@ -30,7 +30,7 @@ function checkrollSQLCommand(formName) {
           WHERE A.ATRNum = @DocNo
           AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       } else {
-        sqlCommand = `
+        sqlCommand += `
           SELECT FORMAT(A.ATRDate, 'dd/MM/yyyy') AS ATRDate,
           B.GangCode + ' - ' + B.GangDesc AS Gang,
           A.Remarks AS Remarks,
@@ -53,10 +53,16 @@ function checkrollSQLCommand(formName) {
 
     case "Inter-OU Daily Contract Work (Loan To)":
       if (region === "IND") {
-        sqlCommand = `
+        sqlCommand += `
           SELECT FORMAT(A.ATRDate, 'dd/MM/yyyy') AS InterOUAtrDate,
           B.GangCode + ' - ' + B.GangDesc AS Gang,
           A.Remarks AS Remarks,
+          CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
+          END AS Status,
           C.OUCode + ' - ' + C.OUDesc AS OU,
           D.OUCode + ' - ' + D.OUDesc AS LoanToOU
           FROM CR_InterATRHdr_IND A
@@ -66,10 +72,16 @@ function checkrollSQLCommand(formName) {
           WHERE A.ATRNum = @DocNo
           AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       } else {
-        sqlCommand = `
+        sqlCommand += `
           SELECT FORMAT(A.ATRDate, 'dd/MM/yyyy') AS InterOUAtrDate,
           B.GangCode + ' - ' + B.GangDesc AS Gang,
           A.Remarks AS Remarks,
+          CASE A.Status
+            WHEN 'O' THEN 'OPEN'
+            WHEN 'C' THEN 'CLOSE'
+            WHEN 'S' THEN 'SUBMITTED'
+            WHEN 'A' THEN 'APPROVED'
+          END AS Status,
           C.EmpyID + ' - ' + C.EmpyName AS Mandor,
           D.OUCode + ' - ' + D.OUDesc AS OU,
           E.OUCode + ' - ' + E.OUDesc AS LoanToOU
@@ -84,10 +96,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Monthly Piece Rate Work":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.ATRDate, 'MMMM yyyy') AS MonthlyPRDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor,
         D.OUCode + ' - ' + D.OUDesc AS OU
         FROM CR_MthPRHdr A
@@ -99,10 +117,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Inter-OU Monthly Piece Rate Work":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.ATRDate, 'MMMM yyyy') AS InterOUMonthlyPRDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor,
         D.OUCode + ' - ' + D.OUDesc AS OU,
         E.OUCode + ' - ' + E.OUDesc AS LoanToOU
@@ -116,9 +140,15 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Monthly Standard Borong & Tall Palm Rate":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(DATEFROMPARTS(A.Yr, A.Mth, 1), 'MMMM yyyy', 'id-ID') AS STDMonth,
         A.Remarks AS Remark,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_StdBorong_IND A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
@@ -222,21 +252,30 @@ function checkrollSQLCommand(formName) {
         ) AS AddRemMonth,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_AddRemHdr A
         LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.ADRNum = @DocNo AND A.OUKey IN (
-          SELECT OUKey FROM GMS_OUStp
-          WHERE OUCode + ' - ' + OUDesc = @OU
-        )`;
+        WHERE A.ADRNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Worker Monthly Tax Deduction":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PCBDate, 'MMMM yyyy') AS PCBMonth,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_PCBHdr A
         LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
@@ -247,10 +286,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Worker Previous Employment Tax Deduction":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PreEmpDate, 'MMMM yyyy') AS PreEmpMonth, 
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_PreEmpHdr A
         LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey
@@ -262,9 +307,15 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Worker CP38":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.AddTaxDate , 'MMMM yyyy') AS AddTaxMonth,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_AddTaxHdr A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
@@ -275,56 +326,53 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Worker Income Declaration (EA Form)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT A.Yr AS YearDeclared, 
         A.Remarks,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_PCBArrearsHdr A
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
         WHERE A.Yr = @Date
-            AND C.OUCode + ' - ' + C.OUDesc = @OU
-            AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')`;
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+        AND A.Remarks IN ('Automation Testing Create','Automation Testing Edit')`;
       break;
 
     case "Worker Preceding Tax (PPh 21)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PreceedingDate, 'MMMM yyyy', 'id-ID') AS PreceedingMonth,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_PreTaxSubHdr_IND A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
         WHERE A.PreTaxSubNum = @DocNo 
-        AND A.OUKey IN (
-          SELECT OUKey FROM GMS_OUStp
-          WHERE OUCode + ' - ' + OUDesc = @OU
-        )
-        AND A.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')`;
+        AND B.OUCode + ' - ' + B.OUDesc = @OU`;
       break;
 
     case "Create Rainfall Entry":
-      sqlCommand = `
-        SELECT 
-        IIF(@region = 'IND',
+      sqlCommand += `
+        SELECT IIF(@region = 'IND',
           FORMAT(A.RainfallDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.RainfallDate, 'MMMM yyyy', 'en-US')
-        ) AS RFMonth,
+        ) AS RFDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM CR_RainfallDistHdr A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-        WHERE  
-        IIF(@region = 'IND',
-            FORMAT(A.RainfallDate, 'MMMM yyyy', 'id-ID'),
-            FORMAT(A.RainfallDate, 'MMMM yyyy', 'en-US')
-        ) = @Date AND A.OUKey IN (
-            SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-        )`;
+        WHERE IIF(@region = 'IND',
+          FORMAT(A.RainfallDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(A.RainfallDate, 'MMMM yyyy', 'en-US')
+        ) = @Date 
+        AND B.OUCode + ' - ' + B.OUDesc = @OU`;
       break;
 
     case "Worker Loan/Deposit Maintenance":
-      sqlCommand = `
-        SELECT 
-        IIF(@region = 'IND',
+      sqlCommand += `
+        SELECT IIF(@region = 'IND',
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
         ) AS LoanDepMonth,
@@ -334,28 +382,32 @@ function checkrollSQLCommand(formName) {
         FROM CR_OutsMaintHdr A
         LEFT JOIN GMS_RecTypeStp B ON A.RecTypeKey = B.RecTypeKey
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE   
-        IIF(@region = 'IND',
+        WHERE IIF(@region = 'IND',
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.OutsMaintDate, 'MMMM yyyy', 'en-US')
         ) = @Date
         AND C.OUCode + ' - ' + C.OUDesc = @OU
-        AND B.RecTypeCode + ' - ' + B.RecTypeDesc = @RecType
         AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')`;
       break;
 
     case "Worker Advance Payment":
-      sqlCommand = `
-        SELECT 
-        IIF(@region = 'IND',
+      sqlCommand += `
+        SELECT IIF(@region = 'IND',
           FORMAT(A.AdvPayDate, 'MMMM yyyy', 'id-ID'),
           FORMAT(A.AdvPayDate, 'MMMM yyyy', 'en-US')
         ) AS ADVMonth,
         A.Remarks AS Remarks,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_AdvPayHdr A 
         LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        WHERE A.AdvPayNum = @DocNo AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+        WHERE A.AdvPayNum = @DocNo 
+        AND C.OUCode + ' - ' + C.OUDesc = @OU`;
       break;
 
     case "Crop Harvesting":
@@ -364,10 +416,10 @@ function checkrollSQLCommand(formName) {
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
@@ -393,10 +445,10 @@ function checkrollSQLCommand(formName) {
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
@@ -486,7 +538,7 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Monthly Contract Crop Harvesting and Loose Fruit Collection":
-      sqlCommand = `
+      sqlCommand += `
         SELECT
         IIF(@region = 'IND',
           FORMAT(A.FLHarDate, 'MMMM yyyy', 'id-ID'),
@@ -494,6 +546,12 @@ function checkrollSQLCommand(formName) {
         ) AS MthCHLFDate,
         B.DivCode + ' - ' + B.DivDesc AS Division,
         A.Remarks AS Remark,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_FLHarHdr A
         LEFT JOIN GMS_DivStp B ON A.DivKey = B.DivKey
@@ -503,10 +561,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Inter-OU Crop Harvesting (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.FFBHarDate, 'dd/MM/yyyy') AS InterHarDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
         E.EmpyID + ' - ' + E.EmpyName AS Checker,
@@ -528,10 +592,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Inter-OU Crop Harvesting & Collection (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.FFBHarDate , 'dd/MM/yyyy') AS InterFFBHarDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
         E.EmpyID + ' - ' + E.EmpyName AS Checker,
@@ -557,10 +627,16 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Inter-OU Loose Fruit Collection (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.LFDate, 'dd/MM/yyyy') AS InterLFCDate,
         B.GangCode + ' - ' + B.GangDesc AS Gang,
         A.Remarks AS Remark,
+        CASE A.Status
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
+        END AS Status,
         C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
         E.BlockCode + ' - ' + E.BlockDesc AS Block,
         F.OUCode + ' - ' + F.OUDesc AS OU,
@@ -578,7 +654,7 @@ function checkrollSQLCommand(formName) {
       break;
 
     case "Mill CPO and PK":
-      sqlCommand = `
+      sqlCommand += `
         SELECT A.FY AS FiscYear,
         A.Period AS Period,
         B.DivCode + ' - ' + B.DivDesc AS Division,
@@ -604,32 +680,32 @@ function checkrollGridSQLCommand(formName) {
   switch (formName) {
     case "Daily Piece Rate Work":
       if (region === "IND") {
-        sqlCommand = `
+        sqlCommand += `
           SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
-          B.DRate AS DailyRate,
-          FORMAT(B.MD, 'N2') AS ManDaynumeric2,
+          B.DRate AS DailyRatenumeric,
+          B.MD AS MDnumeric,
           D.AttdCode AS AttendanceCode,
           CONVERT(VARCHAR(5), B.TimeIn, 108) AS ClockIn,
           CONVERT(VARCHAR(5), B.TimeOut, 108) AS ClockOut,
-          B.Work AS Work,
-          B.Rest AS Rest,
-          B.Absent AS Absent,
-          (B.OTH1+ B.OTH2 + B.OTH3 + B.OTH4) AS OTHr,
-          B.Allowance AS TotalAllow,
+          B.Work AS Worknumeric,
+          B.Rest AS Restnumeric,
+          B.Absent AS Absentnumeric,
+          (B.OTH1+ B.OTH2 + B.OTH3 + B.OTH4) AS OTHrnumeric,
+          B.Allowance AS TotalAllownumeric,
           F.AccNum + ' - ' + F.AccDesc AS Account,
           G.CCIDCode + ' - ' + G.CCIDDesc AS CCID,
           E.MD AS ManDaynumeric,
-          (E.OTH1 + E.OTH2 + E.OTH3 + E.OTH4) AS OT,
-          E.Allowance AS Allowance,
+          (E.OTH1 + E.OTH2 + E.OTH3 + E.OTH4) AS OTnumeric,
+          E.Allowance AS Allowancenumeric,
           E.Remarks AS Remarks,
           I.ACode + ' - ' + I.ACodeDesc AS ActivityCode, 
           M.AccNum + ' - ' + M.AccDesc AS PRAccount,
           J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
           CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
-          H.Rate AS PayRate,
-          H.Qty AS PayQty,
+          H.Rate AS PayRatenumeric,
+          H.Qty AS PayQtynumeric,
           N.UOMCode AS UOM,
-          H.GrossAmt AS TotalAmt,
+          H.GrossAmt AS TotalAmtnumeric,
           H.Remarks AS PRRemarks
           FROM CR_ATRDet_IND B
           LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
@@ -649,7 +725,7 @@ function checkrollGridSQLCommand(formName) {
               AND L.OUCode + ' - ' + L.OUDesc = @OU
           )`;
       } else {
-        sqlCommand = `
+        sqlCommand += `
           SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
           FORMAT(B.DRate, 'N2') AS DailyRate,
           B.MD AS MDnumeric,
@@ -698,22 +774,32 @@ function checkrollGridSQLCommand(formName) {
 
     case "Inter-OU Daily Contract Work (Loan To)":
       if (region === "IND") {
-        sqlCommand = `
+        sqlCommand += `
           SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+          B.DRate AS DailyRatenumeric,
+          B.MD AS MDnumeric,
           D.AttdCode AS AttendanceCode,
           CONVERT(VARCHAR(5), B.TimeIn, 108) AS ClockIn,
           CONVERT(VARCHAR(5), B.TimeOut, 108) AS ClockOut,
-          B.Rest AS Rest,
+          B.Work AS Worknumeric,
+          B.Rest AS Restnumeric,
+          B.Absent AS Absentnumeric,
+          (B.OTH1+ B.OTH2 + B.OTH3 + B.OTH4) AS OTHrnumeric,
+          B.Allowance AS TotalAllownumeric,
           F.AccNum + ' - ' + F.AccDesc AS Account,
           G.CCIDCode + ' - ' + G.CCIDDesc AS CCID,
           E.MD AS ManDaynumeric,
-          (E.OTH1 + E.OTH2 + E.OTH3 + E.OTH4) AS OT,
-          E.Allowance AS Allowance,
+          (E.OTH1 + E.OTH2 + E.OTH3 + E.OTH4) AS OTnumeric,
+          E.Allowance AS Allowancenumeric,
           E.Remarks AS Remarks,
           I.ACode + ' - ' + I.ACodeDesc AS ActivityCode,
+          M.AccNum + ' - ' + M.AccDesc AS PRAccount,
           J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
           CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
-          H.Qty AS PayQty,
+          H.Rate AS PayRatenumeric,
+          H.Qty AS PayQtynumeric,
+          N.UOMCode AS UOM,
+          H.GrossAmt AS TotalAmtnumeric,
           H.Remarks AS PRRemarks
           FROM CR_InterATRDet_IND B
           LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
@@ -724,27 +810,41 @@ function checkrollGridSQLCommand(formName) {
           LEFT JOIN CR_InterPieceRateDet_IND H ON B.ATRDetKey = H.ATRDetKey
           LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
           LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey
+          LEFT JOIN GMS_AccMas M ON H.ExpAccKey = M.AccKey
+          LEFT JOIN GMS_UOMStp N ON H.UOMKey = N.UOMKey
           WHERE B.ATRHdrKey IN (
-              SELECT ATRHdrKey FROM CR_InterATRHdr_IND K
-              LEFT JOIN GMS_OUStp L ON K.FromOUKey = L.OUKey
-              WHERE K.ATRNum = @DocNo
-              AND L.OUCode + ' - ' + L.OUDesc = @OU
+            SELECT ATRHdrKey FROM CR_InterATRHdr_IND K
+            LEFT JOIN GMS_OUStp L ON K.FromOUKey = L.OUKey
+            WHERE K.ATRNum = @DocNo
+            AND L.OUCode + ' - ' + L.OUDesc = @OU
           )`;
       } else {
-        sqlCommand = `
+        sqlCommand += `
           SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+          B.DRate AS DailyRatenumeric,
+          B.MD AS MDnumeric,
           D.AttdCode AS AttendanceCode,
+          (B.OTH1 + B.OTH2 + B.OTH3) AS OTHrnumeric,
+          B.AllowAmt AS TotalAllownumeric,
           F.AccNum + ' - ' + F.AccDesc AS Account,
           G.CCIDCode + ' - ' + G.CCIDDesc AS CCID,
           E.MD AS ManDaynumeric,
-          (E.OTH1 + E.OTH2 + E.OTH3) AS OT,
-          E.AllowAmt AS Allowance,
+          (E.OTH1 + E.OTH2 + E.OTH3) AS OTnumeric,
+          E.AllowAmt AS Allowancenumeric,
           E.Remarks AS Remarks,
           I.ACode + ' - ' + I.ACodeDesc AS ActivityCode,
+          M.AccNum + ' - ' + M.AccDesc AS PRAccount,
           J.CCIDCode + ' - ' + J.CCIDDesc AS PRCCID,
           CASE WHEN H.EnableBasicPay = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
-          H.PayQty AS PayQty,
-          H.OTPayQty AS OvertimePay,
+          H.PayRate AS PRPayRatenumeric,
+          H.PayFactor AS PRPayFactornumeric,
+          N.UOMCode AS UOM,
+          H.PayQty AS PayQtynumeric,
+          H.Weight AS PRWeightnumeric,
+          H.GrossAmt AS TotalAmtnumeric,
+          H.OTPayQty AS OvertimePaynumeric,
+          H.OTWt AS PROTWeightnumeric,
+          H.OTGrossAmt AS OTTotalAmtnumeric,
           H.Remarks AS PRRemarks
           FROM CR_InterATRDet B
           LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
@@ -755,33 +855,43 @@ function checkrollGridSQLCommand(formName) {
           LEFT JOIN CR_InterPieceRateDet H ON B.ATRDetKey = H.ATRDetKey
           LEFT JOIN GMS_ActivityCodeStp I ON H.ActivityKey = I.ACodeKey
           LEFT JOIN V_SYC_CCIDMapping J On H.CCIDKey = J.CCIDKey 
+          LEFT JOIN GMS_AccMas M ON H.AccKey = M.AccKey
+          LEFT JOIN GMS_UOMStp N ON H.UOMKey = N.UOMKey
           WHERE B.ATRHdrKey IN (
-              SELECT ATRHdrKey FROM CR_InterATRHdr K
-              LEFT JOIN GMS_OUStp L ON K.FromOUKey = L.OUKey
-              WHERE K.ATRNum = @DocNo
-              AND L.OUCode + ' - ' + L.OUDesc = @OU
+            SELECT ATRHdrKey FROM CR_InterATRHdr K
+            LEFT JOIN GMS_OUStp L ON K.FromOUKey = L.OUKey
+            WHERE K.ATRNum = @DocNo
+            AND L.OUCode + ' - ' + L.OUDesc = @OU
           )`;
       }
       break;
 
     case "Monthly Piece Rate Work":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
         D.ACode + ' - ' + D.ACodeDesc AS ActivityCode,
+        H.AccNum + ' - ' + H.AccDesc AS ExpAC,
         E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
-        B.MD AS ManDay,
+        B.MD AS ManDaynumeric,
         CASE B.WorkOn 
-        WHEN 'OT' THEN 'Overtime'
-        WHEN 'RD' THEN 'Rest Day'
-        WHEN 'PH' THEN 'Public Holiday'
-        ELSE '' END AS WorkOn,
+          WHEN 'OT' THEN 'Overtime'
+          WHEN 'RD' THEN 'Rest Day'
+          WHEN 'PH' THEN 'Public Holiday'
+          WHEN '' THEN 'Normal Day'
+        END AS WorkOn,
         CASE WHEN B.IsDRAsPayRate = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
-        B.PayQty AS PayQty,
+        B.PayRate AS PayRatenumeric,
+        B.PayQty AS PayQtynumeric,
+        I.UOMCode AS UOM,
+        B.Weight AS Weightnumeric,
+        B.GrossAmt AS Amtnumeric,
         B.Remarks AS Remarks
         FROM CR_MthPRDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN GMS_ActivityCodeStp D ON B.ActivityKey = D.ACodeKey
         LEFT JOIN V_SYC_CCIDMapping E On B.CCIDKey = E.CCIDKey 
+        LEFT JOIN GMS_AccMas H ON B.AccKey = H.AccKey
+        LEFT JOIN GMS_UOMStp I ON B.UOMKey = I.UOMKey
         WHERE B.MthPRHdrKey IN (
           SELECT MthPRHdrKey FROM CR_MthPRHdr F
           LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
@@ -791,34 +901,45 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Inter-OU Monthly Piece Rate Work":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
         D.ACode + ' - ' + D.ACodeDesc AS ActivityCode,
+        H.AccNum + ' - ' + H.AccDesc AS ExpAC,
         E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
-        B.MD AS ManDay,
+        B.MD AS ManDaynumeric,
         CASE B.WorkOn 
-        WHEN 'OT' THEN 'Overtime'
-        WHEN 'RD' THEN 'Rest Day'
-        WHEN 'PH' THEN 'Public Holiday'
-        ELSE '' END AS WorkOn,
+          WHEN 'OT' THEN 'Overtime'
+          WHEN 'RD' THEN 'Rest Day'
+          WHEN 'PH' THEN 'Public Holiday'
+          WHEN '' THEN 'Normal Day'
+        END AS WorkOn,
         CASE WHEN B.IsDRAsPayRate = 1 THEN 'True' ELSE 'False' END AS DailyRateAsPayRate,
-        B.PayQty AS PayQty,
+        B.PayRate AS PayRatenumeric,
+        B.PayQty AS PayQtynumeric,
+        I.UOMCode AS UOM,
+        B.Weight AS Weightnumeric,
+        B.GrossAmt AS Amtnumeric,
         B.Remarks AS Remarks
         FROM CR_InterMthPRDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN GMS_ActivityCodeStp D ON B.ActivityKey = D.ACodeKey       
         LEFT JOIN V_SYC_CCIDMapping E On B.CCIDKey = E.CCIDKey
+        LEFT JOIN GMS_AccMas H ON B.AccKey = H.AccKey
+        LEFT JOIN GMS_UOMStp I ON B.UOMKey = I.UOMKey
         WHERE B.MthPRHdrKey IN (
-            SELECT MthPRHdrKey FROM CR_InterMthPRHdr F
-            LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
-            WHERE F.MthPRNum = @DocNo
-            AND G.OUCode + ' - ' + G.OUDesc = @OU
+          SELECT MthPRHdrKey FROM CR_InterMthPRHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.MthPRNum = @DocNo
+          AND G.OUCode + ' - ' + G.OUDesc = @OU
         )`;
       break;
 
     case "Monthly Standard Borong & Tall Palm Rate":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.BlockCode + ' - ' + C.BlockDesc AS Block,
+        F.FieldCode AS Field,
+        G.DivCode AS Division,
+        C.PlantedYr AS PlantedYear,
         B.StdBorong AS StdBorang,
         B.BasicBorong AS BasicBorang,
         B.FFBRate AS PremiumMoreBasicBorang,
@@ -828,6 +949,8 @@ function checkrollGridSQLCommand(formName) {
         B.TPRate AS TallPalmRate
         FROM CR_StdBorongDet_IND B
         LEFT JOIN GMS_BlockStp C ON B.BlockKey = C.BlockKey
+        LEFT JOIN GMS_FieldStp F ON C.FieldKey = F.FieldKey
+        LEFT JOIN GMS_DivStp G ON C.DivKey = G.DivKey
         WHERE B.StdBorongKey IN (
           SELECT StdBorongKey FROM CR_StdBorong_IND D
           LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
@@ -939,27 +1062,28 @@ function checkrollGridSQLCommand(formName) {
     case "Worker Additional Remuneration":
       sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
+        D.AddRemAmt AS TotalAmtnumeric,
         E.AddRemCode + ' - ' + E.AddRemDesc AS AddRem,
-        D.AddRemAmt AS Amount
+        D.AddRemAmt AS Amountnumeric
         FROM CR_AddRemDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN CR_AddRemDedDet D ON B.AddRemDetKey = D.AddRemDetKey
         LEFT JOIN GMS_AddRemStp E ON D.AddRemKey = E.AddRemKey
-        WHERE AddRemHdrKey IN (
-          SELECT AddRemHdrKey FROM CR_AddRemHdr
-          WHERE ADRNum = @DocNo AND OUKey IN (
-            SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+        WHERE B.AddRemHdrKey IN (
+          SELECT AddRemHdrKey FROM CR_AddRemHdr F
+          LEFT JOIN GMS_OUStp G ON F.OUKey = G.OUKey
+          WHERE F.ADRNum = @DocNo AND G.OUCode + ' - ' + G.OUDesc = @OU
         )`;
       break;
 
     case "Worker Monthly Tax Deduction":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
-        B.ZakatAmt AS Zakat,
-        B.LevyAmt AS Levy,
-        B.VOLA AS VOLAAmt,
+        B.ZakatAmt AS Zakatnumeric,
+        B.LevyAmt AS Levynumeric,
+        B.VOLA AS VOLAAmtnumeric,
+        SUM(CASE WHEN D.Type = 'B' THEN D.DedAmt ELSE 0 END) AS BIKTotalnumeric,
+        SUM(CASE WHEN D.Type = 'A' THEN D.DedAmt ELSE 0 END) AS ADTotalnumeric,
         MAX(CASE WHEN D.Type = 'B' THEN E.TaxDedCode + ' - ' + E.TaxDedDesc END) AS BIK,
         SUM(CASE WHEN D.Type = 'B' THEN D.DedAmt ELSE 0 END) AS BIKnumeric,
         MAX(CASE WHEN D.Type = 'A' THEN E.TaxDedCode + ' - ' + E.TaxDedDesc END) AS AD,
@@ -988,7 +1112,7 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Worker Previous Employment Tax Deduction":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
         CASE WHEN A.IsNewJoiner = 1 THEN 'True' ELSE 'False' END AS IsNewJoiner,
         A.NormalRem AS NorRemnumeric,
@@ -997,6 +1121,7 @@ function checkrollGridSQLCommand(formName) {
         A.AddRem AS AddRemnumeric,
         CASE WHEN A.IsInclAddRemInPCBCalc = 1 THEN 'True' ELSE 'False' END AS InclAddRem,
         A.AddEPF AS AddEPFnumeric,
+        SUM(CASE WHEN C.Type = 'B' THEN C.DedAmt ELSE 0 END) AS BIKTotalnumeric,
         A.VOLA AS VOLAnumeric,
         A.NormalAlw AS NorAllwnumeric,
         A.Allowance AS Allwnumeric,
@@ -1005,9 +1130,10 @@ function checkrollGridSQLCommand(formName) {
         A.Perquisite AS Perquisitenumeric,
         A.Others AS Othersnumeric,
         A.TotDeduct AS PCBDednumeric,
-        A.TotZakat AS Zakatnumric,
-        A.TotLevy AS Levynumric,
-        A.CP38 AS CP38numric,
+        SUM(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN C.DedAmt ELSE 0 END) AS ADTotalnumeric,
+        A.TotZakat AS Zakatnumeric,
+        A.TotLevy AS Levynumeric,
+        A.CP38 AS CP38numeric,
         MAX(CASE WHEN C.Type = 'B' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS BIK,
         SUM(CASE WHEN C.Type = 'B' THEN C.DedAmt ELSE 0 END) AS BIKnumeric,
         MAX(CASE WHEN C.Type = 'A' AND (D.TaxDedCode + ' - ' + D.TaxDedDesc) != 'SOCSO - SOCSO and EIS payment' THEN D.TaxDedCode + ' - ' + D.TaxDedDesc END) AS AD,
@@ -1017,138 +1143,140 @@ function checkrollGridSQLCommand(formName) {
         LEFT JOIN CR_PreEmpDedDet C ON A.PreEmpDetKey = C.PreEmpDetKey
         LEFT JOIN SYT_TaxDed D ON C.TaxDedKey = D.TaxDedKey
         WHERE A.PreEmpHdrKey IN (
-            SELECT PreEmpHdrKey 
-            FROM CR_PreEmpHdr H
-            LEFT JOIN GMS_GangStp E ON H.GangKey = E.GangKey
-            LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
-            WHERE FORMAT(H.PreEmpDate, 'MMMM yyyy') = @Date
-            AND E.GangCode + ' - ' + E.GangDesc = @Gang
-            AND F.OUCode + ' - ' + F.OUDesc = @OU
-            AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+          SELECT PreEmpHdrKey 
+          FROM CR_PreEmpHdr H
+          LEFT JOIN GMS_GangStp E ON H.GangKey = E.GangKey
+          LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
+          WHERE FORMAT(H.PreEmpDate, 'MMMM yyyy') = @Date
+          AND E.GangCode + ' - ' + E.GangDesc = @Gang
+          AND F.OUCode + ' - ' + F.OUDesc = @OU
+          AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
         )
         GROUP BY 
         B.EmpyID, EmpyName,
-        A.IsNewJoiner,NormalRem,EPF,AddRem,IsInclAddRemInPCBCalc,AddEPF,VOLA,NormalAlw,Allowance,ChildAllw,FreeGoods,Perquisite,Others,TotDeduct,TotZakat,TotLevy,CP38
-      `;
+        A.IsNewJoiner,NormalRem,EPF,AddRem,IsInclAddRemInPCBCalc,AddEPF,VOLA,NormalAlw,Allowance,ChildAllw,FreeGoods,Perquisite,Others,TotDeduct,TotZakat,TotLevy,CP38`;
       break;
 
     case "Worker CP38":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
-        B.AddTaxAmt AS Amount
+        B.AddTaxAmt AS Amountnumeric
         FROM CR_AddTaxDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         WHERE AddTaxHdrKey IN (
-        SELECT AddTaxHdrKey FROM CR_AddTaxHdr
-        WHERE ATDNum = @DocNo AND OUKey IN (
-            SELECT OUKey FROM GMS_OUStp 
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+        SELECT AddTaxHdrKey FROM CR_AddTaxHdr D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+          WHERE D.ATDNum = @DocNo AND OUCode + ' - ' + OUDesc = @OU
         )`;
       break;
 
     case "Worker Income Declaration (EA Form)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.EmpyID + ' - ' + EmpyName AS Employee,
+        D.GangCode AS Gang,
+        C.IncAmt AS TotalIncAmtnumeric,
+        C.PCBAmt AS TotalPCBAmtnumeric,
+        C.EPFAmt AS TotalEPFAmtnumeric,
         C.IncType AS IncomeType,
         FORMAT(DATEFROMPARTS(C.IncYr, C.IncMth, 1), 'MMMM yyyy') AS MonthOfIncome,
         C.TransNo AS TransNo,
         FORMAT(C.TransDate, 'dd/MM/yyyy') AS TransDate,
-        C.IncAmt AS IncomeAmt,
-        C.EPFAmt AS EPFAmt,
-        C.PCBAmt AS TaxAmt
+        C.IncAmt AS IncomeAmtnumeric,
+        C.EPFAmt AS EPFAmtnumeric,
+        C.PCBAmt AS TaxAmtnumeric
         FROM CR_PCBArrearsDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
         LEFT JOIN CR_PCBArrearsIncDet C ON A.PCBArrearsDetKey = C.PCBArrearsDetKey
+        LEFT JOIN GMS_GangStp D ON B.GangKey = D.GangKey
         WHERE A.PCBArrearsHdrKey IN (
-          SELECT PCBArrearsHdrKey 
-          FROM CR_PCBArrearsHdr H
-          LEFT JOIN GMS_OUStp F ON H.OUKey = F.OUKey
-          WHERE H.Yr = @Date
+          SELECT PCBArrearsHdrKey FROM CR_PCBArrearsHdr E
+          LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
+          WHERE E.Yr = @Date
           AND F.OUCode + ' - ' + F.OUDesc = @OU
-          AND Remarks IN ('Automation Testing Create', 'Automation Testing Edit')
+          AND E.Remarks IN ('Automation Testing Create','Automation Testing Edit')
         )`;
       break;
 
     case "Worker Preceding Tax (PPh 21)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
-        B.GrossIncome AS GrossIncome,
-        B.BPJSJHT AS BPJSJHTAmt,
-        B.BPJSPen AS BPJSPenAmt,
-        B.PreDeductedTax AS PPh21
+        B.GrossIncome AS GrossIncomenumeric,
+        B.BPJSJHT AS BPJSJHTAmtnumeric,
+        B.BPJSPen AS BPJSPenAmtnumeric,
+        B.PreDeductedTax AS PPh21numeric
         FROM CR_PreTaxSubDet_IND B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         WHERE PreTaxSubHdrKey IN (
-          SELECT PreTaxSubHdrKey FROM CR_PreTaxSubHdr_IND
-          WHERE PreTaxSubNum = @DocNo 
-          AND OUKey IN (
-            SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
-          AND Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
+          SELECT PreTaxSubHdrKey FROM CR_PreTaxSubHdr_IND D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+          WHERE D.PreTaxSubNum = @DocNo 
+          AND E.OUCode + ' - ' + E.OUDesc = @OU
         )`;
       break;
+
     case "Create Rainfall Entry":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.DivCode + ' - ' + C.DivDesc AS Division,
-        B.Day01 AS D1,
-        B.Day02 AS D2,
-        B.Day03 AS D3,
-        B.Day04 AS D4,
-        B.Day05 AS D5
+        B.Day01 AS D1numeric,
+        B.Day02 AS D2numeric,
+        B.Day03 AS D3numeric,
+        B.Day04 AS D4numeric,
+        B.Day05 AS D5numeric
         FROM CR_RainfallDistDet B
         LEFT JOIN GMS_DivStp C ON B.DivKey = C.DivKey
         WHERE B.CRRainFallHdrKey IN (
-          SELECT CRRainFallHdrKey FROM CR_RainfallDistHdr
+          SELECT CRRainFallHdrKey FROM CR_RainfallDistHdr D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
           WHERE IIF(@region = 'IND',
-            FORMAT(RainfallDate, 'MMMM yyyy', 'id-ID'),
-            FORMAT(RainfallDate, 'MMMM yyyy', 'en-US')
+          FORMAT(D.RainfallDate, 'MMMM yyyy', 'id-ID'),
+          FORMAT(D.RainfallDate, 'MMMM yyyy', 'en-US')
           ) = @Date 
-          AND OUKey IN (
-            SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+          AND E.OUCode + ' - ' + E.OUDesc = @OU
         )`;
       break;
 
     case "Worker Loan/Deposit Maintenance":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
+        H.GangCode AS Gang,
+        C.Amt AS NewTopUpTotalnumeric,
         D.PayCode + ' - ' + D.PayDesc AS DeductionCode,
-        C.Amt AS Amount,
+        C.Amt AS NewTopUpnumeric,
+        CASE C.IsTransfer
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS IsTransfer,
         C.Remarks AS Remarks
         FROM CR_OutsMaintDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN GMS_GangStp H ON B.GangKey = H.GangKey
         LEFT JOIN CR_OutsMaintDeductDet C ON A.OutsMaintDetKey = C.OutsMaintDetKey
         LEFT JOIN GMS_PayCodeStp D ON C.PayCodeKey = D.PayKey
         WHERE A.OutsMaintHdrKey IN (
           SELECT OutsMaintHdrKey 
           FROM CR_OutsMaintHdr E
           LEFT JOIN GMS_OUStp F ON E.OUKey = F.OUKey
-          LEFT JOIN GMS_RecTypeStp G ON E.RecTypeKey = G.RecTypeKey
           WHERE IIF(@region = 'IND',
             FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'id-ID'),
             FORMAT(E.OutsMaintDate, 'MMMM yyyy', 'en-US')
           ) = @Date 
           AND F.OUCode + ' - ' + F.OUDesc = @OU
-          AND G.RecTypeCode + ' - ' + G.RecTypeDesc = @RecType
           AND Remarks IN ('Automation Testing Create','Automation Testing Edit','Automation Testing Create IND','Automation Testing Edit IND')
         )`;
       break;
 
     case "Worker Advance Payment":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
-        A.Amt AS Amount
+        C.GangCode + ' - ' + C.GangDesc AS Gang,
+        A.Amt AS Amountnumeric
         FROM CR_AdvPayDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+        LEFT JOIN GMS_GangStp C ON B.GangKey = C.GangKey
         WHERE AdvPayHdrKey IN (
-          SELECT AdvPayHdrKey FROM CR_AdvPayHdr
-          WHERE AdvPayNum = @DocNo AND OUKey IN (
-            SELECT OUKey FROM GMS_OUStp
-            WHERE OUCode + ' - ' + OUDesc = @OU
-          )
+          SELECT AdvPayHdrKey FROM CR_AdvPayHdr D
+          LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
+          WHERE D.AdvPayNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU
         )`;
       break;
 
@@ -1256,25 +1384,25 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Monthly Contract Crop Harvesting and Loose Fruit Collection":
-      sqlCommand = `
+      sqlCommand += `
         SELECT D.BlockCode + ' - ' + D.BlockDesc AS FFBBlock,
-        B.B1 AS FFBB1,
-        B.M1 AS FFBM1,
-        B.B2 AS FFBB2,
-        B.M2 AS FFBM2,
-        B.B3 AS FFBB3,
-        B.M3 AS FFBM3,
-        B.B4 AS FFBB4,
-        B.M4 AS FFBM4,
+        B.B1 AS FFBB1numeric,
+        B.M1 AS FFBM1numeric,
+        B.B2 AS FFBB2numeric,
+        B.M2 AS FFBM2numeric,
+        B.B3 AS FFBB3numeric,
+        B.M3 AS FFBM3numeric,
+        B.B4 AS FFBB4numeric,
+        B.M4 AS FFBM4numeric,
         E.BlockCode + ' - ' + E.BlockDesc AS LFBlock,
-        C.L1 AS LFL1,
-        C.M1 AS LFM1,
-        C.L2 AS LFL2,
-        C.M2 AS LFM2,
-        C.L3 AS LFL3,
-        C.M3 AS LFM3,
-        C.L4 AS LFL4,
-        C.M4 AS LFM4
+        C.L1 AS LFL1numeric,
+        C.M1 AS LFM1numeric,
+        C.L2 AS LFL2numeric,
+        C.M2 AS LFM2numeric,
+        C.L3 AS LFL3numeric,
+        C.M3 AS LFM3numeric,
+        C.L4 AS LFL4numeric,
+        C.M4 AS LFM4numeric
         FROM CR_FLHarDet B
         LEFT JOIN CR_FLLFDet C ON B.FLHarHdrKey = C.FLHarHdrKey
         LEFT JOIN GMS_BlockStp D ON B.BlockKey = D.BlockKey
@@ -1288,13 +1416,15 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Inter-OU Crop Harvesting (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
         B.WrkDayType AS WorkDayType,
         B.MD AS ManDaynumeric,
         D.Ripe AS RipeAmt,
         D.Others AS OthersAmt,
-        D.Penalty AS PenaltyAmt
+        D.Penalty AS PenaltyAmt,
+        D.PayableBch AS PB,
+        D.Rate AS Rate
         FROM CR_InterFFBHarDet B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN CR_InterFFBHarBlkDet D ON B.FFBHarDetKey = D.FFBHarDetKey
@@ -1308,13 +1438,15 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Inter-OU Crop Harvesting & Collection (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.EmpyID + ' - ' + C.EmpyName AS Employee,
         B.MD AS ManDaynumeric,
         D.Ripe AS RipeAmt,
         D.Others AS Others,
-        D.LF AS LooseFruitAmt,
-        D.Premium AS PremiumAmt
+        D.Bunches AS PB,
+        D.LF AS LooseFruitAmtnumeric,
+        D.Premium AS PremiumAmt,
+        D.Penalty AS Penalty
         FROM CR_InterFFBHarDet_IND B
         LEFT JOIN GMS_EmpyPerMas C ON B.EmpyKey = C.EmpyKey
         LEFT JOIN CR_InterFFBHarBlkDet_IND D ON B.FFBHarDetKey = D.FFBHarDetKey
@@ -1328,11 +1460,15 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Inter-OU Loose Fruit Collection (Loan To)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT D.EmpyID + ' - ' + D.EmpyName AS Employee,
         B.WrkDayType AS WorkDayType,
         B.MD AS ManDaynumeric,
-        C.Bag AS BagAmt
+        C.GrossAmt AS TotalAmtnumeric,
+        C.Bag AS BagAmtnumeric,
+        C.Weight AS Weightnumeric,
+        FORMAT(C.Rate, 'N2') AS Rate,
+        C.GrossAmt AS Amtnumeric
         FROM CR_InterLFDet B
         LEFT JOIN CR_InterLFDetBlock C ON B.LFDetKey = C.LFDetKey
         LEFT JOIN GMS_EmpyPerMas D ON B.EmpyKey = D.EmpyKey
@@ -1346,7 +1482,7 @@ function checkrollGridSQLCommand(formName) {
       break;
 
     case "Mill CPO and PK":
-      sqlCommand = `
+      sqlCommand += `
         SELECT C.MillCode + ' - ' + C.MillDesc AS Mill,
         B.CPO AS CPOAmt,
         B.PK AS PKAmt

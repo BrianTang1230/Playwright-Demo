@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -23,66 +23,86 @@ export async function InterOUDailyContractWorkCreate(
   const tabLocator =
     region === "IND" ? "#tabstripworkDet li" : "#interouTabstripworkDet li";
 
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Create new transaction", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await page.waitForTimeout(2000);
-
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
-    "#ddlFromOU_listbox li span",
-    ou[0]
-  );
-
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
-    "#ddlToOU_listbox li span",
-    ou[1]
-  );
-
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
-  }
-
-  await page.locator("#btnNewItem").click();
-
-  for (let i = 0; i < gridPaths.length; i++) {
-    if (i === 1) await page.locator("#btnNewDWItem").click();
-    if (i === 2) {
-      await page.locator(tabLocator).nth(1).click();
-      await page.locator("#btnNewPRWItem").click();
-    }
-    await InputGridValuesSameCols(
+  await runStep("Select OU", async () => {
+    await SelectOU(
       page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i]
+      "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
+      "#ddlFromOU_listbox li span",
+      ou[0]
     );
-  }
 
-  await sideMenu.clickBtnSave();
+    await SelectOU(
+      page,
+      "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
+      "#ddlToOU_listbox li span",
+      ou[1]
+    );
+  });
 
-  await page.locator(tabLocator).first().click();
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  const uiVals = await getUiValues(
-    page,
-    region === "IND" ? paths.slice(0, 3) : paths
-  );
+  await runStep("Add new grid item", async () => {
+    await page.locator("#btnNewItem").click();
+  });
 
-  const gridVals1 = await getGridValues(
-    page,
-    gridPaths.slice(0, 2),
-    cellsIndex.slice(0, 2)
-  );
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) await page.locator("#btnNewDWItem").click();
+      if (i === 2) {
+        await page.locator(tabLocator).nth(1).click();
+        await page.locator("#btnNewPRWItem").click();
+      }
+      await InputGridValuesSameCols(
+        page,
+        gridPaths[i],
+        gridValues[i],
+        cellsIndex[i]
+      );
+    }
+  });
 
-  await page.locator(tabLocator).nth(1).click();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const gridVals2 = await getGridValues(
-    page,
-    gridPaths.slice(2, 3),
-    cellsIndex.slice(2, 3)
-  );
+  const uiVals = await runStep("Get created UI values", async () => {
+    return await getUiValues(
+      page,
+      region === "IND" ? paths.slice(0, 4) : paths
+    );
+  });
+
+  await runStep("Click on tab 1", async () => {
+    await page.locator(tabLocator).first().click();
+  });
+
+  const gridVals1 = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(
+      page,
+      gridPaths.slice(0, 2),
+      cellsIndex.slice(0, 2)
+    );
+  });
+
+  await runStep("Click on tab 2", async () => {
+    await page.locator(tabLocator).nth(1).click();
+  });
+
+  const gridVals2 = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(
+      page,
+      gridPaths.slice(2, 3),
+      cellsIndex.slice(2, 3)
+    );
+  });
 
   const gridVals = [...gridVals1, ...gridVals2];
 
@@ -107,53 +127,76 @@ export async function InterOUDailyContractWorkEdit(
   const tabLocator =
     region === "IND" ? "#tabstripworkDet li" : "#interouTabstripworkDet li";
 
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
-  }
-
-  await page.locator("#IsSelectGrid").check();
-  await page.locator("#btnDeleteItem").click();
-  await sideMenu.confirmDelete.click();
-  await sideMenu.btnAddNewItem.click();
-
-  for (let i = 0; i < gridPaths.length; i++) {
-    if (i === 1) {
-      await page.locator(tabLocator).first().click();
-      await page.locator("#btnNewDWItem").click();
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await InputValues(page, paths[i], columns[i], newValues[i]);
     }
-    if (i === 2) {
-      await page.locator(tabLocator).nth(1).click();
-      await page.locator("#btnNewPRWItem").click();
+  });
+
+  await runStep("Delete and add new grid item", async () => {
+    await page.locator("#IsSelectGrid").check();
+    await page.locator("#btnDeleteItem").click();
+    await sideMenu.confirmDelete.click();
+    await sideMenu.btnAddNewItem.click();
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) {
+        await page.locator(tabLocator).first().click();
+        await page.locator("#btnNewDWItem").click();
+      }
+      if (i === 2) {
+        await page.locator(tabLocator).nth(1).click();
+        await page.locator("#btnNewPRWItem").click();
+      }
+      await InputGridValuesSameCols(
+        page,
+        gridPaths[i],
+        gridValues[i],
+        cellsIndex[i]
+      );
     }
-    await InputGridValuesSameCols(
+  });
+
+  await runStep("Save edited transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get created UI values", async () => {
+    return await getUiValues(
       page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i]
+      region === "IND" ? paths.slice(0, 4) : paths
     );
-  }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Click on tab 1", async () => {
+    await page.locator(tabLocator).first().click();
+  });
 
-  await page.locator(tabLocator).first().click();
-  const uiVals = await getUiValues(
-    page,
-    region === "IND" ? paths.slice(0, 3) : paths
-  );
-  const gridVals1 = await getGridValues(
-    page,
-    gridPaths.slice(0, 2),
-    cellsIndex.slice(0, 2)
-  );
+  const gridVals1 = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(
+      page,
+      gridPaths.slice(0, 2),
+      cellsIndex.slice(0, 2)
+    );
+  });
 
-  await page.locator(tabLocator).nth(1).click();
-  const gridVals2 = await getGridValues(
-    page,
-    gridPaths.slice(2, 3),
-    cellsIndex.slice(2, 3)
-  );
+  await runStep("Click on tab 2", async () => {
+    await page.locator(tabLocator).nth(1).click();
+  });
+
+  const gridVals2 = await runStep("Get created grid UI values", async () => {
+    return await await getGridValues(
+      page,
+      gridPaths.slice(2, 3),
+      cellsIndex.slice(2, 3)
+    );
+  });
 
   const gridVals = [...gridVals1, ...gridVals2];
 
@@ -167,7 +210,11 @@ export async function InterOUDailyContractWorkDelete(
   ou,
   docNo
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

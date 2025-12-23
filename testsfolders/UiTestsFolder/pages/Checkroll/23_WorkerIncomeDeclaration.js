@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyPieceRateWorkCreate(
+export async function WorkerIncomeDeclarationCreate(
   page,
   sideMenu,
   paths,
@@ -24,8 +24,8 @@ export async function MonthlyPieceRateWorkCreate(
   await runStep("Select OU", async () => {
     await SelectOU(
       page,
-      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-      "#ddlOU-list span",
+      "#divComboOU .k-dropdown .k-select",
+      "#ddlOU-list li span",
       ou[0]
     );
   });
@@ -33,20 +33,14 @@ export async function MonthlyPieceRateWorkCreate(
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);
-
-      if (i === 0) {
-        // If Month is the first field
-        await page.waitForTimeout(1000);
-      }
     }
-  });
-
-  await runStep("Add new grid item", async () => {
-    await sideMenu.btnAddNewItem.click();
   });
 
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
+      i === 0
+        ? await sideMenu.btnAddNewItem.click()
+        : await page.locator("#btnAddNewItemInc").click();
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -71,7 +65,7 @@ export async function MonthlyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkEdit(
+export async function WorkerIncomeDeclarationEdit(
   page,
   sideMenu,
   paths,
@@ -82,10 +76,10 @@ export async function MonthlyPieceRateWorkEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  keyword
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "Dropdown");
   });
 
   await runStep("Edit transaction", async () => {
@@ -94,8 +88,18 @@ export async function MonthlyPieceRateWorkEdit(
     }
   });
 
+  await runStep("Delete and add new grid item", async () => {
+    await page.locator("#IsTaxDeductArrEmpySelectGrid").check();
+    await page.locator("#btnDeleteItem").click();
+    await sideMenu.confirmDelete.click();
+    await sideMenu.btnAddNewItem.click();
+  });
+
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) {
+        await page.locator("#btnAddNewItemInc").click();
+      }
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -120,15 +124,15 @@ export async function MonthlyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkDelete(
+export async function WorkerIncomeDeclarationDelete(
   page,
   sideMenu,
   values,
   ou,
-  docNo
+  keyword
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "Dropdown");
   });
 
   await runStep("Delete transaction", async () => {

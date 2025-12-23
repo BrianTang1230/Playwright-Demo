@@ -23,7 +23,7 @@ import {
   WorkerAdhocReimbursementCreate,
   WorkerAdhocReimbursementEdit,
   WorkerAdhocReimbursementDelete,
-} from "@UiFolder/pages/Checkroll/15_WorkerAdhocReimbursement";
+} from "@UiFolder/pages/Checkroll/17_WorkerAdhocReimbursement";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -76,6 +76,7 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
   test("Create New Worker Ad hoc Reimbursement", async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       DocNo: docNo,
+      OU: ou[0],
     });
 
     const { uiVals, gridVals } = await WorkerAdhocReimbursementCreate(
@@ -114,11 +115,7 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -155,11 +152,7 @@ test.describe.serial("Worker Ad hoc Reimbursement Tests", async () => {
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridVals.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

@@ -5,9 +5,8 @@ import {
   InputValues,
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
-import Login from "@utils/data/uidata/loginData.json";
 
-export async function DailyPieceRateWorkCreate(
+export async function WorkerPreviousEmploymentTaxDeductionCreate(
   page,
   sideMenu,
   paths,
@@ -18,8 +17,6 @@ export async function DailyPieceRateWorkCreate(
   cellsIndex,
   ou
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
@@ -28,29 +25,28 @@ export async function DailyPieceRateWorkCreate(
     await SelectOU(
       page,
       "#divComboOU .k-dropdown .k-select",
-      "#ddlOU_listbox span",
+      "ul[aria-hidden='false'] li span",
       ou[0]
     );
   });
 
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);
     }
   });
 
   await runStep("Add new grid item", async () => {
-    await page.locator("#btnNewItem").click();
+    await sideMenu.btnAddNewItem.click();
   });
 
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) await page.locator("#btnNewDWItem").click();
+      if (i === 1) await page.locator("#btnNewBIK").click();
       if (i === 2) {
-        await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
+        await page.locator("#crTabstripworkDet li").nth(1).click();
+        await page.locator("#btnNewDeductionItem").click();
       }
-
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -65,14 +61,11 @@ export async function DailyPieceRateWorkCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
-      page,
-      region === "IND" ? paths.slice(0, 4) : paths
-    );
+    return await getUiValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
-    await page.locator("#tabstripworkDet li").first().click();
+    await page.locator("#crTabstripworkDet li").first().click();
   });
 
   const gridVals1 = await runStep("Get created grid UI values", async () => {
@@ -84,7 +77,7 @@ export async function DailyPieceRateWorkCreate(
   });
 
   await runStep("Click on tab 2", async () => {
-    await page.locator("#tabstripworkDet li").nth(1).click();
+    await page.locator("#crTabstripworkDet li").nth(1).click();
   });
 
   const gridVals2 = await runStep("Get created grid UI values", async () => {
@@ -100,7 +93,7 @@ export async function DailyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkEdit(
+export async function WorkerPreviousEmploymentTaxDeductionEdit(
   page,
   sideMenu,
   paths,
@@ -111,22 +104,20 @@ export async function DailyPieceRateWorkEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  keyword
 ) {
-  const region = process.env.REGION || Login.Region;
-
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 1, "Dropdown");
   });
 
   await runStep("Edit transaction", async () => {
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
       await InputValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
   await runStep("Delete and add new grid item", async () => {
-    await page.locator("#IsSelectGrid").check();
+    await page.locator("#IsSelect").check();
     await page.locator("#btnDeleteItem").click();
     await sideMenu.confirmDelete.click();
     await sideMenu.btnAddNewItem.click();
@@ -134,13 +125,10 @@ export async function DailyPieceRateWorkEdit(
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) {
-        await page.locator("#tabstripworkDet li").first().click();
-        await page.locator("#btnNewDWItem").click();
-      }
+      if (i === 1) await page.locator("#btnNewBIK").click();
       if (i === 2) {
-        await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
+        await page.locator("#crTabstripworkDet li").nth(1).click();
+        await page.locator("#btnNewDeductionItem").click();
       }
       await InputGridValuesSameCols(
         page,
@@ -156,14 +144,11 @@ export async function DailyPieceRateWorkEdit(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
-      page,
-      region === "IND" ? paths.slice(0, 4) : paths
-    );
+    return await getUiValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
-    await page.locator("#tabstripworkDet li").first().click();
+    await page.locator("#crTabstripworkDet li").first().click();
   });
 
   const gridVals1 = await runStep("Get created grid UI values", async () => {
@@ -175,7 +160,7 @@ export async function DailyPieceRateWorkEdit(
   });
 
   await runStep("Click on tab 2", async () => {
-    await page.locator("#tabstripworkDet li").nth(1).click();
+    await page.locator("#crTabstripworkDet li").nth(1).click();
   });
 
   const gridVals2 = await runStep("Get created grid UI values", async () => {
@@ -191,16 +176,15 @@ export async function DailyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyPieceRateWorkDelete(
+export async function WorkerPreviousEmploymentTaxDeductionDelete(
   page,
   sideMenu,
   values,
-  newValues,
   ou,
-  docNo
+  keyword
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 1, "Dropdown");
   });
 
   await runStep("Delete transaction", async () => {

@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyPieceRateWorkCreate(
+export async function InterOUCropHarvestingAndCollectionCreate(
   page,
   sideMenu,
   paths,
@@ -21,28 +21,33 @@ export async function MonthlyPieceRateWorkCreate(
     await sideMenu.clickBtnCreateNewForm();
   });
 
-  await runStep("Select OU", async () => {
+  await runStep("Select OU and Loan to OU", async () => {
     await SelectOU(
       page,
-      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-      "#ddlOU-list span",
+      "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=0",
+      "ul[aria-hidden='false'] li span",
       ou[0]
+    );
+
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown .k-select >> nth=1",
+      "ul[aria-hidden='false'] li span",
+      ou[1]
     );
   });
 
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.slice(0, 8).length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);
-
-      if (i === 0) {
-        // If Month is the first field
-        await page.waitForTimeout(1000);
-      }
     }
   });
 
-  await runStep("Add new grid item", async () => {
+  await runStep("Add grid and block code", async () => {
     await sideMenu.btnAddNewItem.click();
+    await page.locator('[name="comboBoxBlock_input"]').type(values[8]);
+    await page.keyboard.press("Tab");
+    await page.locator("#btnAddBlock").click();
   });
 
   await runStep("Create grid item", async () => {
@@ -71,7 +76,7 @@ export async function MonthlyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkEdit(
+export async function InterOUCropHarvestingAndCollectionEdit(
   page,
   sideMenu,
   paths,
@@ -85,7 +90,7 @@ export async function MonthlyPieceRateWorkEdit(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
   });
 
   await runStep("Edit transaction", async () => {
@@ -120,7 +125,7 @@ export async function MonthlyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkDelete(
+export async function InterOUCropHarvestingAndCollectionDelete(
   page,
   sideMenu,
   values,
@@ -128,7 +133,7 @@ export async function MonthlyPieceRateWorkDelete(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
   });
 
   await runStep("Delete transaction", async () => {

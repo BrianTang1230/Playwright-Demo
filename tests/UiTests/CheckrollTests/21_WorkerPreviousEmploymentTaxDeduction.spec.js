@@ -25,7 +25,7 @@ import {
   WorkerPreviousEmploymentTaxDeductionCreate,
   WorkerPreviousEmploymentTaxDeductionDelete,
   WorkerPreviousEmploymentTaxDeductionEdit,
-} from "@UiFolder/pages/Checkroll/19_WorkerPreviousEmploymentTaxDeduction";
+} from "@UiFolder/pages/Checkroll/21_WorkerPreviousEmploymentTaxDeduction";
 
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -46,7 +46,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21],
+  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21],
   [1, 2],
   [1, 2],
 ];
@@ -106,7 +106,6 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       Gang: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -117,17 +116,10 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
-    await ValidateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -152,7 +144,6 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       Gang: createValues[1],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -163,17 +154,10 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(editValues, columns, uiVals);
-    await ValidateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0]
-    );
+    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0]
-    );
+    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -192,7 +176,6 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
       Gang: createValues[1],
-      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

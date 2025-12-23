@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
@@ -6,7 +6,7 @@ import {
 } from "@UiFolder/functions/InputValues";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
-export async function MonthlyPieceRateWorkCreate(
+export async function WorkerAdditionalRemunerationCreate(
   page,
   sideMenu,
   paths,
@@ -24,29 +24,23 @@ export async function MonthlyPieceRateWorkCreate(
   await runStep("Select OU", async () => {
     await SelectOU(
       page,
-      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-      "#ddlOU-list span",
+      "#divComboOU .k-dropdown .k-select",
+      "ul[aria-hidden='false'] li span",
       ou[0]
     );
   });
 
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
       await InputValues(page, paths[i], columns[i], values[i]);
-
-      if (i === 0) {
-        // If Month is the first field
-        await page.waitForTimeout(1000);
-      }
     }
   });
 
-  await runStep("Add new grid item", async () => {
-    await sideMenu.btnAddNewItem.click();
-  });
-
-  await runStep("Create grid item", async () => {
+  await runStep("Add and create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
+      i === 0
+        ? await page.locator("#btnNewEmpRem").click()
+        : await page.locator("#btnAddNewItemRem").click();
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -71,7 +65,7 @@ export async function MonthlyPieceRateWorkCreate(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkEdit(
+export async function WorkerAdditionalRemunerationEdit(
   page,
   sideMenu,
   paths,
@@ -85,17 +79,21 @@ export async function MonthlyPieceRateWorkEdit(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Edit transaction", async () => {
-    for (let i = 0; i < paths.length; i++) {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
       await InputValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) {
+        await sideMenu.confirmDelete.click();
+        await page.locator("#btnAddNewItemRem").click();
+      }
       await InputGridValuesSameCols(
         page,
         gridPaths[i],
@@ -120,7 +118,7 @@ export async function MonthlyPieceRateWorkEdit(
   return { uiVals, gridVals };
 }
 
-export async function MonthlyPieceRateWorkDelete(
+export async function WorkerAdditionalRemunerationDelete(
   page,
   sideMenu,
   values,
@@ -128,7 +126,7 @@ export async function MonthlyPieceRateWorkDelete(
   docNo
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
   });
 
   await runStep("Delete transaction", async () => {

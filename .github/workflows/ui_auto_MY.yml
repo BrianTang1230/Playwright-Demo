@@ -1,8 +1,8 @@
 name: UI Automation Test (MY)
 
 on:
-  schedule: 
-   - cron: "30 1 * * 1,3"
+  # schedule: 
+  #  - cron: "30 1 * * 1,3"
   workflow_dispatch: # trigger manually or by schedule
 
 jobs:

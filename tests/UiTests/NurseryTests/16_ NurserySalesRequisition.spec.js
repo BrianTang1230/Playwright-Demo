@@ -98,7 +98,6 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
       DocNo: docNo,
       OU2: ou[0],
     });
-    console.log("DB Values:", dbValues);
 
     const gridDbValues = await db.retrieveGridData(
       nurseryGridSQLCommand(formName),

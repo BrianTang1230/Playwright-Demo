@@ -50,7 +50,7 @@
     "MainNurseryCulling": "NC00000050",
     "MainNurseryAdjustment": "MNA0000023",
     "MainNurseryTransfer/Loss": "NT00000056",
-    "MainNurserySold": "MS00000050",
+    "MainNurserySold": "",
     "Inter-OUMainNurseryTransferTo": "IMT0000059",
     "NurseryTransferRequisition": "RNT0000014",
     "NurserySalesRequisition": ""

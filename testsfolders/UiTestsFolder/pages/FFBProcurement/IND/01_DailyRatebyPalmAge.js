@@ -5,7 +5,6 @@ import {
   InputValues,
 } from "@UiFolder/functions/InputValues";
 import {
-  FilterRecordByOU,
   FilterRecordByOUAndDate,
 } from "@UiFolder/functions/OpenRecord";
 
@@ -33,7 +32,7 @@ export async function DailyRatebyPalmAgeCreate(
     await InputValues(page, paths[i], columns[i], values[i]);
   }
 
-  await page.getByRole("button", { name: " Populate Month" }).click();
+  await page.getByRole("button", { name: " New Item" }).click();
 
   for (let i = 0; i < gridPaths.length; i++) {
     await InputGridValuesSameCols(
@@ -62,10 +61,16 @@ export async function DailyRatebyPalmAgeEdit(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou,
-  docNo
+  ou
 ) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+  await FilterRecordByOUAndDate(
+    page,
+    values[0],
+    ou[0],
+    values[2],
+    5,
+    "Dropdown"
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await InputValues(page, paths[i], columns[i], newValues[i]);
@@ -88,14 +93,15 @@ export async function DailyRatebyPalmAgeEdit(
   return { uiVals, gridVals };
 }
 
-export async function DailyRatebyPalmAgeDelete(
-  page,
-  sideMenu,
-  values,
-  ou,
-  docNo
-) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+export async function DailyRatebyPalmAgeDelete(page, sideMenu, values, ou) {
+  await FilterRecordByOUAndDate(
+    page,
+    values[0],
+    ou[0],
+    values[2],
+    5,
+    "Dropdown"
+  );
 
   await sideMenu.clickBtnDelete();
 }

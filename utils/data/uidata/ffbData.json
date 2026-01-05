@@ -13,14 +13,16 @@
     "Transport&ProcessingChargesColumn": "Month date,Remarks text,Status text",
     "Transport,QualityandVolumeSubsidyPath": "#dpTransSubDate,textbox*0,#txtStatus",
     "Transport,QualityandVolumeSubsidyColumn": "Month date,Remarks text,Status text",
-    "FFBAdvancePaymentPath": "#advDatePicker,#payDatePicker,#Remarks,#ffbFromDatePicker,ffbToDatePicker",
-    "FFBAdvancePaymentColumn": "Advance date,Payment date,Remarks text,FromDate date,ToDate date",
-    "FFBUnitCostAdjustmentPath": "#monthPicker,#Remarks",
-    "FFBUnitCostAdjustmentColumn": "Month date,Remarks text",
-    "FFBUnitCostAdjustment(Block)Path": "#monthPicker,#Remarks",
-    "FFBUnitCostAdjustment(Block)Column": "Month date,Remarks text",
-    "DailyRatebyPalmAgePath": "#dpFromDate,#dpToDate,Region_input,#Remarks",
-    "DailyRatebyPalmAgeColumn": "FromDate date,ToDate date,Region dropdown,Remarks text"
+    "FFBAdvancePaymentPath": "#advDatePicker,#payDatePicker,#txtStatus,#Remarks,#ffbFromDatePicker,ffbToDatePicker",
+    "FFBAdvancePaymentColumn": "Advance date,Payment date,Status text,Remarks text,FromDate date,ToDate date",
+    "FFBUnitCostAdjustmentPath": "#monthPicker,#Remarks,#txtStatus",
+    "FFBUnitCostAdjustmentColumn": "Month date,Remarks text,Status text",
+    "FFBUnitCostAdjustment(Block)Path": "#monthPicker,#Remarks,#txtStatus",
+    "FFBUnitCostAdjustment(Block)Column": "Month date,Remarks text,Status text",
+    "DailyRatebyPalmAgePath": "#dpFromDate,#dpToDate,Region_input,Currency_input,#txtStatus,#Remarks",
+    "DailyRatebyPalmAgeColumn": "FromDate date,ToDate date,Region dropdown,Currency text,Status text,Remarks text",
+    "DailyProcurementRatePath": "#monthPicker,Region_input,Currency_input,#txtStatus,#Remarks",
+    "DailyProcurementRateColumn": "Month date,Region dropdown,Currency text,Status text,Remarks text"
   },
   "GridPath": {
     "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
@@ -31,9 +33,10 @@
     "FFBAdvancePaymentGrid": "#EstateDetGrid > .k-grid-content-locked,#EstateDetGrid > .k-grid-content.k-auto-scrollable",
     "FFBUnitCostAdjustmentGrid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
-    "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody"
+    "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody",
+    "DailyProcurementRateGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody"
   },
   "DocNo": {
-    "FFBAdvancePayment": "ADV2510027"
+    "FFBAdvancePayment": "ADV2601009"
   }
 }

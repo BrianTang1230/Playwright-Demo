@@ -2,7 +2,7 @@ function ffbSQLCommand(formName) {
   let sqlCommand = `
   DECLARE @OU VARCHAR(100) = 
     CASE WHEN @region = 'IND'
-      THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+      THEN 'LSPM - LIBO SAWIT PERKASA PALM OIL MILL'
       ELSE 'SPOM - SERAYA PALM OIL MILL'
   END;
   `;
@@ -342,10 +342,14 @@ function ffbSQLCommand(formName) {
       break;
 
     case "FFB Advance Payment":
-      sqlCommand = `
+      sqlCommand += `
       SELECT 
       FORMAT(A.AdvDate, 'dd/MM/yyyy') AS Advance,
       FORMAT(A.PayDate, 'dd/MM/yyyy') AS Payment,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
       A.Remarks,
       FORMAT(B.FFBFromDate, 'dd/MM/yyyy') AS FromDate,
       FORMAT(B.FFBToDate, 'dd/MM/yyyy') AS ToDate,
@@ -353,11 +357,13 @@ function ffbSQLCommand(formName) {
       FROM FPS_AdvPayHdr A
       LEFT JOIN FPS_AdvPayDet B ON A.AdvPayHdrKey = B.AdvPayHdrKey
       LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-      WHERE A.AdvPayNo = @DocNo`;
+      WHERE A.AdvPayNo = @DocNo
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
       break;
 
     case "FFB Unit Cost Adjustment":
-      sqlCommand = `
+      sqlCommand += `
       SELECT 
       FORMAT(DATEFROMPARTS(
         TRY_CAST(A.Yr AS int),
@@ -366,6 +372,10 @@ function ffbSQLCommand(formName) {
       ),
       'MMMM yyyy') AS Month,
       A.Remarks,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
       C.OUCode + ' - ' + C.OUDesc AS OU
       FROM FPS_FFBUPAdjHdr A
       LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
@@ -379,7 +389,7 @@ function ffbSQLCommand(formName) {
       break;
 
     case "FFB Unit Cost Adjustment (Block)":
-      sqlCommand = `
+      sqlCommand += `
       SELECT 
       FORMAT(DATEFROMPARTS(
         TRY_CAST(A.Yr AS int),
@@ -388,6 +398,10 @@ function ffbSQLCommand(formName) {
       ),
       'MMMM yyyy') AS Month,
       A.Remarks,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
       C.OUCode + ' - ' + C.OUDesc AS OU
       FROM FPS_FFBUPAdjBlkHdr A
       LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
@@ -401,23 +415,29 @@ function ffbSQLCommand(formName) {
       break;
 
     case "Daily Rate by Palm Age":
-      sqlCommand = `
+      sqlCommand += `
       SELECT 
-      FORMAT(A.FormDate,
-      'MMMM yyyy','id-ID') AS FormDate,
+      FORMAT(A.FromDate,
+      'dd/MM/yyyy') AS FromDate,
       FORMAT(A.ToDate,
-      'MMMM yyyy','id-ID') AS ToDate,
+      'dd/MM/yyyy') AS ToDate,
+      E.RegionCode + ' - ' + E.RegionDesc AS Region,
+      D.CurrCode + ' - ' + D.CurrDesc AS Currency,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
       A.Remarks,
       C.OUCode + ' - ' + C.OUDesc AS OU
-      FROM FPS_FFBUPAdjBlkHdr A
+      FROM FPS_DailyRatePAgeHdr A
       LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-      WHERE FORMAT(DATEFROMPARTS(
-        TRY_CAST(A.Yr AS int),
-        TRY_CAST(A.Mth AS int),
-        1
-      ),
-      'MMMM yyyy') = @Date
-      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
+      WHERE FORMAT(A.FromDate,
+      'dd/MM/yyyy') = @Date
+	    AND E.RegionCode + ' - ' + E.RegionDesc = @Area
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
       break;
   }
 
@@ -428,7 +448,7 @@ function ffbGridSQLCommand(formName) {
   let sqlCommand = `
   DECLARE @OU VARCHAR(100) = 
     CASE WHEN @region = 'IND'
-      THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+      THEN 'LSPM - LIBO SAWIT PERKASA PALM OIL MILL'
       ELSE 'SPOM - SERAYA PALM OIL MILL'
   END;
   `;
@@ -634,35 +654,57 @@ function ffbGridSQLCommand(formName) {
       break;
 
     case "FFB Advance Payment":
-      sqlCommand = `
-        SELECT
-        F.ContactCode + ' - ' + F.ContactDesc AS Contact,
-        A.UnitPrice AS UPnumeric,
-        A.AdvPer AS Pnumeric,
-        A.AdjAmt AS AAnumeric,
-        CASE
-          WHEN A.PaymentType = 'Q' THEN 'Cheque'
-          WHEN A.PaymentType = 'C' THEN 'Cash'
-          ELSE 'Bank'
-        END AS PaymentType
-        FROM FPS_AdvPayDet A
-        LEFT JOIN GMS_ContactStp F ON A.ContactKey = F.ContactKey
-        WHERE A.AdvPayHdrKey IN (
-         SELECT AdvPayHdrKey
-         FROM FPS_AdvPayHdr
-         WHERE AdvPayNo = @DocNo
-        )`;
+      sqlCommand += `
+      SELECT F.ContactCode + ' - ' + F.ContactDesc AS Contact,
+      FORMAT(A.FFBFromDate,'dd/MM/yyyy') AS FromDate,
+      FORMAT(A.FFBToDate,'dd/MM/yyyy') AS ToDate,
+		  A.TotalWt AS TWnumeric,
+      A.UnitPrice AS UPnumeric,
+		  A.TotalFFBPrice AS FFBPnumeric,
+      A.AdvPer AS Pnumeric,
+      A.AdjAmt AS AAnumeric,
+		  A.NettAmt AS NAnumeric,
+      CASE A.PaymentType
+        WHEN 'Q' THEN 'Cheque'
+        WHEN 'C' THEN 'Cash'
+        ELSE 'Bank'
+      END AS PaymentType,
+      CASE A.BankKey 
+        WHEN -1 THEN NULL
+        ELSE E.BankCode + ' - ' + E.BankDesc
+      END AS BankCode,
+      CASE A.CashKey
+        WHEN -1 THEN NULL
+        ELSE D.CashCode + ' - ' + D.CashDesc
+      END AS CashCode,
+      A.ChequeNo,
+      CASE A.BenKey
+        WHEN -1 THEN '-'
+        ELSE C.BNMCode + ' - ' + C.BeneficiaryName
+      END AS Beneficiary
+      FROM FPS_AdvPayDet A
+      LEFT JOIN GMS_ContactStp F ON A.ContactKey = F.ContactKey
+      LEFT JOIN GMS_BankStp E ON A.BankKey = E.BankKey
+      LEFT JOIN GMS_CashStp D ON A.CashKey = D.CashKey
+      LEFT JOIN GMS_BeneficiaryStp C ON A.BenKey = C.BenKey
+      WHERE A.AdvPayHdrKey IN (
+        SELECT AdvPayHdrKey
+        FROM FPS_AdvPayHdr
+        WHERE AdvPayNo = @DocNo
+      )`;
       break;
 
     case "FFB Unit Cost Adjustment":
-      sqlCommand = `
+      sqlCommand += `
         SELECT
         E.EstateCode + ' - ' + E.EstateDesc AS Estate,
-        A.FromDay AS FDnumeric,
-        A.ToDay AS TDnumeric,
+        F.ContactCode + ' - ' + F.ContactDesc AS Contact,
+        A.FromDay AS FromDay,
+        A.ToDay AS ToDay,
         A.AdjAmt AS AAnumeric
         FROM FPS_FFBUPAdjDet A
         LEFT JOIN GMS_EstateStp E ON A.EstateKey = E.EstateKey
+        LEFT JOIN GMS_ContactStp F ON E.ContactKey = F.ContactKey
         WHERE A.FFBUPAdjHdrKey IN (
           SELECT H.FFBUPAdjHdrKey
           FROM FPS_FFBUPAdjHdr H
@@ -678,14 +720,18 @@ function ffbGridSQLCommand(formName) {
       break;
 
     case "FFB Unit Cost Adjustment (Block)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT
         E.BlockCode + ' - ' + E.BlockDesc AS Block,
-        A.FromDay AS FDnumeric,
-        A.ToDay AS TDnumeric,
+        F.EstateCode + ' - ' + F.EstateDesc AS Estate,
+        G.ContactCode + ' - ' + G.ContactDesc AS Contact,
+        A.FromDay AS FromDay,
+        A.ToDay AS ToDay,
         A.AdjAmt AS AAnumeric
         FROM FPS_FFBUPAdjBlkDet A
         LEFT JOIN GMS_BlockStp E ON A.BlockKey = E.BlockKey
+        LEFT JOIN GMS_EstateStp F ON E.EstateKey = F.EstateKey
+        LEFT JOIN GMS_ContactStp G ON F.ContactKey = G.ContactKey
         WHERE A.FFBUPAdjHdrKey IN (
           SELECT H.FFBUPAdjHdrKey
           FROM FPS_FFBUPAdjBlkHdr H
@@ -701,26 +747,22 @@ function ffbGridSQLCommand(formName) {
       break;
 
     case "Daily Rate by Palm Age":
-      sqlCommand = `
-        SELECT
-        E.BlockCode + ' - ' + E.BlockDesc AS Block,
-        A.FromDay AS FDnumeric,
-        A.ToDay AS TDnumeric,
-        A.AdjAmt AS AAnumeric
-        FROM FPS_FFBUPAdjBlkDet A
-        LEFT JOIN GMS_BlockStp E ON A.BlockKey = E.BlockKey
-        WHERE A.FFBUPAdjHdrKey IN (
-          SELECT H.FFBUPAdjHdrKey
-          FROM FPS_FFBUPAdjBlkHdr H
-          LEFT JOIN GMS_OUStp C ON H.OUKey = C.OUKey
-          WHERE FORMAT(DATEFROMPARTS(
-            TRY_CAST(H.Yr AS int),
-            TRY_CAST(H.Mth AS int),
-            1
-          ),
-          'MMMM yyyy') = @Date
-          AND C.OUCode + ' - ' + C.OUDesc = @OU
-        )`;
+      sqlCommand += `
+      SELECT 
+      D.FromAge AS FAnumeric,
+      D.ToAge AS TAnumeric,
+      D.RatePerWt AS RPWnumeric
+      FROM FPS_DailyRatePAgeDet D
+      WHERE RatePAgeHdrKey IN (
+        SELECT A.RatePAgeHdrKey
+        FROM FPS_DailyRatePAgeHdr A
+        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+        LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
+        WHERE FORMAT(A.FromDate,
+        'dd/MM/yyyy') = @Date
+        AND E.RegionCode + ' - ' + E.RegionDesc = @Area
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+      )`;
       break;
   }
 

@@ -95,6 +95,9 @@ test.describe.serial("Daily Procurement Rate Tests", () => {
       }
     );
 
+    console.log(dbValues);
+    console.log(gridDbValues);
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -141,12 +144,7 @@ test.describe.serial("Daily Procurement Rate Tests", () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Daily Procurement Rate", async ({ page, db }) => {
-    await DailyProcurementRateDelete(
-      page,
-      sideMenu,
-      createValues,
-      ou
-    );
+    await DailyProcurementRateDelete(page, sideMenu, createValues, ou);
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
@@ -158,7 +156,7 @@ test.describe.serial("Daily Procurement Rate Tests", () => {
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async ({ }) => {
+  test.afterAll(async ({}) => {
     console.log(`End Running: ${formName}`);
   });
 });

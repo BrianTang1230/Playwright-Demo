@@ -439,6 +439,60 @@ function ffbSQLCommand(formName) {
       AND C.OUCode + ' - ' + C.OUDesc = @OU
       `;
       break;
+
+    case "Daily Procurement Rate":
+      sqlCommand += `
+      SELECT 
+      FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),
+      'MMMM yyyy','id-ID') AS Month,
+      E.RegionCode + ' - ' + E.RegionDesc AS Region,
+      D.CurrCode + ' - ' + D.CurrDesc AS Currency,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN  'C' THEN 'CLOSE'
+      END AS Status,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_DailyProcRateHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
+      WHERE TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),'MMMM yyyy',
+      'id-ID') = @Date
+      AND E.RegionCode + ' - ' + E.RegionDesc = @Area
+      AND C.OUCode + ' - ' + C.OUDesc = @OU`;
+      break;
+
+    case "Daily FFB Procurement Rate":
+      sqlCommand += `
+      SELECT 
+      FORMAT(A.RateDate,'dd/MM/yyyy') AS RateDate,
+      A.Remarks,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN  'C' THEN 'CLOSE'
+      END AS Status,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_DailyRateBySuppHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      WHERE FORMAT(A.RateDate,'dd/MM/yyyy') = @Date
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;
@@ -536,17 +590,7 @@ function ffbGridSQLCommand(formName) {
         WHERE 
           TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
           AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
-          AND IIF(@region = 'IND',
-            FORMAT(
-              DATEFROMPARTS(
-                TRY_CAST(A.Yr AS int),
-                TRY_CAST(A.Mth AS int),
-                1
-              ),
-            'MMMM yyyy',
-            'id-ID'
-          ),
-          FORMAT(
+          AND FORMAT(
             DATEFROMPARTS(
               TRY_CAST(A.Yr AS int),
               TRY_CAST(A.Mth AS int),
@@ -554,8 +598,7 @@ function ffbGridSQLCommand(formName) {
             ),
             'MMMM yyyy',
             'en-US'
-            )
-          ) = @Date
+            ) = @Date
           AND B.RegionCode + ' - ' + B.RegionDesc = @Nation
           AND C.OUCode + ' - ' + C.OUDesc = @OU
         )`;
@@ -582,17 +625,7 @@ function ffbGridSQLCommand(formName) {
         WHERE 
           TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
           AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
-          AND IIF(@region = 'IND',
-            FORMAT(
-              DATEFROMPARTS(
-                TRY_CAST(A.Yr AS int),
-                TRY_CAST(A.Mth AS int),
-                1
-              ),
-            'MMMM yyyy',
-            'id-ID'
-          ),
-          FORMAT(
+          AND FORMAT(
             DATEFROMPARTS(
               TRY_CAST(A.Yr AS int),
               TRY_CAST(A.Mth AS int),
@@ -600,8 +633,7 @@ function ffbGridSQLCommand(formName) {
             ),
             'MMMM yyyy',
             'en-US'
-            )
-          ) = @Date
+            ) = @Date
           AND C.OUCode + ' - ' + C.OUDesc = @OU
         )`;
       break;
@@ -755,15 +787,70 @@ function ffbGridSQLCommand(formName) {
       FROM FPS_DailyRatePAgeDet D
       WHERE RatePAgeHdrKey IN (
         SELECT A.RatePAgeHdrKey
-        FROM FPS_DailyRatePAgeHdr A
-        LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-        LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
-        WHERE FORMAT(A.FromDate,
-        'dd/MM/yyyy') = @Date
-        AND E.RegionCode + ' - ' + E.RegionDesc = @Area
-        AND C.OUCode + ' - ' + C.OUDesc = @OU
+      FROM FPS_DailyProcRateHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
+      WHERE TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND FORMAT(DATEFROMPARTS(
+        TRY_CAST(A.Yr AS int),
+        TRY_CAST(A.Mth AS int),
+        1
+      ),'MMMM yyyy',
+      'id-ID') = @Date
+      AND E.RegionCode + ' - ' + E.RegionDesc = @Area
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
       )`;
       break;
+
+    case "Daily Procurement Rate":
+      sqlCommand += `
+      SELECT D.Day AS Dnumeric,
+      D.RatePerWt AS RPWnumeric
+      FROM FPS_DailyProcRateDet D
+      WHERE D.DailyProcRateHdrKey IN (
+        SELECT A.DailyProcRateHdrKey
+      FROM FPS_DailyProcRateHdr A
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
+      WHERE TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
+        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
+        AND FORMAT(DATEFROMPARTS(
+          TRY_CAST(A.Yr AS int),
+          TRY_CAST(A.Mth AS int),
+          1
+        ),'MMMM yyyy',
+        'id-ID') = @Date
+        AND E.RegionCode + ' - ' + E.RegionDesc = @Area
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+      )
+      `;
+      break;
+
+    case "Daily FFB Procurement Rate":
+      sqlCommand += `
+      SELECT A.EstateCode + ' - ' + A.EstateDesc AS Estate,
+      B.SuppCatCode + ' - ' + B.SuppCatDesc AS Category,
+      D.PrevRate AS PRnumeric,
+      D.Fluctuation AS Fnumeric,
+      D.DailyRate AS TRnumeric
+        FROM FPS_DailyRateBySuppDet D
+      LEFT JOIN GMS_EstateStp A ON D.EstateKey = A.EstateKey
+      LEFT JOIN GMS_SuppCatStp B ON A.SuppCatKey = B.SuppCatKey
+      WHERE D.RateBySuppHdrKey IN (
+        SELECT H.RateBySuppHdrKey
+        FROM FPS_DailyRateBySuppHdr H
+        LEFT JOIN GMS_OUStp C ON H.OUKey = C.OUKey
+        WHERE FORMAT(H.RateDate,'dd/MM/yyyy') = @Date
+        AND C.OUCode + ' - ' + C.OUDesc = @OU
+	    )
+      `;
+      break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

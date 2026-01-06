@@ -4,9 +4,7 @@ import {
   InputGridValuesSameCols,
   InputValues,
 } from "@UiFolder/functions/InputValues";
-import {
-  FilterRecordByOUAndDate,
-} from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function DailyRatebyPalmAgeCreate(
   page,
@@ -65,7 +63,7 @@ export async function DailyRatebyPalmAgeEdit(
 ) {
   await FilterRecordByOUAndDate(
     page,
-    values[0],
+    ["Januari 2026"],
     ou[0],
     values[2],
     5,
@@ -96,7 +94,7 @@ export async function DailyRatebyPalmAgeEdit(
 export async function DailyRatebyPalmAgeDelete(page, sideMenu, values, ou) {
   await FilterRecordByOUAndDate(
     page,
-    values[0],
+    ["Januari 2026"],
     ou[0],
     values[2],
     5,

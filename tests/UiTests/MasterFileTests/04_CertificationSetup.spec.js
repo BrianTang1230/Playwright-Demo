@@ -69,6 +69,7 @@ test.describe.serial("Certification Setup Tests", () => {
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
+      OU: ou[0],
     });
 
     await ValidateUiValues(createValues, columns, uiVals);
@@ -88,6 +89,7 @@ test.describe.serial("Certification Setup Tests", () => {
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[0],
     });
 
     await ValidateUiValues(editValues, columns, uiVals);
@@ -100,6 +102,7 @@ test.describe.serial("Certification Setup Tests", () => {
     // Check if the Certification Setup is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[0],
     });
 
     if (dbValues.length > 0) {

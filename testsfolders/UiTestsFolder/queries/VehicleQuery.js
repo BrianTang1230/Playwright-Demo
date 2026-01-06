@@ -111,6 +111,9 @@ function vehicleGridSQLCommand(formName) {
 	    LEFT JOIN GMS_OUStp E ON D.OUKey = E.OUKey
       WHERE D.IRunDistNum = @DocNo AND E.OUCode + ' - ' + E.OUDesc = @OU`;
       break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

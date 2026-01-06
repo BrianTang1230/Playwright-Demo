@@ -18,6 +18,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
 }
 
 /* 
@@ -80,6 +81,7 @@ export async function FilterRecordByOUAndDate(
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
 }
 
 export async function FilterRecordByDateRange(page, values, ou, keyword) {
@@ -97,6 +99,7 @@ export async function FilterRecordByDateRange(page, values, ou, keyword) {
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
 }
 
 export async function FilterRecordByOU(
@@ -153,4 +156,5 @@ export async function FilterRecordByOU(
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
 }

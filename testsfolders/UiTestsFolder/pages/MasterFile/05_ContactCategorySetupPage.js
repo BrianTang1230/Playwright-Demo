@@ -60,7 +60,7 @@ export async function ContactCategorySetupEdit(
 // Delete Function
 export async function ContactCategorySetupDelete(page, sideMenu, newValues) {
   // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, { del: true });
+  await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
   await sideMenu.clickBtnDelete();

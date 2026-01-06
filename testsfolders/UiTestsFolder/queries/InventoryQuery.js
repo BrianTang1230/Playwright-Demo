@@ -23,6 +23,9 @@ function inventorySQLCommand(formName) {
         left join GMS_OUStp Z on A.OUKey = Z.OUKey
         where A.RcvNum = @DocNo and Z.OUCode + ' - ' + Z.OUDesc = @OU`;
       break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;
@@ -55,6 +58,9 @@ function inventoryGridSQLCommand(formName) {
         )
         `;
       break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

@@ -22,7 +22,11 @@
     "DailyRatebyPalmAgePath": "#dpFromDate,#dpToDate,Region_input,Currency_input,#txtStatus,#Remarks",
     "DailyRatebyPalmAgeColumn": "FromDate date,ToDate date,Region dropdown,Currency text,Status text,Remarks text",
     "DailyProcurementRatePath": "#monthPicker,Region_input,Currency_input,#txtStatus,#Remarks",
-    "DailyProcurementRateColumn": "Month date,Region dropdown,Currency text,Status text,Remarks text"
+    "DailyProcurementRateColumn": "Month date,Region dropdown,Currency text,Status text,Remarks text",
+    "DailyFFBProcurementRatePath": "#dpRateDate,#Remarks,#txtStatus",
+    "DailyFFBProcurementRateColumn": "RateDate date,Remarks text,Status text",
+    "FFBProcurementPaymentPath": "#FromDatePicker,#ToDatePicker,#txtStatus,#Remarks",
+    "FFBProcurementPaymentColumn": ""
   },
   "GridPath": {
     "MonthlyMPOBPriceGrid": "#PriceDetGrid > .k-grid-content > .k-selectable > tbody",
@@ -34,9 +38,10 @@
     "FFBUnitCostAdjustmentGrid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody",
-    "DailyProcurementRateGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody"
+    "DailyProcurementRateGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody",
+    "DailyFFBProcurementRateGrid": "#DailyFFBProcurementRateGrid > .k-grid-content > .k-selectable > tbody"
   },
   "DocNo": {
-    "FFBAdvancePayment": "ADV2601009"
+    "FFBAdvancePayment": "ADV2601010"
   }
 }

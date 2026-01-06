@@ -1,12 +1,18 @@
 {
   "InputPath": {
-    "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive",
-    "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox",
-    "AdditionalRemunerationSetupPath": "#remCode,#remDesc,#addRemActive,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF",
-    "AdditionalRemunerationSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RemType text,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox"
+    "AdditionalRemunerationSetupPath": "#remCode,#remDesc,#addRemActive,#addRemRcdType,type_input,#IsPrevYr,#EnableTax,#EnableEPF,#EnableSOCSO,#EnableEIS,#EnableHRDF",
+    "AdditionalRemunerationSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RcdType text,RemType dropdown,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox",
+    "Allowance/Deduction/ReimbursementGroupSetupPath": "#grpCode,#payGrpDesc,#payGrpActive,#rcdType,//*[@id=\"topRegion\"]/div[6]/div/div[2]/div[5]/span",
+    "Allowance/Deduction/ReimbursementGroupSetupColumn": "GrpCode text,GrpDesc text,Active checkbox,RcdType text,Type combobox",
+    "CertificationSetupPath": "#txtCertCode,#txtDescription,#chkActive,#RcdType,#txtCertNo,#chkSetAsDefault,#chkConventional,#CertExpiryDate",
+    "CertificationSetupColumn": "CertCode text,CertDesc text,Active checkbox,RcdType text,CertNo text,IsDefault checkbox,Conventional checkbox,ExpiryDate date",
+    "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive,#addRemRcdType",
+    "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox,RcdType text",
+    "ContactCategorySetupPath": "#txtContactCatCode,#txtDescription,#chkActive,#contactCatRcdType,#chkCropSupp",
+    "ContactCategorySetupColumn": "ContactCatCode text,ContactCatDesc text,Active checkbox,RcdType text,CropSupp checkbox"
   },
 
   "GridPath": {
-    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content"
+    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody"
   }
 }

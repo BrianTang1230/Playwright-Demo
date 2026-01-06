@@ -399,6 +399,7 @@ function payrollGridSQLCommand(formName) {
         AND D.Remarks IN ('Automation Testing Create IND','Automation Testing Edit IND')
         AND FORMAT(D.PrecedingDate, 'MMMM yyyy', 'id-ID') = @Date`;
       break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

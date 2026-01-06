@@ -34,7 +34,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial("ADR Group Setup Tests", () => {
-  if (Login.Region === "IND") test.skip("Skip for IND side", true);
+  if (Login.Region = "IND") test.skip();
 
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {

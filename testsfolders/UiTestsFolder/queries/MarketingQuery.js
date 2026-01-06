@@ -112,6 +112,9 @@ function marketingSQLCommand(formName) {
         left join GMS_OUStp J on A.OUKey = J.OUKey
         where A.ContractDOSID = @DocNo and J.OUCode + ' - ' + J.OUDesc = @OU`;
       break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

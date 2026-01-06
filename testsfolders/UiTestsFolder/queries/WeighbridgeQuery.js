@@ -107,6 +107,9 @@ function weighbridgeGridSQLCommand(formName) {
           ) = @Date
           AND F.OUCode + ' - ' + F.OUDesc = @OU`;
       break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
   }
 
   return sqlCommand;

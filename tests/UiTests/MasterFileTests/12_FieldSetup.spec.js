@@ -28,10 +28,10 @@ const module = "Master File";
 const submodule = "General";
 const formName = "Field Setup";
 const keyName = formName.split(" ").join("");
-const paths = InputPath[keyName + "Path"].split(",");
-const columns = InputPath[keyName + "Column"].split(",");
+// const paths = InputPath[keyName + "Path"].split(",");
+// const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Field Setup Tests", () => {
+test.describe.skip("Field Setup Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values

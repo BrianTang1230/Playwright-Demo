@@ -28,8 +28,8 @@ const module = "Master File";
 const submodule = "General";
 const formName = "Nationality Setup";
 const keyName = formName.split(" ").join("");
-const paths = InputPath[keyName + "Path"].split(",");
-const columns = InputPath[keyName + "Column"].split(",");
+// const paths = InputPath[keyName + "Path"].split(",");
+// const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.skip("Nationality Setup Tests", () => {
   // ---------------- Before All ----------------

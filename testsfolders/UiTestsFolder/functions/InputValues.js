@@ -54,7 +54,10 @@ export async function InputValues(page, path, col, value) {
   // For dropdown with no text input
   else if (col.includes("combobox")) {
     await element.click();
-    await page.locator('ul[role="listbox"] li', { hasText: value }).first().click();
+    await page
+      .locator('ul[role="listbox"] li', { hasText: value })
+      .first()
+      .click();
   }
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
@@ -65,7 +68,7 @@ export async function InputGridValuesSameCols(
   path,
   values,
   cellsIndex,
-  nRow = 0
+  nRow = 0,
 ) {
   const table = page.locator(path);
   const vals = values.split(";");
@@ -97,7 +100,6 @@ export async function InputGridValuesSameCols(
       await input.fill("");
     }
 
-    await input.fill("");
     await input.type(vals[i]);
     await input.press("Enter");
   }

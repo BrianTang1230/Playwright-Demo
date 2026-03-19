@@ -31,16 +31,7 @@ export async function DivisionSetupCreate(
   await sideMenu.clickBtnSave();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, values, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0]
-      ),
-  });
+  await SelectRecord(page, sideMenu, values);
 
   const uiVals = await getUiValues(page, paths);
 
@@ -57,17 +48,15 @@ export async function DivisionSetupEdit(
   newValues,
   ou
 ) {
+  await SelectOU(
+    page,
+    "div.masterModeOU .k-dropdown .k-select",
+    "#comboBoxOU_listbox li span",
+    ou[0]
+  );
+
   // Search and select the created record
-  await SelectRecord(page, sideMenu, values, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0]
-      ),
-  });
+  await SelectRecord(page, sideMenu, values);
 
   // Input new data
   for (let i = 0; i < paths.length; i++) {
@@ -78,16 +67,7 @@ export async function DivisionSetupEdit(
   await sideMenu.clickBtnSave();
 
   // Search and select created record
-  await SelectRecord(page, sideMenu, newValues, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0]
-      ),
-  });
+  await SelectRecord(page, sideMenu, newValues);
 
   const uiVals = await getUiValues(page, paths);
 
@@ -96,18 +76,14 @@ export async function DivisionSetupEdit(
 
 // Delete Function
 export async function DivisionSetupDelete(page, sideMenu, newValues, ou) {
-  // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, {
-    del: true,
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0]
-      ),
-  });
+  SelectOU(
+    page,
+    "div.masterModeOU .k-dropdown .k-select",
+    "#comboBoxOU_listbox li span",
+    ou[0]
+  ),
+    // Search and select the edited record
+    await SelectRecord(page, sideMenu, newValues, true);
 
   // Delete record
   await sideMenu.clickBtnDelete();

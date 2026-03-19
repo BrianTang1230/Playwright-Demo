@@ -15,7 +15,7 @@ export async function InterOUMonthlyPieceRateWorkCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -26,14 +26,14 @@ export async function InterOUMonthlyPieceRateWorkCreate(
       page,
       "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
       "#ddlFromOU_listbox li span",
-      ou[0]
+      ou[0],
     );
 
     await SelectOU(
       page,
       "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
       "#ddlToOU_listbox li span",
-      ou[1]
+      ou[1],
     );
   });
 
@@ -53,7 +53,7 @@ export async function InterOUMonthlyPieceRateWorkCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -84,7 +84,7 @@ export async function InterOUMonthlyPieceRateWorkEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
@@ -102,7 +102,7 @@ export async function InterOUMonthlyPieceRateWorkEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -127,7 +127,7 @@ export async function InterOUMonthlyPieceRateWorkDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);

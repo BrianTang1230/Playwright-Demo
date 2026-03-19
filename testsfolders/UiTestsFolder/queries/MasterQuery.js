@@ -134,7 +134,7 @@ function masterSQLCommand(formName) {
         FROM GMS_ContactCategoryStp 
         WHERE ContactCatCode = @Code`;
       break;
-    
+
     case "Country Setup":
       sqlCommand = `
         SELECT CtryCode, 
@@ -149,6 +149,40 @@ function masterSQLCommand(formName) {
         END AS RcdType
         FROM GMS_CountryStp 
         WHERE CtryCode = @Code`;
+      break;
+
+    case "Currency Setup":
+      sqlCommand = `
+        SELECT CurrCode, 
+        CurrDesc, 
+        CASE Active
+          WHEN 1 THEN 'True' 
+          WHEN 0 THEN 'False'
+        END AS Active,
+        CASE RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+        END AS RcdType,
+        CurrSymb
+        FROM GMS_CurrencyStp 
+        WHERE CurrCode = @Code
+      `;
+      break;
+
+    case "Division Setup":
+      sqlCommand = `
+      SELECT A.DivCode,
+      A.DivDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_DivStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.DivCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
       break;
 
     default:

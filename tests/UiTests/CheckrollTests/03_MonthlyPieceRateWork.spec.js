@@ -90,13 +90,13 @@ test.describe.serial("Monthly Piece Rate Work Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       keyName,
-      await page.locator("#txtMPRNum").inputValue()
+      await page.locator("#txtMPRNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -108,7 +108,7 @@ test.describe.serial("Monthly Piece Rate Work Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -133,7 +133,7 @@ test.describe.serial("Monthly Piece Rate Work Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const uiVals = await getUiValues(page, paths);
@@ -148,7 +148,7 @@ test.describe.serial("Monthly Piece Rate Work Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 

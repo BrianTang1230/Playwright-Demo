@@ -115,7 +115,7 @@ test.describe.serial("Main Nursery Received Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
+    console.log(dbValues);
     if (dbValues.length > 0) {
       throw new Error(`Deleting Main Nursery Received failed`);
     }
@@ -123,9 +123,9 @@ test.describe.serial("Main Nursery Received Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    await editJson(JsonPath, formName, "");
+    // await editJson(JsonPath, formName, "");
 
     console.log(`End Running: ${formName}`);
   });

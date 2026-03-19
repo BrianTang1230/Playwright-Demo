@@ -15,7 +15,7 @@ export async function MonthlyPieceRateWorkCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -26,7 +26,7 @@ export async function MonthlyPieceRateWorkCreate(
       page,
       "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
       "#ddlOU-list span",
-      ou[0]
+      ou[0],
     );
   });
 
@@ -51,7 +51,7 @@ export async function MonthlyPieceRateWorkCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -82,7 +82,7 @@ export async function MonthlyPieceRateWorkEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
@@ -100,7 +100,7 @@ export async function MonthlyPieceRateWorkEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -125,7 +125,7 @@ export async function MonthlyPieceRateWorkDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);

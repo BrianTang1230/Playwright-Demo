@@ -5,6 +5,11 @@ function nurserySQLCommand(formName) {
          THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
          ELSE 'AGT - AGATHIS ESTATE'
     END;
+    DECLARE @OU2 VARCHAR(100) =
+      CASE WHEN @region = 'IND'
+         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         ELSE 'BWHO - HEAD OFFICE'
+    END;
   `;
 
   switch (formName) {
@@ -13,10 +18,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.RcvDate, 'dd/MM/yyyy') AS RcvDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         C.PlantSourceCode + ' - ' + C.PlantSourceDesc AS PlantSource,
@@ -40,10 +45,10 @@ function nurserySQLCommand(formName) {
         FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,

@@ -65,7 +65,6 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await checkLength(paths, columns, createValues, editValues);
 
     docNo = DocNo[keyName];
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`Start Running: ${formName}`);
   });
@@ -175,9 +174,9 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    await editJson(JsonPath, formName, "");
+    // await editJson(JsonPath, formName, "");
 
     console.log(`End Running: ${formName}`);
   });

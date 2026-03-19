@@ -6,10 +6,14 @@
     "Allowance/Deduction/ReimbursementGroupSetupColumn": "GrpCode text,GrpDesc text,Active checkbox,RcdType text,Type combobox",
     "CertificationSetupPath": "#txtCertCode,#txtDescription,#chkActive,#RcdType,#txtCertNo,#chkSetAsDefault,#chkConventional,#CertExpiryDate",
     "CertificationSetupColumn": "CertCode text,CertDesc text,Active checkbox,RcdType text,CertNo text,IsDefault checkbox,Conventional checkbox,ExpiryDate date",
-    "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive,#addRemRcdType",
-    "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox,RcdType text",
     "ContactCategorySetupPath": "#txtContactCatCode,#txtDescription,#chkActive,#contactCatRcdType,#chkCropSupp",
-    "ContactCategorySetupColumn": "ContactCatCode text,ContactCatDesc text,Active checkbox,RcdType text,CropSupp checkbox"
+    "ContactCategorySetupColumn": "ContactCatCode text,ContactCatDesc text,Active checkbox,RcdType text,CropSupp checkbox",
+    "CountrySetupPath": "#txtCountryCode,#txtDescription,#chkActive,#ctryRcdType",
+    "CountrySetupColumn": "CtryCode text,CtryDesc text,Active checkbox,RcdType text",
+    "CurrencySetupPath": "#txtCurrencyCode,#txtDescription,#chkActive,#currRcdType,#txtSymbol",
+    "CurrencySetupColumn": "CurrCode text,CurrDesc text,Active checkbox,RcdType text,CurrSymb text",
+    "DivisionSetupPath": "#txtDivisionCode,#txtDescription,#chkActive",
+    "DivisionSetupColumn": "DivCode text,DivDesc text,Active checkbox"
   },
 
   "GridPath": {

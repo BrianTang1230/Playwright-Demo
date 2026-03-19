@@ -85,25 +85,24 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtSoldNum").inputValue()
+      await page.locator("#txtSoldNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
-      OU2: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       nurseryGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -115,7 +114,7 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
     await ValidateDBValues(
       gridVals.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -132,19 +131,18 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
-      OU2: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
       nurseryGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -156,7 +154,7 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
     await ValidateDBValues(
       gridVals.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -166,7 +164,6 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
 
     if (dbValues.length > 0)

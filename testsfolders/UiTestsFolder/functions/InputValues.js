@@ -100,7 +100,10 @@ export async function InputGridValuesSameCols(
       await input.fill("");
     }
 
+    await input.press("Control+A");
+    await input.press("Control+A");
+    await input.press("Backspace");
     await input.type(vals[i]);
-    await input.press("Enter");
+    await input.press("Enter"); 
   }
 }

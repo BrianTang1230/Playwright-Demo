@@ -1,5 +1,7 @@
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { InputValues } from "@UiFolder/functions/InputValues";
+import {
+  getFormValues,
+  InputFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
@@ -8,14 +10,14 @@ export async function CurrencySetupCreate(
   sideMenu,
   paths,
   columns,
-  values
+  values,
 ) {
   // Click "New" button
   await sideMenu.btnNew.click();
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   // Save created data
@@ -24,7 +26,7 @@ export async function CurrencySetupCreate(
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -36,14 +38,14 @@ export async function CurrencySetupEdit(
   paths,
   columns,
   values,
-  newValues
+  newValues,
 ) {
   // Search and select the created record
   await SelectRecord(page, sideMenu, values);
 
   // Input new data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   // Save created data
@@ -52,7 +54,7 @@ export async function CurrencySetupEdit(
   // Search and select created record
   await SelectRecord(page, sideMenu, newValues);
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }

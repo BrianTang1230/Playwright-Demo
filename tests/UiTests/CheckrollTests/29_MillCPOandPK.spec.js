@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -90,7 +91,7 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -107,22 +108,22 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
         Period: createValues[1],
         Div: createValues[2],
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...createValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -139,10 +140,10 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0]
+      gridCreateValues[0],
     );
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getFormValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -159,21 +160,21 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
         Period: createValues[1],
         Div: createValues[2],
         OU: ou[0],
-      }
+      },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...editValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 

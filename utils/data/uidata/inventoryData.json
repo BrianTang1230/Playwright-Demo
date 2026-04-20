@@ -8,6 +8,7 @@
     "StockReceiptGrid": "#prundistdetailGrid > div.k-grid-content-locked,#prundistdetailGrid > div.k-grid-content.k-auto-scrollable"
   },
   "DocNo": {
-    "StockReceipt": "SR00004910"
+    "StockReceipt": "SR00005688",
+    "StockPurchaseReturn": ""
   }
 }

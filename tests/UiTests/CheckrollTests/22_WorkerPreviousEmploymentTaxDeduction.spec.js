@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -100,7 +100,7 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
         gridPaths,
         gridCreateValues,
         cellsIndex,
-        ou
+        ou,
       );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -110,12 +110,12 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -138,7 +138,7 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0]
+      gridCreateValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -148,12 +148,12 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { Date: createValues[0], Gang: createValues[1], OU: ou[0] }
+      { Date: createValues[0], Gang: createValues[1], OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -170,7 +170,7 @@ test.describe.serial("Worker Previous Employment Tax Deduction Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0].split(";")[0]
+      gridEditValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {

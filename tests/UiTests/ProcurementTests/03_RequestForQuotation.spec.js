@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   procurementGridSQLCommand,
@@ -90,13 +90,13 @@ test.describe.serial("Request for Quotation Tests", () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtQRFNum").inputValue()
+      await page.locator("#txtQRFNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
@@ -107,22 +107,22 @@ test.describe.serial("Request for Quotation Tests", () => {
       procurementGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -139,7 +139,7 @@ test.describe.serial("Request for Quotation Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
@@ -150,22 +150,22 @@ test.describe.serial("Request for Quotation Tests", () => {
       procurementGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 

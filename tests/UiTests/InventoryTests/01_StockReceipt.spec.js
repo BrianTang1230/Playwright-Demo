@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   inventoryGridSQLCommand,
@@ -51,7 +52,7 @@ test.describe.serial("Stock Receipt Tests", async () => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
-      formName
+      formName,
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -78,13 +79,13 @@ test.describe.serial("Stock Receipt Tests", async () => {
       paths,
       columns,
       createValues,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtReceiptNum").inputValue()
+      await page.locator("#txtReceiptNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(inventorySQLCommand(formName), {
@@ -97,29 +98,29 @@ test.describe.serial("Stock Receipt Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
-    await ValidateUiValues(
+    await ValidateFormValues(
       createValues.slice(0, 6),
       columns.slice(0, 6),
-      uiVals
+      uiVals,
     );
 
-    await ValidateUiValues(
+    await ValidateFormValues(
       createValues.slice(6, -1),
       columns.slice(6, -1),
-      gridVals
+      gridVals,
     );
     await ValidateDBValues(
       [...createValues.slice(0, 6), ou[0]],
       [...columns.slice(0, 6), "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateDBValues(
       createValues.slice(6, -1),
       columns.slice(6, -1),
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -133,7 +134,7 @@ test.describe.serial("Stock Receipt Tests", async () => {
       createValues,
       editValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(inventorySQLCommand(formName), {
@@ -146,25 +147,29 @@ test.describe.serial("Stock Receipt Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
-    await ValidateUiValues(editValues.slice(0, 6), columns.slice(0, 6), uiVals);
+    await ValidateFormValues(
+      editValues.slice(0, 6),
+      columns.slice(0, 6),
+      uiVals,
+    );
 
-    await ValidateUiValues(
+    await ValidateFormValues(
       editValues.slice(6, -1),
       columns.slice(6, -1),
-      gridVals
+      gridVals,
     );
     await ValidateDBValues(
       [...editValues.slice(0, 6), ou[0]],
       [...columns.slice(0, 6), "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateDBValues(
       editValues.slice(6, -1),
       columns.slice(6, -1),
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 

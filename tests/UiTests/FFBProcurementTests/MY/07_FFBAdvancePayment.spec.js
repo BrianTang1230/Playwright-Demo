@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import {
@@ -72,11 +72,6 @@ test.describe.serial("FFB Advance Payment Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create New FFB Advance Payment", async ({ page, db }) => {
-    if (docNo)
-      await db.deleteData(deleteSQL, {
-        DocNo: docNo,
-        OU: ou[0],
-      });
 
     const { uiVals, gridVals } = await FFBAdvancePaymentCreate(
       page,
@@ -87,13 +82,13 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#AdvPayNo").inputValue()
+      await page.locator("#AdvPayNo").inputValue(),
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
@@ -104,12 +99,12 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       ffbGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -129,7 +124,7 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
@@ -140,12 +135,12 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       ffbGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -159,7 +154,7 @@ test.describe.serial("FFB Advance Payment Tests", () => {
       createValues,
       gridEditValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {

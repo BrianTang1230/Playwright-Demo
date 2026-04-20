@@ -2,10 +2,10 @@
 // import LoginPage from "@UiFolder/pages/General/LoginPage";
 // import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 // import editJson from "@utils/commonFunctions/EditJson";
-// import { getUiValues } from "@UiFolder/functions/GetValues";
+// import { getFormValues } from "@UiFolder/functions/GetValues";
 // import { checkLength } from "@UiFolder/functions/comFuncs";
 // import {
-//   ValidateUiValues,
+//   ValidateFormValues,
 //   ValidateDBValues,
 //   ValidateGridValues,
 // } from "@UiFolder/functions/ValidateValues";
@@ -80,7 +80,7 @@
 //       DocNo: docNo,
 //     });
 
-//     await ValidateUiValues(createValues, columns, [...uiVals, ...gridVals]);
+//     await ValidateFormValues(createValues, columns, [...uiVals, ...gridVals]);
 //     await ValidateDBValues(
 //       [...createValues, ou],
 //       [...columns, "OU"],

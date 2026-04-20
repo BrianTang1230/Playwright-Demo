@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -88,13 +89,13 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.getByPlaceholder("Auto No.").inputValue()
+      await page.getByPlaceholder("Auto No.").inputValue(),
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -106,12 +107,12 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -131,10 +132,10 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getFormValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -146,11 +147,11 @@ test.describe.serial("Worker Advance Payment Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);

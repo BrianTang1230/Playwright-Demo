@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   vehicleGridSQLCommand,
@@ -92,13 +93,13 @@ test.describe
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await page.locator("#txtVehNum").inputValue();
     await editJson(JsonPath, formName, docNo);
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getFormValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
@@ -109,16 +110,16 @@ test.describe
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "ToOU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -140,10 +141,10 @@ test.describe
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getFormValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
@@ -154,16 +155,16 @@ test.describe
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "ToOU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -179,7 +180,7 @@ test.describe
       sideMenu,
       createValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
@@ -188,7 +189,7 @@ test.describe
 
     if (dbValues.length > 0)
       throw new Error(
-        "Deleting Inter-OU Vehicle Running Distribution (Loan To) failed"
+        "Deleting Inter-OU Vehicle Running Distribution (Loan To) failed",
       );
   });
 

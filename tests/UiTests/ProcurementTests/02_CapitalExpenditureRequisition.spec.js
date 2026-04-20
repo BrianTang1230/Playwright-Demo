@@ -4,7 +4,7 @@
 // import editJson from "@utils/commonFunctions/EditJson";
 // import { checkLength } from "@UiFolder/functions/comFuncs";
 // import {
-//   ValidateUiValues,
+//   ValidateFormValues,
 //   ValidateDBValues,
 //   ValidateGridValues,
 // } from "@UiFolder/functions/ValidateValues";
@@ -91,7 +91,7 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateUiValues(createValues, columns, uiVals);
+//     await ValidateFormValues(createValues, columns, uiVals);
 //     await ValidateDBValues(
 //       [...createValues, ou],
 //       [...columns, "OU"],
@@ -134,7 +134,7 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateUiValues(editValues, columns, uiVals);
+//     await ValidateFormValues(editValues, columns, uiVals);
 //     await ValidateDBValues(
 //       [...editValues, ou],
 //       [...columns, "OU"],

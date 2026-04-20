@@ -1,6 +1,8 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { InputValues } from "@UiFolder/functions/InputValues";
+import {
+  getFormValues,
+  InputFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
@@ -10,7 +12,7 @@ export async function FieldSetupCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   // Click "New" button
   await sideMenu.btnNew.click();
@@ -19,12 +21,12 @@ export async function FieldSetupCreate(
     page,
     "div.masterModeOU .k-dropdown .k-select",
     "#comboBoxOU_listbox li span",
-    ou[0]
+    ou[0],
   );
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   // Save created data
@@ -38,11 +40,11 @@ export async function FieldSetupCreate(
         page,
         "div.masterModeOU .k-dropdown .k-select",
         "#comboBoxOU_listbox li span",
-        ou[0]
+        ou[0],
       ),
   });
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -55,7 +57,7 @@ export async function FieldSetupEdit(
   columns,
   values,
   newValues,
-  ou
+  ou,
 ) {
   // Search and select the created record
   await SelectRecord(page, sideMenu, values, {
@@ -65,13 +67,13 @@ export async function FieldSetupEdit(
         page,
         "div.masterModeOU .k-dropdown .k-select",
         "#comboBoxOU_listbox li span",
-        ou[0]
+        ou[0],
       ),
   });
 
   // Input new data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   // Save created data
@@ -85,11 +87,11 @@ export async function FieldSetupEdit(
         page,
         "div.masterModeOU .k-dropdown .k-select",
         "#comboBoxOU_listbox li span",
-        ou[0]
+        ou[0],
       ),
   });
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -105,7 +107,7 @@ export async function FieldSetupDelete(page, sideMenu, newValues, ou) {
         page,
         "div.masterModeOU .k-dropdown .k-select",
         "#comboBoxOU_listbox li span",
-        ou[0]
+        ou[0],
       ),
   });
 

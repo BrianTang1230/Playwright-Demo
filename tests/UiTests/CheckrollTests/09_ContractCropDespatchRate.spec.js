@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -87,13 +87,13 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtCDRNum").inputValue()
+      await page.locator("#txtCDRNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -105,12 +105,12 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -130,7 +130,7 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -142,12 +142,12 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -161,7 +161,7 @@ test.describe.serial("Contract Crop Despatch Rate Tests", async () => {
       sideMenu,
       createValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {

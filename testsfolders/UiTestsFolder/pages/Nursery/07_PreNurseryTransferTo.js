@@ -1,7 +1,9 @@
-import { InputValues } from "@UiFolder/functions/InputValues";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
-import { getUiValues } from "@UiFolder/functions/GetValues";
 import { SelectOU } from "@UiFolder/functions/comFuncs";
+import {
+  InputFormValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
+import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function PreNurseryTransferToCreate(
   page,
@@ -9,7 +11,7 @@ export async function PreNurseryTransferToCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -17,23 +19,23 @@ export async function PreNurseryTransferToCreate(
     page,
     "#comboFromOU .k-dropdown-wrap .k-select",
     "#comboBoxInterNurFromOU-list li",
-    ou[0]
+    ou[0],
   );
 
   await SelectOU(
     page,
     "#comboToOU .k-dropdown-wrap .k-select",
     "#ddlOU_listbox li",
-    ou[1]
+    ou[1],
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -46,17 +48,17 @@ export async function PreNurseryTransferToEdit(
   values,
   newValues,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -66,7 +68,7 @@ export async function PreNurseryTransferToDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 

@@ -1,9 +1,10 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function SalesContractAllocationCreate(
@@ -12,12 +13,12 @@ export async function SalesContractAllocationCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {
@@ -35,7 +36,7 @@ export async function SalesContractAllocationCreate(
   const uiVals = [];
 
   for (let i = 0; i < paths.length; i++) {
-    uiVals.push(await getUiValues(page, [paths[i]]));
+    uiVals.push(await getFormValues(page, [paths[i]]));
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {
@@ -57,12 +58,12 @@ export async function SalesContractAllocationEdit(
   columns,
   values,
   newValues,
-  ou
+  ou,
 ) {
   await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {
@@ -80,7 +81,7 @@ export async function SalesContractAllocationEdit(
   const uiVals = [];
 
   for (let i = 0; i < paths.length; i++) {
-    uiVals.push(await getUiValues(page, [paths[i]]));
+    uiVals.push(await getFormValues(page, [paths[i]]));
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {
@@ -99,7 +100,7 @@ export async function SalesContractAllocationDelete(
   page,
   sideMenu,
   values,
-  ou
+  ou,
 ) {
   await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
 

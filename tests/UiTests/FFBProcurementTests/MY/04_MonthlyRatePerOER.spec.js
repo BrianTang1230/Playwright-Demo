@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
 import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
@@ -38,7 +38,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
-      formName
+      formName,
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -68,7 +68,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       paths,
       columns,
       createValues,
-      ou
+      ou,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
@@ -76,7 +76,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       Nation: createValues[1],
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
@@ -89,7 +89,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       columns,
       createValues,
       editValues,
-      ou
+      ou,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
@@ -97,7 +97,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       Nation: createValues[1],
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
@@ -110,8 +110,7 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       Nation: createValues[1],
     });
 
-    if (dbValues.length > 0)
-      throw new Error(`Deleting ${formName} failed`);
+    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
   });
 
   // ---------------- After All ----------------

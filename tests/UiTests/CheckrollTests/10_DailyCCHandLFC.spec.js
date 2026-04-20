@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -94,13 +94,13 @@ test.describe
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtRefNum").inputValue()
+      await page.locator("#txtRefNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -112,11 +112,11 @@ test.describe
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -139,7 +139,7 @@ test.describe
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -151,11 +151,11 @@ test.describe
       {
         DocNo: docNo,
         OU: ou[0],
-      }
+      },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);

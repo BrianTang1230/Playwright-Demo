@@ -1,9 +1,10 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffPreviousEmploymentTaxDeductionCreate(
@@ -15,7 +16,7 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -23,11 +24,11 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
     page,
     "#divComboOU .k-dropdown .k-select",
     "ul[aria-hidden='false'] li span",
-    ou[0]
+    ou[0],
   );
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -42,25 +43,25 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
   await page.locator("#prTabstripworkDet li").first().click();
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals1 = await getGridValues(
     page,
     gridPaths.slice(0, 2),
-    cellsIndex.slice(0, 2)
+    cellsIndex.slice(0, 2),
   );
 
   await page.locator("#prTabstripworkDet li").nth(1).click();
   const gridVals2 = await getGridValues(
     page,
     gridPaths.slice(2, 3),
-    cellsIndex.slice(2, 3)
+    cellsIndex.slice(2, 3),
   );
 
   const gridVals = [...gridVals1, ...gridVals2];
@@ -79,12 +80,12 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   gridValues,
   cellsIndex,
   ou,
-  keyword
+  keyword,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], keyword, 1, "Dropdown");
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await page.locator("#IsPRPreEmpySelect").check();
@@ -104,25 +105,25 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
   await page.locator("#prTabstripworkDet li").first().click();
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals1 = await getGridValues(
     page,
     gridPaths.slice(0, 2),
-    cellsIndex.slice(0, 2)
+    cellsIndex.slice(0, 2),
   );
 
   await page.locator("#prTabstripworkDet li").nth(1).click();
   const gridVals2 = await getGridValues(
     page,
     gridPaths.slice(2, 3),
-    cellsIndex.slice(2, 3)
+    cellsIndex.slice(2, 3),
   );
 
   const gridVals = [...gridVals1, ...gridVals2];
@@ -135,7 +136,7 @@ export async function StaffPreviousEmploymentTaxDeductionDelete(
   sideMenu,
   values,
   ou,
-  keyword
+  keyword,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], keyword, 1, "Dropdown");
 

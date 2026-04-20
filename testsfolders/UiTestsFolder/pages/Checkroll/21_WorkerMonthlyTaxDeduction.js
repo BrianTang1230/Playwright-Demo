@@ -1,9 +1,10 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerMonthlyTaxDeductionCreate(
@@ -15,7 +16,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -26,13 +27,13 @@ export async function WorkerMonthlyTaxDeductionCreate(
       page,
       "#divComboOU .k-dropdown .k-select",
       "ul[aria-hidden='false'] li span",
-      ou[0]
+      ou[0],
     );
   });
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -51,7 +52,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -61,7 +62,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
@@ -72,7 +73,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -84,7 +85,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
     return await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -103,7 +104,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], values[2], 5);
@@ -111,7 +112,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
+      await InputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
@@ -133,7 +134,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -143,7 +144,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   await runStep("Click on tab 1", async () => {
@@ -154,7 +155,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -166,7 +167,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
     return await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -180,7 +181,7 @@ export async function WorkerMonthlyTaxDeductionDelete(
   sideMenu,
   values,
   newValues,
-  ou
+  ou,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], newValues[2], 5);

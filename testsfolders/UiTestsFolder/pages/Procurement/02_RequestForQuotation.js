@@ -1,9 +1,10 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import {
   FilterRecordByDateRange,
   FilterRecordByOUAndDate,
@@ -18,7 +19,7 @@ export async function RequestforQuotationCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -26,11 +27,11 @@ export async function RequestforQuotationCreate(
     page,
     "#divComboOU .k-dropdown .k-select",
     "ul[aria-hidden='false'] li span",
-    ou[0]
+    ou[0],
   );
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -40,13 +41,13 @@ export async function RequestforQuotationCreate(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -63,12 +64,12 @@ export async function RequestforQuotationEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
     if (i === paths.length - 2) await sideMenu.confirmDelete.click();
   }
 
@@ -79,13 +80,13 @@ export async function RequestforQuotationEdit(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -96,7 +97,7 @@ export async function RequestforQuotationDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 

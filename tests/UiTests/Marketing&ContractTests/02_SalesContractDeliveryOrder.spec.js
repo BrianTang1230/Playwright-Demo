@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import { marketingSQLCommand } from "@UiFolder/queries/MarketingQuery";
 
@@ -47,7 +48,7 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
-      formName
+      formName,
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -78,20 +79,20 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       paths,
       columns,
       createValues,
-      ou
+      ou,
     );
 
     if (Login.Region === "IND") {
       docNo = await editJson(
         JsonPath,
         formName + "IND",
-        await page.locator("#ContractDOSID").inputValue()
+        await page.locator("#ContractDOSID").inputValue(),
       );
     } else {
       docNo = await editJson(
         JsonPath,
         formName,
-        await page.locator("#ContractDOSID").inputValue()
+        await page.locator("#ContractDOSID").inputValue(),
       );
     }
 
@@ -100,11 +101,11 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       OU: ou[0],
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...createValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
   });
 
@@ -117,7 +118,7 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       columns,
       createValues,
       editValues,
-      ou
+      ou,
     );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
@@ -125,11 +126,11 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       OU: ou[0],
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...editValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
   });
 

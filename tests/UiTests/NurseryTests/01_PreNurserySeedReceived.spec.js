@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
 import {
@@ -42,7 +42,7 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
-      formName
+      formName,
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -71,21 +71,21 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
       paths,
       columns,
       createValues,
-      ou
+      ou,
     );
 
     // Save document number to json file
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtPSRNum").inputValue()
+      await page.locator("#txtPSRNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
@@ -99,14 +99,14 @@ test.describe.serial("Pre Nursery Seed Received Tests", () => {
       createValues,
       editValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 

@@ -42,6 +42,6 @@
     "DailyFFBProcurementRateGrid": "#DailyFFBProcurementRateGrid > .k-grid-content > .k-selectable > tbody"
   },
   "DocNo": {
-    "FFBAdvancePayment": "ADV2601010"
+    "FFBAdvancePayment": "ADV2601037"
   }
 }

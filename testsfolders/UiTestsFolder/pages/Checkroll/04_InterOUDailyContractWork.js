@@ -1,9 +1,10 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -16,7 +17,7 @@ export async function InterOUDailyContractWorkCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   const region = process.env.REGION || Login.Region;
 
@@ -32,20 +33,20 @@ export async function InterOUDailyContractWorkCreate(
       page,
       "#divComboOU .k-dropdown-wrap .k-select >> nth=0",
       "#ddlFromOU_listbox li span",
-      ou[0]
+      ou[0],
     );
 
     await SelectOU(
       page,
       "#divComboOU .k-dropdown-wrap .k-select >> nth=1",
       "#ddlToOU_listbox li span",
-      ou[1]
+      ou[1],
     );
   });
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -64,7 +65,7 @@ export async function InterOUDailyContractWorkCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -74,9 +75,9 @@ export async function InterOUDailyContractWorkCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
+    return await getFormValues(
       page,
-      region === "IND" ? paths.slice(0, 4) : paths
+      region === "IND" ? paths.slice(0, 4) : paths,
     );
   });
 
@@ -88,7 +89,7 @@ export async function InterOUDailyContractWorkCreate(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -100,7 +101,7 @@ export async function InterOUDailyContractWorkCreate(
     return await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -120,7 +121,7 @@ export async function InterOUDailyContractWorkEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   const region = process.env.REGION || Login.Region;
 
@@ -133,7 +134,7 @@ export async function InterOUDailyContractWorkEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
+      await InputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
@@ -158,7 +159,7 @@ export async function InterOUDailyContractWorkEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -168,9 +169,9 @@ export async function InterOUDailyContractWorkEdit(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
+    return await getFormValues(
       page,
-      region === "IND" ? paths.slice(0, 4) : paths
+      region === "IND" ? paths.slice(0, 4) : paths,
     );
   });
 
@@ -182,7 +183,7 @@ export async function InterOUDailyContractWorkEdit(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -194,7 +195,7 @@ export async function InterOUDailyContractWorkEdit(
     return await await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -208,7 +209,7 @@ export async function InterOUDailyContractWorkDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);

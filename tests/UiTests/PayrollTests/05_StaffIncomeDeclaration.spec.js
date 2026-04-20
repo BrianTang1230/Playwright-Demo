@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   payrollSQLCommand,
@@ -98,13 +98,13 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtARSNum").inputValue()
+      await page.locator("#txtARSNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -117,12 +117,12 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       {
         DocNo: docNo,
         Date: createValues[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -141,7 +141,7 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
+      gridCreateValues[0].split(";")[0], // need to add keyword to identify the record
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
@@ -154,12 +154,12 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       {
         DocNo: docNo,
         Date: createValues[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -172,7 +172,7 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0].split(";")[0]
+      gridEditValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {

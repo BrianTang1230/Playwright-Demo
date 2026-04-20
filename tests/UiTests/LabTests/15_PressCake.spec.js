@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
 import {
@@ -83,7 +83,7 @@ test.describe.serial("Press Cake Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
@@ -96,22 +96,22 @@ test.describe.serial("Press Cake Tests", async () => {
       {
         Date: createValues[0],
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(
       [...createValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridCreateValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -128,7 +128,7 @@ test.describe.serial("Press Cake Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0]
+      gridCreateValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
@@ -141,22 +141,22 @@ test.describe.serial("Press Cake Tests", async () => {
       {
         Date: createValues[0],
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(
       [...editValues, ou[0]],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(
       gridEditValues.join(";").split(";"),
       gridDbColumns,
-      gridDbValues[0]
+      gridDbValues[0],
     );
   });
 
@@ -167,7 +167,7 @@ test.describe.serial("Press Cake Tests", async () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0].split(";")[0]
+      gridEditValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {

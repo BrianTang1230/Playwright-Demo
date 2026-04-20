@@ -1,6 +1,8 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { InputValues } from "@UiFolder/functions/InputValues";
+import {
+  getFormValues,
+  InputFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
@@ -10,7 +12,7 @@ export async function CertificationSetupCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   // Click "New" button
   await sideMenu.btnNew.click();
@@ -19,12 +21,12 @@ export async function CertificationSetupCreate(
     page,
     "div.masterModeOU .k-dropdown .k-select",
     "#comboBoxOU_listbox li span",
-    ou[0]
+    ou[0],
   );
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   // Save created data
@@ -33,7 +35,7 @@ export async function CertificationSetupCreate(
   // Search and select created record
   await SelectRecord(page, sideMenu, values);
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -46,13 +48,13 @@ export async function CertificationSetupEdit(
   columns,
   values,
   newValues,
-  ou
+  ou,
 ) {
   await SelectOU(
     page,
     "div.masterModeOU .k-dropdown .k-select",
     "#comboBoxOU_listbox li span",
-    ou[0]
+    ou[0],
   );
 
   // Search and select created record
@@ -60,7 +62,7 @@ export async function CertificationSetupEdit(
 
   // Input new data
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   // Save created data
@@ -69,7 +71,7 @@ export async function CertificationSetupEdit(
   // Search and select created record
   await SelectRecord(page, sideMenu, newValues);
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -80,7 +82,7 @@ export async function CertificationSetupDelete(page, sideMenu, newValues, ou) {
     page,
     "div.masterModeOU .k-dropdown .k-select",
     "#comboBoxOU_listbox li span",
-    ou[0]
+    ou[0],
   );
 
   // Search and select the edited record

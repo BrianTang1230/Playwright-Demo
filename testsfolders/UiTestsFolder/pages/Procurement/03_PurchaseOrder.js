@@ -1,8 +1,8 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+} from "@UiFolder/functions/InputFormValues";
 import { FilterRecordByDateRange } from "@UiFolder/functions/OpenRecord";
 
 export async function PurchaseOrderCreate(
@@ -11,7 +11,7 @@ export async function PurchaseOrderCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -19,19 +19,19 @@ export async function PurchaseOrderCreate(
     page,
     "#divComboOU .k-dropdown .k-select",
     "ul[aria-hidden='false'] li span",
-    ou[0]
+    ou[0],
   );
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 
   for (let i = 0; i < paths.slice(0, 9).length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await page.locator("#btnNewItem").click();
 
   for (let i = 9; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnSaveRecord.click();
@@ -49,7 +49,7 @@ export async function PurchaseOrderEdit(
   values,
   newValues,
   ou,
-  docNo
+  docNo,
 ) {
   await sideMenu.btnCreateNewForm.click();
 
@@ -62,13 +62,13 @@ export async function PurchaseOrderEdit(
     .click();
 
   for (let i = 0; i < paths.slice(0, 9).length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await page.locator("#btnNewItem").click();
 
   for (let i = 9; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnSaveRecord.click();

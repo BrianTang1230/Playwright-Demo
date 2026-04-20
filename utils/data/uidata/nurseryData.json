@@ -45,14 +45,14 @@
     "PreNurseryAdjustment": "",
     "PreNurseryTransfer/Sold/Loss": "",
     "Inter-OUPreNurseryTransferTo": "",
-    "MainNurseryReceived": "NR00000078",
+    "MainNurseryReceived": "NR00000111",
     "MainNurseryDoubletonSplitting": "",
     "MainNurseryCulling": "",
     "MainNurseryAdjustment": "",
     "MainNurseryTransfer/Loss": "",
     "MainNurserySold": "",
     "Inter-OUMainNurseryTransferTo": "",
-    "NurseryTransferRequisition": "RNT0000037",
+    "NurseryTransferRequisition": "",
     "NurserySalesRequisition": ""
   }
 }

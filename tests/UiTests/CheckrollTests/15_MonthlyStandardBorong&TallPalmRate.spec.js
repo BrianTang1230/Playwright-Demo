@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -90,7 +90,7 @@ test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
         gridPaths,
         gridCreateValues,
         cellsIndex,
-        ou
+        ou,
       );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -102,12 +102,12 @@ test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -130,7 +130,7 @@ test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
       gridEditValues,
       cellsIndex,
       ou,
-      gridCreateValues[0].split(";")[0] // need to add keyword to identify the record
+      gridCreateValues[0].split(";")[0], // need to add keyword to identify the record
     );
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
@@ -141,12 +141,12 @@ test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
       {
         Date: createValues[0],
         OU: ou[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -163,7 +163,7 @@ test.describe.serial("Monthly Standard Borong & Tall Palm Rate Tests", () => {
       sideMenu,
       createValues,
       ou,
-      gridEditValues[0].split(";")[0]
+      gridEditValues[0].split(";")[0],
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {

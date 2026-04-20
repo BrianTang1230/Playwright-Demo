@@ -1,9 +1,10 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerCP38Create(
@@ -15,7 +16,7 @@ export async function WorkerCP38Create(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -26,13 +27,13 @@ export async function WorkerCP38Create(
       page,
       "#divComboOU .k-dropdown-wrap .k-select",
       "#ddlOU_listbox span",
-      ou[0]
+      ou[0],
     );
   });
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputFormValues(page, paths[i], columns[i], values[i]);
 
       if (i === 0) {
         // If Month is the first field
@@ -51,7 +52,7 @@ export async function WorkerCP38Create(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -61,7 +62,7 @@ export async function WorkerCP38Create(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
@@ -82,7 +83,7 @@ export async function WorkerCP38Edit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
@@ -90,7 +91,7 @@ export async function WorkerCP38Edit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
+      await InputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
@@ -100,7 +101,7 @@ export async function WorkerCP38Edit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -110,7 +111,7 @@ export async function WorkerCP38Edit(
   });
 
   const uiVals = await runStep("Get edited UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {

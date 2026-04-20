@@ -1,9 +1,10 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
@@ -16,7 +17,7 @@ export async function DailyAttendanceCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   const region = process.env.REGION || Login.Region;
 
@@ -29,13 +30,13 @@ export async function DailyAttendanceCreate(
       page,
       "#divComboOU .k-dropdown .k-select",
       "#ddlOU_listbox span",
-      ou[0]
+      ou[0],
     );
   });
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -55,7 +56,7 @@ export async function DailyAttendanceCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -65,9 +66,9 @@ export async function DailyAttendanceCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
+    return await getFormValues(
       page,
-      region === "IND" ? paths.slice(0, 4) : paths
+      region === "IND" ? paths.slice(0, 4) : paths,
     );
   });
 
@@ -79,7 +80,7 @@ export async function DailyAttendanceCreate(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -91,7 +92,7 @@ export async function DailyAttendanceCreate(
     return await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -111,7 +112,7 @@ export async function DailyAttendanceEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   const region = process.env.REGION || Login.Region;
 
@@ -121,7 +122,7 @@ export async function DailyAttendanceEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
+      await InputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
@@ -146,7 +147,7 @@ export async function DailyAttendanceEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -156,9 +157,9 @@ export async function DailyAttendanceEdit(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(
+    return await getFormValues(
       page,
-      region === "IND" ? paths.slice(0, 4) : paths
+      region === "IND" ? paths.slice(0, 4) : paths,
     );
   });
 
@@ -170,7 +171,7 @@ export async function DailyAttendanceEdit(
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
-      cellsIndex.slice(0, 2)
+      cellsIndex.slice(0, 2),
     );
   });
 
@@ -182,7 +183,7 @@ export async function DailyAttendanceEdit(
     return await getGridValues(
       page,
       gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3)
+      cellsIndex.slice(2, 3),
     );
   });
 
@@ -197,7 +198,7 @@ export async function DailyAttendanceDelete(
   values,
   newValues,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);

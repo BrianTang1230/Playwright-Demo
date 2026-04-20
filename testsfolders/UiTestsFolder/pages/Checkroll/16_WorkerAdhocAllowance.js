@@ -1,9 +1,10 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerAdhocAllowanceCreate(
@@ -15,7 +16,7 @@ export async function WorkerAdhocAllowanceCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -26,13 +27,13 @@ export async function WorkerAdhocAllowanceCreate(
       page,
       "#divComboOU .k-dropdown-wrap .k-select",
       "#comboBoxOU_listbox span",
-      ou[0]
+      ou[0],
     );
   });
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], values[i]);
+      await InputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -46,7 +47,7 @@ export async function WorkerAdhocAllowanceCreate(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -56,7 +57,7 @@ export async function WorkerAdhocAllowanceCreate(
   });
 
   const uiVals = await runStep("Get created UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
@@ -77,7 +78,7 @@ export async function WorkerAdhocAllowanceEdit(
   gridValues,
   cellsIndex,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
@@ -85,7 +86,7 @@ export async function WorkerAdhocAllowanceEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputValues(page, paths[i], columns[i], newValues[i]);
+      await InputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
@@ -102,7 +103,7 @@ export async function WorkerAdhocAllowanceEdit(
         page,
         gridPaths[i],
         gridValues[i],
-        cellsIndex[i]
+        cellsIndex[i],
       );
     }
   });
@@ -112,7 +113,7 @@ export async function WorkerAdhocAllowanceEdit(
   });
 
   const uiVals = await runStep("Get edited UI values", async () => {
-    return await getUiValues(page, paths);
+    return await getFormValues(page, paths);
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
@@ -127,7 +128,7 @@ export async function WorkerAdhocAllowanceDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);

@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
@@ -38,7 +38,7 @@ test.describe.serial("Country Setup Tests", () => {
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
       formName,
-      {}
+      {},
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -63,14 +63,14 @@ test.describe.serial("Country Setup Tests", () => {
       sideMenu,
       paths,
       columns,
-      createValues
+      createValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
     });
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(uiVals, columns, dbValues[0]);
   });
 
@@ -81,14 +81,14 @@ test.describe.serial("Country Setup Tests", () => {
       paths,
       columns,
       createValues,
-      editValues
+      editValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(uiVals, columns, dbValues[0]);
   });
 

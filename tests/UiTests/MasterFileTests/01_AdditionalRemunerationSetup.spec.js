@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   masterSQLCommand,
@@ -81,7 +81,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
       createValues,
       gridPaths,
       gridCreateValues,
-      cellsIndex
+      cellsIndex,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -92,12 +92,12 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
       masterGridSQLCommand(formName),
       {
         Code: createValues[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues(uiVals, columns, dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -113,7 +113,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
       editValues,
       gridPaths,
       gridEditValues,
-      cellsIndex
+      cellsIndex,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -124,12 +124,12 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
       masterGridSQLCommand(formName),
       {
         Code: editValues[0],
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues(uiVals, columns, dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -145,7 +145,7 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
 
     if (dbValues.length > 0) {
       throw new Error(
-        "DB validation failed when deleting Additional Remuneration Setup"
+        "DB validation failed when deleting Additional Remuneration Setup",
       );
     }
   });

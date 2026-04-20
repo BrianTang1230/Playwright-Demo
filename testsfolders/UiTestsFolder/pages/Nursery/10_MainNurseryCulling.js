@@ -1,6 +1,8 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getUiValues } from "@UiFolder/functions/GetValues";
-import { InputValues } from "@UiFolder/functions/InputValues";
+import {
+  getFormValues,
+  InputFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function MainNurseryCullingCreate(
@@ -9,7 +11,7 @@ export async function MainNurseryCullingCreate(
   paths,
   columns,
   values,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -17,16 +19,16 @@ export async function MainNurseryCullingCreate(
     page,
     "#divComboOU .k-dropdown-wrap .k-select",
     "#ddlOU_listbox li",
-    ou[0]
+    ou[0],
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -39,17 +41,17 @@ export async function MainNurseryCullingEdit(
   values,
   newValues,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
 
   return { uiVals };
 }
@@ -59,7 +61,7 @@ export async function MainNurseryCullingDelete(
   sideMenu,
   values,
   ou,
-  docNo
+  docNo,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 

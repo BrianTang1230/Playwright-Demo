@@ -1,9 +1,10 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffLoanDepositMaintenanceCreate(
@@ -15,7 +16,7 @@ export async function StaffLoanDepositMaintenanceCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -23,11 +24,11 @@ export async function StaffLoanDepositMaintenanceCreate(
     page,
     "#divComboOU .k-dropdown .k-select",
     "ul[aria-hidden='false'] li span",
-    ou[0]
+    ou[0],
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
@@ -38,13 +39,13 @@ export async function StaffLoanDepositMaintenanceCreate(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -61,12 +62,12 @@ export async function StaffLoanDepositMaintenanceEdit(
   gridValues,
   cellsIndex,
   ou,
-  keyword
+  keyword,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await page.locator("#IsOutMainEmpySelectGrid").check();
@@ -82,13 +83,13 @@ export async function StaffLoanDepositMaintenanceEdit(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -99,7 +100,7 @@ export async function StaffLoanDepositMaintenanceDelete(
   sideMenu,
   values,
   ou,
-  keyword
+  keyword,
 ) {
   await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
 

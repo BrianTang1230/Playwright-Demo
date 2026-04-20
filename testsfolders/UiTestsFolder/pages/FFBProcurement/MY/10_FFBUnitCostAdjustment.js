@@ -1,9 +1,10 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import {
   InputGridValuesSameCols,
-  InputValues,
-} from "@UiFolder/functions/InputValues";
+  InputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 import {
   FilterRecordByOU,
   FilterRecordByOUAndDate,
@@ -18,7 +19,7 @@ export async function FFBUnitCostAdjustmentCreate(
   gridPaths,
   gridValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
 
@@ -26,11 +27,11 @@ export async function FFBUnitCostAdjustmentCreate(
     page,
     "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
     "#comboBoxOU_listbox li",
-    ou[0]
+    ou[0],
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], values[i]);
+    await InputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -40,13 +41,13 @@ export async function FFBUnitCostAdjustmentCreate(
       page,
       gridPaths[i],
       gridValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -63,7 +64,7 @@ export async function FFBUnitCostAdjustmentEdit(
   gridValues,
   gridNewValues,
   cellsIndex,
-  ou
+  ou,
 ) {
   await FilterRecordByOUAndDate(
     page,
@@ -71,11 +72,11 @@ export async function FFBUnitCostAdjustmentEdit(
     ou[0],
     gridValues[0].split(";")[0],
     2,
-    "Directly"
+    "Directly",
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputValues(page, paths[i], columns[i], newValues[i]);
+    await InputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
@@ -83,13 +84,13 @@ export async function FFBUnitCostAdjustmentEdit(
       page,
       gridPaths[i],
       gridNewValues[i],
-      cellsIndex[i]
+      cellsIndex[i],
     );
   }
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getUiValues(page, paths);
+  const uiVals = await getFormValues(page, paths);
   const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
   return { uiVals, gridVals };
@@ -100,7 +101,7 @@ export async function FFBUnitCostAdjustmentDelete(
   sideMenu,
   values,
   gridValues,
-  ou
+  ou,
 ) {
   await FilterRecordByOUAndDate(
     page,
@@ -108,7 +109,7 @@ export async function FFBUnitCostAdjustmentDelete(
     ou[0],
     gridValues[0].split(";")[0],
     2,
-    "Directly"
+    "Directly",
   );
 
   await sideMenu.clickBtnDelete();

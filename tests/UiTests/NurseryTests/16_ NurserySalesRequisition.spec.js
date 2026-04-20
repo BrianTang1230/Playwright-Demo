@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   nurseryGridSQLCommand,
@@ -107,7 +107,7 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -147,7 +147,7 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -160,7 +160,13 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
   // ---------------- Delete Test ----------------
   test("Delete Nursery Sales Requisition", async ({ page, db }) => {
-    await NurserySalesRequisitionDelete(page, sideMenu, editValues, ou, docNo);
+    await NurserySalesRequisitionDelete(
+      page,
+      sideMenu,
+      createValues,
+      ou,
+      docNo,
+    );
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,

@@ -2,13 +2,14 @@ import { test } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { getGridValues, getUiValues } from "@UiFolder/functions/GetValues";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateGridValues,
   ValidateDBValues,
-} from "@UiFolder/functions/ValidateValues";
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   vehicleGridSQLCommand,
@@ -88,13 +89,13 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       gridPaths,
       gridCreateValues,
       cellsIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtVEHNum").inputValue()
+      await page.locator("#txtVEHNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
@@ -105,12 +106,12 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, columns, uiVals);
+    await ValidateFormValues(createValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -129,10 +130,10 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       gridEditValues,
       cellsIndex,
       ou,
-      docNo
+      docNo,
     );
 
-    const uiVals = await getUiValues(page, paths);
+    const uiVals = await getFormValues(page, paths);
     const gridVals = await getGridValues(page, gridPaths, cellsIndex);
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
@@ -143,12 +144,12 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       vehicleGridSQLCommand(formName),
       {
         DocNo: docNo,
-      }
+      },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, columns, uiVals);
+    await ValidateFormValues(editValues, columns, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
@@ -161,7 +162,7 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       sideMenu,
       createValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {

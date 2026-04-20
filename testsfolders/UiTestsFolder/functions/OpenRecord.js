@@ -30,14 +30,15 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 
     Directly - directly apply filter with only OU and Date
     //![Dropdown](../../../utils/images/UQF_Directly.png)
- */
+*/
+
 export async function FilterRecordByOUAndDate(
   page,
   values,
   ou,
   keyword,
   times = 1,
-  type = "Default"
+  type = "Default",
 ) {
   const date = values[0];
   await page
@@ -74,7 +75,7 @@ export async function FilterRecordByOUAndDate(
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page
-    .getByRole("gridcell", { name: `${keyword.slice(0, 4)}` })
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
     .first()
     .click({ force: true });
   await page.getByRole("button", { name: "   Open Transaction" }).click();
@@ -107,7 +108,7 @@ export async function FilterRecordByOU(
   date,
   ou,
   keyword,
-  times = [1, 1]
+  times = [1, 1],
 ) {
   await page
     .locator('input[name="comboBoxCompulSearchParam_input"]')

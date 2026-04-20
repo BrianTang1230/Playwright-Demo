@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
 import {
@@ -43,7 +43,7 @@ test.describe.serial("Purchase Requisition Tests", () => {
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
-      formName
+      formName,
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -71,25 +71,25 @@ test.describe.serial("Purchase Requisition Tests", () => {
       paths,
       columns,
       createValues,
-      ou
+      ou,
     );
 
     // Save document number to json file
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtRequisitionNum").inputValue()
+      await page.locator("#txtRequisitionNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(createValues, columns, [...uiVals, ...gridVals]);
+    await ValidateFormValues(createValues, columns, [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
   });
 
@@ -103,18 +103,18 @@ test.describe.serial("Purchase Requisition Tests", () => {
       createValues,
       editValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    await ValidateUiValues(editValues, columns, [...uiVals, ...gridVals]);
+    await ValidateFormValues(editValues, columns, [...uiVals, ...gridVals]);
     await ValidateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
-      dbValues[0]
+      dbValues[0],
     );
   });
 

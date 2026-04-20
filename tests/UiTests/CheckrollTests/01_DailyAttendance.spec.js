@@ -4,10 +4,10 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateUiValues,
+  ValidateFormValues,
   ValidateDBValues,
   ValidateGridValues,
-} from "@UiFolder/functions/ValidateValues";
+} from "@UiFolder/functions/valuesFuncs";
 
 import {
   checkrollSQLCommand,
@@ -103,13 +103,13 @@ test.describe.serial("Daily Attendance Tests", () => {
       gridPaths,
       gridCreateValues,
       dwCellIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtATRNum").inputValue()
+      await page.locator("#txtATRNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -118,12 +118,12 @@ test.describe.serial("Daily Attendance Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(createValues, dwCols, uiVals);
+    await ValidateFormValues(createValues, dwCols, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
@@ -143,7 +143,7 @@ test.describe.serial("Daily Attendance Tests", () => {
       gridEditValues,
       dwCellIndex,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
@@ -152,12 +152,12 @@ test.describe.serial("Daily Attendance Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateUiValues(editValues, dwCols, uiVals);
+    await ValidateFormValues(editValues, dwCols, uiVals);
     await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
@@ -172,7 +172,7 @@ test.describe.serial("Daily Attendance Tests", () => {
       createValues,
       editValues,
       ou,
-      docNo
+      docNo,
     );
 
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {

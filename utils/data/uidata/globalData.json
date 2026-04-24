@@ -1,0 +1,4 @@
+{
+  "globalJsonPath": "utils/data/uidata/globalData.json",
+  "allPhases": ["B", "C", "E1", "E2", "D"]
+}

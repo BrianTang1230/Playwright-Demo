@@ -4,8 +4,8 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
@@ -83,8 +83,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -104,8 +104,8 @@ test.describe.serial("Main Nursery Received Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -115,7 +115,7 @@ test.describe.serial("Main Nursery Received Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    console.log(dbValues);
+
     if (dbValues.length > 0) {
       throw new Error(`Deleting Main Nursery Received failed`);
     }
@@ -123,9 +123,7 @@ test.describe.serial("Main Nursery Received Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    // await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

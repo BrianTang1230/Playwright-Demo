@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateGridValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateGridValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
@@ -34,6 +34,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = null;
@@ -107,11 +108,11 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(
       gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0],
@@ -147,11 +148,11 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
 
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await validateDBValues(
       gridVals.join(";").split(";"),
       gridDbColumns,
       gridDbValues[0],
@@ -172,8 +173,12 @@ test.describe.serial("Nursery Sales Requisition Tests", async () => {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0)
-      throw new Error("Deleting Nursery Sales Requisition failed");
+    if (dbValues.length > 0) {
+      consoleErrMsg("D-DB-F", formName);
+    } else {
+      // for those forms that have DocNo
+      await editJson(JsonPath, formName, "");
+    }
   });
 
   // ---------------- After All ----------------

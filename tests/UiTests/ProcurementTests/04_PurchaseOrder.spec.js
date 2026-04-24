@@ -5,9 +5,9 @@
 // import { getFormValues } from "@UiFolder/functions/GetValues";
 // import { checkLength } from "@UiFolder/functions/comFuncs";
 // import {
-//   ValidateFormValues,
-//   ValidateDBValues,
-//   ValidateGridValues,
+//   validateFormValues,
+//   validateDBValues,
+//   validateGridValues,
 // } from "@UiFolder/functions/ValidateValues";
 
 // import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
@@ -80,8 +80,8 @@
 //       DocNo: docNo,
 //     });
 
-//     await ValidateFormValues(createValues, columns, [...uiVals, ...gridVals]);
-//     await ValidateDBValues(
+//     await validateFormValues(createValues, columns, [...uiVals, ...gridVals]);
+//     await validateDBValues(
 //       [...createValues, ou],
 //       [...columns, "OU"],
 //       dbValues[0]

@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateGridValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateGridValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
@@ -97,10 +97,10 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(uiVals, columns, dbValues[0]);
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   test("Edit Additional Remuneration Setup", async ({ page, db }) => {
@@ -129,10 +129,10 @@ test.describe.serial("Additional Remuneration Setup Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(uiVals, columns, dbValues[0]);
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   test("Delete Additional Remuneration Setup", async ({ page, db }) => {

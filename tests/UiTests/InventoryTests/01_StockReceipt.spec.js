@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateGridValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateGridValues,
+  validateDBValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -101,23 +101,23 @@ test.describe.serial("Stock Receipt Tests", async () => {
       },
     );
 
-    await ValidateFormValues(
+    await validateFormValues(
       createValues.slice(0, 6),
       columns.slice(0, 6),
       uiVals,
     );
 
-    await ValidateFormValues(
+    await validateFormValues(
       createValues.slice(6, -1),
       columns.slice(6, -1),
       gridVals,
     );
-    await ValidateDBValues(
+    await validateDBValues(
       [...createValues.slice(0, 6), ou[0]],
       [...columns.slice(0, 6), "OU"],
       dbValues[0],
     );
-    await ValidateDBValues(
+    await validateDBValues(
       createValues.slice(6, -1),
       columns.slice(6, -1),
       gridDbValues[0],
@@ -150,23 +150,23 @@ test.describe.serial("Stock Receipt Tests", async () => {
       },
     );
 
-    await ValidateFormValues(
+    await validateFormValues(
       editValues.slice(0, 6),
       columns.slice(0, 6),
       uiVals,
     );
 
-    await ValidateFormValues(
+    await validateFormValues(
       editValues.slice(6, -1),
       columns.slice(6, -1),
       gridVals,
     );
-    await ValidateDBValues(
+    await validateDBValues(
       [...editValues.slice(0, 6), ou[0]],
       [...columns.slice(0, 6), "OU"],
       dbValues[0],
     );
-    await ValidateDBValues(
+    await validateDBValues(
       editValues.slice(6, -1),
       columns.slice(6, -1),
       gridDbValues[0],

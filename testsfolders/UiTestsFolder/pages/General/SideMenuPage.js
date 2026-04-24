@@ -12,7 +12,7 @@ export default class SideMenuPage {
   }
 
   get btnPopulate() {
-    return this.page.locator("#btnNew").first();
+    return this.page.locator("#btnPopulate").first();
   }
 
   async clickBtnSave(isDblClick = false) {
@@ -36,27 +36,29 @@ export default class SideMenuPage {
 
   async clickBtnDelete() {
     await this.page.locator("#btnDelete,#btnDelate").first().click();
-    await this.confirmDelete.click();
+    await this.confirmBtn.click();
     await this.page
       .locator(".k-loading-image")
       .first()
       .waitFor({ state: "detached" });
   }
 
-  get confirmDelete() {
+  get confirmBtn() {
     return this.page
       .locator("#btnMsgBoxYes")
       .filter({ has: this.page.locator(":visible") });
   }
 
-  get rejectDelete() {
-    return this.page.locator("#btnMsgBoxNo");
+  get rejectBtn() {
+    return this.page
+      .locator("#btnMsgBoxNo")
+      .filter({ has: this.page.locator(":visible") });
   }
 
   get btnAddNewItem() {
     return this.page
       .locator(
-        "#btnNewItem,#btnCreateNew,#btnCreate,#btnNewPRW,#btnNewDet,#btnNewSB"
+        "#btnNewItem,#btnCreateNew,#btnCreate,#btnNewPRW,#btnNewDet,#btnNewSB",
       )
       .first();
   }
@@ -85,8 +87,8 @@ export default class SideMenuPage {
     return this.page.locator("#btnSaveRecord");
   }
 
-  get btnClose() {
-    return this.page.locator("#btnClose");
+  async clickBtnClose() {
+    await this.page.locator("#btnClose").click();
   }
 }
 

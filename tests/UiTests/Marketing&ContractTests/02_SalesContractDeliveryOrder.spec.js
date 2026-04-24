@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateGridValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateGridValues,
+  validateDBValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -101,8 +101,8 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       OU: ou[0],
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
       [...createValues, ou[0]],
       [...columns, "OU"],
       dbValues[0],
@@ -126,8 +126,8 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       OU: ou[0],
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(
       [...editValues, ou[0]],
       [...columns, "OU"],
       dbValues[0],

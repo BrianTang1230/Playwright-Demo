@@ -1,9 +1,12 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   getFormValues,
-  InputFormValues,
+  inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function PreNurserySeedReceivedCreate(
@@ -26,7 +29,7 @@ export async function PreNurserySeedReceivedCreate(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -36,8 +39,8 @@ export async function PreNurserySeedReceivedCreate(
   return { uiVals };
 }
 
-// Edit Function
-export async function PreNurserySeedReceivedEdit(
+// Edit Function (Without Saving)
+export async function PreNurserySeedReceivedEdit1(
   page,
   sideMenu,
   paths,
@@ -52,7 +55,38 @@ export async function PreNurserySeedReceivedEdit(
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+
+  return { uiVals };
+}
+
+// Edit Function (With Saving)
+export async function PreNurserySeedReceivedEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+  docNo,
+) {
+  // Select the created record
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
+
+  // Input data
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();

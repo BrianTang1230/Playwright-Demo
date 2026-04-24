@@ -4,9 +4,9 @@
 // import editJson from "@utils/commonFunctions/EditJson";
 // import { checkLength } from "@UiFolder/functions/comFuncs";
 // import {
-//   ValidateFormValues,
-//   ValidateDBValues,
-//   ValidateGridValues,
+//   validateFormValues,
+//   validateDBValues,
+//   validateGridValues,
 // } from "@UiFolder/functions/ValidateValues";
 
 // import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
@@ -103,10 +103,10 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateFormValues(createValues, columns, uiVals);
-//     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
-//     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-//     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+//     await validateFormValues(createValues, columns, uiVals);
+//     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+//     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+//     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
 //   });
 
 //   // ---------------- Edit Test ----------------
@@ -137,10 +137,10 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateFormValues(editValues, columns, uiVals);
-//     await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
-//     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-//     await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+//     await validateFormValues(editValues, columns, uiVals);
+//     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+//     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+//     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
 //   });
 
 //   // ---------------- Delete Test ----------------

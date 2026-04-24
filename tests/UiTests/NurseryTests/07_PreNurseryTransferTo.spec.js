@@ -4,8 +4,8 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
@@ -49,7 +49,7 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
     docNo = DocNo[keyName];
 
-    if (docNo) console.log(`Start Running: ${formName}`);
+    console.log(`Start Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------
@@ -62,7 +62,11 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Inter-OU Pre Nursery Transfer To", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      ToOU: ou[1],
+      FromOU: ou[0],
+    });
 
     const { uiVals } = await PreNurseryTransferToCreate(
       page,
@@ -83,8 +87,8 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0],
@@ -108,8 +112,8 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0],
@@ -125,15 +129,17 @@ test.describe.serial("Inter-OU Pre Nursery Transfer To Tests", () => {
     });
 
     if (dbValues.length > 0) {
-      throw new Error("Deleting Inter-OU Pre Nursery Transfer To failed");
+      throw new Error(`Deleting Inter-OU Pre Nursery Transfer To failed`);
     }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      ToOU: ou[1],
+      FromOU: ou[0],
+    });
 
     console.log(`End Running: ${formName}`);
   });

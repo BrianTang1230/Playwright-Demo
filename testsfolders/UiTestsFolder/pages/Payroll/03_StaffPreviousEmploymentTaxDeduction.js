@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -28,7 +28,7 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
   );
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
@@ -39,12 +39,7 @@ export async function StaffPreviousEmploymentTaxDeductionCreate(
       await page.locator("#prTabstripworkDet li").nth(1).click();
       await page.locator("#btnNewDeductionItem").click();
     }
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -85,13 +80,13 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
   await FilterRecordByOUAndDate(page, values, ou[0], keyword, 1, "Dropdown");
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await page.locator("#IsPRPreEmpySelect").check();
   await page.locator("#btnDeleteItem").click();
 
-  await sideMenu.confirmDelete.click();
+  await sideMenu.confirmBtn.click();
 
   await sideMenu.btnAddNewItem.click();
 
@@ -101,12 +96,7 @@ export async function StaffPreviousEmploymentTaxDeductionEdit(
       await page.locator("#prTabstripworkDet li").nth(1).click();
       await page.locator("#btnNewDeductionItem").click();
     }
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();

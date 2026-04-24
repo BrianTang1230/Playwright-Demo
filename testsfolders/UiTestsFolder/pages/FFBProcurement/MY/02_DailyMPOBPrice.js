@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -31,18 +31,13 @@ export async function DailyMPOBPriceCreate(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await page.getByRole("button", { name: " Populate Day" }).click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -75,16 +70,11 @@ export async function DailyMPOBPriceEdit(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();

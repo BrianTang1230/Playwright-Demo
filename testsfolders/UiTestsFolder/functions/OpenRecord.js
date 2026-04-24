@@ -25,11 +25,13 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
     Default - when need to use document number or typing keyword
     //![Default](../../../utils/images/UQF_Default.png)
 
+
     Dropdown - when need to use dropdown selection
     //![Dropdown](../../../utils/images/UQF_Dropdown.png)
 
+
     Directly - directly apply filter with only OU and Date
-    //![Dropdown](../../../utils/images/UQF_Directly.png)
+    //![Directly](../../../utils/images/UQF_Directly.png)
 */
 
 export async function FilterRecordByOUAndDate(
@@ -77,7 +79,7 @@ export async function FilterRecordByOUAndDate(
   await page
     .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
     .first()
-    .click({ force: true });
+    .click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading
@@ -85,18 +87,27 @@ export async function FilterRecordByOUAndDate(
   await page.waitForLoadState("networkidle");
 }
 
-export async function FilterRecordByDateRange(page, values, ou, keyword) {
-  await page.locator("#FromDate").first().fill(values[0]);
-  await page.locator("#ToDate").first().fill(values[1]);
-  await page.locator('[name="OUCode_input"]').first().type(ou);
-  await page.locator("#prnum").fill(keyword);
+export async function FilterRecordByDateRange(
+  page,
+  dates,
+  ou,
+  keyword,
+  kewordInputPath,
+) {
+  await page.locator("#FromDate").first().fill(dates[0]);
+  await page.locator("#ToDate").first().fill(dates[1]);
+  let ouBox = await page.locator('[name="OUCode_input"]').first();
+  if (ouBox !== null) {
+    await page.locator('[name="OUCode_input"]').first().type(ou);
+  }
+  await page.locator(kewordInputPath).fill(keyword);
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();
-  await page.getByRole("gridcell", { name: keyword }).click();
   await page
-    .getByRole("button", { name: "   Open Transaction" })
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
     .first()
     .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
@@ -150,9 +161,22 @@ export async function FilterRecordByOU(
 
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page
-    .getByRole("gridcell", { name: `${keyword.slice(0, 4)}` })
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
     .first()
-    .click({ force: true });
+    .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
+}
+
+export async function FilterForUnsaveChecking(page, keyword) {
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
+    .first()
+    .click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();
 
   // Wait for loading

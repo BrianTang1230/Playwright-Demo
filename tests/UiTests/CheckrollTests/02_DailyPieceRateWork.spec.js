@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
-  ValidateGridValues,
+  validateFormValues,
+  validateDBValues,
+  validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
@@ -121,11 +121,11 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(createValues, dwCols, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+    await validateFormValues(createValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -155,11 +155,11 @@ test.describe.serial("Daily Piece Rate Work Tests", () => {
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(editValues, dwCols, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+    await validateFormValues(editValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

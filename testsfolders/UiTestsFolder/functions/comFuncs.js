@@ -1,4 +1,23 @@
-import { allure } from "allure-playwright";
+import { allure, expect } from "allure-playwright";
+
+let currForm = "";
+let currPhase = "";
+
+export async function setCurrForm(formName) {
+  currForm = formName;
+}
+
+export async function getCurrForm(formName) {
+  return currForm;
+}
+
+export async function setCurrPhase(phaseName) {
+  currPhase = phaseName;
+}
+
+export async function getCurrPhase() {
+  return currPhase;
+}
 
 export async function checkLength(paths, columns, createValues, editValues) {
   if (
@@ -16,7 +35,11 @@ export async function checkLength(paths, columns, createValues, editValues) {
       editValues,
       editValues.length,
     );
-    throw new Error("Paths, columns, and values do not match in length.");
+    throwTestFailMsg(
+      `${currPhase}-DATA-DI`,
+      currForm,
+      `Paths ${paths.length}, Columns ${columns.length}, Create Values ${createValues.length}, Edit Values ${editValues.length}`,
+    );
   }
 }
 
@@ -34,7 +57,7 @@ export async function runStep(stepName, callback) {
   });
 }
 
-export async function GetElementByPath(page, path) {
+export async function getElementByPath(page, path) {
   let element;
   // If path starts with # or //, use .locator directly
   if (path.startsWith("#") || path.startsWith("//")) {
@@ -55,5 +78,64 @@ export async function GetElementByPath(page, path) {
     // If path does not start with any symbols, use .locator with name
     element = page.locator(`[name='${path}']`).first();
   }
+
+  if (!element) {
+    throwTestFailMsg(
+      `${currPhase}-DATA-DI`,
+      currForm,
+      `Element not found for ${path}`,
+    );
+  }
+
   return element;
+}
+
+export async function throwTestFailMsg(
+  caseCode,
+  formName,
+  remarks = "No remark",
+) {
+  let decodedCode = caseCode.split("-");
+  let step = "";
+  let side = "";
+  let reason = "";
+
+  if (decodedCode[0] === "C") {
+    step = "Creation";
+  } else if (decodedCode[0] === "E1") {
+    step = "1st Edition";
+  } else if (decodedCode[0] === "E2") {
+    step = "2nd Edition";
+  } else if (decodedCode[0] === "D") {
+    step = "Deletion";
+  } else if (decodedCode[0] === "B") {
+    step = "Before Tests";
+  }
+
+  if (decodedCode.includes("UI")) {
+    side = "Ui";
+  } else if (decodedCode.includes("DB")) {
+    side = "DataBase";
+  } else if (decodedCode.includes("GRID")) {
+    side = "Grid";
+  } else if (decodedCode.includes("DATA")) {
+    side = "Json File or Excel Sheet";
+  }
+
+  if (decodedCode[2] === "MM") {
+    reason = "Mismatch value";
+  } else if (decodedCode[2] === "NF") {
+    reason = "Not found";
+  } else if (decodedCode[2] === "DI") {
+    reason = "Data issue/Missing data";
+  } else if (decodedCode[2] === "RF") {
+    // For Deletion only
+    reason = "Record found";
+  } else {
+    reason = "Unknown reason";
+  }
+
+  throw new Error(
+    `${step} in ${formName} failed due to ${reason} on ${side}: ${remarks}.`,
+  );
 }

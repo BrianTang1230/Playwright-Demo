@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -18,7 +18,7 @@ export async function SalesContractAllocationCreate(
   await sideMenu.clickBtnCreateNewForm();
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {
@@ -63,7 +63,7 @@ export async function SalesContractAllocationEdit(
   await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
     if (i === 7) {
       await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
     } else if (i === 11) {

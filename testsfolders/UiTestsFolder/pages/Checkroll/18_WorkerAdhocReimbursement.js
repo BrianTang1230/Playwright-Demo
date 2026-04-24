@@ -1,7 +1,7 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -34,7 +34,7 @@ export async function WorkerAdhocReimbursementCreate(
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputFormValues(page, paths[i], columns[i], values[i]);
+      await inputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -44,12 +44,7 @@ export async function WorkerAdhocReimbursementCreate(
 
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      await InputGridValuesSameCols(
-        page,
-        gridPaths[i],
-        gridValues[i],
-        cellsIndex[i],
-      );
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
 
@@ -87,25 +82,20 @@ export async function WorkerAdhocReimbursementEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputFormValues(page, paths[i], columns[i], newValues[i]);
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
   await runStep("Delete and add new grid item", async () => {
     await page.locator("#IsAdHocReimburseEmpySelectGrid").check();
     await page.locator("#btnDeleteItem").click();
-    await sideMenu.confirmDelete.click();
+    await sideMenu.confirmBtn.click();
     await sideMenu.btnAddNewItem.click();
   });
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      await InputGridValuesSameCols(
-        page,
-        gridPaths[i],
-        gridValues[i],
-        cellsIndex[i],
-      );
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
 

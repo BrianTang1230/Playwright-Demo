@@ -1,6 +1,6 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputFormValues,
+  inputFormValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
@@ -30,7 +30,7 @@ export async function PreNurseryTransferToCreate(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -53,7 +53,7 @@ export async function PreNurseryTransferToEdit(
   await FilterRecordByOUAndDate(page, values, ou[0], docNo);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();

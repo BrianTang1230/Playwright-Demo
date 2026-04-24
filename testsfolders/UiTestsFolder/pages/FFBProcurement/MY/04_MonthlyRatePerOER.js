@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -25,7 +25,7 @@ export async function MonthlyRatePerOERCreate(
   );
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -47,7 +47,7 @@ export async function MonthlyRatePerOEREdit(
   await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();

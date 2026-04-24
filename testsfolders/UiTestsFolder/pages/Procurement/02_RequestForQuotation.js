@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -31,18 +31,13 @@ export async function RequestforQuotationCreate(
   );
 
   for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.btnAddNewItem.click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -69,19 +64,14 @@ export async function RequestforQuotationEdit(
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
-    if (i === paths.length - 2) await sideMenu.confirmDelete.click();
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    if (i === paths.length - 2) await sideMenu.confirmBtn.click();
   }
 
   await page.locator("#btnPopulate").click();
 
   for (let i = 0; i < gridPaths.length; i++) {
-    await InputGridValuesSameCols(
-      page,
-      gridPaths[i],
-      gridValues[i],
-      cellsIndex[i],
-    );
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
   }
 
   await sideMenu.clickBtnSave();

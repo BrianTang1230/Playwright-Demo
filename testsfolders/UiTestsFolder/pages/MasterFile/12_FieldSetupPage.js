@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   getFormValues,
-  InputFormValues,
+  inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 
@@ -26,7 +26,7 @@ export async function FieldSetupCreate(
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   // Save created data
@@ -73,7 +73,7 @@ export async function FieldSetupEdit(
 
   // Input new data
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   // Save created data

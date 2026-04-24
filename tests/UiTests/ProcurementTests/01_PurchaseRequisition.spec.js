@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
-  ValidateGridValues,
+  validateFormValues,
+  validateDBValues,
+  validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
@@ -85,8 +85,8 @@ test.describe.serial("Purchase Requisition Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(createValues, columns, [...uiVals, ...gridVals]);
-    await ValidateDBValues(
+    await validateFormValues(createValues, columns, [...uiVals, ...gridVals]);
+    await validateDBValues(
       [...createValues, ou],
       [...columns, "OU"],
       dbValues[0],
@@ -110,8 +110,8 @@ test.describe.serial("Purchase Requisition Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(editValues, columns, [...uiVals, ...gridVals]);
-    await ValidateDBValues(
+    await validateFormValues(editValues, columns, [...uiVals, ...gridVals]);
+    await validateDBValues(
       [...editValues, ou],
       [...columns, "OU"],
       dbValues[0],

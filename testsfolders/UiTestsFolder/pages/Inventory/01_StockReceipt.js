@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -25,7 +25,7 @@ export async function StockReceiptCreate(
   );
 
   for (let i = 0; i < 6; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await page.locator("#btnPopulatePOItem").click();
@@ -60,13 +60,13 @@ export async function StockReceiptEdit(
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
 
   for (let i = 0; i < 6; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await page.locator("#btnNewItem").click();
 
   for (let i = 6; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await page.locator("#btnSaveRecord").click;

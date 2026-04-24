@@ -1,77 +1,93 @@
-import { GetElementByPath } from "./comFuncs";
+import {
+  getElementByPath,
+  throwTestFailMsg,
+  getCurrForm,
+  getCurrPhase,
+} from "./comFuncs";
 import { parse } from "path";
 import Data from "@utils/data/uidata/loginData.json";
 
 const region = process.env.REGION || Data.Region;
+let currForm;
+let currPhase;
 
-export async function ValidateFormValues(InputFormValues, columns, uiValues) {
+async function updateCurrFormAndPhase() {
+  currForm = await getCurrForm();
+  currPhase = await getCurrPhase();
+}
+
+export async function validateFormValues(inputValues, columns, uiValues) {
   console.log("\nUI Values:\n" + "-".repeat(74));
 
-  for (let i = 0; i < InputFormValues.length; i++) {
+  for (let i = 0; i < inputValues.length; i++) {
     if (
-      InputFormValues[i] === "NA" ||
-      InputFormValues[i] === "AF" ||
+      inputValues[i] === "NA" ||
+      inputValues[i] === "AF" ||
       uiValues[i] === "NA"
     )
       continue;
 
     if (columns[i].includes("numeric")) {
-      const inpVal = normalizeNumber(String(InputFormValues[i]));
+      const inpVal = normalizeNumber(String(inputValues[i]));
       const uiVal = normalizeNumber(String(uiValues[i]));
-      InputFormValues[i] = String(inpVal);
+      inputValues[i] = String(inpVal);
       uiValues[i] = String(uiVal);
     }
 
-    if (InputFormValues[i] !== uiValues[i]) {
-      throw new Error(
-        `Mismatch UI values of ${columns[i]}: ${InputFormValues[i]} !== ${uiValues[i]}`,
+    if (inputValues[i] !== uiValues[i]) {
+      await updateCurrFormAndPhase();
+      throwTestFailMsg(
+        `${currPhase}-UI-MM`,
+        currForm,
+        `${columns[i]}: ${inputValues[i]} !== ${uiValues[i]}`,
       );
     } else {
       console.log(
-        `Matched UI values of ${columns[i]}: ${InputFormValues[i]} === ${uiValues[i]}`,
+        `Matched UI values of ${columns[i]}: ${inputValues[i]} === ${uiValues[i]}`,
       );
     }
   }
 }
 
-export async function ValidateDBValues(InputFormValues, inputCols, dbValues) {
+export async function validateDBValues(inputValues, inputCols, dbValues) {
   console.log("\nDB Values:\n" + "-".repeat(74));
 
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
-    if (InputFormValues[i] === "NA" || InputFormValues[i] === "AF") continue;
+    if (inputValues[i] === "NA" || inputValues[i] === "AF") continue;
     if (inputCols[i].includes("numeric")) {
-      InputFormValues[i] = normalizeNumber(InputFormValues[i]);
+      inputValues[i] = normalizeNumber(inputValues[i]);
     }
 
-    if (
-      String(InputFormValues[i]).trim() !== String(dbValues[colName]).trim()
-    ) {
-      throw new Error(
-        `Mismatch DB values of ${colName}: ${InputFormValues[i]} !== ${dbValues[colName]}`,
+    if (String(inputValues[i]).trim() !== String(dbValues[colName]).trim()) {
+      await updateCurrFormAndPhase();
+      throwTestFailMsg(
+        `${currPhase}-DB-MM`,
+        currForm,
+        `${colName}: ${inputValues[i]} !== ${dbValues[colName]}`,
       );
     } else {
       console.log(
-        `Matched DB values of ${colName}: ${InputFormValues[i]} === ${dbValues[colName]}`,
+        `Matched DB values of ${colName}: ${inputValues[i]} === ${dbValues[colName]}`,
       );
     }
   }
 }
 
-export async function ValidateGridValues(eValues, gValues) {
-  if (eValues.length !== gValues.length) {
-    // console.log(eValues, eValues.length);
-    // console.log(gValues, gValues.length);
+export async function validateGridValues(inputValues, gridValues) {
+  if (inputValues.length !== gridValues.length) {
+    // console.log(inputValues, inputValues.length);
+    // console.log(gridValues, gridValues.length);
     throw new Error("Mismatch length in Grid values.");
   }
 
   console.log("\nGrid Values:\n" + "-".repeat(74));
 
-  for (let i = 0; i < gValues.length; i++) {
-    let expected = eValues[i];
-    let actual = gValues[i];
+  for (let i = 0; i < gridValues.length; i++) {
+    let expected = inputValues[i];
+    let actual = gridValues[i];
 
     if (expected === "NA" || expected === "AF" || actual === "NA") continue;
 
@@ -83,7 +99,12 @@ export async function ValidateGridValues(eValues, gValues) {
     if (actual === expected) {
       console.log(`Matched Grid values: ${actual} === ${expected}`);
     } else {
-      throw new Error(`Mismatch Grid values： ${actual} !== ${expected}.`);
+      await updateCurrFormAndPhase();
+      throwTestFailMsg(
+        `${currPhase}-GRID-MM`,
+        currForm,
+        `${actual} !== ${expected}.`,
+      );
     }
   }
 }
@@ -100,70 +121,81 @@ function normalizeNumber(raw) {
 
 // Input values based on the column type
 
-export async function InputFormValues(page, path, col, value) {
+export async function inputFormValues(page, path, col, value) {
   if (value == "NA" || value == "AF") {
     return;
   }
 
   col = col.toLowerCase();
-  const element = await GetElementByPath(page, path);
-  if (!element) throw new Error("Element not found");
-  else await element.focus();
+  const element = await getElementByPath(page, path);
+  await element.focus();
 
-  if (col.includes("k-drop")) {
-    await element.click();
-    await page
-      .locator(`${path}_listbox li`, { hasText: value })
-      .first()
-      .click();
-  }
-
-  // Checkbox Input
-  else if (col.includes("checkbox")) {
-    if (value.toLowerCase() === "true") {
-      await element.check();
-    } else if (value.toLowerCase() === "false") {
-      await element.uncheck();
+  try {
+    if (col.includes("k-drop")) {
+      await element.click();
+      await page
+        .locator(`${path}_listbox li`, { hasText: value })
+        .first()
+        .click();
     }
-  }
 
-  // Button Input
-  else if (col.includes("button")) {
-    await element.click();
-  }
+    // Checkbox Input
+    else if (col.includes("checkbox")) {
+      if (value.toLowerCase() === "true") {
+        await element.check();
+      } else if (value.toLowerCase() === "false") {
+        await element.uncheck();
+      }
+    }
 
-  // Integer,Date,Text Input
-  else if (col.includes("text") || col.includes("date")) {
-    await element.fill(value);
-    await element.press("Enter");
-  }
+    // Button Input
+    else if (col.includes("button")) {
+      await element.click();
+    }
 
-  // Numeric Input
-  else if (col.includes("numeric")) {
-    await element.press("Backspace");
-    await element.type(value);
-  }
+    // Integer,Date,Text Input
+    else if (col.includes("text") || col.includes("date")) {
+      await element.fill(value);
+      await element.press("Enter");
+    }
 
-  // All elements which have dropdown menu
-  else if (col.includes("dropdown")) {
-    await element.fill("");
-    await element.type(value);
-    await element.press("Enter");
-  }
+    // Numeric Input
+    else if (col.includes("numeric")) {
+      await element.press("Backspace");
+      await element.type(value);
+    }
 
-  // For dropdown with no text input
-  else if (col.includes("combobox")) {
-    await element.click();
+    // All elements which have dropdown menu
+    else if (col.includes("dropdown")) {
+      await element.fill("");
+      await element.type(value);
+      await element.press("Enter");
+    }
+
+    // For dropdown with no text input
+    else if (col.includes("combobox")) {
+      await element.click();
+      await page
+        .locator('ul[role="listbox"] li', { hasText: value })
+        .first()
+        .click();
+    }
+
     await page
-      .locator('ul[role="listbox"] li', { hasText: value })
+      .locator(".k-loading-image")
       .first()
-      .click();
+      .waitFor({ state: "detached" });
+  } catch (error) {
+    await updateCurrFormAndPhase();
+    throwTestFailMsg(
+      `${currPhase}-UI-NF`,
+      currForm,
+      `${col} with value ${value} at ${path}`,
+    );
   }
-
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
 
-export async function InputGridValuesSameCols(page, path, values, cellsIndex) {
+export async function inputGridValues(page, path, values, cellsIndex) {
   const table = page.locator(path);
   const vals = values.split(";");
   const row = table.locator("tr").nth(0);
@@ -207,7 +239,7 @@ export async function InputGridValuesSameCols(page, path, values, cellsIndex) {
 export async function getFormValues(page, paths) {
   const uiValues = [];
   for (let i = 0; i < paths.length; i++) {
-    const inputPath = await GetElementByPath(page, paths[i]);
+    const inputPath = await getElementByPath(page, paths[i]);
     const tagName = (
       await inputPath.evaluate((el) => el.tagName)
     ).toLowerCase();

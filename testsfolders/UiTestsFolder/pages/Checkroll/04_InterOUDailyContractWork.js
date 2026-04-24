@@ -1,7 +1,7 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -46,7 +46,7 @@ export async function InterOUDailyContractWorkCreate(
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputFormValues(page, paths[i], columns[i], values[i]);
+      await inputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
@@ -61,12 +61,7 @@ export async function InterOUDailyContractWorkCreate(
         await page.locator(tabLocator).nth(1).click();
         await page.locator("#btnNewPRWItem").click();
       }
-      await InputGridValuesSameCols(
-        page,
-        gridPaths[i],
-        gridValues[i],
-        cellsIndex[i],
-      );
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
 
@@ -134,14 +129,14 @@ export async function InterOUDailyContractWorkEdit(
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await InputFormValues(page, paths[i], columns[i], newValues[i]);
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
 
   await runStep("Delete and add new grid item", async () => {
     await page.locator("#IsSelectGrid").check();
     await page.locator("#btnDeleteItem").click();
-    await sideMenu.confirmDelete.click();
+    await sideMenu.confirmBtn.click();
     await sideMenu.btnAddNewItem.click();
   });
 
@@ -155,12 +150,7 @@ export async function InterOUDailyContractWorkEdit(
         await page.locator(tabLocator).nth(1).click();
         await page.locator("#btnNewPRWItem").click();
       }
-      await InputGridValuesSameCols(
-        page,
-        gridPaths[i],
-        gridValues[i],
-        cellsIndex[i],
-      );
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
 

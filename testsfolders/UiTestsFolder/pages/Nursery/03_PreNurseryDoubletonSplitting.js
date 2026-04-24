@@ -1,9 +1,12 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   getFormValues,
-  InputFormValues,
+  inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function PreNurseryDoubletonSplittingCreate(
@@ -27,7 +30,7 @@ export async function PreNurseryDoubletonSplittingCreate(
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
   }
 
   await sideMenu.clickBtnSave();
@@ -37,8 +40,39 @@ export async function PreNurseryDoubletonSplittingCreate(
   return { uiVals };
 }
 
-// Edit Function
-export async function PreNurseryDoubletonSplittingEdit(
+// Edit Function (Without Saving)
+export async function PreNurseryDoubletonSplittingEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+  docNo,
+) {
+  // Select the created record
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
+
+  // Input Values
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+
+  return { uiVals };
+}
+
+// Edit Function (With Saving)
+export async function PreNurseryDoubletonSplittingEdit2(
   page,
   sideMenu,
   paths,
@@ -53,7 +87,7 @@ export async function PreNurseryDoubletonSplittingEdit(
 
   // Input data
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
   }
 
   await sideMenu.clickBtnSave();

@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
-  ValidateGridValues,
+  validateFormValues,
+  validateDBValues,
+  validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
@@ -76,8 +76,8 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       Nation: createValues[1],
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -97,8 +97,8 @@ test.describe.serial("Monthly Rate Per OER Tests", () => {
       Nation: createValues[1],
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------

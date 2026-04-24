@@ -4,8 +4,8 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
@@ -83,8 +83,8 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0],
@@ -108,8 +108,8 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
       DocNo: docNo,
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "FromOU", "ToOU"],
       dbValues[0],

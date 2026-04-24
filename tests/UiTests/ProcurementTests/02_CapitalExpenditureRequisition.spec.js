@@ -4,9 +4,9 @@
 // import editJson from "@utils/commonFunctions/EditJson";
 // import { checkLength } from "@UiFolder/functions/comFuncs";
 // import {
-//   ValidateFormValues,
-//   ValidateDBValues,
-//   ValidateGridValues,
+//   validateFormValues,
+//   validateDBValues,
+//   validateGridValues,
 // } from "@UiFolder/functions/ValidateValues";
 
 // import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
@@ -91,14 +91,14 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateFormValues(createValues, columns, uiVals);
-//     await ValidateDBValues(
+//     await validateFormValues(createValues, columns, uiVals);
+//     await validateDBValues(
 //       [...createValues, ou],
 //       [...columns, "OU"],
 //       dbValues[0]
 //     );
-//     await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-//     await ValidateDBValues(
+//     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+//     await validateDBValues(
 //       gridCreateValues.join(";").split(";"),
 //       gridDbColumns,
 //       gridDbValues[0]
@@ -134,14 +134,14 @@
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-//     await ValidateFormValues(editValues, columns, uiVals);
-//     await ValidateDBValues(
+//     await validateFormValues(editValues, columns, uiVals);
+//     await validateDBValues(
 //       [...editValues, ou],
 //       [...columns, "OU"],
 //       dbValues[0]
 //     );
-//     await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-//     await ValidateDBValues(
+//     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+//     await validateDBValues(
 //       gridEditValues.join(";").split(";"),
 //       gridDbColumns,
 //       gridDbValues[0]

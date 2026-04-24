@@ -4,9 +4,9 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateGridValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateGridValues,
+  validateDBValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -54,6 +54,9 @@ test.describe
   .serial("Inter-OU Vehicle Running Distribution (Loan To) Tests", async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Phase to Before Tests
+    await editJson(globalJsonPath, "currPhase", "B");
+
     // Load Excel values
     [
       createValues,
@@ -115,14 +118,14 @@ test.describe
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "ToOU"],
       dbValues[0],
     );
-    await ValidateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -160,14 +163,14 @@ test.describe
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(
       [...uiVals, ou[0], ou[1]],
       [...columns, "OU", "ToOU"],
       dbValues[0],
     );
-    await ValidateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await ValidateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
@@ -195,7 +198,9 @@ test.describe
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
+    await editJson(JsonPath, formName, "");
 
     console.log(`End Running: ${formName}`);
   });

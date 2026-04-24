@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^24.2.1",
+    "@types/node": "^24.12.2",
     "allure-playwright": "^3.4.3",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@azure/identity": "^4.11.1",

@@ -1,7 +1,7 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  InputGridValuesSameCols,
-  InputFormValues,
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
@@ -18,7 +18,7 @@ export async function SalesContractDeliveryOrderCreate(
   await sideMenu.clickBtnCreateNewForm();
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], values[i]);
+    await inputFormValues(page, paths[i], columns[i], values[i]);
     if (i === 8) {
       await page.getByRole("tab", { name: "Delivery", exact: true }).click();
     }
@@ -52,7 +52,7 @@ export async function SalesContractDeliveryOrderEdit(
   await FilterRecordByOUAndDate(page, [values[2]], ou[0], values[0], 1);
 
   for (let i = 0; i < paths.length; i++) {
-    await InputFormValues(page, paths[i], columns[i], newValues[i]);
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
     if (i === 11) {
       await page.getByRole("tab", { name: "Delivery", exact: true }).click();
     }

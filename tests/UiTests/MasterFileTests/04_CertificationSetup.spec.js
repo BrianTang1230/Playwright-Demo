@@ -4,8 +4,8 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
@@ -72,8 +72,8 @@ test.describe.serial("Certification Setup Tests", () => {
       OU: ou[0],
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   test("Edit Certification Setup", async ({ page, db }) => {
@@ -92,8 +92,8 @@ test.describe.serial("Certification Setup Tests", () => {
       OU: ou[0],
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   test("Delete Certification Setup", async ({ page, db }) => {

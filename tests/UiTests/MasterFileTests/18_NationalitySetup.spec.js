@@ -4,8 +4,8 @@ import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength } from "@UiFolder/functions/comFuncs";
 import {
-  ValidateFormValues,
-  ValidateDBValues,
+  validateFormValues,
+  validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
@@ -71,8 +71,8 @@ test.describe.skip("Nationality Setup Tests", () => {
       OU: ou[0],
     });
 
-    await ValidateFormValues(createValues, columns, uiVals);
-    await ValidateDBValues(uiVals, columns, dbValues[0]);
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test("Edit Nationality Code", async ({ page, db }) => {
@@ -89,8 +89,8 @@ test.describe.skip("Nationality Setup Tests", () => {
       Code: editValues[0],
     });
 
-    await ValidateFormValues(editValues, columns, uiVals);
-    await ValidateDBValues(uiVals, columns, dbValues[0]);
+    await validateFormValues(editValues, columns, uiVals);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test("Delete Nationality Code", async ({ page, db }) => {

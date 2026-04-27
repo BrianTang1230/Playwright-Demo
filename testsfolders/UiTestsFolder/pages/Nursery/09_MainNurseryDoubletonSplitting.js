@@ -3,7 +3,10 @@ import {
   getFormValues,
   inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterRecordByOUAndDate,
+  FilterForUnsaveChecking,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function MainNurseryDoubletonSplittingCreate(
   page,
@@ -33,7 +36,38 @@ export async function MainNurseryDoubletonSplittingCreate(
   return { uiVals };
 }
 
-export async function MainNurseryDoubletonSplittingEdit(
+// Edit Function (Without Saving)
+export async function MainNurseryDoubletonSplittingEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+  docNo,
+) {
+  // Select the created record
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
+
+  // Input Values
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+
+  return { uiVals };
+}
+
+export async function MainNurseryDoubletonSplittingEdit2(
   page,
   sideMenu,
   paths,

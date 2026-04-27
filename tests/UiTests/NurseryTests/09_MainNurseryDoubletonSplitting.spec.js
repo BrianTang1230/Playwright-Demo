@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  setCurrForm,
+  setCurrPhase,
+  checkLength,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -17,7 +23,8 @@ import {
 
 import {
   MainNurseryDoubletonSplittingCreate,
-  MainNurseryDoubletonSplittingEdit,
+  MainNurseryDoubletonSplittingEdit1,
+  MainNurseryDoubletonSplittingEdit2,
   MainNurseryDoubletonSplittingDelete,
 } from "@UiFolder/pages/Nursery/09_MainNurseryDoubletonSplitting";
 
@@ -28,6 +35,7 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let phaseCount = 0;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
@@ -39,6 +47,10 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -58,10 +70,14 @@ test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Main Nursery Doubleton Splitting", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await MainNurseryDoubletonSplittingCreate(
@@ -82,14 +98,17 @@ test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("C-DB-NF", formName);
+    }
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Main Nursery Doubleton Splitting", async ({ page, db }) => {
-    const { uiVals } = await MainNurseryDoubletonSplittingEdit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryDoubletonSplittingEdit1(
       page,
       sideMenu,
       paths,
@@ -103,13 +122,40 @@ test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E1-DB-NF", formName);
+    }
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryDoubletonSplittingEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
+    });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E2-DB-NF", formName);
+    }
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Main Nursery Doubleton Splitting", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await MainNurseryDoubletonSplittingDelete(
       page,
       sideMenu,
@@ -121,17 +167,14 @@ test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length > 0) {
-      throw new Error(`Deleting Main Nursery Doubleton Splitting failed`);
+      throwTestFailMsg("D-DB-RF", formName);
     }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

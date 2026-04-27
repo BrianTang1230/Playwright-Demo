@@ -129,9 +129,7 @@ test.describe.serial("Nursery Transfer Requisition Tests", () => {
 
   //---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

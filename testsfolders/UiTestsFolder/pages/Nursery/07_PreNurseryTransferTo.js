@@ -1,9 +1,12 @@
 import { SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  inputFormValues,
   getFormValues,
+  inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function PreNurseryTransferToCreate(
   page,
@@ -40,7 +43,38 @@ export async function PreNurseryTransferToCreate(
   return { uiVals };
 }
 
-export async function PreNurseryTransferToEdit(
+// Edit Function (Without Saving)
+export async function PreNurseryTransferToEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+  docNo,
+) {
+  // Select the created record
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo);
+
+  // Input data
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+
+  return { uiVals };
+}
+
+export async function PreNurseryTransferToEdit2(
   page,
   sideMenu,
   paths,

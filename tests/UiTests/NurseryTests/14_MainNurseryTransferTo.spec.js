@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  setCurrForm,
+  setCurrPhase,
+  checkLength,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -17,7 +23,8 @@ import {
 
 import {
   MainNurseryTransferToCreate,
-  MainNurseryTransferToEdit,
+  MainNurseryTransferToEdit1,
+  MainNurseryTransferToEdit2,
   MainNurseryTransferToDelete,
 } from "@UiFolder/pages/Nursery/14_MainNurseryTransferTo";
 
@@ -28,6 +35,7 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let phaseCount = 0;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
@@ -36,7 +44,7 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -58,10 +66,14 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Inter-OU Main Nursery Transfer To", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await MainNurseryTransferToCreate(
@@ -82,6 +94,9 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("C-DB-NF", formName);
+    }
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(
@@ -91,9 +106,9 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     );
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Main Nursery Transfer To", async ({ page, db }) => {
-    const { uiVals } = await MainNurseryTransferToEdit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryTransferToEdit1(
       page,
       sideMenu,
       paths,
@@ -107,6 +122,37 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E1-DB-NF", formName);
+    }
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...uiVals, ou[0], ou[1]],
+      [...columns, "FromOU", "ToOU"],
+      dbValues[0],
+    );
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryTransferToEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
+    });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E2-DB-NF", formName);
+    }
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues(
@@ -123,17 +169,14 @@ test.describe.serial("Inter-OU Main Nursery Transfer To Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length > 0) {
-      throw new Error("Deleting Inter-OU Main Nursery Transfer To failed");
+      throwTestFailMsg("D-DB-RF", formName);
     }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

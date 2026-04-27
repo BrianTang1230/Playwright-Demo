@@ -1,8 +1,14 @@
-import { region, test } from "@utils/commonFunctions/GlobalSetup";
+import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  setCurrForm,
+  setCurrPhase,
+  checkLength,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -17,7 +23,8 @@ import {
 
 import {
   MainNurseryAdjustmentCreate,
-  MainNurseryAdjustmentEdit,
+  MainNurseryAdjustmentEdit1,
+  MainNurseryAdjustmentEdit2,
   MainNurseryAdjustmentDelete,
 } from "@UiFolder/pages/Nursery/11_MainNurseryAdjustment";
 
@@ -30,6 +37,7 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let phaseCount = 0;
 const sheetName = "NUR_DATA";
 const module = "Nursery";
 const submodule = "Main Nursery";
@@ -38,10 +46,15 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Main Nursery Adjustment Tests", () => {
-  if (region === "IND") test.skip(true);
+test.describe.serial(`${formName} Tests`, () => {
+  if (Login.region === "IND") test.skip(true);
+
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -61,10 +74,14 @@ test.describe.serial("Main Nursery Adjustment Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Main Nursery Adjustment", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals } = await MainNurseryAdjustmentCreate(
@@ -86,14 +103,17 @@ test.describe.serial("Main Nursery Adjustment Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("C-DB-NF", formName);
+    }
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Main Nursery Adjustment", async ({ page, db }) => {
-    const { uiVals } = await MainNurseryAdjustmentEdit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryAdjustmentEdit1(
       page,
       sideMenu,
       paths,
@@ -107,29 +127,53 @@ test.describe.serial("Main Nursery Adjustment Tests", () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E1-DB-NF", formName);
+    }
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals } = await MainNurseryAdjustmentEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
+      DocNo: docNo,
+    });
+    if (dbValues.length === 0) {
+      throwTestFailMsg("E2-DB-NF", formName);
+    }
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Main Nursery Adjustment", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await MainNurseryAdjustmentDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length > 0) {
-      throw new Error("Deleting Main Nursery Adjustment failed");
+      throwTestFailMsg("D-DB-RF", formName);
     }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     console.log(`End Running: ${formName}`);
   });

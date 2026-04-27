@@ -124,7 +124,6 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length === 0) {
       throwTestFailMsg("E1-DB-NF", formName);
     }
@@ -149,7 +148,6 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length === 0) {
       throwTestFailMsg("E2-DB-NF", formName);
     }
@@ -165,7 +163,6 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-
     if (dbValues.length > 0) {
       throwTestFailMsg("D-DB-RF", formName);
     }
@@ -174,6 +171,7 @@ test.describe.serial(`${formName} Tests`, () => {
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     console.log(`End Running: ${formName}`);
   });
 });

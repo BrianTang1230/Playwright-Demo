@@ -38,7 +38,7 @@ export default class DBHelper {
   async connect() {
     if (!this.pools[this.dbName]) {
       this.pools[this.dbName] = await new sql.ConnectionPool(
-        configs[this.dbName]
+        configs[this.dbName],
       ).connect();
       console.log(`✅ Connected to ${configs[this.dbName].database}`);
     }
@@ -57,7 +57,7 @@ export default class DBHelper {
 
     // ✅ Only add Region if the query actually references @Region
     if (query.includes("@region") && !params.Region) {
-      params.Region = this.region;  
+      params.Region = this.region;
     }
 
     this.setParams(request, params);
@@ -66,12 +66,20 @@ export default class DBHelper {
 
   async retrieveData(query, params = {}) {
     const result = await this.execute(query, params);
-    return result.recordset;
+    if (result.recordset.length !== 0) {
+      return result.recordset;
+    } else {
+      return false;
+    }
   }
 
   async retrieveGridData(query, params = {}) {
     const result = await this.execute(query, params);
-    return result.recordset;
+    if (result.recordset.length !== 0) {
+      return result.recordset;
+    } else {
+      return false;
+    }
   }
 
   async deleteData(query, params = {}) {

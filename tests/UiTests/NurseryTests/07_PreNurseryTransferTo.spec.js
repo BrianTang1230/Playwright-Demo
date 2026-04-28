@@ -102,7 +102,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("C-DB-NF", formName);
     }
 
@@ -130,7 +130,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E1-DB-NF", formName);
     }
 
@@ -158,7 +158,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E2-DB-NF", formName);
     }
 

@@ -1,14 +1,18 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
   validateDBValues,
-  getGridValues,
-  getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
@@ -24,8 +28,9 @@ import {
 
 import {
   VehicleRunningDistributionCreate,
+  VehicleRunningDistributionEdit1,
+  VehicleRunningDistributionEdit2,
   VehicleRunningDistributionDelete,
-  VehicleRunningDistributionEdit,
 } from "@UiFolder/pages/Vehicle/01_VehicleRunningDistribution";
 
 // ---------------- Set Global Variables ----------------
@@ -37,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "VEH_DATA";
 const module = "Vehicle";
 const submodule = null;
@@ -50,9 +56,13 @@ const cellsIndex = [
   [0, 1, 2, 3, 4],
 ];
 
-test.describe.serial("Vehicle Running Distribution Tests", async () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -76,10 +86,14 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Vehicle Running Distribution", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await VehicleRunningDistributionCreate(
       page,
       sideMenu,
@@ -101,6 +115,9 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
+    if (!dbValues) {
+      throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+    }
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
@@ -108,18 +125,22 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
         DocNo: docNo,
       },
     );
+    if (!gridDbValues) {
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
+    }
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Vehicle Running Distribution", async ({ page, db }) => {
-    await VehicleRunningDistributionEdit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await VehicleRunningDistributionEdit1(
       page,
       sideMenu,
       paths,
@@ -133,12 +154,12 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
       docNo,
     );
 
-    const uiVals = await getFormValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
+    if (!dbValues) {
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+    }
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
@@ -146,17 +167,63 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
         DocNo: docNo,
       },
     );
+    if (!gridDbValues) {
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    }
+
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await VehicleRunningDistributionEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    if (!dbValues) {
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    }
+
+    const gridDbValues = await db.retrieveGridData(
+      vehicleGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+      },
+    );
+    if (!gridDbValues) {
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
+    }
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Vehicle Running Distribution", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await VehicleRunningDistributionDelete(
       page,
       sideMenu,
@@ -168,17 +235,14 @@ test.describe.serial("Vehicle Running Distribution Tests", async () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-
-    if (dbValues.length > 0)
-      throw new Error("Deleting Vehicle Running Distribution failed");
+    if (dbValues.length > 0) {
+      throwTestFailMsg("D-DB-F", formName);
+    }
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
-
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     console.log(`End Running: ${formName}`);
   });
 });

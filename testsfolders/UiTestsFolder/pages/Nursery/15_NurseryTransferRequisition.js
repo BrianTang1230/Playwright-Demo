@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
   getFormValues,
   inputFormValues,
@@ -46,7 +46,38 @@ export async function NurseryTransferRequisitionCreate(
   return { uiVals };
 }
 
-export async function NurseryTransferRequisitionEdit(
+// Edit Function (Without Saving)
+export async function NurseryTransferRequisitionEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+  docNo,
+) {
+  // Select the created record
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+
+  // Input Values
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+
+  return { uiVals };
+}
+
+export async function NurseryTransferRequisitionEdit2(
   page,
   sideMenu,
   paths,

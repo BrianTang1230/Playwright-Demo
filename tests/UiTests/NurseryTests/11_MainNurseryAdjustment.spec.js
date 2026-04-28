@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { region, test } from "@utils/commonFunctions/GlobalSetup";
 import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
@@ -28,8 +28,6 @@ import {
   MainNurseryAdjustmentDelete,
 } from "@UiFolder/pages/Nursery/11_MainNurseryAdjustment";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Global Variables ----------------
 let ou;
 let docNo;
@@ -47,7 +45,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  if (Login.region === "IND") test.skip(true);
+  if (region === "IND") test.skip();
 
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
@@ -103,7 +101,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("C-DB-NF", formName);
     }
 
@@ -127,7 +125,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E1-DB-NF", formName);
     }
 
@@ -151,7 +149,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E2-DB-NF", formName);
     }
 

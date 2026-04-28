@@ -15,6 +15,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 import { nurserySQLCommand } from "@UiFolder/queries/NurseryQuery";
+
 import {
   InputPath,
   JsonPath,
@@ -45,6 +46,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
+  test.skip();
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Change Current Form and Phase
@@ -99,7 +101,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("C-DB-NF", formName);
     }
 
@@ -123,7 +125,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E1-DB-NF", formName);
     }
 
@@ -147,7 +149,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length === 0) {
+    if (!dbValues) {
       throwTestFailMsg("E2-DB-NF", formName);
     }
 

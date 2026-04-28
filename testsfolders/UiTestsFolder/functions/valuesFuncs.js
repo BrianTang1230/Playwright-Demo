@@ -8,16 +8,17 @@ import { parse } from "path";
 import Data from "@utils/data/uidata/loginData.json";
 
 const region = process.env.REGION || Data.Region;
-let currForm;
-let currPhase;
+let currForm = "";
+let currPhase = "";
 
-async function updateCurrFormAndPhase() {
-  currForm = await getCurrForm();
-  currPhase = await getCurrPhase();
+function updateCurrFormAndPhase() {
+  currForm = getCurrForm();
+  currPhase = getCurrPhase();
 }
 
 export async function validateFormValues(inputValues, columns, uiValues) {
-  console.log("\nUI Values:\n" + "-".repeat(74));
+  updateCurrFormAndPhase();
+  console.log(`\nUI Values of ${currForm}:\n` + "-".repeat(100));
 
   for (let i = 0; i < inputValues.length; i++) {
     if (
@@ -35,7 +36,6 @@ export async function validateFormValues(inputValues, columns, uiValues) {
     }
 
     if (inputValues[i] !== uiValues[i]) {
-      await updateCurrFormAndPhase();
       throwTestFailMsg(
         `${currPhase}-UI-MM`,
         currForm,
@@ -50,7 +50,8 @@ export async function validateFormValues(inputValues, columns, uiValues) {
 }
 
 export async function validateDBValues(inputValues, inputCols, dbValues) {
-  console.log("\nDB Values:\n" + "-".repeat(74));
+  updateCurrFormAndPhase();
+  console.log(`\nDB Values of ${currForm}:\n` + "-".repeat(100));
 
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element be colName
@@ -62,7 +63,6 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
     }
 
     if (String(inputValues[i]).trim() !== String(dbValues[colName]).trim()) {
-      await updateCurrFormAndPhase();
       throwTestFailMsg(
         `${currPhase}-DB-MM`,
         currForm,
@@ -77,13 +77,16 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
 }
 
 export async function validateGridValues(inputValues, gridValues) {
+  updateCurrFormAndPhase();
   if (inputValues.length !== gridValues.length) {
-    // console.log(inputValues, inputValues.length);
-    // console.log(gridValues, gridValues.length);
-    throw new Error("Mismatch length in Grid values.");
+    throwTestFailMsg(
+      `${currPhase}-GRID-DI`,
+      currForm,
+      `${colName}: ${inputValues[i]} !== ${dbValues[colName]}`,
+    );
   }
 
-  console.log("\nGrid Values:\n" + "-".repeat(74));
+  console.log(`\nGrid Values of ${currForm}:\n` + "-".repeat(100));
 
   for (let i = 0; i < gridValues.length; i++) {
     let expected = inputValues[i];
@@ -99,7 +102,6 @@ export async function validateGridValues(inputValues, gridValues) {
     if (actual === expected) {
       console.log(`Matched Grid values: ${actual} === ${expected}`);
     } else {
-      await updateCurrFormAndPhase();
       throwTestFailMsg(
         `${currPhase}-GRID-MM`,
         currForm,

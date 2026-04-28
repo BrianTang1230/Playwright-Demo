@@ -5,7 +5,10 @@ import {
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionCreate(
   page,
@@ -45,7 +48,44 @@ export async function VehicleRunningDistributionCreate(
   return { uiVals, gridVals };
 }
 
-export async function VehicleRunningDistributionEdit(
+// Edit Function (Without Saving)
+export async function VehicleRunningDistributionEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, docNo);
+
+  const uiVals = await getFormValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
+}
+
+export async function VehicleRunningDistributionEdit2(
   page,
   sideMenu,
   paths,

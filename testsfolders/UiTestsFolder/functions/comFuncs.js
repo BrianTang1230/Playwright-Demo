@@ -3,19 +3,19 @@ import { allure, expect } from "allure-playwright";
 let currForm = "";
 let currPhase = "";
 
-export async function setCurrForm(formName) {
+export function setCurrForm(formName) {
   currForm = formName;
 }
 
-export async function getCurrForm(formName) {
+export function getCurrForm(formName) {
   return currForm;
 }
 
-export async function setCurrPhase(phaseName) {
+export function setCurrPhase(phaseName) {
   currPhase = phaseName;
 }
 
-export async function getCurrPhase() {
+export function getCurrPhase() {
   return currPhase;
 }
 
@@ -96,20 +96,20 @@ export async function throwTestFailMsg(
   remarks = "No remark",
 ) {
   let decodedCode = caseCode.split("-");
-  let step = "";
+  let phase = "";
   let side = "";
   let reason = "";
 
   if (decodedCode[0] === "C") {
-    step = "Creation";
+    phase = "Creation";
   } else if (decodedCode[0] === "E1") {
-    step = "1st Edition";
+    phase = "1st Edition";
   } else if (decodedCode[0] === "E2") {
-    step = "2nd Edition";
+    phase = "2nd Edition";
   } else if (decodedCode[0] === "D") {
-    step = "Deletion";
+    phase = "Deletion";
   } else if (decodedCode[0] === "B") {
-    step = "Before Tests";
+    phase = "Before Tests";
   }
 
   if (decodedCode.includes("UI")) {
@@ -136,6 +136,6 @@ export async function throwTestFailMsg(
   }
 
   throw new Error(
-    `${step} in ${formName} failed due to ${reason} on ${side}: ${remarks}.`,
+    `${phase} in ${formName} failed due to ${reason} on ${side}: ${remarks}.\n${"-".repeat(100)}`,
   );
 }

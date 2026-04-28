@@ -7,7 +7,7 @@ function nurserySQLCommand(formName) {
     END;
     DECLARE @OU2 VARCHAR(100) =
       CASE WHEN @region = 'IND'
-         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         THEN 'SPSH - PT. SURYA PALMA SEJAHTERA'
          ELSE 'BWHO - HEAD OFFICE'
     END;
   `;
@@ -348,10 +348,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.TrnDate, 'dd/MM/yyyy') AS InterTrnDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         CASE 
           WHEN A.TransTypeKey = 1 THEN 'Transfer to Batch'
@@ -782,8 +782,8 @@ function nurserySQLCommand(formName) {
         A.Price AS UnitPrice,
         D.Qty AS TotalQty,
         CASE 
-        WHEN A.Type = 1 THEN 'Pre Nursery'
-        WHEN A.Type = 2 THEN 'Main Nursery'
+          WHEN A.Type = 1 THEN 'Pre Nursery'
+          WHEN A.Type = 2 THEN 'Main Nursery'
         END AS NurType,
         C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantMaterial,
         E.OUCode + ' - ' + E.OUDesc AS OU
@@ -805,7 +805,7 @@ function nurseryGridSQLCommand(formName) {
   let sqlCommand = `
    DECLARE @OU VARCHAR(100) = 
     CASE WHEN @region = 'IND'
-         THEN 'SPSE - SURYA PALMA SEJAHTERA ESTATE'
+         THEN 'SPSH - PT. SURYA PALMA SEJAHTERA'
          ELSE 'BWHO - HEAD OFFICE'
     END;
   `;

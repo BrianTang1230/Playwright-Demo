@@ -5,7 +5,7 @@ import {
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import { FilterForUnsaveChecking, FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
 
 export async function DailyTotalCropReceiptByCropSupplierCreate(
   page,
@@ -45,7 +45,42 @@ export async function DailyTotalCropReceiptByCropSupplierCreate(
   return { uiVals, gridVals };
 }
 
-export async function DailyTotalCropReceiptByCropSupplierEdit(
+export async function DailyTotalCropReceiptByCropSupplierEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+) {
+  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
+
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+  }
+
+  for (let i = 0; i < gridPaths.length; i++) {
+    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+  }
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, values[0]);
+
+  const uiVals = await getFormValues(page, paths);
+  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+
+  return { uiVals, gridVals };
+}
+
+export async function DailyTotalCropReceiptByCropSupplierEdit2(
   page,
   sideMenu,
   paths,

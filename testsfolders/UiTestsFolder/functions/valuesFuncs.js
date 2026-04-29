@@ -197,10 +197,12 @@ export async function inputFormValues(page, path, col, value) {
   }
 }
 
-export async function inputGridValues(page, path, values, cellsIndex) {
+export async function inputGridValues(page, path, values, cellsIndex, nRow = 0) {
   const table = page.locator(path);
   const vals = values.split(";");
-  const row = table.locator("tr").nth(0);
+  // If the JSON path already points to a specific row (tr), use it directly. 
+  // Otherwise, find the row inside the table.
+  const row = path.includes("tr[") ? table : table.locator("tr").nth(nRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
     if (vals[i] === "NA" || vals[i] === "AF") continue;
@@ -266,7 +268,10 @@ export async function getGridValues(page, gridPaths, cellsIndex) {
   const gridValues = [];
   for (let i = 0; i < gridPaths.length; i++) {
     const table = page.locator(gridPaths[i]);
-    const row = table.locator("tr").first();
+
+    // If JSON path already includes "tr[" (like tr[1]), it uses it directly.
+    // Otherwise, it falls back to Checkroll's normal behavior (.first())
+    const row = gridPaths[i].includes("tr[") ? table : table.locator("tr").first();
 
     for (let j = 0; j < cellsIndex[i].length; j++) {
       const cell = row.locator("td").nth(cellsIndex[i][j]);

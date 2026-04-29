@@ -1,0 +1,13 @@
+{
+  "JsonPath": "utils/data/uidata/accountData.json",
+  "InputPath": {
+    "GeneralJournalPath": "GLDate,GLDesc,#txtStatus",
+    "GeneralJournalColumn": "JournalDate date,Description text,Status text"
+  },
+  "GridPath": {
+    "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]"
+  },
+  "DocNo": {
+    "GeneralJournal": "BGJ2512059"
+  }
+}

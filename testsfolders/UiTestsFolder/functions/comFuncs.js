@@ -139,3 +139,11 @@ export async function throwTestFailMsg(
     `${phase} in ${formName} failed due to ${reason} on ${side}: ${remarks}.\n${"-".repeat(100)}`,
   );
 }
+
+export function chunkArray(array, size) {
+  const chunked = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunked.push(array.slice(i, i + size));
+  }
+  return chunked;
+}

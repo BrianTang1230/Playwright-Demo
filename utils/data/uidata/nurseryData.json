@@ -34,11 +34,9 @@
     "NurserySalesRequisitionPath": "#SoldDatePicker,#txtSoldStatus,#txtSoldRemark,#txtRefNo,cboContact_input,spinbutton*0,#numericSoldQty,cboNurseryType_input,cboPlantMaterial_input",
     "NurserySalesRequisitionColumn": "SoldDate date,Status text,Remarks text,RefNo text,Contact dropdown,UnitPrice numeric,TotalQty numeric,NurType dropdown,PlantMaterial dropdown"
   },
-
   "GridPath": {
     "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
-
   "DocNo": {
     "PreNurserySeedReceived": "PSR0000020",
     "PreNurseryGerminated": "PG00000014",
@@ -53,8 +51,8 @@
     "MainNurseryAdjustment": "MNA0000047",
     "MainNurseryTransfer/Loss": "NT00000054",
     "MainNurserySold": "MS00000002",
-    "Inter-OUMainNurseryTransferTo": "IMT0000004",
+    "Inter-OUMainNurseryTransferTo": "IMT0000024",
     "NurseryTransferRequisition": "",
-    "NurserySalesRequisition": "RNS0000006"
+    "NurserySalesRequisition": "RNS0000094"
   }
 }

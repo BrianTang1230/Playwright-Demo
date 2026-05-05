@@ -19,7 +19,7 @@ export async function MandorAndCheckerPenaltyCreate(
   ou,
   docNo,
 ) {
-  await runStep("Create new transaction", async () => {
+  await runStep("Open create new form", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
 

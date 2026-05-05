@@ -98,10 +98,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("C-DB-NF", formName);
-    }
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
@@ -122,9 +119,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("E1-DB-NF", formName);
-    }
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
@@ -146,9 +142,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("E2-DB-NF", formName);
-    }
+    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
@@ -178,7 +172,7 @@ test.describe.serial(`${formName} Tests`, () => {
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     await editJson(JsonPath, formName, "");
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

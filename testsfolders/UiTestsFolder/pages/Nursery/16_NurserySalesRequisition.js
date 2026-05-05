@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterRecordByOUAndDate,
+  FilterTransactionBy3Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function NurserySalesRequisitionCreate(
@@ -21,7 +21,7 @@ export async function NurserySalesRequisitionCreate(
   cellsIndex,
   ou,
 ) {
-  await runStep("Create new transaction", async () => {
+  await runStep("Open create new form", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
 
@@ -79,7 +79,13 @@ export async function NurserySalesRequisitionEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -106,7 +112,7 @@ export async function NurserySalesRequisitionEdit1(
     await sideMenu.rejectBtn.click();
   });
 
-  await runStep("Reopen closed transaction", async () => {
+  await runStep("Reopen transaction", async () => {
     await FilterForUnsaveChecking(page, docNo);
   });
 
@@ -135,7 +141,13 @@ export async function NurserySalesRequisitionEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -180,7 +192,13 @@ export async function NurserySalesRequisitionDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

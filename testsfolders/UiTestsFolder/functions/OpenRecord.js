@@ -22,7 +22,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
 }
 
 /* 
-    Default - when need to use document number or typing keyword
+    3 Criterias and Fixed OU & Date - when need to use document number or typing keyword
     //![Default](../../../utils/images/UQF_Default.png)
 
 
@@ -33,6 +33,65 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
     Directly - directly apply filter with only OU and Date
     //![Directly](../../../utils/images/UQF_Directly.png)
 */
+
+export async function FilterTransactionBy3Criterias(
+  page,
+  date,
+  ou,
+  keyword,
+  filterColumn,
+  inputKeywordWith = "Typing",
+) {
+  // Input OU and Date
+  await page
+    .locator('input[name="comboBoxCompulSearchParam_input"]')
+    .first()
+    .fill(ou);
+  await page.getByRole("combobox").nth(3).fill(date);
+  const secondDateInput = page.getByRole("combobox").nth(4);
+  if (await secondDateInput.isVisible()) {
+    await secondDateInput.fill(date);
+  }
+
+  // Add filter criteria and select filter column
+  await page.getByRole("button", { name: "+", exact: true }).click();
+  await page
+    .locator("#tabstrip-2")
+    .getByText("Choose a Column to Filter")
+    .nth(2)
+    .click();
+  await page
+    .locator("#ddlColumn_listbox li", { hasText: filterColumn })
+    .nth(2)
+    .click();
+
+  // Input Keyword
+  const paramInput =
+    inputKeywordWith === "Typing"
+      ? page.locator("[name='searchParam']").nth(1)
+      : page.locator("[name='comboBoxSearchParam_input']");
+  await paramInput.type(keyword);
+
+  if (inputKeywordWith === "Dropdown") {
+    await page
+      .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
+      .first()
+      .waitFor({ state: "visible" });
+    await paramInput.press("Enter");
+  }
+
+  // Apply filter and open seleted transaction
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
+    .first()
+    .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
+}
 
 export async function FilterRecordByOUAndDate(
   page,

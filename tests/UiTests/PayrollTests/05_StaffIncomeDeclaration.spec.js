@@ -195,7 +195,7 @@ test.describe.serial("Staff Income Declaration (EA Form) Tests", () => {
       });
 
     await editJson(JsonPath, formName, "");
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

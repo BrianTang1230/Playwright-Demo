@@ -168,7 +168,7 @@ test.describe.serial("Worker Ad hoc Deduction Tests", async () => {
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

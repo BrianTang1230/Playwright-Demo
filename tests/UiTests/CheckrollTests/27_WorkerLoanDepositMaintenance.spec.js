@@ -171,6 +171,7 @@ test.describe.serial("Worker Loan/Deposit Maintenance Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

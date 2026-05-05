@@ -109,7 +109,7 @@ test.describe.skip("Location Setup Tests", () => {
   });
 
   test.afterAll(async () => {
-    // Close database connection
+    // Close database connectionawait editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

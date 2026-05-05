@@ -171,7 +171,7 @@ test.describe.serial("FFB Advance Payment Tests", () => {
         DocNo: docNo,
         OU: ou[0],
       });
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

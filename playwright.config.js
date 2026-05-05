@@ -103,7 +103,7 @@ module.exports = defineConfig({
         channel: process.env.BROWSER || "chrome",
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
-          slowMo: 1100,
+          slowMo: 1000,
         },
       },
     },

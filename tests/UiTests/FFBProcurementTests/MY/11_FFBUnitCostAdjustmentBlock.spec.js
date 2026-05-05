@@ -152,6 +152,7 @@ test.describe.serial("FFB Unit Cost Adjustment (Block) Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

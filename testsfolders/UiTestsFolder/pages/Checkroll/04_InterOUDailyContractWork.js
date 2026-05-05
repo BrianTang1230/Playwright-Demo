@@ -24,7 +24,7 @@ export async function InterOUDailyContractWorkCreate(
   const tabLocator =
     region === "IND" ? "#tabstripworkDet li" : "#interouTabstripworkDet li";
 
-  await runStep("Create new transaction", async () => {
+  await runStep("Open create new form", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
 

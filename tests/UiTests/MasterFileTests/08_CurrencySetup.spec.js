@@ -106,7 +106,7 @@ test.describe.skip("Currency Setup Tests", () => {
   });
 
   test.afterAll(async () => {
-    // Close database connection
+    // Close database connectionawait editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

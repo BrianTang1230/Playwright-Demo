@@ -107,20 +107,15 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
       Date: createValues[0],
     });
-    if (!dbValues) {
-      throwTestFailMsg("C-DB-NF", formName, "Form record not found");
-    }
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       weighbridgeGridSQLCommand(formName),
       {
         Date: createValues[0],
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -147,9 +142,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
       Date: createValues[0],
     });
-    if (!dbValues) {
+    !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
-    }
 
     const gridDbValues = await db.retrieveGridData(
       weighbridgeGridSQLCommand(formName),
@@ -157,10 +151,8 @@ test.describe.serial(`${formName} Tests`, () => {
         Date: createValues[0],
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -187,9 +179,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(weighbridgeSQLCommand(formName), {
       Date: createValues[0],
     });
-    if (!dbValues) {
+    !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
-    }
 
     const gridDbValues = await db.retrieveGridData(
       weighbridgeGridSQLCommand(formName),
@@ -197,10 +188,8 @@ test.describe.serial(`${formName} Tests`, () => {
         Date: createValues[0],
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -222,13 +211,12 @@ test.describe.serial(`${formName} Tests`, () => {
       Date: createValues[0],
     });
 
-    if (dbValues.length > 0) {
-      throwTestFailMsg("D-DB-F", formName);
-    }
+    dbValues && throwTestFailMsg("D-DB-F", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

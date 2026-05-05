@@ -181,6 +181,7 @@ test.describe.serial("Cracking Efficiency Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

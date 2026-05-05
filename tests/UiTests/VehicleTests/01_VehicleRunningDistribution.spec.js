@@ -115,9 +115,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("C-DB-NF", formName, "Form record not found");
-    }
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
@@ -125,10 +123,8 @@ test.describe.serial(`${formName} Tests`, () => {
         DocNo: docNo,
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -157,9 +153,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
+    !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
-    }
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
@@ -167,10 +162,8 @@ test.describe.serial(`${formName} Tests`, () => {
         DocNo: docNo,
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -199,9 +192,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
+    !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
-    }
 
     const gridDbValues = await db.retrieveGridData(
       vehicleGridSQLCommand(formName),
@@ -209,10 +201,8 @@ test.describe.serial(`${formName} Tests`, () => {
         DocNo: docNo,
       },
     );
-    if (!gridDbValues) {
+    !gridDbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
-    }
-
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -235,14 +225,13 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-    if (dbValues.length > 0) {
-      throwTestFailMsg("D-DB-F", formName);
-    }
+    dbValues && throwTestFailMsg("D-DB-F", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

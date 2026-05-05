@@ -45,7 +45,6 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  test.skip();
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Change Current Form and Phase
@@ -100,10 +99,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("C-DB-NF", formName);
-    }
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
@@ -124,9 +120,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("E1-DB-NF", formName);
-    }
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
@@ -148,9 +143,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    if (!dbValues) {
-      throwTestFailMsg("E2-DB-NF", formName);
-    }
+    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
@@ -164,15 +157,13 @@ test.describe.serial(`${formName} Tests`, () => {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throwTestFailMsg("D-DB-F", formName);
-    }
+    dbValues && throwTestFailMsg("D-DB-F", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

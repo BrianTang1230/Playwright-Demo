@@ -181,6 +181,7 @@ test.describe.serial("Effluent Flowmeter Reading Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

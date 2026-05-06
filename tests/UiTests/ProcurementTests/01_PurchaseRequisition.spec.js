@@ -133,6 +133,7 @@ test.describe.serial("Purchase Requisition Tests", () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

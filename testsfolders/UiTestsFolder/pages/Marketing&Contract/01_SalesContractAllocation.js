@@ -5,7 +5,10 @@ import {
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterRecordByOUAndDate,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function SalesContractAllocationCreate(
   page,
@@ -16,6 +19,13 @@ export async function SalesContractAllocationCreate(
   ou,
 ) {
   await sideMenu.clickBtnCreateNewForm();
+
+  await SelectOU(
+    page,
+    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+    "#ddlOU-list li",
+    ou[0],
+  );
 
   for (let i = 0; i < paths.length; i++) {
     await inputFormValues(page, paths[i], columns[i], values[i]);
@@ -51,7 +61,57 @@ export async function SalesContractAllocationCreate(
   return { uiVals };
 }
 
-export async function SalesContractAllocationEdit(
+export async function SalesContractAllocationEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+) {
+  await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
+
+  for (let i = 0; i < paths.length; i++) {
+    await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    if (i === 7) {
+      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+    } else if (i === 11) {
+      await page
+        .getByRole("tab", { name: "Payment Terms and Delivery" })
+        .click();
+    } else if (i === 18) {
+      await page.getByRole("tab", { name: "Remarks" }).click();
+    }
+  }
+  await page.getByRole("tab", { name: "General" }).click();
+
+  await sideMenu.clickBtnClose();
+
+  await sideMenu.rejectBtn.click();
+
+  // Select the created record
+  await FilterForUnsaveChecking(page, values[0]);
+
+  const uiVals = [];
+
+  for (let i = 0; i < paths.length; i++) {
+    uiVals.push(await getFormValues(page, [paths[i]]));
+    if (i === 7) {
+      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+    } else if (i === 11) {
+      await page
+        .getByRole("tab", { name: "Payment Terms and Delivery" })
+        .click();
+    } else if (i === 18) {
+      await page.getByRole("tab", { name: "Remarks" }).click();
+    }
+  }
+
+  return { uiVals };
+}
+
+export async function SalesContractAllocationEdit2(
   page,
   sideMenu,
   paths,
@@ -103,6 +163,5 @@ export async function SalesContractAllocationDelete(
   ou,
 ) {
   await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
-
   await sideMenu.clickBtnDelete();
 }

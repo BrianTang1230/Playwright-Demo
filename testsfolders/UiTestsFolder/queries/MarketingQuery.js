@@ -1,5 +1,10 @@
 function marketingSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+  DECLARE @OU VARCHAR(100) = 
+    CASE WHEN @region = 'IND'
+         THEN 'LSPH - PT. LIBO SAWIT PERKASA'
+         ELSE 'BWHO - HEAD OFFICE'
+    END;`;
 
   switch (formName) {
     case "Sales Contract Allocation":

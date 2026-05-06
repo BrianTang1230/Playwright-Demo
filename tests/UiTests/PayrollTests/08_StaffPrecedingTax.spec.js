@@ -182,7 +182,7 @@ test.describe.serial("Staff Preceding Tax (PPh 21) Tests", async () => {
         OU: ou[0],
         Date: createValues[0],
       });
-
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

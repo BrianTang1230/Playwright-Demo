@@ -18,7 +18,7 @@ export async function WorkerPreviousEmploymentTaxDeductionCreate(
   cellsIndex,
   ou,
 ) {
-  await runStep("Create new transaction", async () => {
+  await runStep("Open create new form", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
 

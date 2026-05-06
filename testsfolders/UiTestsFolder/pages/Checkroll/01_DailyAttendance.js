@@ -21,7 +21,7 @@ export async function DailyAttendanceCreate(
 ) {
   const region = process.env.REGION || Login.Region;
 
-  await runStep("Create new transaction", async () => {
+  await runStep("Open create new form", async () => {
     await sideMenu.clickBtnCreateNewForm();
   });
 

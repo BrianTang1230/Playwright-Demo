@@ -1,14 +1,18 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { region, test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  setCurrForm,
+  setCurrPhase,
+  checkLength,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
   validateDBValues,
-  getGridValues,
-  getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import { marketingSQLCommand } from "@UiFolder/queries/MarketingQuery";
@@ -21,8 +25,9 @@ import {
 
 import {
   SalesContractDeliveryOrderCreate,
+  SalesContractDeliveryOrderEdit1,
+  SalesContractDeliveryOrderEdit2,
   SalesContractDeliveryOrderDelete,
-  SalesContractDeliveryOrderEdit,
 } from "@UiFolder/pages/Marketing&Contract/02_SalesContractDeliveryOrder";
 
 import Login from "@utils/data/uidata/loginData.json";
@@ -34,6 +39,7 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let phaseCount = 0;
 const sheetName = "MAR&CON_DATA";
 const module = "Marketing & Contract";
 const submodule = null;
@@ -42,9 +48,13 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial("Sales Contract Delivery Order Tests", async () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -53,12 +63,7 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    if (Login.Region === "IND") {
-      docNo = DocNo[keyName + "IND"];
-    } else {
-      docNo = DocNo[keyName];
-    }
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -69,10 +74,16 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Sales Contract Delivery Order", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     const { uiVals } = await SalesContractDeliveryOrderCreate(
       page,
       sideMenu,
@@ -82,25 +93,17 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       ou,
     );
 
-    if (Login.Region === "IND") {
-      docNo = await editJson(
-        JsonPath,
-        formName + "IND",
-        await page.locator("#ContractDOSID").inputValue(),
-      );
-    } else {
-      docNo = await editJson(
-        JsonPath,
-        formName,
-        await page.locator("#ContractDOSID").inputValue(),
-      );
-    }
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#ContractDOSID").inputValue(),
+    );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(
       [...createValues, ou[0]],
@@ -109,9 +112,9 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
     );
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Sales Contract Delivery Order", async ({ page, db }) => {
-    const { uiVals } = await SalesContractDeliveryOrderEdit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals } = await SalesContractDeliveryOrderEdit1(
       page,
       sideMenu,
       paths,
@@ -125,6 +128,35 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
       DocNo: docNo,
       OU: ou[0],
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...createValues, ou[0]],
+      [...columns, "OU"],
+      dbValues[0],
+    );
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals } = await SalesContractDeliveryOrderEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      ou,
+    );
+
+    const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
+      DocNo: docNo,
+      OU: ou[0],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues(
@@ -135,22 +167,20 @@ test.describe.serial("Sales Contract Delivery Order Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Sales Contract Delivery Order", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await SalesContractDeliveryOrderDelete(page, sideMenu, editValues, ou);
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
       OU: ou[0],
     });
-
-    if (dbValues.length > 0)
-      throw new Error("Deleting Sales Contract Delivery Order failed");
+    dbValues && throwTestFailMsg("D-DB-F", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    // if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

@@ -5,7 +5,7 @@ import {
     getGridValues,
     getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
 // Create
@@ -27,31 +27,31 @@ export async function GeneralJournalCreate(
     });
     
     await runStep("Select OU", async () => {
-        await SelectOU(
-            page,
-            "#divComboOU .k-dropdown-wrap .k-select",
-            "#comboBoxOU_listbox span",
-            ou[0]
-        );
+      await SelectOU(
+        page,
+        "#divComboOU .k-dropdown-wrap .k-select",
+        "#comboBoxOU_listbox span",
+        ou[0]
+      );
     });
 
     await runStep("Input transaction data", async () => {
-        for (let i = 0; i < paths.length; i++) {
-            await inputFormValues(page, paths[i], columns[i], values[i]);
-        }
+      for (let i = 0; i < paths.length; i++) {
+        await inputFormValues(page, paths[i], columns[i], values[i]);
+      }
     });
 
     await runStep("Create grid item", async () => {
-        for (let i = 0; i < gridPaths.length; i++) {
+      for (let i = 0; i < gridPaths.length; i++) {
 
-            await sideMenu.btnAddNewItem.click();
+        await sideMenu.btnAddNewItem.click();
 
-            await page.waitForTimeout(500);
+        await page.waitForTimeout(500);
 
-            // Passes the 'i' index so it handles multiple rows if gridValues > 1
-            await inputGridValues(page, gridPaths[0], gridValues[i], cellsIndex[0], i);
-    }
-  });
+        // Passes the 'i' index so it handles multiple rows if gridValues > 1
+        await inputGridValues(page, gridPaths[0], gridValues[i], cellsIndex[0], i);
+      }
+    });
 
     await runStep("Save transaction", async () => {
         await sideMenu.clickBtnSave();
@@ -59,8 +59,8 @@ export async function GeneralJournalCreate(
 
     const uiVals = await runStep("Get created UI values", async () => {
         return await getFormValues(
-            page, 
-            paths,
+          page, 
+          paths,
         );
     });
 
@@ -82,27 +82,28 @@ export async function GeneralJournalEdit(
     sideMenu,
     paths,
     columns,
-    values,
-    newValues,
+    editValues,
     gridPaths,
     gridValues,
     cellsIndex,
     ou,
-    docNo
+    docNo,
+    fiscalYear,
+    period
 ) {
-    await runStep("Filter transaction", async () => {
-        await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
-    });
+
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo);
+  });
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
-      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+      await inputFormValues(page, paths[i], columns[i], editValues[i]);
     }
   });
 
-  // Check this step for your specific General Journal Grid UI
   await runStep("Delete and add new grid item", async () => {
-    await page.locator("#IsSelectGrid").first().check();
+    await page.locator("#IsSelectGrid").nth(2).check();
     await page.locator("#btnDeleteItem").click();
     await sideMenu.confirmBtn.click();
     await sideMenu.btnAddNewItem.click();
@@ -127,19 +128,4 @@ export async function GeneralJournalEdit(
   });
 
   return { uiVals, gridVals };
-}
-
-export async function GeneralJournalDelete(
-  db,
-  deleteSQL,
-  docNo,
-  ou
-) {
-  // Since Account has no UI Delete button, we use the SQL cleanup logic directly
-  await runStep("Delete transaction via SQL", async () => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0]
-    });
-  });
 }

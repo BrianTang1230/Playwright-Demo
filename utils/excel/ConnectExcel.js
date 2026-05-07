@@ -76,7 +76,7 @@ export default class ConnectExcel {
   async loadExcelValues(
     sheetName,
     formName,
-    { isUI = true, hasOU = true, hasGrid = false, hasTree = false } = {}
+    { isUI = true, hasOU = true, hasGrid = false, hasTree = false, hasFilter = false } = {}
   ) {
     let columns = isUI
       ? ["CreateData", "EditData", "DeleteSQL"]
@@ -108,6 +108,10 @@ export default class ConnectExcel {
       columns.push("TreeViewDataChecker");
     }
 
+    if (hasFilter) {
+      columns.push("FilterData");
+    }
+
     for (let col = 0; col < columns.length; col++) {
       let value;
       if (
@@ -119,6 +123,9 @@ export default class ConnectExcel {
       } else if (columns[col] === "DeleteSQL") {
         value = await this.readExcel(formName, columns[col], isUI);
         value = String(value);
+      } else if (columns[col] === "FilterData") {
+        value = await this.readExcel(formName, columns[col], isUI);
+        value = String(value).split(";");
       } else {
         value = await this.readExcel(formName, columns[col], isUI);
         value = String(value).split(";");

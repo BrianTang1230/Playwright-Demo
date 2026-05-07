@@ -241,3 +241,30 @@ export async function FilterForUnsaveChecking(page, keyword) {
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
   await page.waitForLoadState("networkidle");
 }
+
+export async function FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo) {
+  const yearInput = page.locator('input.k-textbox.filter-input:visible').nth(0);
+  await yearInput.fill(fiscalYear);
+  await yearInput.press('Tab');
+
+  const periodInput = page.locator('input.k-textbox.filter-input:visible').nth(1);
+  await periodInput.fill(period);
+  await page.getByRole("button", { name: "+", exact: true }).last().click();
+
+  const fieldDropdown = page.locator("#tabstrip-2").getByText("Choose a Column to Filter").nth(2);
+  await fieldDropdown.click();
+  await page.locator("#ddlColumn_listbox li", { hasText: 'Doc. No.' }).last().click();
+
+  const docInput = page.locator('input[name="searchParam"]:visible').last();
+  
+  await docInput.click();
+  await docInput.type(docNo, { delay: 50 });
+  await docInput.press('Tab');
+
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: new RegExp(docNo.slice(0, 4)) })
+    .first()
+    .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
+}

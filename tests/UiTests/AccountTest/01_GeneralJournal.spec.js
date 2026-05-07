@@ -3,6 +3,7 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength, chunkArray } from "@UiFolder/functions/comFuncs";
+import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import {
   validateFormValues,
   validateDBValues,
@@ -36,6 +37,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let filterData;
 const sheetName = "ACC_Data";
 const module = "Account";
 const submodule = "General Ledger";
@@ -67,12 +69,10 @@ test.describe.serial("General Journal Tests", () => {
       ou,
       gridCreateValues,
       gridEditValues,
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
-
-    await checkLength(dwPaths, dwCols, createValues, editValues);
+      filterData
+    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
 
     docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -86,12 +86,11 @@ test.describe.serial("General Journal Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create General Journal", async ({ page, db }) => {
-    // 1. Pre-test cleanup using SQL to avoid duplicate data errors
-    if (docNo) {
-        await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-    }
+    await db.deleteData(deleteSQL, { 
+      DocNo: docNo, 
+      OU: ou[0] 
+    });
 
-    // 2. Execute UI Create Step
     const { uiVals, gridVals } = await GeneralJournalCreate(
       page,
       sideMenu,
@@ -110,7 +109,6 @@ test.describe.serial("General Journal Tests", () => {
       await page.locator("#txtDocNum").inputValue() 
     );
 
-    // 4. Retrieve Database Values
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
       DocNo: docNo,
     });
@@ -119,11 +117,12 @@ test.describe.serial("General Journal Tests", () => {
       accountGridSQLCommand(formName),
       { DocNo: docNo, OU: ou[0] }
     );
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
-    // 5. Validations
     await validateFormValues(createValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+    
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = chunkArray(gridVals, gridDbColumns.length);
@@ -132,5 +131,75 @@ test.describe.serial("General Journal Tests", () => {
       console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
     };
+  });
+
+  // ---------------- Edit Test ----------------
+  test('Edit General Journal', async ({ page, db }) => {
+    const fiscalYear = filterData[0];
+    const period = filterData[1];
+
+    const { uiVals, gridVals } = await GeneralJournalEdit(
+      page,
+      sideMenu,
+      dwPaths,
+      dwCols,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      dwCellIndex,
+      ou,
+      docNo,
+      fiscalYear,
+      period
+    );
+
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtDocNum").inputValue() 
+    );
+
+    const dbValues = await db.retrieveData(accountSQLCommand(formName), {
+      DocNo: docNo,
+    });
+
+    const gridDbValues = await db.retrieveGridData(
+      accountGridSQLCommand(formName),
+      { DocNo: docNo, OU: ou[0] }
+    );
+
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await validateFormValues(createValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+    
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+
+    const rowData = chunkArray(gridVals, gridDbColumns.length);
+    console.log("\n--- Starting Grid DB Validation ---");
+    for (let i = 0; i < rowData.length; i++) {
+      console.log(`\nValidating Row ${i + 1}...`);
+      await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
+    };
+  });
+
+  // ---------------- Delete Test ----------------
+  test('Delete General Journal', async ({ db }) => {
+    console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
+
+    await db.deleteData(deleteSQL, { 
+      DocNo: docNo, 
+      OU: ou[0] 
+    });
+
+    const dbValues = await db.retrieveData(accountSQLCommand(formName), {
+      DocNo: docNo,
+    });
+
+    if (dbValues && dbValues.length > 0) {
+      throw new Error(`Deletion failed! Record ${docNo} is still present in the database.`);
+    } else {
+      console.log(`\n Success! Record ${docNo} is completely gone from the database.`);
+    }
   });
 });

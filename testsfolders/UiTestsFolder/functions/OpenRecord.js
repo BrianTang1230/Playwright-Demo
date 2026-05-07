@@ -49,9 +49,7 @@ export async function FilterTransactionBy3Criterias(
     .fill(ou);
   await page.getByRole("combobox").nth(3).fill(date);
   const secondDateInput = page.getByRole("combobox").nth(4);
-  if (await secondDateInput.isVisible()) {
-    await secondDateInput.fill(date);
-  }
+  (await secondDateInput.isVisible()) && (await secondDateInput.fill(date));
 
   // Add filter criteria and select filter column
   await page.getByRole("button", { name: "+", exact: true }).click();
@@ -91,6 +89,7 @@ export async function FilterTransactionBy3Criterias(
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
   await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500); //Wait 1.5s to prevent slow loading in some forms
 }
 
 export async function FilterRecordByOUAndDate(

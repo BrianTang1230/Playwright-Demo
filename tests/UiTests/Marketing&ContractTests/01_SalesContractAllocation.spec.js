@@ -16,7 +16,6 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 import { marketingSQLCommand } from "@UiFolder/queries/MarketingQuery";
-
 import {
   JsonPath,
   InputPath,
@@ -100,7 +99,8 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
     });
-    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("C-DB-NF", formName);
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
@@ -115,13 +115,13 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
     });
-    !dbValues &&
-      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
@@ -137,13 +137,13 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
     });
-    !dbValues &&
-      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
@@ -151,12 +151,12 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Delete Test ----------------
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await SalesContractAllocationDelete(page, sideMenu, editValues, ou);
+    await SalesContractAllocationDelete(page, sideMenu, editValues, ou, docNo);
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
     });
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

@@ -131,6 +131,8 @@ export async function throwTestFailMsg(
   } else if (decodedCode[2] === "RF") {
     // For Deletion only
     reason = "Record found";
+  } else if (decodeCode[2] === "ERR") {
+    reason = "Get Error";
   } else {
     reason = "Unknown reason";
   }

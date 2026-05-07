@@ -25,16 +25,14 @@ export async function VehicleRunningDistributionLoanToCreate(
     await sideMenu.clickBtnCreateNewForm();
   });
 
-  await runStep("Select FromOU", async () => {
+  await runStep("Select From OU and To OU", async () => {
     await SelectOU(
       page,
       "#comboOU .k-dropdown-wrap .k-select",
       "#comboBoxOU_listbox li span",
       ou[0],
     );
-  });
 
-  await runStep("Select ToOU", async () => {
     await SelectOU(
       page,
       "#comboToOU .k-dropdown-wrap .k-select",
@@ -66,7 +64,6 @@ export async function VehicleRunningDistributionLoanToCreate(
   const uiVals = await runStep("Get created UI values", async () => {
     return await getFormValues(page, paths);
   });
-
   const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(page, gridPaths, cellsIndex);
   });

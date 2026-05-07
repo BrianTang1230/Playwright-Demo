@@ -157,7 +157,7 @@ test.describe.serial(`${formName} Tests`, () => {
       DocNo: docNo,
     });
 
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

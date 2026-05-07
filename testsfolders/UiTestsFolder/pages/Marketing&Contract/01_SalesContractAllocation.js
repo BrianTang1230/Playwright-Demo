@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { runStep, SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterRecordByOUAndDate,
+  FilterTransactionBy3Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function SalesContractAllocationCreate(
@@ -18,45 +18,58 @@ export async function SalesContractAllocationCreate(
   values,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#ddlOU-list li",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+      "#ddlOU-list li",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
-  await page.getByRole("tab", { name: "General" }).click();
+    await page.getByRole("tab", { name: "General" }).click();
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
   const uiVals = [];
-
-  for (let i = 0; i < paths.length; i++) {
-    uiVals.push(await getFormValues(page, [paths[i]]));
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Get created UI values", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      uiVals.push(await getFormValues(page, [paths[i]]));
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
+  });
 
   return { uiVals };
 }
@@ -69,44 +82,62 @@ export async function SalesContractAllocationEdit1(
   values,
   newValues,
   ou,
+  docNo,
 ) {
-  await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[1],
+      ou[0],
+      values[0],
+      "Our Contract No.",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
-  await page.getByRole("tab", { name: "General" }).click();
+    await page.getByRole("tab", { name: "General" }).click();
+  });
 
-  await sideMenu.clickBtnClose();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  await sideMenu.rejectBtn.click();
-
-  // Select the created record
-  await FilterForUnsaveChecking(page, values[0]);
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, values[0]);
+  });
 
   const uiVals = [];
-
-  for (let i = 0; i < paths.length; i++) {
-    uiVals.push(await getFormValues(page, [paths[i]]));
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Get edited UI values", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      uiVals.push(await getFormValues(page, [paths[i]]));
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
+  });
 
   return { uiVals };
 }
@@ -119,39 +150,57 @@ export async function SalesContractAllocationEdit2(
   values,
   newValues,
   ou,
+  docNo,
 ) {
-  await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[1],
+      ou[0],
+      values[0],
+      "Our Contract No.",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
-  await page.getByRole("tab", { name: "General" }).click();
+    await page.getByRole("tab", { name: "General" }).click();
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save edited transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
   const uiVals = [];
-
-  for (let i = 0; i < paths.length; i++) {
-    uiVals.push(await getFormValues(page, [paths[i]]));
-    if (i === 7) {
-      await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
-    } else if (i === 11) {
-      await page
-        .getByRole("tab", { name: "Payment Terms and Delivery" })
-        .click();
-    } else if (i === 18) {
-      await page.getByRole("tab", { name: "Remarks" }).click();
+  await runStep("Get edited UI values", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      uiVals.push(await getFormValues(page, [paths[i]]));
+      if (i === 8) {
+        await page.getByRole("tab", { name: "Quantity and Pricing" }).click();
+      } else if (i === 16) {
+        await page
+          .getByRole("tab", { name: "Payment Terms and Delivery" })
+          .click();
+      } else if (i === 23) {
+        await page.getByRole("tab", { name: "Remarks" }).click();
+      } else if (i === 35) {
+        await page.getByRole("tab", { name: "Despatch" }).click();
+      }
     }
-  }
+  });
 
   return { uiVals };
 }
@@ -161,7 +210,19 @@ export async function SalesContractAllocationDelete(
   sideMenu,
   values,
   ou,
+  docNo,
 ) {
-  await FilterRecordByOUAndDate(page, [values[1]], ou[0], values[0], 2);
-  await sideMenu.clickBtnDelete();
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[1],
+      ou[0],
+      values[0],
+      "Our Contract No.",
+    );
+  });
+
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

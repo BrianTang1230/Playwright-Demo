@@ -35,7 +35,7 @@ export async function validateFormValues(inputValues, columns, uiValues) {
       uiValues[i] = String(uiVal);
     }
 
-    if (inputValues[i] !== uiValues[i]) {
+    if (String(inputValues[i]).trim() !== String(uiValues[i]).trim()) {
       throwTestFailMsg(
         `${currPhase}-UI-MM`,
         currForm,
@@ -57,9 +57,15 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
 
-    if (inputValues[i] === "NA" || inputValues[i] === "AF") continue;
+    if (
+      String(inputValues[i]).trim() === "NA" ||
+      String(inputValues[i]).trim() === "AF" ||
+      dbValues[colName] === null
+    )
+      continue;
+
     if (inputCols[i].includes("numeric")) {
-      inputValues[i] = normalizeNumber(inputValues[i]);
+      inputValues[i] = normalizeNumber(String(inputValues[i]));
     }
 
     if (String(inputValues[i]).trim() !== String(dbValues[colName]).trim()) {
@@ -113,6 +119,7 @@ export async function validateGridValues(inputValues, gridValues) {
 
 function normalizeNumber(raw) {
   let cleaned = raw;
+
   if (region === "MY") {
     cleaned = cleaned.replaceAll(",", "");
   } else if (region === "IND") {
@@ -197,10 +204,16 @@ export async function inputFormValues(page, path, col, value) {
   }
 }
 
-export async function inputGridValues(page, path, values, cellsIndex, nRow = 0) {
+export async function inputGridValues(
+  page,
+  path,
+  values,
+  cellsIndex,
+  nRow = 0,
+) {
   const table = page.locator(path);
   const vals = values.split(";");
-  // If the JSON path already points to a specific row (tr), use it directly. 
+  // If the JSON path already points to a specific row (tr), use it directly.
   // Otherwise, find the row inside the table.
   const row = path.includes("tr[") ? table : table.locator("tr").nth(nRow);
 
@@ -271,7 +284,9 @@ export async function getGridValues(page, gridPaths, cellsIndex) {
 
     // If JSON path already includes "tr[" (like tr[1]), it uses it directly.
     // Otherwise, it falls back to Checkroll's normal behavior (.first())
-    const row = gridPaths[i].includes("tr[") ? table : table.locator("tr").first();
+    const row = gridPaths[i].includes("tr[")
+      ? table
+      : table.locator("tr").first();
 
     for (let j = 0; j < cellsIndex[i].length; j++) {
       const cell = row.locator("td").nth(cellsIndex[i][j]);

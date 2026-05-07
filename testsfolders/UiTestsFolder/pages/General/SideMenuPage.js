@@ -81,6 +81,7 @@ export default class SideMenuPage {
       .locator(".k-loading-image")
       .first()
       .waitFor({ state: "detached" });
+    await this.page.waitForTimeout(2000);
   }
 
   get btnSaveRecord() {

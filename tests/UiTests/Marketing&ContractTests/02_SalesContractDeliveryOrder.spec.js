@@ -101,7 +101,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
 
@@ -128,7 +127,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
@@ -155,7 +153,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
@@ -179,7 +176,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });

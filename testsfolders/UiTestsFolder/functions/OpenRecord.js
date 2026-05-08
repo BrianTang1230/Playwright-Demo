@@ -240,6 +240,7 @@ export async function FilterForUnsaveChecking(page, keyword) {
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
   await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500);
 }
 
 export async function FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo) {

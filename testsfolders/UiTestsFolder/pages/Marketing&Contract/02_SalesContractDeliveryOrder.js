@@ -23,9 +23,18 @@ export async function SalesContractDeliveryOrderCreate(
   });
 
   await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+      "#ddlOU-list li",
+      ou[0],
+    );
+  });
+
+  await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], values[i]);
-      if (i === 8) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -41,7 +50,7 @@ export async function SalesContractDeliveryOrderCreate(
   await runStep("Get created UI values", async () => {
     for (let i = 0; i < paths.length; i++) {
       uiVals.push(await getFormValues(page, [paths[i]]));
-      if (i === 8) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -63,17 +72,17 @@ export async function SalesContractDeliveryOrderEdit1(
   await runStep("Filter transaction", async () => {
     await FilterTransactionBy3Criterias(
       page,
-      values[1],
+      values[3],
       ou[0],
-      docNo,
-      "DO ID.",
+      values[0],
+      "Delivery Order No.",
     );
   });
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
-      if (i === 11) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -93,7 +102,7 @@ export async function SalesContractDeliveryOrderEdit1(
   await runStep("Get edited UI values", async () => {
     for (let i = 0; i < paths.length; i++) {
       uiVals.push(await getFormValues(page, [paths[i]]));
-      if (i === 11) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -115,17 +124,17 @@ export async function SalesContractDeliveryOrderEdit2(
   await runStep("Filter transaction", async () => {
     await FilterTransactionBy3Criterias(
       page,
-      values[1],
+      values[3],
       ou[0],
-      docNo,
-      "DO ID.",
+      values[0],
+      "Delivery Order No.",
     );
   });
 
   await runStep("Edit transaction", async () => {
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
-      if (i === 11) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -140,7 +149,7 @@ export async function SalesContractDeliveryOrderEdit2(
   await runStep("Get edited UI values", async () => {
     for (let i = 0; i < paths.length; i++) {
       uiVals.push(await getFormValues(page, [paths[i]]));
-      if (i === 11) {
+      if (i === 18) {
         await page.getByRole("tab", { name: "Delivery", exact: true }).click();
       }
     }
@@ -159,10 +168,10 @@ export async function SalesContractDeliveryOrderDelete(
   await runStep("Filter transaction", async () => {
     await FilterTransactionBy3Criterias(
       page,
-      values[1],
+      values[3],
       ou[0],
-      docNo,
-      "DO ID.",
+      values[0],
+      "Delivery Order No.",
     );
   });
 

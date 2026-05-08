@@ -90,15 +90,12 @@ export async function getElementByPath(page, path) {
   return element;
 }
 
-export async function throwTestFailMsg(
-  caseCode,
-  formName,
-  remarks = "No remark",
-) {
+export async function throwTestFailMsg(caseCode, formName, remarks = "") {
   let decodedCode = caseCode.split("-");
   let phase = "";
   let side = "";
   let reason = "";
+  remarks = remarks === "" ? "" : ": " + remarks;
 
   if (decodedCode[0] === "C") {
     phase = "Creation";
@@ -113,32 +110,32 @@ export async function throwTestFailMsg(
   }
 
   if (decodedCode.includes("UI")) {
-    side = "Ui";
+    side = "UI";
   } else if (decodedCode.includes("DB")) {
-    side = "DataBase";
+    side = "DATABASE";
   } else if (decodedCode.includes("GRID")) {
-    side = "Grid";
+    side = "GRID";
   } else if (decodedCode.includes("DATA")) {
-    side = "Json File or Excel Sheet";
+    side = "JSON or EXCEL";
   }
 
   if (decodedCode[2] === "MM") {
-    reason = "Mismatch value";
+    reason = "Mismatch Value";
   } else if (decodedCode[2] === "NF") {
-    reason = "Not found";
+    reason = "Not Found";
   } else if (decodedCode[2] === "DI") {
-    reason = "Data issue/Missing data";
+    reason = "Data Issue/Missing Data";
   } else if (decodedCode[2] === "RF") {
     // For Deletion only
-    reason = "Record found";
+    reason = "Record Found";
   } else if (decodeCode[2] === "ERR") {
     reason = "Get Error";
   } else {
-    reason = "Unknown reason";
+    reason = "Unknown Reason";
   }
 
   throw new Error(
-    `${phase} in ${formName} failed due to ${reason} on ${side}: ${remarks}.\n${"-".repeat(100)}`,
+    `${phase} in ${formName} failed due to ${reason} on ${side}${remarks}.\n${"-".repeat(100)}`,
   );
 }
 

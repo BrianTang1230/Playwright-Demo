@@ -12,12 +12,13 @@ function marketingSQLCommand(formName) {
         select A.ContractNo,
         FORMAT(A.ContractDate,'dd/MM/yyyy') as ContractDate, 
         FORMAT(A.ContractExpDate,'dd/MM/yyyy') as ContractExpDate,
-        case
-          when A.Status = 'OP' then 'OPEN'
-          when A.Status = 'AP' then 'APPROVED'
-          when A.Status = 'SM' then 'SUBMITED'
-          when A.Status = 'VD' then 'VOID'
-          when A.Status = 'RJ' then 'REJECTED'
+        case A.Status
+          when 'OP' then 'OPEN'
+          when 'AP' then 'APPROVED'
+          when 'SM' then 'SUBMITED'
+          when 'VD' then 'VOIDED'
+          when 'RJ' then 'REJECTED'
+          when 'CL' then 'CLOSED'
         end as Status,
         B.WgItemCode + ' - ' + B.WgItemDesc as Item,
         C.CertCode + ' - ' + C.CertDesc as Certification,
@@ -90,41 +91,50 @@ function marketingSQLCommand(formName) {
           when A.DOType = 'E' then 'EXTERNAL DELIVERY ORDER'
           when A.DOType = 'I' then 'INTERNAL DELIVERY ORDER'
         end as DOType,
-        IIF(@region = 'IND',
-          FORMAT(A.DODate,'dd/MM/yyyy','id-ID'),
-          FORMAT(A.DODate,'dd/MM/yyyy','en-US')
-        ) as DODate,
-         IIF(@region = 'IND',
-          FORMAT(A.DeliveryDate,'dd/MM/yyyy','id-ID'),
-          FORMAT(A.DeliveryDate,'dd/MM/yyyy','en-US')
-        ) as DeliveryDate,
+	    	case A.Status
+          when 'OP' then 'OPEN'
+          when 'AP' then 'APPROVED'
+          when 'SM' then 'SUBMITED'
+          when 'VD' then 'VOIDED'
+          when 'RJ' then 'REJECTED'
+          when 'CL' then 'CLOSED'
+        end as Status,
+        FORMAT(A.DODate,'dd/MM/yyyy') as DODate,
+        FORMAT(A.DeliveryDate,'dd/MM/yyyy') as DeliveryDate,
         B.OUCode + ' - ' + B.OUDesc as Despatcher,
-        C.RCVDesc as Recv,
+        case A.RecvKey
+          when -1 then null
+          else C.RCVDesc 
+		    end as Recv,
         A.DOQty,
         D.ContractNo as ContractNo,
         E.CertCode + ' - ' + E.CertDesc as Certification,
+        FORMAT(D.ContractDate,'dd/MM/yyyy') as ContractDate,
+        FORMAT(D.ContractExpDate,'dd/MM/yyyy') as ContractExpDate,
         G.WgItemCode + ' - ' + G.WgItemDesc as Item,
         case 
-          when A.WeightBasis = 'D' then 'DELIVERED WEIGHT'
-          when A.WeightBasis = 'S' then 'SUPPLIED WEIGHT'
+          when D.WeightBasis = 'D' then 'DELIVERED WEIGHT'
+          when D.WeightBasis = 'S' then 'SUPPLIED WEIGHT'
         end as WeightBasis,
         H.ContactCode + ' - ' + H.ContactDesc as Buyer,
+        K.CurrCode + ' - ' + K.CurrDesc as Currency,
+        D.Qty,
+        D.FinalUnitPrice,
+        D.TotalPrice,
         I.TranspDesc as Transp,
         A.TranspRefNo,
-        IIF(@region = 'IND',
-          FORMAT(A.TranspDODate,'dd/MM/yyyy','id-ID'),
-          FORMAT(A.TranspDODate,'dd/MM/yyyy','en-US')
-        ) as TranspDODate,
+        FORMAT(A.TranspDODate,'dd/MM/yyyy') as TranspDODate,
         J.OUCode + ' - ' + J.OUDesc as OU
         from MKT_ContractDO A
         left join GMS_OUStp B on A.RecvOUKey = B.OUKey
         left join GMS_RcvStp C on A.RecvKey = C.RCVKey
         left join MKT_Contract D on A.ContractKey = D.ContractKey
         left join GMS_CertStp E on A.CertKey = E.CertKey
-        left join GMS_WgItemStp G on A.ItemKey = G.WgItemKey
-        left join GMS_ContactStp H on A.BuyerKey = H.ContactKey
+        left join GMS_WgItemStp G on D.ItemKey = G.WgItemKey
+        left join GMS_ContactStp H on D.BuyerKey = H.ContactKey
         left join GMS_TranspStp I on A.TranspKey = I.TranspKey
         left join GMS_OUStp J on A.OUKey = J.OUKey
+		    left join GMS_CurrencyStp K on D.CurrKey = K.CurrKey
         where A.ContractDOSID = @DocNo and J.OUCode + ' - ' + J.OUDesc = @OU`;
       break;
 

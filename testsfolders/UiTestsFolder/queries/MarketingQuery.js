@@ -27,9 +27,9 @@ function marketingSQLCommand(formName) {
           FORMAT(A.MthOfCollection,'MMMM yyyy','en-US')
         ) as MthOfCollection,
         D.ContactCode + ' - ' + D.ContactDesc as Customer,
-        case 
-          when A.FullyBilled = 0 then 'False'
-          when A.FullyBilled = 1 then 'True'
+        case A.FullyBilled 
+          when 0 then 'False'
+          when 1 then 'True'
         end as FullBill,
         A.Qty,
         A.Tolerance,
@@ -50,9 +50,10 @@ function marketingSQLCommand(formName) {
           when A.DeliveryType = 'F' then 'FRANCO'
         end as DeliveryType,
         E.PayTermCode + ' - ' + E.PayTermDesc as PayTerm,
-        case 
-          when A.WeightBasis = 'D' then 'DELIVERED WEIGHT'
-          when A.WeightBasis = 'S' then 'SUPPLIED WEIGHT'
+        case A.WeightBasis
+          when 'D' then 'DELIVERED WEIGHT'
+          when 'S' then 'SUPPLIED WEIGHT'
+          else null
         end as WeightBasis,
         A.BuyerRef,
         A.BrokerRef,
@@ -112,9 +113,10 @@ function marketingSQLCommand(formName) {
         FORMAT(D.ContractDate,'dd/MM/yyyy') as ContractDate,
         FORMAT(D.ContractExpDate,'dd/MM/yyyy') as ContractExpDate,
         G.WgItemCode + ' - ' + G.WgItemDesc as Item,
-        case 
-          when D.WeightBasis = 'D' then 'DELIVERED WEIGHT'
-          when D.WeightBasis = 'S' then 'SUPPLIED WEIGHT'
+        case D.WeightBasis
+          when 'D' then 'DELIVERED WEIGHT'
+          when 'S' then 'SUPPLIED WEIGHT'
+          else null
         end as WeightBasis,
         H.ContactCode + ' - ' + H.ContactDesc as Buyer,
         K.CurrCode + ' - ' + K.CurrDesc as Currency,

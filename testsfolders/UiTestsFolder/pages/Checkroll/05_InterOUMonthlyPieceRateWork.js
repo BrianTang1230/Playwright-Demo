@@ -58,7 +58,7 @@ export async function InterOUMonthlyPieceRateWorkCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 

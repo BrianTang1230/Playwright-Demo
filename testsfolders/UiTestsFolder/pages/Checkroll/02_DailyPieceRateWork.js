@@ -56,7 +56,7 @@ export async function DailyPieceRateWorkCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(
       page,
       region === "IND" ? paths.slice(0, 4) : paths,
@@ -116,7 +116,7 @@ export async function DailyPieceRateWorkEdit(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(
       page,
       region === "IND" ? paths.slice(0, 4) : paths,

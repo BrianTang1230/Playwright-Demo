@@ -2,7 +2,7 @@ function payrollSQLCommand(formName) {
   let sqlCommand = `
     DECLARE @OU VARCHAR(100) = 
       CASE WHEN @region = 'IND'
-        THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+        THEN 'TSPH - CV. TANI SEJAHTERA PERKASA'
         ELSE 'BNG - BINUANG ESTATE'
     END;
   `;
@@ -152,8 +152,8 @@ function payrollSQLCommand(formName) {
         A.Remarks,
         CASE A.Status
           WHEN 'O' THEN 'OPEN'
-          WHEN 'C' THEN 'CLOSE'
-          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'C' THEN 'CLOSED'
+          WHEN 'S' THEN 'SUBMITED'
           WHEN 'A' THEN 'APPROVED'
         END AS Status,
         B.OUCode + ' - ' + B.OUDesc AS OU
@@ -175,7 +175,7 @@ function payrollGridSQLCommand(formName) {
   let sqlCommand = `
   DECLARE @OU VARCHAR(100) = 
       CASE WHEN @region = 'IND'
-        THEN 'TSPE - TANI SEJAHTERA PERKASA ESTATE'
+        THEN 'TSPH - CV. TANI SEJAHTERA PERKASA'
         ELSE 'BNG - BINUANG ESTATE'
     END;
     `;

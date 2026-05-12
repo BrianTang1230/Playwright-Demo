@@ -1,30 +1,35 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
   validateDBValues,
-  getGridValues,
-  getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
   payrollGridSQLCommand,
   payrollSQLCommand,
 } from "@UiFolder/queries/PayrollQuery";
-
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
 } from "@utils/data/uidata/payrollData.json";
+
 import {
   StaffCP38Create,
-  StaffCP38Edit,
+  StaffCP38Edit1,
+  StaffCP38Edit2,
   StaffCP38Delete,
 } from "@UiFolder/pages/Payroll/04_StaffCP38";
 
@@ -37,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "PR_DATA";
 const module = "Payroll";
 const submodule = "Income Tax";
@@ -47,10 +53,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2]];
 
-test.describe.serial("Staff CP38 Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
+  if (region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "IND") test.skip(true);
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
     [
@@ -75,10 +84,14 @@ test.describe.serial("Staff CP38 Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Staff CP38", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals, gridVals } = await StaffCP38Create(
@@ -103,14 +116,15 @@ test.describe.serial("Staff CP38 Tests", async () => {
       DocNo: docNo,
       Date: createValues[0],
     });
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
         DocNo: docNo,
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -119,9 +133,9 @@ test.describe.serial("Staff CP38 Tests", async () => {
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Staff CP38", async ({ page, db }) => {
-    await StaffCP38Edit(
+  // ---------------- Edit Test (Without Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await StaffCP38Edit1(
       page,
       sideMenu,
       paths,
@@ -135,14 +149,12 @@ test.describe.serial("Staff CP38 Tests", async () => {
       docNo,
     );
 
-    const uiVals = await getFormValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       Date: createValues[0],
     });
-
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
@@ -150,6 +162,47 @@ test.describe.serial("Staff CP38 Tests", async () => {
         Date: createValues[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await StaffCP38Edit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+      DocNo: docNo,
+      Date: createValues[0],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      payrollGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+        Date: createValues[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -159,22 +212,19 @@ test.describe.serial("Staff CP38 Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff CP38", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await StaffCP38Delete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
       DocNo: docNo,
       Date: createValues[0],
     });
-
-    if (dbValues.length > 0) throw new Error("Deleting Staff CP38 failed");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });

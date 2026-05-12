@@ -55,7 +55,7 @@ export async function StaffAdditionalRemunerationCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
   const gridVals = await runStep("Get created grid UI values", async () => {
@@ -93,6 +93,8 @@ export async function StaffAdditionalRemunerationEdit1(
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
+
+  await page.waitForTimeout(1500);
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
@@ -151,6 +153,8 @@ export async function StaffAdditionalRemunerationEdit2(
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
+
+  await page.waitForTimeout(1500);
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {

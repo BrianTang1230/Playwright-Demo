@@ -1,11 +1,14 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy3Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function StaffAdvancePaymentCreate(
   page,
@@ -18,39 +21,51 @@ export async function StaffAdvancePaymentCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox span",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "#divComboOU .k-dropdown-wrap .k-select",
+      "#comboBoxOU_listbox span",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-
-    if (i === 0) {
-      // If Month is the first field
-      await page.waitForTimeout(1000);
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
     }
-  }
+  });
 
-  await sideMenu.btnAddNewItem.click();
+  await runStep("Add new grid item", async () => {
+    await sideMenu.btnAddNewItem.click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
 
-export async function StaffAdvancePaymentEdit(
+export async function StaffAdvancePaymentEdit1(
   page,
   sideMenu,
   paths,
@@ -63,20 +78,94 @@ export async function StaffAdvancePaymentEdit(
   ou,
   docNo,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Advance Payment No.",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function StaffAdvancePaymentEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Advance Payment No.",
+    );
+  });
+
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -88,7 +177,17 @@ export async function StaffAdvancePaymentDelete(
   ou,
   docNo,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy3Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Advance Payment No.",
+    );
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

@@ -7,7 +7,6 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterRecordByOUAndDate,
   FilterTransactionBy3Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
@@ -60,11 +59,11 @@ export async function StaffMonthlyTaxDeductionCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 
-  const gridVals = await runStep("Get created UI values", async () => {
+  const gridVals = await runStep("Get Grid values", async () => {
     await page.locator("#prTabstripworkDet li").first().click();
     const gridVals1 = await getGridValues(
       page,
@@ -143,11 +142,11 @@ export async function StaffMonthlyTaxDeductionEdit1(
     await FilterForUnsaveChecking(page, values[2]);
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 
-  const gridVals = await runStep("Get created GRID values", async () => {
+  const gridVals = await runStep("Get Grid values", async () => {
     await page.locator("#prTabstripworkDet li").first().click();
     const gridVals1 = await getGridValues(
       page,
@@ -221,11 +220,11 @@ export async function StaffMonthlyTaxDeductionEdit2(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 
-  const gridVals = await runStep("Get created GRID values", async () => {
+  const gridVals = await runStep("Get Grid values", async () => {
     await page.locator("#prTabstripworkDet li").first().click();
     const gridVals1 = await getGridValues(
       page,

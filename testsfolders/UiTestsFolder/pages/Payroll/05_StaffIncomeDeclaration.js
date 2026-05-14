@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffIncomeDeclarationCreate(
@@ -78,7 +78,7 @@ export async function StaffIncomeDeclarationEdit1(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -147,7 +147,7 @@ export async function StaffIncomeDeclarationEdit2(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -205,7 +205,7 @@ export async function StaffIncomeDeclarationDelete(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

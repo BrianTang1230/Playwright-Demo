@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionCreate(
@@ -80,7 +80,7 @@ export async function VehicleRunningDistributionEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -134,7 +134,7 @@ export async function VehicleRunningDistributionEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -177,7 +177,7 @@ export async function VehicleRunningDistributionDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

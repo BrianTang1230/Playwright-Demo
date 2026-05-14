@@ -5,7 +5,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
@@ -59,7 +59,7 @@ export async function PreNurseryDoubletonSplittingEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -102,7 +102,7 @@ export async function PreNurseryDoubletonSplittingEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -136,7 +136,7 @@ export async function PreNurseryDoubletonSplittingDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

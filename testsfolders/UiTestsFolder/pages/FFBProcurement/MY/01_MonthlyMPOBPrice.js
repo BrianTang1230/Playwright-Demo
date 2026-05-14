@@ -1,4 +1,4 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
@@ -21,34 +21,51 @@ export async function MonthlyMPOBPriceCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+      "#comboBoxOU_listbox",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  await page.getByRole("button", { name: " Populate Month" }).click();
+  await runStep("Populate grid item", async () => {
+    await page.getByRole("button", { name: " Populate Month" }).click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
 
-export async function MonthlyMPOBPriceEdit(
+export async function MonthlyMPOBPriceEdit1(
   page,
   sideMenu,
   paths,

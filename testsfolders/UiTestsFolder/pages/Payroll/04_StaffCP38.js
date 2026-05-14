@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffCP38Create(
@@ -79,7 +79,7 @@ export async function StaffCP38Edit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -134,7 +134,7 @@ export async function StaffCP38Edit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -172,7 +172,7 @@ export async function StaffCP38Edit2(
 
 export async function StaffCP38Delete(page, sideMenu, values, ou, docNo) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

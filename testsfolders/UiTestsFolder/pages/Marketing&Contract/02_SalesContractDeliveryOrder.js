@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function SalesContractDeliveryOrderCreate(
@@ -70,7 +70,7 @@ export async function SalesContractDeliveryOrderEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[3],
       ou[0],
@@ -122,7 +122,7 @@ export async function SalesContractDeliveryOrderEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[3],
       ou[0],
@@ -166,7 +166,7 @@ export async function SalesContractDeliveryOrderDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[3],
       ou[0],

@@ -8,7 +8,7 @@ import {
 import {
   FilterForUnsaveChecking,
   FilterRecordByOUAndDate,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function StaffAdditionalRemunerationCreate(
@@ -79,7 +79,7 @@ export async function StaffAdditionalRemunerationEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -139,7 +139,7 @@ export async function StaffAdditionalRemunerationEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -188,7 +188,7 @@ export async function StaffAdditionalRemunerationDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

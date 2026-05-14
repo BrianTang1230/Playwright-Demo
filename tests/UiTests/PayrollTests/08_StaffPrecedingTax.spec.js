@@ -229,12 +229,12 @@ test.describe.serial(`${formName} Tests`, async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    // await db.deleteData(deleteSQL, {
-    //   DocNo: docNo,
-    //   OU: ou[0],
-    //   Date: createValues[0],
-    // });
-    // await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+      Date: createValues[0],
+    });
+    await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });
 });

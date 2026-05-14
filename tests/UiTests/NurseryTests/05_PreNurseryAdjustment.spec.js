@@ -79,8 +79,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     const { uiVals } = await PreNurseryAdjustmentCreate(
       page,
       sideMenu,

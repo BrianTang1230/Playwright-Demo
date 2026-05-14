@@ -78,8 +78,6 @@ test.describe.serial("Main Nursery Doubleton Splitting Tests", () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     const { uiVals } = await MainNurseryDoubletonSplittingCreate(
       page,
       sideMenu,

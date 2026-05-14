@@ -6,8 +6,10 @@ import {
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 import {
+  FilterForUnsaveChecking,
   FilterRecordByOU,
   FilterRecordByOUAndDate,
+  FilterTransactionBy1AndMoreCriterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function MonthlyMPOBPriceCreate(
@@ -77,20 +79,93 @@ export async function MonthlyMPOBPriceEdit1(
   cellsIndex,
   ou,
 ) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      [values[0], values[1]],
+      ["Year", "Region"],
+      ["Typing", "Dropdown"],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, values[0]);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function MonthlyMPOBPriceEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      [values[0], values[1]],
+      ["Year", "Region"],
+      ["Typing", "Dropdown"],
+    );
+  });
+
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -102,7 +177,17 @@ export async function MonthlyMPOBPriceDelete(
   ou,
   docNo,
 ) {
-  await FilterRecordByOU(page, values[0], ou[0], values[1], [2, 3]);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      [values[0], values[1]],
+      ["Year", "Region"],
+      ["Typing", "Dropdown"],
+    );
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

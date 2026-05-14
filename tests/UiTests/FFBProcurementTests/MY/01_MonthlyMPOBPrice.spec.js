@@ -197,7 +197,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Monthly MPOB Price", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await MonthlyMPOBPriceDelete(page, sideMenu, createValues, ou);
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {

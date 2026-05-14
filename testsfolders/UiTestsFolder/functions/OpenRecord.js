@@ -34,12 +34,12 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
     //![Directly](../../../utils/images/UQF_Directly.png)
 */
 
-export async function FilterTransactionBy1And1Criterias(
+export async function FilterTransactionBy1AndMoreCriterias(
   page,
   ou,
-  keyword,
-  filterColumn,
-  inputKeywordWith = "Typing",
+  keywords = [],
+  filterColumns = [],
+  inputKeywordsWith = [],
 ) {
   // Input OU and Date
   await page
@@ -47,41 +47,39 @@ export async function FilterTransactionBy1And1Criterias(
     .first()
     .fill(ou);
 
-  // Add filter criteria and select filter column
-  await page.getByRole("button", { name: "+", exact: true }).click();
-  await page
-    .locator("#tabstrip-2")
-    .getByText("Choose a Column to Filter")
-    .nth(1)
-    .click();
-  await page
-    .locator("#ddlColumn_listbox li", { hasText: filterColumn })
-    .nth(1)
-    .click();
-
-  await page.getByRole("combobox").nth(3).fill(date);
-  const secondDateInput = page.getByRole("combobox").nth(4);
-  (await secondDateInput.isVisible()) && (await secondDateInput.fill(date));
-
-  // Input Keyword
-  const paramInput =
-    inputKeywordWith === "Typing"
-      ? page.locator("[name='searchParam']").nth(1)
-      : page.locator("[name='comboBoxSearchParam_input']");
-  await paramInput.type(keyword);
-
-  if (inputKeywordWith === "Dropdown") {
+  for (let i = 0; i < keywords.length; i++) {
+    // Add filter criteria and select filter column
+    await page.getByRole("button", { name: "+", exact: true }).click();
     await page
-      .locator("#comboBoxSearchParam_listbox li", { hasText: keyword })
-      .first()
-      .waitFor({ state: "visible" });
-    await paramInput.press("Enter");
+      .locator("#tabstrip-2")
+      .getByText("Choose a Column to Filter")
+      .nth(i + 1)
+      .click();
+    await page
+      .locator("#ddlColumn_listbox li", { hasText: filterColumns[i] })
+      .nth(i + 1)
+      .click();
+
+    // Input Keyword
+    const paramInput =
+      inputKeywordsWith[i] === "Typing"
+        ? page.locator("[name='searchParam']").nth(i)
+        : page.locator("[name='comboBoxSearchParam_input']").nth(i);
+    await paramInput.type(keywords[i]);
+
+    if (inputKeywordsWith[i] === "Dropdown") {
+      await page
+        .locator("#comboBoxSearchParam_listbox li", { hasText: keywords[i] })
+        .first()
+        .waitFor({ state: "visible" });
+      await paramInput.press("Enter");
+    }
   }
 
   // Apply filter and open seleted transaction
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page
-    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
+    .getByRole("gridcell", { name: new RegExp(keywords[1].slice(0, 4)) })
     .first()
     .click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();

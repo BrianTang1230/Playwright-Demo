@@ -94,6 +94,7 @@ export async function GeneralJournalEdit(
   });
 
   await runStep("Edit transaction", async () => {
+    await page.waitForTimeout(6000);
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], editValues[i]);
     }

@@ -23,10 +23,10 @@ import {
 } from "@utils/data/uidata/accountData.json";
 
 import {
-  GeneralJournalCreate,
-  GeneralJournalDelete,
-  GeneralJournalEdit,
-} from "@UiFolder/pages/Account/01_GeneralJournal";
+  ClosedPeriodAdjustmentCreate,
+  ClosedPeriodAdjustmentDelete,
+  ClosedPeriodAdjustmentEdit,
+} from "@UiFolder/pages/Account/02_ClosedPeriodAdjustment";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -41,25 +41,25 @@ let filterData;
 const sheetName = "ACC_Data";
 const module = "Account";
 const submodule = "General Ledger";
-const formName = "General Journal";
+const formName = "Closed Period Adjustment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 6, 7],
-  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5],
+  [1, 2, 3, 4, 5],
 ];
 const cellsIndexIND = [
-  [1, 2, 3, 4, 6, 7],
-  [1, 2, 3, 4, 6, 7],
+  [1, 2, 3, 4, 5],
+  [1, 2, 3, 4, 5],
 ];
 
 const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
 const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
 
-test.describe.serial("General Journal Tests", () => {
+test.describe.serial("Closed Period Adjustment Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -85,13 +85,13 @@ test.describe.serial("General Journal Tests", () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create General Journal", async ({ page, db }) => {
+  test("Create Closed Period Adjustment", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 
     });
 
-    const { uiVals, gridVals } = await GeneralJournalCreate(
+    const { uiVals, gridVals } = await ClosedPeriodAdjustmentCreate(
       page,
       sideMenu,
       dwPaths,
@@ -134,11 +134,11 @@ test.describe.serial("General Journal Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test('Edit General Journal', async ({ page, db }) => {
+  test('Edit Closed Period Adjustment', async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
-    const { uiVals, gridVals } = await GeneralJournalEdit(
+    const { uiVals, gridVals } = await ClosedPeriodAdjustmentEdit(
       page,
       sideMenu,
       dwPaths,
@@ -184,7 +184,7 @@ test.describe.serial("General Journal Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test('Delete General Journal', async ({ db }) => {
+  test('Delete Closed Period Adjustment', async ({ db }) => {
     console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
 
     await db.deleteData(deleteSQL, { 

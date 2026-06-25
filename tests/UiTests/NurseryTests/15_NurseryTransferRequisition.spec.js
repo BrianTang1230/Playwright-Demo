@@ -78,8 +78,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     const { uiVals } = await NurseryTransferRequisitionCreate(
       page,
       sideMenu,
@@ -169,9 +167,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
   //---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
     console.log(`End Running: ${formName}`);
   });

@@ -5,7 +5,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function PreNurseryTransferToCreate(
@@ -46,7 +46,7 @@ export async function PreNurseryTransferToCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 
@@ -65,7 +65,7 @@ export async function PreNurseryTransferToEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -107,7 +107,7 @@ export async function PreNurseryTransferToEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -141,7 +141,7 @@ export async function PreNurseryTransferToDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

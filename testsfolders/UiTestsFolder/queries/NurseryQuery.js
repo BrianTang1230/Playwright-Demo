@@ -85,17 +85,37 @@ function nurserySQLCommand(formName) {
             WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
-		    (
-          SELECT ISNULL(SUM(E.DbtQty), 0) 
-          FROM NUR_PDoubleton E
-          WHERE E.NurBatchKey = A.NurBatchKey AND E.Status = 'O'
-          AND FORMAT(E.DbtDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        (
+          SELECT ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(A2.SplitQty),0)
-          FROM NUR_PDbtSplit A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.PDbtSplitDate,'yyyyMM') <= FORMAT(A.PDbtSplitDate,'yyyyMM')
-        ) + A.SplitQty as DbtQty,
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(W.PCullDTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.DTQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.DbtQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.DTQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.PDbtSplitDate, 'yyyyMM')
+        ) + A.SplitQty AS DbtQty,
         A.SplitQty,
         E.OUCode + ' - ' + E.OUDesc AS OU
         FROM NUR_PDbtSplit A
@@ -116,54 +136,88 @@ function nurserySQLCommand(formName) {
         END AS Status,
         A.Remarks,
         (
-          SELECT ISNULL(SUM(X.RcvQty), 0)
-          FROM NUR_PRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
-		      AND FORMAT(X.RcvDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+          SELECT ISNULL(SUM(E2.RcvQty), 0)
+          FROM NUR_PRcv E2
+          WHERE E2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(E2.RcvDate,'yyyyMM') <= FORMAT(A.CullDate,'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(Y.SgtQty), 0) + ISNULL(SUM(Y.DbtQty), 0)
-          FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
-		      AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+          SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0)  
+          FROM NUR_PDoubleton A2
+          WHERE A2.NurBatchKey = A.NurBatchKey AND FORMAT(A2.DbtDate,'yyyyMM') <= FORMAT(A.CullDate,'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.PCullQty), 0)
           FROM NUR_PCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.NGQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + A.PCullQty AS AvlQty,
         A.PCullQty,
         (
           SELECT ISNULL(SUM(Y.SgtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
-          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+          WHERE Y.NurBatchKey = A.NurBatchKey
+		      AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(A2.PCullSTQty), 0)
           FROM NUR_PCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.STQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.STQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + A.PCullSTQty AS AvlSTQty,
         A.PCullSTQty,
         (
           SELECT ISNULL(SUM(Y.DbtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(A2.PCullDTQty), 0)
-          FROM NUR_PCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+          SELECT ISNULL(SUM(W.PCullDTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.DTQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.DbtQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.DTQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + A.PCullDTQty AS AvlDTQty,
         A.PCullDTQty,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -187,67 +241,87 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(X.RcvQty), 0)
           FROM NUR_PRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
           AND FORMAT(X.RcvDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Y.SgtQty), 0) + ISNULL(SUM(Y.DbtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(W.PCullQty), 0)
           FROM NUR_PCull W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          WHERE W.NurBatchKey = A.NurBatchKey
         AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(A2.NGQty), 0)
           FROM NUR_PAdjustment A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - A.NGQty AS AvlQty,
         A.NGQty,
         (
           SELECT ISNULL(SUM(Y.SgtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
-          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+          WHERE Y.NurBatchKey = A.NurBatchKey
+		      AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(A2.PCullSTQty), 0)
           FROM NUR_PCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
-          SELECT ISNULL(SUM(A2.STQty), 0)
-          FROM NUR_PAdjustment A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+          SELECT ISNULL(SUM(V.STQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.STQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - A.STQty AS AvlSTQty,
         A.STQty,
         (
           SELECT ISNULL(SUM(Y.DbtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(A2.PCullDTQty), 0)
-          FROM NUR_PCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+          SELECT ISNULL(SUM(W.PCullDTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
-          SELECT ISNULL(SUM(A2.DTQty), 0)
-          FROM NUR_PAdjustment A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+          SELECT ISNULL(SUM(V.DTQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.DbtQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.DTQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - A.DTQty AS AvlDTQty,
         A.DTQty,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -281,54 +355,64 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(Y.SgtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(W.PCullSTQty), 0)
           FROM NUR_PCull W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          WHERE W.NurBatchKey = A.NurBatchKey
           AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(V.STQty), 0)
           FROM NUR_PAdjustment V
-          WHERE V.NurBatchKey = A.NurBatchKey AND V.Status = 'O'
+          WHERE V.NurBatchKey = A.NurBatchKey
           AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.TrnQty), 0)
           FROM NUR_PTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.STQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) + A.TrnQty AS AvlTrnQty,
         (
           SELECT ISNULL(SUM(Y.DbtQty), 0)
           FROM NUR_PDoubleton Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_PDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(W.PCullDTQty), 0)
           FROM NUR_PCull W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          WHERE W.NurBatchKey = A.NurBatchKey
           AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(V.DTQty), 0)
           FROM NUR_PAdjustment V
-          WHERE V.NurBatchKey = A.NurBatchKey AND V.Status = 'O'
+          WHERE V.NurBatchKey = A.NurBatchKey
           AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.DbtQty), 0)
           FROM NUR_PTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.DTQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
         ) + A.DbtQty AS AvlDbtQty,
         A.TrnQty,
         A.DbtQty,
@@ -372,6 +456,68 @@ function nurserySQLCommand(formName) {
         END AS UnitPriceType,
         A.UnitPrice,
         A.Remarks,
+        (
+          SELECT ISNULL(SUM(Y.SgtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) * 2 - (
+          SELECT ISNULL(SUM(W.PCullSTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.STQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.STQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + A.STQty AS AvlSTQty,
+         (
+          SELECT ISNULL(SUM(Y.DbtQty), 0)
+          FROM NUR_PDoubleton Y
+          WHERE Y.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Y.DbtDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(Z.SplitQty), 0)
+          FROM NUR_PDbtSplit Z
+          WHERE Z.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Z.PDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(W.PCullDTQty), 0)
+          FROM NUR_PCull W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.DTQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.DbtQty), 0)
+          FROM NUR_PTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(B2.DTQty), 0)
+          FROM NUR_PInterOUTrn B2
+          WHERE B2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(B2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
+        ) + A.DTQty AS AvlDTQty,
         A.STQty,
         A.DTQty,
         G.OUCode + ' - ' + G.OUDesc AS FromOU,
@@ -431,12 +577,12 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(E.DbtQty), 0) 
           FROM NUR_MRcv E
-          WHERE E.NurBatchKey = A.NurBatchKey AND E.Status = 'O'
+          WHERE E.NurBatchKey = A.NurBatchKey
           AND FORMAT(E.MRcvDate, 'yyyyMM') <= FORMAT(A.MDbtSplitDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.SplitQty),0)
           FROM NUR_MDbtSplit A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.MDbtSplitDate,'yyyyMM') <= FORMAT(A.MDbtSplitDate,'yyyyMM')
         ) + A.SplitQty as DbtQty,
         A.SplitQty,
@@ -461,35 +607,55 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(X.SgtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(Y.CullQty), 0)
           FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
-        ) + A.CullQty AS AvlSTQty,
+        ) + (
+          SELECT ISNULL(SUM(W.STQty), 0)
+          FROM NUR_MAdjustment W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.AdjDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_MTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.MTrnDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) - (
+		    SELECT ISNULL(SUM(A2.SoldQty), 0)
+          FROM NUR_MSold A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.SoldDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+		    ) + A.CullQty AS AvlSTQty,
         A.CullQty AS SgtQty,
 		    (
           SELECT ISNULL(SUM(X.DbtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) - (
-          SELECT ISNULL(SUM(A2.MCullDTQty), 0)
-          FROM NUR_MainCull A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+          SELECT ISNULL(SUM(Y.MCullDTQty), 0)
+          FROM NUR_MainCull Y
+          WHERE Y.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(A2.DTQty), 0)
+          FROM NUR_MAdjustment A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.CullDate, 'yyyyMM')
         ) + MCullDTQty AS AvlDTQty,
         A.MCullDTQty AS DbtQty,
         C.OUCode + ' - ' + C.OUDesc AS OU
@@ -513,44 +679,54 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(X.SgtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(Y.CullQty), 0)
           FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
-          SELECT ISNULL(SUM(A2.STQty), 0)
-          FROM NUR_MAdjustment A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
-        ) - A.STQty AS AvlSTQty,
+          SELECT ISNULL(SUM(W.STQty), 0)
+          FROM NUR_MAdjustment W
+          WHERE W.NurBatchKey = A.NurBatchKey
+          AND FORMAT(W.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.TrnQty), 0)
+          FROM NUR_MTrn A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.MTrnDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+        ) - (
+		    SELECT ISNULL(SUM(A2.SoldQty), 0)
+          FROM NUR_MSold A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.SoldDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
+		    ) - A.STQty AS AvlSTQty,
         A.STQty,
         (
           SELECT ISNULL(SUM(X.DbtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(Y.MCullDTQty), 0)
           FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(A2.DTQty), 0)
           FROM NUR_MAdjustment A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.AdjDate, 'yyyyMM')
         ) - A.DTQty AS AvlDTQty,
         A.DTQty,
@@ -581,27 +757,27 @@ function nurserySQLCommand(formName) {
 		    (
           SELECT ISNULL(SUM(X.SgtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.MTrnDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.MTrnDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(Y.CullQty), 0)
           FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.MTrnDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(W.STQty), 0)
           FROM NUR_MAdjustment W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          WHERE W.NurBatchKey = A.NurBatchKey
           AND FORMAT(W.AdjDate, 'yyyyMM') <= FORMAT(A.MTrnDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.TrnQty), 0)
           FROM NUR_MTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.MTrnDate, 'yyyyMM') <= FORMAT(A.MTrnDate, 'yyyyMM')
         ) + A.TrnQty AS AvlQty,
         A.TrnQty,
@@ -619,10 +795,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.SoldDate, 'dd/MM/yyyy') AS SoldDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         E.AccNum + ' - ' + E.AccDesc AS SoldToAccount,
@@ -631,32 +807,32 @@ function nurserySQLCommand(formName) {
         (
           SELECT ISNULL(SUM(X.SgtQty), 0)
           FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
+          WHERE X.NurBatchKey = A.NurBatchKey
 		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(Z.SplitQty), 0)
           FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
+          WHERE Z.NurBatchKey = A.NurBatchKey
           AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
         ) * 2 - (
           SELECT ISNULL(SUM(Y.CullQty), 0)
           FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
+          WHERE Y.NurBatchKey = A.NurBatchKey
           AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
         ) + (
           SELECT ISNULL(SUM(W.STQty), 0)
           FROM NUR_MAdjustment W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
+          WHERE W.NurBatchKey = A.NurBatchKey
           AND FORMAT(W.AdjDate, 'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
         ) - (
           SELECT ISNULL(SUM(A2.TrnQty), 0)
           FROM NUR_MTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.MTrnDate, 'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
         ) - (
 		    SELECT ISNULL(SUM(A2.SoldQty), 0)
           FROM NUR_MSold A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
+          WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.SoldDate, 'yyyyMM') <= FORMAT(A.SoldDate, 'yyyyMM')
 		    ) + A.SoldQty AS AvlQty,
         A.SoldQty,
@@ -707,44 +883,6 @@ function nurserySQLCommand(formName) {
         LEFT JOIN GMS_OUStp H ON A.ToOUKey = H.OUKey
         WHERE A.IMTrnNum = @DocNo AND G.OUCode + ' - ' + G.OUDesc = @OU`;
       break;
-    /*
-      (
-          SELECT ISNULL(SUM(X.SgtQty), 0)
-          FROM NUR_MRcv X
-          WHERE X.NurBatchKey = A.NurBatchKey AND X.Status = 'O'
-		      AND FORMAT(X.MRcvDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-        ) + (
-          SELECT ISNULL(SUM(Z.SplitQty), 0)
-          FROM NUR_MDbtSplit Z
-          WHERE Z.NurBatchKey = A.NurBatchKey AND Z.Status = 'O'
-          AND FORMAT(Z.MDbtSplitDate,'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-        ) * 2 - (
-          SELECT ISNULL(SUM(Y.CullQty), 0)
-          FROM NUR_MainCull Y
-          WHERE Y.NurBatchKey = A.NurBatchKey AND Y.Status = 'O'
-          AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-        ) + (
-          SELECT ISNULL(SUM(W.STQty), 0)
-          FROM NUR_MAdjustment W
-          WHERE W.NurBatchKey = A.NurBatchKey AND W.Status = 'O'
-          AND FORMAT(W.AdjDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-        ) - (
-          SELECT ISNULL(SUM(A2.TrnQty), 0)
-          FROM NUR_MTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.MTrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-        ) - (
-		    SELECT ISNULL(SUM(A2.SoldQty), 0)
-          FROM NUR_MSold A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.SoldDate, 'yyyyMM') < FORMAT(A.TrnDate, 'yyyyMM')
-		    ) - (
-			  SELECT ISNULL(SUM(A2.STQty), 0)
-          FROM NUR_MInterOUTrn A2
-          WHERE A2.NurBatchKey = A.NurBatchKey AND A2.Status = 'O'
-          AND FORMAT(A2.TrnDate, 'yyyyMM') <= FORMAT(A.TrnDate, 'yyyyMM')
-		    ) + A.STQty AS AvlQty,
-*/
 
     case "Nursery Transfer Requisition":
       sqlCommand += `

@@ -108,6 +108,7 @@ test.describe.serial(`${formName} Tests`, () => {
       Date: createValues[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+
     const gridDbValues = await db.retrieveGridData(
       weighbridgeGridSQLCommand(formName),
       {
@@ -211,12 +212,12 @@ test.describe.serial(`${formName} Tests`, () => {
       Date: createValues[0],
     });
 
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
     console.log(`End Running: ${formName}`);
   });
 });

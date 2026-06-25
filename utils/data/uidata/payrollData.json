@@ -29,11 +29,12 @@
     "StaffPrecedingTaxGrid": "//*[@id='staffPreTaxSubDetGrid']/div[3]/table"
   },
   "DocNo": {
-    "StaffAdditionalRemuneration": "ADR0000064",
-    "StaffCP38": "",
+    "StaffAdditionalRemuneration": "",
     "StaffIncomeDeclarationEAForm": "EAF0000020",
+    "StaffCP38": "",
+    "StaffIncomeDeclaration(EAForm)": "",
     "StaffAdvancePayment": "",
-    "StaffPrecedingTax": "",
-    "StaffIncomeDeclaration(EAForm)": ""
+    "StaffPrecedingTax": "PT00000005",
+    "StaffPrecedingTax(PPh21)": ""
   }
 }

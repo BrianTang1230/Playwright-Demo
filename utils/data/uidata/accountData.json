@@ -2,12 +2,20 @@
   "JsonPath": "utils/data/uidata/accountData.json",
   "InputPath": {
     "GeneralJournalPath": "GLDate,GLDesc,#txtStatus",
-    "GeneralJournalColumn": "JournalDate date,Description text,Status text"
+    "GeneralJournalColumn": "JournalDate date,Description text,Status text",
+    "ClosedPeriodAdjustmentPath": "#FY,#ddlPeriod,#txtDesc,#txtStatus",
+    "ClosedPeriodAdjustmentColumn": "FY text,Period k-hidden-drop,Description text,Status text",
+    "BankPaymentPath": "GLDate,GLDesc,BankCode_input,#ddlPaymentCategory,#ddlPaymentType,PayTo,BankDueDate,TransferNo,comboBoxBen_input,#txtRefNo,Remarks,#txtStatus",
+    "BankPaymentColumn": "JournalDate date,Description text,BankCode dropdown,PaymentCategory k-hidden-drop,PaymentType k-hidden-drop,PayTo text,ClearanceDate date,TransferNo text,BeneficiaryInfo dropdown,RefNo text,Remarks text,Status text"
   },
   "GridPath": {
-    "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]"
+    "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
+    "ClosedPeriodAdjustmentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
+    "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]"
   },
   "DocNo": {
-    "GeneralJournal": "BGJ2512059"
+    "GeneralJournal": "BGJ2604025",
+    "ClosedPeriodAdjustment": "BGJ2505035",
+    "BankPayment": "BV26050042"
   }
 }

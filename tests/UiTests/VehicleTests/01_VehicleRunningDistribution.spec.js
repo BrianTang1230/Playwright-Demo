@@ -225,7 +225,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(vehicleSQLCommand(formName), {
       DocNo: docNo,
     });
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

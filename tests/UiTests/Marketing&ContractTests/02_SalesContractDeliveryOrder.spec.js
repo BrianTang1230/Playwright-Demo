@@ -101,9 +101,9 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("C-DB-NF", formName);
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(
       [...createValues, ou[0]],
@@ -122,14 +122,13 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    !dbValues &&
-      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(
@@ -149,14 +148,13 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    !dbValues &&
-      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues(
@@ -168,13 +166,18 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Delete Test ----------------
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await SalesContractDeliveryOrderDelete(page, sideMenu, editValues, ou);
+    await SalesContractDeliveryOrderDelete(
+      page,
+      sideMenu,
+      editValues,
+      ou,
+      docNo,
+    );
 
     const dbValues = await db.retrieveData(marketingSQLCommand(formName), {
       DocNo: docNo,
-      OU: ou[0],
     });
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

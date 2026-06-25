@@ -1,8 +1,13 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -22,8 +27,9 @@ import {
 
 import {
   StaffPreviousEmploymentTaxDeductionCreate,
+  StaffPreviousEmploymentTaxDeductionEdit1,
+  StaffPreviousEmploymentTaxDeductionEdit2,
   StaffPreviousEmploymentTaxDeductionDelete,
-  StaffPreviousEmploymentTaxDeductionEdit,
 } from "@UiFolder/pages/Payroll/03_StaffPreviousEmploymentTaxDeduction";
 
 // ---------------- Set Global Variables ----------------
@@ -34,6 +40,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "PR_Data";
 const module = "Payroll";
 const submodule = "Income Tax";
@@ -48,10 +55,13 @@ const cellsIndex = [
   [1, 2],
 ];
 
-test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
+  if (region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "IND") test.skip(true);
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
     [
@@ -74,13 +84,14 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
       Dept: createValues[1],
@@ -104,12 +115,13 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       Date: createValues[0],
       Dept: createValues[1],
     });
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       { Date: createValues[0], Dept: createValues[1] },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -119,8 +131,8 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Staff Previous Employment Tax Deduction", async ({ page, db }) => {
-    const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit1(
       page,
       sideMenu,
       paths,
@@ -138,12 +150,50 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       Date: createValues[0],
       Dept: createValues[1],
     });
-
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       { Date: createValues[0], Dept: createValues[1] },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await StaffPreviousEmploymentTaxDeductionEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      gridCreateValues[0].split(";")[0],
+    );
+
+    const dbValues = await db.retrieveData(payrollSQLCommand(formName), {
+      Date: createValues[0],
+      Dept: createValues[1],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      payrollGridSQLCommand(formName),
+      { Date: createValues[0], Dept: createValues[1] },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -153,10 +203,7 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Staff Previous Employment Tax Deduction", async ({
-    page,
-    db,
-  }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await StaffPreviousEmploymentTaxDeductionDelete(
       page,
       sideMenu,
@@ -169,15 +216,17 @@ test.describe.serial("Staff Previous Employment Tax Deduction Tests", () => {
       Date: createValues[0],
       Dept: createValues[1],
     });
-
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      Dept: createValues[1],
+      OU: ou[0],
+    });
+
     console.log(`End Running: ${formName}`);
   });
 });

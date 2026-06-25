@@ -79,8 +79,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     const { uiVals } = await PreNurseryGerminatedCreate(
       page,
       sideMenu,
@@ -158,7 +156,7 @@ test.describe.serial(`${formName} Tests`, () => {
       DocNo: docNo,
     });
 
-    dbValues && throwTestFailMsg("D-DB-F", formName);
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

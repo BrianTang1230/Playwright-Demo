@@ -34,7 +34,63 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
     //![Directly](../../../utils/images/UQF_Directly.png)
 */
 
-export async function FilterTransactionBy3Criterias(
+export async function FilterTransactionBy1AndMoreCriterias(
+  page,
+  ou,
+  keywords = [],
+  filterColumns = [],
+  inputKeywordsWith = [],
+) {
+  // Input OU and Date
+  await page
+    .locator('input[name="comboBoxCompulSearchParam_input"]')
+    .first()
+    .fill(ou);
+
+  for (let i = 0; i < keywords.length; i++) {
+    // Add filter criteria and select filter column
+    await page.getByRole("button", { name: "+", exact: true }).click();
+    await page
+      .locator("#tabstrip-2")
+      .getByText("Choose a Column to Filter")
+      .nth(i + 1)
+      .click();
+    await page
+      .locator("#ddlColumn_listbox li", { hasText: filterColumns[i] })
+      .nth(i + 1)
+      .click();
+
+    // Input Keyword
+    const paramInput =
+      inputKeywordsWith[i] === "Typing"
+        ? page.locator("[name='searchParam']").nth(i)
+        : page.locator("[name='comboBoxSearchParam_input']").nth(i);
+    await paramInput.type(keywords[i]);
+
+    if (inputKeywordsWith[i] === "Dropdown") {
+      await page
+        .locator("#comboBoxSearchParam_listbox li", { hasText: keywords[i] })
+        .first()
+        .waitFor({ state: "visible" });
+      await paramInput.press("Enter");
+    }
+  }
+
+  // Apply filter and open seleted transaction
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: new RegExp(keywords[1].slice(0, 4)) })
+    .first()
+    .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500); //Wait 1.5s to prevent slow loading in some forms
+}
+
+export async function FilterTransactionBy2And1Criterias(
   page,
   date,
   ou,
@@ -49,9 +105,7 @@ export async function FilterTransactionBy3Criterias(
     .fill(ou);
   await page.getByRole("combobox").nth(3).fill(date);
   const secondDateInput = page.getByRole("combobox").nth(4);
-  if (await secondDateInput.isVisible()) {
-    await secondDateInput.fill(date);
-  }
+  (await secondDateInput.isVisible()) && (await secondDateInput.fill(date));
 
   // Add filter criteria and select filter column
   await page.getByRole("button", { name: "+", exact: true }).click();
@@ -91,6 +145,7 @@ export async function FilterTransactionBy3Criterias(
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
   await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500); //Wait 1.5s to prevent slow loading in some forms
 }
 
 export async function FilterRecordByOUAndDate(
@@ -241,4 +296,45 @@ export async function FilterForUnsaveChecking(page, keyword) {
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
   await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500);
+}
+
+export async function FilterRecordByFiscalYearAndPeriod(
+  page,
+  fiscalYear,
+  period,
+  docNo,
+) {
+  const yearInput = page.locator("input.k-textbox.filter-input:visible").nth(0);
+  await yearInput.fill(fiscalYear);
+  await yearInput.press("Tab");
+
+  const periodInput = page
+    .locator("input.k-textbox.filter-input:visible")
+    .nth(1);
+  await periodInput.fill(period);
+  await page.getByRole("button", { name: "+", exact: true }).last().click();
+
+  const fieldDropdown = page
+    .locator("#tabstrip-2")
+    .getByText("Choose a Column to Filter")
+    .nth(2);
+  await fieldDropdown.click();
+  await page
+    .locator("#ddlColumn_listbox li", { hasText: "Doc. No." })
+    .last()
+    .click();
+
+  const docInput = page.locator('input[name="searchParam"]:visible').last();
+
+  await docInput.click();
+  await docInput.type(docNo, { delay: 50 });
+  await docInput.press("Tab");
+
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", { name: new RegExp(docNo.slice(0, 4)) })
+    .first()
+    .click();
+  await page.getByRole("button", { name: "   Open Transaction" }).click();
 }

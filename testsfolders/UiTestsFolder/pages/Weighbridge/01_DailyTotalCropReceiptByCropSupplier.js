@@ -1,11 +1,14 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { runStep, SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterForUnsaveChecking, FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function DailyTotalCropReceiptByCropSupplierCreate(
   page,
@@ -18,29 +21,45 @@ export async function DailyTotalCropReceiptByCropSupplierCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "div.viewModeOU.pinOU .k-dropdown .k-select",
-    "#comboBoxOU_listbox li",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown .k-select",
+      "#comboBoxOU_listbox li",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  await sideMenu.btnAddNewItem.click();
+  await runStep("Add new grid item", async () => {
+    await sideMenu.btnAddNewItem.click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+  const gridVals = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -57,25 +76,43 @@ export async function DailyTotalCropReceiptByCropSupplierEdit1(
   cellsIndex,
   ou,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Crop Supplier Type",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnClose();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  await sideMenu.rejectBtn.click();
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, values[1]);
+  });
 
-  // Select the created record
-  await FilterForUnsaveChecking(page, values[0]);
-
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+  const gridVals = await runStep("Get edited Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -92,20 +129,38 @@ export async function DailyTotalCropReceiptByCropSupplierEdit2(
   cellsIndex,
   ou,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Crop Supplier Type",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save edited transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+  const gridVals = await runStep("Get edited Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
@@ -116,7 +171,17 @@ export async function DailyTotalCropReceiptByCropSupplierDelete(
   values,
   ou,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[0], 2, "Directly");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Crop Supplier Type",
+    );
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

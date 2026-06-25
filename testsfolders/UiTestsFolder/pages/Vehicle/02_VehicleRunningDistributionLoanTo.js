@@ -7,7 +7,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy3Criterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function VehicleRunningDistributionLoanToCreate(
@@ -25,16 +25,14 @@ export async function VehicleRunningDistributionLoanToCreate(
     await sideMenu.clickBtnCreateNewForm();
   });
 
-  await runStep("Select FromOU", async () => {
+  await runStep("Select From OU and To OU", async () => {
     await SelectOU(
       page,
       "#comboOU .k-dropdown-wrap .k-select",
       "#comboBoxOU_listbox li span",
       ou[0],
     );
-  });
 
-  await runStep("Select ToOU", async () => {
     await SelectOU(
       page,
       "#comboToOU .k-dropdown-wrap .k-select",
@@ -63,10 +61,9 @@ export async function VehicleRunningDistributionLoanToCreate(
     await sideMenu.clickBtnSave();
   });
 
-  const uiVals = await runStep("Get created UI values", async () => {
+  const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
-
   const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(page, gridPaths, cellsIndex);
   });
@@ -89,7 +86,7 @@ export async function VehicleRunningDistributionLoanToEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -143,7 +140,7 @@ export async function VehicleRunningDistributionLoanToEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
@@ -186,7 +183,7 @@ export async function VehicleRunningDistributionLoanToDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy3Criterias(
+    await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],

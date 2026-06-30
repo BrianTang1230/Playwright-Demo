@@ -220,12 +220,16 @@ export async function inputGridValues(
   values,
   cellsIndex,
   nRow = 0,
+  options = {}
 ) {
   const table = page.locator(path);
   const vals = values.split(";");
-  // If the JSON path already points to a specific row (tr), use it directly.
-  // Otherwise, find the row inside the table.
-  const row = path.includes("tr[") ? table : table.locator("tr").nth(nRow);
+
+  let targetRow = nRow;
+  if (options.hasAutoFill === true) {
+      targetRow = nRow + 1; 
+  }
+  const row = path.includes("tr[") ? table : table.locator("tr").nth(targetRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
     if (vals[i] === "NA" || vals[i] === "AF") continue;
@@ -306,19 +310,26 @@ export async function getFormValues(page, paths) {
   return uiValues;
 }
 
-export async function getGridValues(page, gridPaths, cellsIndex) {
+export async function getGridValues(page, gridPaths, cellsIndex, options = {}) {
   const gridValues = [];
   for (let i = 0; i < gridPaths.length; i++) {
     const table = page.locator(gridPaths[i]);
 
-    // If JSON path already includes "tr[" (like tr[1]), it uses it directly.
-    // Otherwise, it falls back to Checkroll's normal behavior (.first())
-    const row = gridPaths[i].includes("tr[")
-      ? table
-      : table.locator("tr").first();
+    // 1. THE CONFIG FIX: Offset the row dynamically based on your options object!
+    let row;
+    if (gridPaths[i].includes("tr[")) {
+      row = table;
+    } else {
+      // If hasAutoFill is true, shift down by 1 (i + 1) to skip the auto-generated row.
+      // If false, use 'i' to grab the normal rows in sequence
+      const targetRow = options.hasAutoFill ? i + 1 : i;
+      row = table.locator("tr").nth(targetRow);
+    }
 
-    for (let j = 0; j < cellsIndex[i].length; j++) {
-      const cell = row.locator("td").nth(cellsIndex[i][j]);
+    const currentCellsIndex = cellsIndex[i] || cellsIndex[0];
+
+    for (let j = 0; j < currentCellsIndex.length; j++) {
+      const cell = row.locator("td").nth(currentCellsIndex[j]);
 
       const checkbox = cell.locator('input[type="checkbox"]');
 

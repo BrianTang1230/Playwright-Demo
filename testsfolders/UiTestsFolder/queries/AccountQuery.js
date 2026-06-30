@@ -167,7 +167,8 @@ function accountGridSQLCommand(formName) {
         
         WHERE A.DocNum = @DocNo   
         AND D.OUCode + ' - ' + D.OUDesc = @OU
-        
+        AND B.SeqNo > 0
+
         ORDER BY B.SeqNo ASC`;
       break;
 

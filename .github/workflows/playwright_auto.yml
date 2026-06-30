@@ -22,6 +22,15 @@ jobs:
     runs-on: self-hosted
     
     steps:
+      - name: Check Teams webhook secret exists
+        run: |
+          if [ -z "${{ secrets.TEAMS_WEBHOOK_URL }}" ]; then
+            echo "TEAMS_WEBHOOK_URL is empty or not available"
+            exit 1
+          else
+            echo "TEAMS_WEBHOOK_URL exists"
+          fi
+          
       - name: Microsoft Teams Notification
         uses: mikesprague/teams-incoming-webhook-action@v1
         with:

@@ -22,6 +22,17 @@ jobs:
     runs-on: self-hosted
     
     steps:
+      - name: Check Teams webhook secret exists
+        shell: pwsh
+        run: |
+          if ([string]::IsNullOrEmpty("${{ secrets.TEAMS_WEBHOOK_URL }}")) {
+            Write-Host "❌ TEAMS_WEBHOOK_URL is empty or not available"
+            exit 1
+          }
+          else {
+            Write-Host "✅ TEAMS_WEBHOOK_URL exists"
+          }
+          
       - name: Microsoft Teams Notification
         uses: mikesprague/teams-incoming-webhook-action@v1
         with:
@@ -31,6 +42,7 @@ jobs:
           title: "${{ github.workflow }} started on ${{ github.ref_name }}"
           color: "info"
           timezone: "Asia/Kuala_Lumpur"
+          
   test:
     needs: notify-job-triggered
     timeout-minutes: 4320

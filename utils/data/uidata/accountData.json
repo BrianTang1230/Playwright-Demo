@@ -11,11 +11,11 @@
   "GridPath": {
     "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
     "ClosedPeriodAdjustmentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
-    "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]"
+    "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "GeneralJournal": "BGJ2604025",
+    "GeneralJournal": "BGJ2604026",
     "ClosedPeriodAdjustment": "BGJ2505035",
-    "BankPayment": "BV26050042"
+    "BankPayment": "BV26050053"
   }
 }

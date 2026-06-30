@@ -13,7 +13,9 @@
     "CurrencySetupPath": "#txtCurrencyCode,#txtDescription,#chkActive,#currRcdType,#txtSymbol",
     "CurrencySetupColumn": "CurrCode text,CurrDesc text,Active checkbox,RcdType text,CurrSymb text",
     "DivisionSetupPath": "#txtDivisionCode,#txtDescription,#chkActive",
-    "DivisionSetupColumn": "DivCode text,DivDesc text,Active checkbox"
+    "DivisionSetupColumn": "DivCode text,DivDesc text,Active checkbox",
+    "FieldSetupPath": "#txtFieldCode,#txtDescription,#chkActive,comboBoxDivision_input",
+    "FieldSetupColumn": "FieldCode text,FieldDesc text,Active checkbox,Division dropdown"
   },
 
   "GridPath": {

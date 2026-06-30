@@ -185,6 +185,53 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Field Setup":
+      sqlCommand = `
+      select A.FieldCode,
+      A.FieldDesc,
+      CASE A.Active
+        WHen 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      C.DivCode + ' - ' + C.DivDesc as Division,
+      B.OUCode + ' - ' + B.OUDesc as OU
+      FROM GMS_FieldStp A
+      LEFT JOIN GMS_OUStp B ON B.OUKey = A.OUKey
+      LEFT JOIN GMS_DivStp C ON C.DivKey = A.DivKey
+      WHERE A.FieldCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
+    case "Location Setup":
+      sqlCommand = `
+      select A.LocationCode,
+      A.LocationDesc,
+      CASE A.Active
+        WHen 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.IsDefault
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsDefault,
+      B.OUCode + ' - ' + B.OUDesc AS OU,
+        A.Address,
+      A.ContactPerson as Contact,
+      C.PostDesc,
+      A.Position,
+      A.Phone,
+      A.Mobile,
+      A.Fax,
+      A.Email
+      FROM GMS_LocationStp A
+      LEFT JOIN GMS_OUStp B ON B.OUKey = A.OUKey
+      LEFT JOIN GMS_PostStp C ON C.PostKey = A.Position
+      WHERE A.LocationCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

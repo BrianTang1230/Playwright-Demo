@@ -147,7 +147,7 @@ export async function inputFormValues(page, path, col, value) {
         .first()
         .click();
     }
-    
+
     // Invisible k-drop Input
     else if (col.includes("k-hidden-drop")) {
       const dropdownWrapper = element.locator("..");
@@ -254,9 +254,9 @@ export async function inputGridValues(
     }
 
     await input.press("Control+A");
+    await input.press("Control+A");
     await input.press("Backspace");
     await input.type(vals[i]);
-    await page.keyboard.press("ArrowDown");
     await input.press("Enter");
   }
 }

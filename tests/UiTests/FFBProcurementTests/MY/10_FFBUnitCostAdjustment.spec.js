@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -14,8 +20,9 @@ import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
   FFBUnitCostAdjustmentCreate,
+  FFBUnitCostAdjustmentEdit1,
+  FFBUnitCostAdjustmentEdit2,
   FFBUnitCostAdjustmentDelete,
-  FFBUnitCostAdjustmentEdit,
 } from "@UiFolder/pages/FFBProcurement/MY/10_FFBUnitCostAdjustment";
 
 // ---------------- Set Global Variables ----------------
@@ -26,6 +33,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
@@ -36,9 +44,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3, 4, 5]];
 
-test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -60,15 +72,14 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New FFB Unit Cost Adjustment", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      OU: ou[0],
-    });
-
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await FFBUnitCostAdjustmentCreate(
       page,
       sideMenu,
@@ -84,14 +95,15 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
     });
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -101,8 +113,8 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit FFB Unit Cost Adjustment", async ({ page, db }) => {
-    const { uiVals, gridVals } = await FFBUnitCostAdjustmentEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await FFBUnitCostAdjustmentEdit1(
       page,
       sideMenu,
       paths,
@@ -119,14 +131,53 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
     });
-
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
         Date: createValues[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await FFBUnitCostAdjustmentEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridCreateValues,
+      gridEditValues,
+      cellsIndex,
+      ou,
+    );
+
+    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
+      Date: createValues[0],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      ffbGridSQLCommand(formName),
+      {
+        Date: createValues[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -136,7 +187,7 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete FFB Unit Cost Adjustment", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await FFBUnitCostAdjustmentDelete(
       page,
       sideMenu,
@@ -148,14 +199,15 @@ test.describe.serial("FFB Unit Cost Adjustment Tests", () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
     });
-
-    if (dbValues.length > 0)
-      throw new Error("Deleting FFB Unit Cost Adjustment failed");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
-    console.log(`End Running: ${formName}`);
+    await db.deleteData(deleteSQL, {
+      Date: createValues[0],
+      OU: ou[0],
+    });
+    console.log(`End Tests Running: ${formName}`);
   });
 });

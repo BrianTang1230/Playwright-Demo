@@ -16,29 +16,39 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 import { ffbSQLCommand, ffbGridSQLCommand } from "@UiFolder/queries/FFBQuery";
-import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
+import {
+  JsonPath,
+  InputPath,
+  GridPath,
+  DocNo,
+} from "@utils/data/uidata/ffbData.json";
 
 import {
-  MonthlyRatePerOERCreate,
-  MonthlyRatePerOEREdit1,
-  MonthlyRatePerOEREdit2,
-  MonthlyRatePerOERDelete,
-} from "@UiFolder/pages/FFBProcurement/MY/04_MonthlyRatePerOER";
+  FFBDeductionCreate,
+  FFBDeductionEdit1,
+  FFBDeductionEdit2,
+  FFBDeductionDelete,
+} from "@UiFolder/pages/FFBProcurement/MY/09_FFBDeduction";
 
 // ---------------- Set Global Variables ----------------
 let ou;
+let docNo;
 let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let gridCreateValues;
+let gridEditValues;
 let phaseCount = 0;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
-const formName = "Monthly Rate Per OER";
+const formName = "FFB Deduction";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
+const gridPaths = GridPath[keyName + "Grid"].split(",");
+const cellsIndex = [[1, 2, 3, 4, 5, 6, 7]];
 
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
@@ -48,12 +58,18 @@ test.describe.serial(`${formName} Tests`, () => {
     await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
-      sheetName,
-      formName,
-    );
+    [
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+      gridCreateValues,
+      gridEditValues,
+    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
+
+    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });
@@ -72,85 +88,144 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      Date: createValues[0],
-      OU: ou[0],
-      Nation: createValues[1],
-    });
-
-    const { uiVals } = await MonthlyRatePerOERCreate(
+    const { uiVals, gridVals } = await FFBDeductionCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
+      gridPaths,
+      gridCreateValues,
+      cellsIndex,
       ou,
     );
 
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#DeductNo").inputValue(),
+    );
+
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      Nation: createValues[1],
+      DocNo: docNo,
     });
-    !dbValues && throwTestFailMsg("C-DB-NF", formName);
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      ffbGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await MonthlyRatePerOEREdit1(
+    const { uiVals, gridVals } = await FFBDeductionEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      gridPaths,
+      gridCreateValues,
+      gridEditValues,
+      cellsIndex,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      Nation: createValues[1],
+      DocNo: docNo,
     });
-    !dbValues && throwTestFailMsg("E1-DB-NF", formName);
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      ffbGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await MonthlyRatePerOEREdit2(
+    const { uiVals, gridVals } = await FFBDeductionEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      gridPaths,
+      gridCreateValues,
+      gridEditValues,
+      cellsIndex,
       ou,
+      docNo,
     );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      Nation: createValues[1],
+      DocNo: docNo,
     });
-    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      ffbGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Delete Test ----------------
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await MonthlyRatePerOERDelete(page, sideMenu, createValues, ou);
+    await FFBDeductionDelete(
+      page,
+      sideMenu,
+      createValues,
+      gridEditValues,
+      ou,
+      docNo,
+    );
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
-      Date: createValues[0],
-      Nation: createValues[1],
+      DocNo: docNo,
     });
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
+    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });
 });

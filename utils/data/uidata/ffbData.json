@@ -15,6 +15,10 @@
     "Transport,QualityandVolumeSubsidyColumn": "Month date,Remarks text,Status text",
     "FFBAdvancePaymentPath": "#advDatePicker,#payDatePicker,#txtStatus,#Remarks,#ffbFromDatePicker,ffbToDatePicker",
     "FFBAdvancePaymentColumn": "Advance date,Payment date,Status text,Remarks text,FromDate date,ToDate date",
+    "OtherSubsidyPath": "#monthPicker,#txtStatus,#Remarks",
+    "OtherSubsidyColumn": "Month date,Status text,Remarks text",
+    "FFBDeductionPath": "#monthPicker,#txtStatus,#Remarks",
+    "FFBDeductionColumn": "Month date,Status text,Remarks text",
     "FFBUnitCostAdjustmentPath": "#monthPicker,#Remarks,#txtStatus",
     "FFBUnitCostAdjustmentColumn": "Month date,Remarks text,Status text",
     "FFBUnitCostAdjustment(Block)Path": "#monthPicker,#Remarks,#txtStatus",
@@ -35,6 +39,8 @@
     "Transport&ProcessingChargesGrid": "#EstateDetGrid > .k-grid-content > .k-selectable > tbody",
     "Transport,QualityandVolumeSubsidyGrid": "#TransSubDetGrid > .k-grid-content > .k-selectable > tbody,#VolSubGrid > .k-grid-content > .k-selectable > tbody",
     "FFBAdvancePaymentGrid": "#EstateDetGrid > .k-grid-content-locked,#EstateDetGrid > .k-grid-content.k-auto-scrollable",
+    "OtherSubsidyGrid": "#EstateDetGrid > .k-grid-content > .k-selectable > tbody",
+    "FFBDeductionGrid": "#DeductDetGrid > .k-grid-content > .k-selectable > tbody",
     "FFBUnitCostAdjustmentGrid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody",
@@ -42,6 +48,8 @@
     "DailyFFBProcurementRateGrid": "#DailyFFBProcurementRateGrid > .k-grid-content > .k-selectable > tbody"
   },
   "DocNo": {
-    "FFBAdvancePayment": "ADV2601037"
+    "FFBAdvancePayment": "",
+    "OtherSubsidy": "",
+    "FFBDeduction": ""
   }
 }

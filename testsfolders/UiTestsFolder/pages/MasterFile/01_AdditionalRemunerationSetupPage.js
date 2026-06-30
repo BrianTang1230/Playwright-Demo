@@ -1,10 +1,11 @@
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import {
+  inputGridValues,
+  inputFormValues,
   getGridValues,
   getFormValues,
-  inputFormValues,
-  inputGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 
 // Create Function
 export async function AddRemSetupCreate(
@@ -17,36 +18,47 @@ export async function AddRemSetupCreate(
   gridValues,
   cellsIndex,
 ) {
-  // Click 'New' button
-  await sideMenu.btnNew.click();
+  await runStep("Open create new form", async () => {
+    await sideMenu.btnNew.click();
+  });
 
-  // Input data
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  // Click to add new item
-  await page.locator("#btnNewItem").click();
+  await runStep("Add grid item", async () => {
+    await page.locator("#btnNewItem").click();
+  });
 
-  // Input grid data
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  // Save created data
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  // Search and select created record
-  await SelectRecord(page, sideMenu, values);
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
 
 // Edit Function
-export async function AddRemSetupEdit(
+export async function AddRemSetupEdit1(
   page,
   sideMenu,
   paths,
@@ -57,36 +69,106 @@ export async function AddRemSetupEdit(
   gridNewValues,
   cellsIndex,
 ) {
-  // Search and select created record
-  await SelectRecord(page, sideMenu, values);
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
+  });
 
-  // Input new data
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  // Input new grid data
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridNewValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(
+        page,
+        gridPaths[i],
+        gridNewValues[i],
+        cellsIndex[i],
+      );
+    }
+  });
 
-  // Save created data
-  await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await sideMenu.rejectBtn.click();
+  });
 
-  // Search and select created record
-  await SelectRecord(page, sideMenu, newValues);
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, values, "reopen");
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
+
+  return { uiVals, gridVals };
+}
+
+// Edit Function - 2
+export async function AddRemSetupEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridNewValues,
+  cellsIndex,
+) {
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
+  });
+
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(
+        page,
+        gridPaths[i],
+        gridNewValues[i],
+        cellsIndex[i],
+      );
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, newValues);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }
 
 // Delete Function
 export async function AddRemSetupDelete(page, sideMenu, newValues) {
-  // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, { del: true });
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, newValues, "delete");
+  });
 
-  // Delete record
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

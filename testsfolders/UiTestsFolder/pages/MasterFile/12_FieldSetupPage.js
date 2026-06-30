@@ -1,9 +1,11 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
-import {
-  getFormValues,
-  inputFormValues,
-} from "@UiFolder/functions/valuesFuncs";
+import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import { SelectRecord } from "@UiFolder/functions/OpenRecord";
+import {
+  inputGridValues,
+  inputFormValues,
+  getGridValues,
+  getFormValues,
+} from "@UiFolder/functions/valuesFuncs";
 
 // Create Function
 export async function FieldSetupCreate(
@@ -14,43 +16,42 @@ export async function FieldSetupCreate(
   values,
   ou,
 ) {
-  // Click "New" button
-  await sideMenu.btnNew.click();
-
-  await SelectOU(
-    page,
-    "div.masterModeOU .k-dropdown .k-select",
-    "#comboBoxOU_listbox li span",
-    ou[0],
-  );
-
-  // Input data
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
-
-  // Save created data
-  await sideMenu.clickBtnSave();
-
-  // Search and select created record
-  await SelectRecord(page, sideMenu, values, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0],
-      ),
+  await runStep("Open create new form", async () => {
+    await sideMenu.btnNew.click();
   });
 
-  const uiVals = await getFormValues(page, paths);
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.masterModeOU .k-dropdown .k-select",
+      "#comboBoxOU_listbox li span",
+      ou[0],
+    );
+  });
+
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
 
   return { uiVals };
 }
 
 // Edit Function
-export async function FieldSetupEdit(
+export async function FieldSetupEdit1(
   page,
   sideMenu,
   paths,
@@ -59,58 +60,101 @@ export async function FieldSetupEdit(
   newValues,
   ou,
 ) {
-  // Search and select the created record
-  await SelectRecord(page, sideMenu, values, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0],
-      ),
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.masterModeOU .k-dropdown .k-select",
+      "#comboBoxOU_listbox li span",
+      ou[0],
+    );
   });
 
-  // Input new data
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
-
-  // Save created data
-  await sideMenu.clickBtnSave();
-
-  // Search and select created record
-  await SelectRecord(page, sideMenu, newValues, {
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0],
-      ),
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
   });
 
-  const uiVals = await getFormValues(page, paths);
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, values, "reopen");
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  return { uiVals };
+}
+
+// Edit Function
+export async function FieldSetupEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  ou,
+) {
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.masterModeOU .k-dropdown .k-select",
+      "#comboBoxOU_listbox li span",
+      ou[0],
+    );
+  });
+
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, values);
+  });
+
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await SelectRecord(page, sideMenu, newValues);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
 
   return { uiVals };
 }
 
 // Delete Function
 export async function FieldSetupDelete(page, sideMenu, newValues, ou) {
-  // Search and select the edited record
-  await SelectRecord(page, sideMenu, newValues, {
-    del: true,
-    hasOU: true,
-    selectOU: () =>
-      SelectOU(
-        page,
-        "div.masterModeOU .k-dropdown .k-select",
-        "#comboBoxOU_listbox li span",
-        ou[0],
-      ),
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.masterModeOU .k-dropdown .k-select",
+      "#comboBoxOU_listbox li span",
+      ou[0],
+    );
   });
 
-  // Delete record
-  await sideMenu.clickBtnDelete();
+  await runStep("Open transaction", async () => {
+    await SelectRecord(page, sideMenu, newValues, "delete");
+  });
+
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

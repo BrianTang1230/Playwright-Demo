@@ -44,9 +44,13 @@ export async function checkLength(paths, columns, createValues, editValues) {
 }
 
 export async function SelectOU(page, inputPath, dropdownPath, ou) {
-  await page.waitForSelector(inputPath);
-  await page.locator(inputPath).first().click();
-  await page.locator(dropdownPath, { hasText: ou }).first().click();
+  const ouArrow = page.locator(inputPath).first();
+  await page.waitForTimeout(10000);
+  await ouArrow.click();
+
+  const option = page.locator(dropdownPath, { hasText: ou }).first();
+  await page.waitForTimeout(5000);
+  await option.click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
 }
@@ -145,4 +149,32 @@ export function formatGridData(array, size) {
     chunked.push(array.slice(i, i + size));
   }
   return chunked;
+}
+
+export function convertMonth(month) {
+  const monthMap = {
+    january: "1",
+    januari: "1",
+    february: "2",
+    februari: "2",
+    march: "3",
+    maret: "3",
+    april: "4",
+    may: "5",
+    mei: "5",
+    june: "6",
+    juni: "6",
+    july: "7",
+    juli: "7",
+    august: "8",
+    agustus: "8",
+    september: "9",
+    october: "10",
+    oktober: "10",
+    november: "11",
+    december: "12",
+    desember: "12",
+  };
+
+  return monthMap[month.toLowerCase()];
 }

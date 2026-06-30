@@ -168,6 +168,6 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}`);
   });
 });

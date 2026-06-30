@@ -10,7 +10,7 @@ import {
   FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
-export async function TransportQualityandVolumnSubsidyCreate(
+export async function FFBDeductionCreate(
   page,
   sideMenu,
   paths,
@@ -41,12 +41,11 @@ export async function TransportQualityandVolumnSubsidyCreate(
   });
 
   await runStep("Add new grid item", async () => {
-    await sideMenu.btnAddNewItem.click();
+    await page.getByRole("button", { name: "Add" }).click();
   });
 
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
-      if (i === 1) await page.locator("#btnNewItem2").click();
       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
@@ -66,7 +65,7 @@ export async function TransportQualityandVolumnSubsidyCreate(
   return { uiVals, gridVals };
 }
 
-export async function TransportQualityandVolumnSubsidyEdit1(
+export async function FFBDeductionEdit1(
   page,
   sideMenu,
   paths,
@@ -85,9 +84,8 @@ export async function TransportQualityandVolumnSubsidyEdit1(
       page,
       values[0],
       ou[0],
-      gridValues[0].split(";")[0],
-      "Crop Supplier",
-      "Dropdown",
+      docNo,
+      "Deduction No.",
     );
   });
 
@@ -114,7 +112,7 @@ export async function TransportQualityandVolumnSubsidyEdit1(
   });
 
   await runStep("Reopen transaction", async () => {
-    await FilterForUnsaveChecking(page, gridValues[0]);
+    await FilterForUnsaveChecking(page, docNo);
   });
 
   const uiVals = await runStep("Get UI values", async () => {
@@ -128,7 +126,7 @@ export async function TransportQualityandVolumnSubsidyEdit1(
   return { uiVals, gridVals };
 }
 
-export async function TransportQualityandVolumnSubsidyEdit2(
+export async function FFBDeductionEdit2(
   page,
   sideMenu,
   paths,
@@ -147,9 +145,8 @@ export async function TransportQualityandVolumnSubsidyEdit2(
       page,
       values[0],
       ou[0],
-      gridValues[0].split(";")[0],
-      "Crop Supplier",
-      "Dropdown",
+      docNo,
+      "Deduction No.",
     );
   });
 
@@ -185,21 +182,21 @@ export async function TransportQualityandVolumnSubsidyEdit2(
   return { uiVals, gridVals };
 }
 
-export async function TransportQualityandVolumnSubsidyDelete(
+export async function FFBDeductionDelete(
   page,
   sideMenu,
   values,
   gridValues,
   ou,
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
     await FilterTransactionBy2And1Criterias(
       page,
       values[0],
       ou[0],
-      gridValues[0].split(";")[0],
-      "Crop Supplier",
-      "Dropdown",
+      docNo,
+      "Deduction No.",
     );
   });
 

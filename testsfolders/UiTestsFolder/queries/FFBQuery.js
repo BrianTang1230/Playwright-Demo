@@ -362,6 +362,42 @@ function ffbSQLCommand(formName) {
       `;
       break;
 
+    case "Other Subsidy":
+      sqlCommand += `
+      SELECT 
+      FORMAT(A.AddSubDate, 'MMMM yyyy') AS Month,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_AddSubHdr A
+      LEFT JOIN FPS_AddSubDet B ON A.AddSubHdrKey = B.AddSubHdrKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.AddSubNo = @DocNo
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
+
+    case "FFB Deduction":
+      sqlCommand += `
+      SELECT 
+      FORMAT(A.DeductDate, 'MMMM yyyy') AS Month,
+      CASE A.Status
+        WHEN 'O' THEN 'OPEN'
+        WHEN 'C' THEN 'CLOSE'
+      END AS Status,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM FPS_DeductHdr A
+      LEFT JOIN FPS_DeductDet B ON A.DeductHdrKey = B.DeductHdrKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.DeductNo = @DocNo
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
+
     case "FFB Unit Cost Adjustment":
       sqlCommand += `
       SELECT 
@@ -724,6 +760,54 @@ function ffbGridSQLCommand(formName) {
         FROM FPS_AdvPayHdr
         WHERE AdvPayNo = @DocNo
       )`;
+      break;
+
+    case "Other Subsidy":
+      sqlCommand += `
+      SELECT
+      E.EstateCode + ' - ' + E.EstateDesc AS Estate,
+      F.SubsidyCode + ' - ' + F.SubsidyDesc AS Subsidy,
+      CASE A.ByTonnage
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS ByTonnage,
+      G.UOMCode AS UOM,
+      A.Qty AS Qnumeric,
+      A.Rate AS Rnumeric,
+      A.Amt AS Anumeric
+      FROM FPS_AddSubDet A
+      LEFT JOIN FPS_AddSubHdr B ON A.AddSubHdrKey = B.AddSubHdrKey
+      LEFT JOIN GMS_EstateStp E ON A.EstateKey = E.EstateKey
+      LEFT JOIN GMS_UOMStp G ON A.UOMKey = G.UOMKey
+      LEFT JOIN GMS_OUStp D ON B.OUKey = D.OUKey
+      LEFT JOIN GMS_SubsidyStp F ON F.OUKey = D.OUKey AND F.SubsidyKey = A.SubsidyKey
+      WHERE B.AddSubNo = @DocNo
+      AND D.OUCode + ' - ' + D.OUDesc = @OU
+      `;
+      break;
+
+    case "FFB Deduction":
+      sqlCommand += `
+      SELECT
+      E.EstateCode + ' - ' + E.EstateDesc AS Estate,
+      F.DeductionCode + ' - ' + F.DeductionDesc AS Deduction,
+      CASE A.ByTonnage
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS ByTonnage,
+      G.UOMCode AS UOM,
+      A.Qty AS Qnumeric,
+      A.Rate AS Rnumeric,
+      A.Amt AS Anumeric
+      FROM FPS_DeductDet A
+      LEFT JOIN FPS_DeductHdr B ON A.DeductHdrKey = B.DeductHdrKey
+      LEFT JOIN GMS_EstateStp E ON A.EstateKey = E.EstateKey
+      LEFT JOIN GMS_UOMStp G ON A.UOMKey = G.UOMKey
+      LEFT JOIN GMS_OUStp D ON B.OUKey = D.OUKey
+      LEFT JOIN GMS_DeductionStp F ON F.OUKey = D.OUKey AND F.DeductionKey = A.DeductionKey
+      WHERE B.DeductNo = @DocNo
+      AND D.OUCode + ' - ' + D.OUDesc = @OU
+      `;
       break;
 
     case "FFB Unit Cost Adjustment":

@@ -1,6 +1,6 @@
-export async function SelectRecord(page, sideMenu, values, del = false) {
+export async function SelectRecord(page, sideMenu, values, action = "edit") {
   // Click Show Active Checkbox
-  !del &&
+  action === "edit" &&
     (await page
       .getByRole("checkbox", {
         name: "Show Active Only",
@@ -14,7 +14,7 @@ export async function SelectRecord(page, sideMenu, values, del = false) {
   await page.getByRole("gridcell", { name: `${values[0]}` }).click();
 
   // Verification
-  !del && (await sideMenu.btnEdit.click());
+  if (action === "edit" || action === "reopen") await sideMenu.btnEdit.click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
@@ -64,7 +64,14 @@ export async function FilterTransactionBy1AndMoreCriterias(
     const paramInput =
       inputKeywordsWith[i] === "Typing"
         ? page.locator("[name='searchParam']").nth(i)
-        : page.locator("[name='comboBoxSearchParam_input']").nth(i);
+        : inputKeywordsWith[i] === "Dropdown"
+          ? page.locator("[name='comboBoxSearchParam_input']").nth(i)
+          : page.getByRole("spinbutton");
+
+    if (inputKeywordsWith[i] === "Numeric") {
+      await paramInput.press("Control+a");
+    }
+
     await paramInput.type(keywords[i]);
 
     if (inputKeywordsWith[i] === "Dropdown") {
@@ -79,7 +86,7 @@ export async function FilterTransactionBy1AndMoreCriterias(
   // Apply filter and open seleted transaction
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page
-    .getByRole("gridcell", { name: new RegExp(keywords[1].slice(0, 4)) })
+    .getByRole("gridcell", { name: new RegExp(keywords.at(-1).slice(0, 4)) })
     .first()
     .click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();

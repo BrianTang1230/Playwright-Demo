@@ -150,6 +150,6 @@ test.describe.serial("Daily FFB Procurement Rate Tests", () => {
   // ---------------- After All ----------------
   test.afterAll(async ({}) => {
     await editJson(JsonPath, formName, "");
-    console.log(`End Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}`);
   });
 });

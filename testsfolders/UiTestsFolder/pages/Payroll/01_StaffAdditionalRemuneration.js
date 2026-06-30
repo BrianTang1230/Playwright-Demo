@@ -58,6 +58,7 @@ export async function StaffAdditionalRemunerationCreate(
   const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
+
   const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(page, gridPaths, cellsIndex);
   });

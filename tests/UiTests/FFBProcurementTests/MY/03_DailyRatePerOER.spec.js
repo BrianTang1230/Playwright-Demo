@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -14,8 +20,9 @@ import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/ffbData.json";
 
 import {
   DailyRatePerOERCreate,
+  DailyRatePerOEREdit1,
+  DailyRatePerOEREdit2,
   DailyRatePerOERDelete,
-  DailyRatePerOEREdit,
 } from "@UiFolder/pages/FFBProcurement/MY/03_DailyRatePerOER";
 
 // ---------------- Set Global Variables ----------------
@@ -26,6 +33,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "FFB_DATA";
 const module = "FFB Procurement";
 const submodule = null;
@@ -36,9 +44,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2]];
 
-test.describe.serial("Daily Rate Per OER Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -60,10 +72,14 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Daily Rate Per OER", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       Date: createValues[0],
       OU: ou[0],
@@ -86,7 +102,7 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
       Date: createValues[0],
       Nation: createValues[1],
     });
-
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
@@ -94,7 +110,8 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
         Nation: createValues[1],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -104,8 +121,8 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Daily Rate Per OER", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyRatePerOEREdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyRatePerOEREdit1(
       page,
       sideMenu,
       paths,
@@ -122,7 +139,8 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
       Date: createValues[0],
       Nation: createValues[1],
     });
-
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
     const gridDbValues = await db.retrieveGridData(
       ffbGridSQLCommand(formName),
       {
@@ -130,7 +148,46 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
         Nation: createValues[1],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyRatePerOEREdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+    );
+
+    const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
+      Date: createValues[0],
+      Nation: createValues[1],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+    const gridDbValues = await db.retrieveGridData(
+      ffbGridSQLCommand(formName),
+      {
+        Date: createValues[0],
+        Nation: createValues[1],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -140,21 +197,18 @@ test.describe.serial("Daily Rate Per OER Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Rate Per OER", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await DailyRatePerOERDelete(page, sideMenu, createValues, ou);
 
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       Date: createValues[0],
       Nation: createValues[1],
     });
-
-    if (dbValues.length > 0)
-      throw new Error("Deleting Daily Rate Per OER failed");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
-    console.log(`End Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}`);
   });
 });

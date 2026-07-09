@@ -15,7 +15,11 @@
     "DivisionSetupPath": "#txtDivisionCode,#txtDescription,#chkActive",
     "DivisionSetupColumn": "DivCode text,DivDesc text,Active checkbox",
     "FieldSetupPath": "#txtFieldCode,#txtDescription,#chkActive,comboBoxDivision_input",
-    "FieldSetupColumn": "FieldCode text,FieldDesc text,Active checkbox,Division dropdown"
+    "FieldSetupColumn": "FieldCode text,FieldDesc text,Active checkbox,Division dropdown",
+    "LocationSetupPath": "#locationCode,#locationDesc,#locationActive,#locationIsDefault,comboBoxOU_input,#address,#contactPerson,comboBoxPost_input,#phone,#mobile,#fax,#email",
+    "LocationSetupColumn": "LocationCode text,LocationDesc text,Active checkbox,IsDefault checkbox,OU dropdown,Address text,Contact text,PostDesc dropdown,Phone text,Mobile text,Fax text,Email text",
+    "NationalitySetupPath": "#nationalCode,#nationalDesc,#nationalActive,#nationalRcdType,ctry_input",
+    "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown"
   },
 
   "GridPath": {

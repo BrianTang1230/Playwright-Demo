@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -13,7 +19,8 @@ import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
   LocationSetupCreate,
-  LocationSetupEdit,
+  LocationSetupEdit1,
+  LocationSetupEdit2,
   LocationSetupDelete,
 } from "@UiFolder/pages/MasterFile/16_LocationSetupPage";
 
@@ -23,15 +30,16 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
 const formName = "Location Setup";
 const keyName = formName.split(" ").join("");
-// const paths = InputPath[keyName + "Path"].split(",");
-// const columns = InputPath[keyName + "Column"].split(",");
+const paths = InputPath[keyName + "Path"].split(",");
+const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.skip("Location Setup Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -52,11 +60,15 @@ test.describe.skip("Location Setup Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Tests ----------------
-  test("Create New Location Code", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { OU: ou[0] });
+  test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, {});
 
     const { uiVals } = await LocationSetupCreate(
       page,
@@ -70,13 +82,34 @@ test.describe.skip("Location Setup Tests", () => {
       Code: createValues[0],
       OU: ou[0],
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
-  test("Edit Location Code", async ({ page, db }) => {
-    const { uiVals } = await LocationSetupEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals } = await LocationSetupEdit1(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+    );
+
+    const dbValues = await db.retrieveData(masterSQLCommand(formName), {
+      Code: createValues[0],
+      OU: ou[0],
+    });
+    !dbValues && throwTestFailMsg("E1-DB-NF", formName);
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(uiVals, columns, dbValues[0]);
+  });
+
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals } = await LocationSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -89,12 +122,13 @@ test.describe.skip("Location Setup Tests", () => {
       Code: editValues[0],
       OU: ou[1],
     });
+    !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
-  test("Delete Location Code", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await LocationSetupDelete(page, sideMenu, editValues);
 
     // Check if the Location code is deleted
@@ -103,13 +137,10 @@ test.describe.skip("Location Setup Tests", () => {
       OU: ou[1],
     });
 
-    if (dbValues.length > 0) {
-      throw new Error("DB validation failed when deleting Location Code");
-    }
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   test.afterAll(async () => {
-    // Close database connectionawait editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });
 });

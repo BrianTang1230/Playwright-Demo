@@ -216,10 +216,9 @@ function masterSQLCommand(formName) {
         WHEN 0 THEN 'False'
       END AS IsDefault,
       B.OUCode + ' - ' + B.OUDesc AS OU,
-        A.Address,
+      A.Address,
       A.ContactPerson as Contact,
       C.PostDesc,
-      A.Position,
       A.Phone,
       A.Mobile,
       A.Fax,
@@ -229,6 +228,25 @@ function masterSQLCommand(formName) {
       LEFT JOIN GMS_PostStp C ON C.PostKey = A.Position
       WHERE A.LocationCode = @Code
       AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
+    case "Nationality Setup":
+      sqlCommand = `
+      select A.NationalityCode,
+      A.NationalityDesc,
+      CASE A.Active
+        WHen 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 1 THEN 'System'
+        WHEN 0 THEN 'User'
+      END AS RcdType,
+      B.CtryCode + ' - ' + B.CtryDesc AS Country
+      FROM GMS_NationalStp A
+      LEFT JOIN GMS_CountryStp B ON B.CtryKey = A.CtryKey
+      WHERE A.NationalityCode = @Code
       `;
       break;
 

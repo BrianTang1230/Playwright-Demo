@@ -1,4 +1,5 @@
 {
+  "JsonPath": "utils/data/uidata/labData.json",
   "InputPath": {
     "CrudePalmOilQuality(FFA)Path": "#CPOFFADatePicker",
     "CrudePalmOilQuality(FFA)Column": "CPOFFADate date",

@@ -1,8 +1,14 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -10,17 +16,12 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
-import {
-  JsonPath,
-  InputPath,
-  GridPath,
-  DocNo,
-} from "@utils/data/uidata/labData.json";
+import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/labData.json";
 
 import {
   LabCommonPageCreate,
-  LabCommonPageDelete,
   LabCommonPageEdit,
+  LabCommonPageDelete,
 } from "@UiFolder/pages/Lab/LabCommonPage";
 
 // ---------------- Set Global Variables ----------------
@@ -31,6 +32,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "LAB_DATA";
 const module = "Lab";
 const submodule = null;
@@ -44,7 +46,7 @@ const cellsIndex = [
   [0, 1, 2, 3, 4],
 ];
 
-test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Load Excel values
@@ -68,6 +70,10 @@ test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
@@ -181,7 +187,6 @@ test.describe.serial("Crude Palm Oil Quality (FFA) Tests", async () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });
 });

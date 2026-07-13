@@ -220,14 +220,14 @@ export async function inputGridValues(
   values,
   cellsIndex,
   nRow = 0,
-  options = {}
+  options = {},
 ) {
   const table = page.locator(path);
   const vals = values.split(";");
 
   let targetRow = nRow;
   if (options.hasAutoFill === true) {
-      targetRow = nRow + 1; 
+    targetRow = nRow + 1;
   }
   const row = path.includes("tr[") ? table : table.locator("tr").nth(targetRow);
 
@@ -323,7 +323,7 @@ export async function getGridValues(page, gridPaths, cellsIndex, options = {}) {
       // If hasAutoFill is true, shift down by 1 (i + 1) to skip the auto-generated row.
       // If false, use 'i' to grab the normal rows in sequence
       const targetRow = options.hasAutoFill ? i + 1 : i;
-      row = table.locator("tr").nth(targetRow);
+      row = table.locator("tr").nth(targetRow - 1);
     }
 
     const currentCellsIndex = cellsIndex[i] || cellsIndex[0];

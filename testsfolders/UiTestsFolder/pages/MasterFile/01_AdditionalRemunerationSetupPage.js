@@ -51,7 +51,7 @@ export async function AddRemSetupCreate(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -104,7 +104,7 @@ export async function AddRemSetupEdit1(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -156,7 +156,7 @@ export async function AddRemSetupEdit2(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

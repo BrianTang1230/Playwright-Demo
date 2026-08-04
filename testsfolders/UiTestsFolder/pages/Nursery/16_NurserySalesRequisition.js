@@ -33,6 +33,7 @@ export async function NurserySalesRequisitionCreate(
       "#ddlOU_listbox span",
       ou[0],
     );
+    await sideMenu.confirmBtn.click();
   });
 
   await runStep("Input transaction data", async () => {

@@ -1,11 +1,15 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy1AndMoreCriterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function MonthlyStandardBorongAndTallPalmRateCreate(
   page,
@@ -56,13 +60,13 @@ export async function MonthlyStandardBorongAndTallPalmRateCreate(
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
 }
 
-export async function MonthlyStandardBorongAndTallPalmRateEdit(
+export async function MonthlyStandardBorongAndTallPalmRateEdit1(
   page,
   sideMenu,
   paths,
@@ -76,7 +80,56 @@ export async function MonthlyStandardBorongAndTallPalmRateEdit(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
+    await FilterTransactionBy1AndMoreCriterias(page, ou);
+  });
+
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function MonthlyStandardBorongAndTallPalmRateEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  keyword,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(page, ou);
   });
 
   await runStep("Edit transaction", async () => {
@@ -100,7 +153,7 @@ export async function MonthlyStandardBorongAndTallPalmRateEdit(
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -114,7 +167,7 @@ export async function MonthlyStandardBorongAndTallPalmRateDelete(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
+    await FilterTransactionBy1AndMoreCriterias(page, ou);
   });
 
   await runStep("Delete transaction", async () => {

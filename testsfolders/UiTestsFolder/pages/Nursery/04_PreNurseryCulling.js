@@ -1,4 +1,5 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   getFormValues,
   inputFormValues,
@@ -63,7 +64,7 @@ export async function PreNurseryCullingEdit1(
       values[0],
       ou[0],
       docNo,
-      "PC Num",
+      "PC No.",
     );
   });
 
@@ -105,7 +106,7 @@ export async function PreNurseryCullingEdit2(
       values[0],
       ou[0],
       docNo,
-      "PC Num",
+      "PC No.",
     );
   });
 
@@ -139,7 +140,7 @@ export async function PreNurseryCullingDelete(
       values[0],
       ou[0],
       docNo,
-      "PC Num",
+      "PC No.",
     );
   });
 

@@ -59,8 +59,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -96,7 +94,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("C-DB-NF", formName);
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
@@ -117,8 +115,7 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
-    !dbValues &&
-      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+    !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);

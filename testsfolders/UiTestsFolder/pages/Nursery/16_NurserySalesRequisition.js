@@ -1,4 +1,5 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
@@ -59,7 +60,7 @@ export async function NurserySalesRequisitionCreate(
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -121,7 +122,7 @@ export async function NurserySalesRequisitionEdit1(
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -178,7 +179,7 @@ export async function NurserySalesRequisitionEdit2(
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

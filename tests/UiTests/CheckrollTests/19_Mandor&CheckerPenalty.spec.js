@@ -1,8 +1,14 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
@@ -13,12 +19,14 @@ import {
   checkrollSQLCommand,
   checkrollGridSQLCommand,
 } from "@UiFolder/queries/CheckrollQuery";
+
 import {
   JsonPath,
   InputPath,
   GridPath,
   DocNo,
 } from "@utils/data/uidata/checkrollData.json";
+
 import {
   MandorAndCheckerPenaltyCreate,
   MandorAndCheckerPenaltyEdit,
@@ -34,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Allowance & Deduction";
@@ -44,10 +53,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3, 4, 5, 6, 7, 8]];
 
-test.describe.serial("Mandor & Checker Penalty Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
+  if (region === "MY") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "MY") test.skip(true);
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
     [
@@ -61,8 +73,6 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -72,15 +82,14 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mandor & Checker Penalty", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
-    });
-
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await MandorAndCheckerPenaltyCreate(
       page,
       sideMenu,
@@ -102,6 +111,7 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -110,7 +120,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
         OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -121,8 +132,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mandor & Checker Penalty", async ({ page, db }) => {
-    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit1(
       page,
       sideMenu,
       paths,
@@ -139,6 +150,8 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -147,7 +160,48 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
         OU: ou[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await MandorAndCheckerPenaltyEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      checkrollGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -158,7 +212,7 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Mandor & Checker Penalty", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await MandorAndCheckerPenaltyDelete(
       page,
       sideMenu,
@@ -170,15 +224,15 @@ test.describe.serial("Mandor & Checker Penalty Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
-
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-
-    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
+    });
     await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });

@@ -69,6 +69,7 @@ export async function WorkerMonthlyTaxDeductionCreate(
       page,
       gridPaths.slice(0, 2),
       cellsIndex.slice(0, 2),
+      { isOneRow: true },
     );
   });
 
@@ -146,6 +147,7 @@ export async function WorkerMonthlyTaxDeductionEdit(
       page,
       gridPaths.slice(0, 2),
       cellsIndex.slice(0, 2),
+      { isOneRow: true },
     );
   });
 

@@ -24,6 +24,8 @@ export default class SideMenuPage {
       await saveBtn.click();
     }
 
+    await this.page.waitForTimeout(2000);
+
     await this.page
       .locator(".k-loading-image")
       .first()

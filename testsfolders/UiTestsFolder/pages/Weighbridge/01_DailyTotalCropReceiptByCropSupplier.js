@@ -58,7 +58,7 @@ export async function DailyTotalCropReceiptByCropSupplierCreate(
     return await getFormValues(page, paths);
   });
   const gridVals = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

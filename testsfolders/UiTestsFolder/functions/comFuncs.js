@@ -94,7 +94,7 @@ export async function getElementByPath(page, path) {
   return element;
 }
 
-export async function throwTestFailMsg(caseCode, formName, remarks = "") {
+export function throwTestFailMsg(caseCode, formName, remarks = "") {
   let decodedCode = caseCode.split("-");
   let phase = "";
   let side = "";

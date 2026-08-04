@@ -65,8 +65,6 @@ test.describe.serial("Worker Preceding Tax (PPh 21) Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 

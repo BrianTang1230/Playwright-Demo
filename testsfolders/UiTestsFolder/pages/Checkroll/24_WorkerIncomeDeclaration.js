@@ -55,7 +55,7 @@ export async function WorkerIncomeDeclarationCreate(
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -109,7 +109,7 @@ export async function WorkerIncomeDeclarationEdit(
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

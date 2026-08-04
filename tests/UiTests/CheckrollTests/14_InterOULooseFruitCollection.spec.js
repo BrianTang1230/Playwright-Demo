@@ -1,8 +1,14 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
@@ -23,7 +29,8 @@ import {
 
 import {
   InterOULooseFruitCollectionCreate,
-  InterOULooseFruitCollectionEdit,
+  InterOULooseFruitCollectionEdit1,
+  InterOULooseFruitCollectionEdit2,
   InterOULooseFruitCollectionDelete,
 } from "@UiFolder/pages/Checkroll/14_InterOULooseFruitCollection";
 
@@ -36,6 +43,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Crop";
@@ -49,11 +57,13 @@ const cellsIndex = [
   [0, 1, 3, 4, 5, 6],
 ];
 
-test.describe
-  .serial("Inter-OU Loose Fruit Collection (Loan To) Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
+  if (region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    if (region === "IND") test.skip(true);
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
     [
@@ -67,8 +77,6 @@ test.describe
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -78,13 +86,14 @@ test.describe
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals, gridVals } = await InterOULooseFruitCollectionCreate(
@@ -108,6 +117,7 @@ test.describe
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -116,7 +126,8 @@ test.describe
         OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -130,11 +141,8 @@ test.describe
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
-    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit1(
       page,
       sideMenu,
       paths,
@@ -151,6 +159,8 @@ test.describe
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -159,7 +169,51 @@ test.describe
         OU: ou[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...uiVals, ou[0], ou[1]],
+      [...columns, "OU", "LoanToOU"],
+      dbValues[0],
+    );
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await InterOULooseFruitCollectionEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      checkrollGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+        OU: ou[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -173,10 +227,7 @@ test.describe
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Inter-OU Loose Fruit Collection (Loan To)", async ({
-    page,
-    db,
-  }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await InterOULooseFruitCollectionDelete(
       page,
       sideMenu,
@@ -188,15 +239,12 @@ test.describe
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
-
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-
-    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });

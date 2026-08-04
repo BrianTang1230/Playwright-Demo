@@ -1,8 +1,14 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  setCurrForm,
+  setCurrPhase,
+  checkLength,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -23,8 +29,9 @@ import {
 
 import {
   DailyAttendanceCreate,
+  DailyAttendanceEdit1,
+  DailyAttendanceEdit2,
   DailyAttendanceDelete,
-  DailyAttendanceEdit,
 } from "@UiFolder/pages/Checkroll/01_DailyAttendance";
 
 // ---------------- Set Global Variables ----------------
@@ -36,6 +43,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "CR_Data";
 const module = "Checkroll";
 const submodule = "Attendance";
@@ -59,9 +67,13 @@ const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 const dwCols = region === "IND" ? columns.slice(0, 4) : columns;
 const dwPaths = region === "IND" ? paths.slice(0, 4) : paths;
 
-test.describe.serial("Daily Attendance Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -74,8 +86,6 @@ test.describe.serial("Daily Attendance Tests", () => {
 
     await checkLength(dwPaths, dwCols, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 
@@ -85,15 +95,14 @@ test.describe.serial("Daily Attendance Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Daily Attendance", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
-    });
-
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await DailyAttendanceCreate(
       page,
       sideMenu,
@@ -115,12 +124,14 @@ test.describe.serial("Daily Attendance Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       { DocNo: docNo, OU: ou[0] },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, dwCols, uiVals);
@@ -130,9 +141,9 @@ test.describe.serial("Daily Attendance Tests", () => {
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Daily Attendance", async ({ page, db }) => {
-    const { uiVals, gridVals } = await DailyAttendanceEdit(
+  //---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyAttendanceEdit1(
       page,
       sideMenu,
       dwPaths,
@@ -149,12 +160,52 @@ test.describe.serial("Daily Attendance Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       { DocNo: docNo, OU: ou[0] },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await DailyAttendanceEdit2(
+      page,
+      sideMenu,
+      dwPaths,
+      dwCols,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      dwCellIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      checkrollGridSQLCommand(formName),
+      { DocNo: docNo, OU: ou[0] },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, dwCols, uiVals);
@@ -165,7 +216,7 @@ test.describe.serial("Daily Attendance Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Daily Attendance", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await DailyAttendanceDelete(
       page,
       sideMenu,
@@ -178,15 +229,12 @@ test.describe.serial("Daily Attendance Tests", () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
-
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-
-    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}`);
   });

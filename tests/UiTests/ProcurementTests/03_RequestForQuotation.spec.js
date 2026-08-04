@@ -64,8 +64,6 @@ test.describe.serial("Request for Quotation Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    docNo = DocNo[keyName];
-
     console.log(`Start Running: ${formName}`);
   });
 

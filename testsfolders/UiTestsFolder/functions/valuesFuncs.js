@@ -310,7 +310,12 @@ export async function getFormValues(page, paths) {
   return uiValues;
 }
 
-export async function getGridValues(page, gridPaths, cellsIndex, options = {}) {
+export async function getGridValues(
+  page,
+  gridPaths,
+  cellsIndex,
+  options = { hasAutoFill: false, isOneRow: false },
+) {
   const gridValues = [];
   for (let i = 0; i < gridPaths.length; i++) {
     const table = page.locator(gridPaths[i]);
@@ -319,14 +324,16 @@ export async function getGridValues(page, gridPaths, cellsIndex, options = {}) {
     let row;
     if (gridPaths[i].includes("tr[")) {
       row = table;
+    } else if (options.isOneRow) {
+      row = table.locator("tr").first();
     } else {
       // If hasAutoFill is true, shift down by 1 (i + 1) to skip the auto-generated row.
       // If false, use 'i' to grab the normal rows in sequence
       const targetRow = options.hasAutoFill ? i + 1 : i;
-      row = table.locator("tr").nth(targetRow - 1);
+      row = table.locator("tr").nth(targetRow);
     }
 
-    const currentCellsIndex = cellsIndex[i] || cellsIndex[0];
+    const currentCellsIndex = cellsIndex[i];
 
     for (let j = 0; j < currentCellsIndex.length; j++) {
       const cell = row.locator("td").nth(currentCellsIndex[j]);

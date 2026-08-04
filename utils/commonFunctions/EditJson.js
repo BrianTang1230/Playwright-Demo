@@ -1,9 +1,17 @@
+import { throwTestFailMsg } from "@UiFolder/functions/comFuncs";
 import fs from "fs";
 import path from "path";
 
 export default async function editJson(json, formName, value, isUi = true) {
   const jsonPath = path.resolve(json);
   let content;
+  console.log(value);
+  value === "Auto No." &&
+    throwTestFailMsg(
+      "C-DATA-ERR",
+      formName,
+      "Unable to store DocNo in JSON file",
+    );
 
   try {
     const data = fs.readFileSync(jsonPath, "utf-8");

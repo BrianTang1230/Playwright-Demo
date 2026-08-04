@@ -1,4 +1,5 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   getFormValues,
   inputFormValues,
@@ -63,7 +64,7 @@ export async function PreNurseryTransferSoldLossEdit1(
       values[0],
       ou[0],
       docNo,
-      "PTO Num",
+      "PTO No.",
     );
   });
 
@@ -105,7 +106,7 @@ export async function PreNurseryTransferSoldLossEdit2(
       values[0],
       ou[0],
       docNo,
-      "PTO Num",
+      "PTO No.",
     );
   });
 
@@ -139,7 +140,7 @@ export async function PreNurseryTransferSoldLossDelete(
       values[0],
       ou[0],
       docNo,
-      "PTO Num",
+      "PTO No.",
     );
   });
 

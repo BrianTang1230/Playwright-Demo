@@ -19,6 +19,7 @@ import {
   vehicleGridSQLCommand,
   vehicleSQLCommand,
 } from "@UiFolder/queries/VehicleQuery";
+
 import {
   JsonPath,
   InputPath,
@@ -74,8 +75,6 @@ test.describe.serial(`${formName} Tests`, () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true });
 
     await checkLength(paths, columns, createValues, editValues);
-
-    docNo = DocNo[keyName];
 
     console.log(`Start Running: ${formName}`);
   });

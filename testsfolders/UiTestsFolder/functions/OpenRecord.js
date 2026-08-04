@@ -47,39 +47,41 @@ export async function FilterTransactionBy1AndMoreCriterias(
     .first()
     .fill(ou);
 
-  for (let i = 0; i < keywords.length; i++) {
-    // Add filter criteria and select filter column
-    await page.getByRole("button", { name: "+", exact: true }).click();
-    await page
-      .locator("#tabstrip-2")
-      .getByText("Choose a Column to Filter")
-      .nth(i + 1)
-      .click();
-    await page
-      .locator("#ddlColumn_listbox li", { hasText: filterColumns[i] })
-      .nth(i + 1)
-      .click();
-
-    // Input Keyword
-    const paramInput =
-      inputKeywordsWith[i] === "Typing"
-        ? page.locator("[name='searchParam']").nth(i)
-        : inputKeywordsWith[i] === "Dropdown"
-          ? page.locator("[name='comboBoxSearchParam_input']").nth(i)
-          : page.getByRole("spinbutton");
-
-    if (inputKeywordsWith[i] === "Numeric") {
-      await paramInput.press("Control+a");
-    }
-
-    await paramInput.type(keywords[i]);
-
-    if (inputKeywordsWith[i] === "Dropdown") {
+  if (keywords.length > 0) {
+    for (let i = 0; i < keywords.length; i++) {
+      // Add filter criteria and select filter column
+      await page.getByRole("button", { name: "+", exact: true }).click();
       await page
-        .locator("#comboBoxSearchParam_listbox li", { hasText: keywords[i] })
-        .first()
-        .waitFor({ state: "visible" });
-      await paramInput.press("Enter");
+        .locator("#tabstrip-2")
+        .getByText("Choose a Column to Filter")
+        .nth(i + 1)
+        .click();
+      await page
+        .locator("#ddlColumn_listbox li", { hasText: filterColumns[i] })
+        .nth(i + 1)
+        .click();
+
+      // Input Keyword
+      const paramInput =
+        inputKeywordsWith[i] === "Typing"
+          ? page.locator("[name='searchParam']").nth(i)
+          : inputKeywordsWith[i] === "Dropdown"
+            ? page.locator("[name='comboBoxSearchParam_input']").nth(i)
+            : page.getByRole("spinbutton");
+
+      if (inputKeywordsWith[i] === "Numeric") {
+        await paramInput.press("Control+a");
+      }
+
+      await paramInput.type(keywords[i]);
+
+      if (inputKeywordsWith[i] === "Dropdown") {
+        await page
+          .locator("#comboBoxSearchParam_listbox li", { hasText: keywords[i] })
+          .first()
+          .waitFor({ state: "visible" });
+        await paramInput.press("Enter");
+      }
     }
   }
 

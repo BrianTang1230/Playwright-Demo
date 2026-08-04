@@ -1,11 +1,15 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function ContractCropDespatchRateCreate(
   page,
@@ -56,13 +60,13 @@ export async function ContractCropDespatchRateCreate(
   });
 
   const gridVals = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
 }
 
-export async function ContractCropDespatchRateEdit(
+export async function ContractCropDespatchRateEdit1(
   page,
   sideMenu,
   paths,
@@ -76,7 +80,75 @@ export async function ContractCropDespatchRateEdit(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
+  });
+
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Delete and add new grid item", async () => {
+    await page.locator("#isSelectGrid").check();
+    await page.locator("#btnDeleteItem").click();
+    await sideMenu.confirmBtn.click();
+    await sideMenu.btnAddNewItem.click();
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function ContractCropDespatchRateEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -107,7 +179,7 @@ export async function ContractCropDespatchRateEdit(
   });
 
   const gridVals = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -121,7 +193,13 @@ export async function ContractCropDespatchRateDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Document No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

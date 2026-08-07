@@ -21,7 +21,9 @@
     "NationalitySetupPath": "#nationalCode,#nationalDesc,#nationalActive,#nationalRcdType,ctry_input",
     "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown",
     "RaceSetupPath": "#raceCode,#raceDesc,#raceActive,#raceRcdType",
-    "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text"
+    "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
+    "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",
+    "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown"
   },
 
   "GridPath": {

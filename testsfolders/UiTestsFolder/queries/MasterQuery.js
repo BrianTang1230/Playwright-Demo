@@ -266,6 +266,28 @@ function masterSQLCommand(formName) {
         WHERE RaceCode = @Code`;
       break;
 
+      case "Transporter Setup":
+        sqlCommand = `
+          SELECT t.TranspID,
+          t.TranspDesc,
+          CASE t.Active
+              WHEN 1 THEN 'True'
+              WHEN 0 THEN 'False'
+          END AS Active,
+          CASE t.RcdType
+              WHEN 0 THEN 'User'
+              WHEN 1 THEN 'System'
+          END AS RcdType,
+          CASE t.TranspType
+              WHEN 'I' THEN 'Internal Transporter'
+              WHEN 'E' THEN 'External Transporter'
+          END AS TranspType,
+          c.ContactCode + ' - ' + c.ContactDesc AS ContactID
+          FROM GMS_TranspStp t
+          LEFT JOIN GMS_ContactStp c ON t.ContactKey = c.ContactKey
+          WHERE t.TranspID = @Code`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

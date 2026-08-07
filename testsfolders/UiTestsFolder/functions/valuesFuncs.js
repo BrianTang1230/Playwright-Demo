@@ -232,7 +232,11 @@ export async function inputGridValues(
   const row = path.includes("tr[") ? table : table.locator("tr").nth(targetRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
+    if (vals[i] === "AF")
+      console.log(`Grid value of cell ${cellsIndex[i]} is Auto-Filled`);
     if (vals[i] === "NA" || vals[i] === "AF") continue;
+    if (vals[i] === "AF")
+      console.log(`Grid value of cell ${cellsIndex[i]} is Auto-Filled 2`);
 
     const cell = row.locator("td").nth(cellsIndex[i]);
 

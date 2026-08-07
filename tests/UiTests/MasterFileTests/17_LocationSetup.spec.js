@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  NationalitySetupCreate,
-  NationalitySetupEdit1,
-  NationalitySetupEdit2,
-  NationalitySetupDelete,
-} from "@UiFolder/pages/MasterFile/18_NationalitySetupPage";
+  LocationSetupCreate,
+  LocationSetupEdit1,
+  LocationSetupEdit2,
+  LocationSetupDelete,
+} from "@UiFolder/pages/MasterFile/17_LocationSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Nationality Setup";
+const formName = "Location Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -68,9 +68,9 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Tests ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { OU: ou[0] });
+    await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await NationalitySetupCreate(
+    const { uiVals } = await LocationSetupCreate(
       page,
       sideMenu,
       paths,
@@ -80,6 +80,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
+      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
 
@@ -88,7 +89,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await NationalitySetupEdit1(
+    const { uiVals } = await LocationSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -99,6 +100,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
+      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
@@ -107,7 +109,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await NationalitySetupEdit2(
+    const { uiVals } = await LocationSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -118,6 +120,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[1],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
@@ -126,11 +129,12 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await NationalitySetupDelete(page, sideMenu, editValues);
+    await LocationSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Nationality code is deleted
+    // Check if the Location code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[1],
     });
 
     dbValues && throwTestFailMsg("D-DB-RF", formName);

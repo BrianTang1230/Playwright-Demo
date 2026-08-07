@@ -50,13 +50,9 @@ export async function DailyPieceRateWorkCreate(
     for (let i = 0; i < gridPaths.length; i++) {
       i === 1
         ? await page.locator("#btnNewPRWItem").click()
-        : region === "MY"
-          ? await page
-              .getByRole("tab", { name: "Piece Rate Work", exact: true })
-              .click()
-          : await page
-              .getByRole("tab", { name: "Daily Piece Rate Work", exact: true })
-              .click();
+        : await page
+            .getByRole("tab", { name: "Piece Rate Work", exact: true })
+            .click();
 
       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }

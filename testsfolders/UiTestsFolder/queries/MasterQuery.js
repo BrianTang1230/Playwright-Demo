@@ -288,6 +288,23 @@ function masterSQLCommand(formName) {
           WHERE t.TranspID = @Code`;
       break;
 
+      case "UOM Setup":
+      sqlCommand = `
+        SELECT UOMCode,
+        UOMDesc,
+        CASE Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS Active,
+        CASE RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+        END AS RcdType,
+        Symbol
+        FROM GMS_UOMStp
+        WHERE UOMCode = @Code`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

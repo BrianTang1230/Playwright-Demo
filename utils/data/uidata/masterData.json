@@ -23,7 +23,9 @@
     "RaceSetupPath": "#raceCode,#raceDesc,#raceActive,#raceRcdType",
     "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
     "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",
-    "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown"
+    "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown",
+    "UOMSetupPath": "#uomCode,#uomDesc,#uomActive,#uomRcdType,#Symbol",
+    "UOMSetupColumn": "UOMCode text,UOMDesc text,Active checkbox,RcdType text,Symbol dropdown"
   },
 
   "GridPath": {

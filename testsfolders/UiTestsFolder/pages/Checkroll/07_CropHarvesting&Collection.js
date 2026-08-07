@@ -82,7 +82,13 @@ export async function CropHarvestingAndCollectionEdit1(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Harvesting No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -126,7 +132,13 @@ export async function CropHarvestingAndCollectionEdit2(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Harvesting No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -164,7 +176,13 @@ export async function CropHarvestingAndCollectionDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Harvesting No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

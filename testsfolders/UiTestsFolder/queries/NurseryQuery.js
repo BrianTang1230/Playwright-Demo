@@ -568,10 +568,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.MDbtSplitDate, 'dd/MM/yyyy') AS MDbtSplitDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -584,6 +584,16 @@ function nurserySQLCommand(formName) {
           FROM NUR_MDbtSplit A2
           WHERE A2.NurBatchKey = A.NurBatchKey
           AND FORMAT(A2.MDbtSplitDate,'yyyyMM') <= FORMAT(A.MDbtSplitDate,'yyyyMM')
+        )  - (
+          SELECT ISNULL(SUM(Y.MCullDTQty), 0)
+          FROM NUR_MainCull Y
+          WHERE Y.NurBatchKey = A.NurBatchKey
+          AND FORMAT(Y.CullDate, 'yyyyMM') <= FORMAT(A.MDbtSplitDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(A2.DTQty), 0)
+          FROM NUR_MAdjustment A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.AdjDate, 'yyyyMM') <= FORMAT(A.MDbtSplitDate, 'yyyyMM')
         ) + A.SplitQty as DbtQty,
         A.SplitQty,
         D.OUCode + ' - ' + D.OUDesc AS OU
@@ -598,10 +608,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS MCullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -670,10 +680,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.AdjDate, 'dd/MM/yyyy') AS MAdjDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (
@@ -742,10 +752,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.MTrnDate,'dd/MM/yyyy') AS MTDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         CASE

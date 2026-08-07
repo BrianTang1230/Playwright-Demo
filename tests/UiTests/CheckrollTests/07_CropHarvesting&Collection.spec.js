@@ -52,7 +52,7 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6]];
+const cellsIndex = [[1], [0, 2, 3, 4, 5, 6, 7]];
 
 test.describe.serial(`${formName} Tests`, async () => {
   if (region === "MY") test.skip(true);
@@ -74,7 +74,6 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(ou);
     console.log(`Start Running: ${formName}`);
   });
 

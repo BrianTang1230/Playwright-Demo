@@ -252,18 +252,19 @@ function masterSQLCommand(formName) {
 
     case "Planting Source Setup":
       sqlCommand = `
-        SELECT PlantSourceCode,
-        PlantSourceDesc,
-        CASE Active
-          WHEN 1 THEN 'True'
-          WHEN 0 THEN 'False'
-        END AS Active,
-        CASE RcdType
-          WHEN 0 THEN 'User'
-          WHEN 1 THEN 'System'
-        END AS RcdType
-        FROM GMS_PlantSourceStp
-        WHERE PlantSourceCode = @Code`;
+      SELECT PlantSourceCode,
+      PlantSourceDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PlantSourceStp
+      WHERE PlantSourceCode = @Code
+      `;
       break;
 
     case "Planting Material Setup":
@@ -302,18 +303,19 @@ function masterSQLCommand(formName) {
     
     case "Race Setup":
       sqlCommand = `
-        SELECT RaceCode,
-        RaceDesc,
-        CASE Active
-          WHEN 1 THEN 'True'
-          WHEN 0 THEN 'False'
-        END AS Active,
-        CASE RcdType
-          WHEN 0 THEN 'User'
-          WHEN 1 THEN 'System'
-        END AS RcdType
-        FROM GMS_RaceStp
-        WHERE RaceCode = @Code`;
+      SELECT RaceCode,
+      RaceDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_RaceStp
+      WHERE RaceCode = @Code
+      `;
       break;
 
     case "Soil Type Setup":
@@ -333,84 +335,86 @@ function masterSQLCommand(formName) {
       `;
       break;
 
-      case "State Setup":
-        sqlCommand = `
-        SELECT StateCode,
-        StateDesc,
-        CASE Active
-          WHEN 1 THEN 'True'
-          WHEN 0 THEN 'False'
-        END AS Active,
-        CASE RcdType
-          WHEN 0 THEN 'User'
-          WHEN 1 THEN 'System'
-        END AS RcdType
-        FROM GMS_StateStp
-        WHERE StateCode = @Code
-        `;
-        break;
-
-      case "Transporter Setup":
-        sqlCommand = `
-          SELECT t.TranspID,
-          t.TranspDesc,
-          CASE t.Active
-              WHEN 1 THEN 'True'
-              WHEN 0 THEN 'False'
-          END AS Active,
-          CASE t.RcdType
-              WHEN 0 THEN 'User'
-              WHEN 1 THEN 'System'
-          END AS RcdType,
-          CASE t.TranspType
-              WHEN 'I' THEN 'Internal Transporter'
-              WHEN 'E' THEN 'External Transporter'
-          END AS TranspType,
-          c.ContactCode + ' - ' + c.ContactDesc AS ContactID
-          FROM GMS_TranspStp t
-          LEFT JOIN GMS_ContactStp c ON t.ContactKey = c.ContactKey
-          WHERE t.TranspID = @Code`;
-      break;
-
-      case "UOM Setup":
+    case "State Setup":
       sqlCommand = `
-        SELECT UOMCode,
-        UOMDesc,
-        CASE Active
-          WHEN 1 THEN 'True'
-          WHEN 0 THEN 'False'
-        END AS Active,
-        CASE RcdType
-          WHEN 0 THEN 'User'
-          WHEN 1 THEN 'System'
-        END AS RcdType,
-        Symbol
-        FROM GMS_UOMStp
-        WHERE UOMCode = @Code`;
+      SELECT StateCode,
+      StateDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_StateStp
+      WHERE StateCode = @Code
+      `;
       break;
 
-      case "Weighing Item Setup":
-        sqlCommand = `
-        SELECT A.WgItemCode,
-        A.WgItemDesc,
-        CASE A.Active
+    case "Transporter Setup":
+      sqlCommand = `
+      SELECT t.TranspID,
+      t.TranspDesc,
+      CASE t.Active
           WHEN 1 THEN 'True'
           WHEN 0 THEN 'False'
-        END AS Active,
-        CASE A.RcdType
+      END AS Active,
+      CASE t.RcdType
           WHEN 0 THEN 'User'
           WHEN 1 THEN 'System'
-        END AS RcdType,
-        B.WgItemTypeDesc,
-        Case A.WgType
-          WHEN 'D' THEN 'Despatch'
-          WHEN 'R' THEN 'Receipt'
-        END AS WgType
-        FROM GMS_WgItemStp A
-        LEFT JOIN GMS_WgItemTypeStp B ON A.ItemType = B.WgItemTypeCode
-        WHERE A.WgItemCode = @Code
-        `;
-        break;
+      END AS RcdType,
+      CASE t.TranspType
+          WHEN 'I' THEN 'Internal Transporter'
+          WHEN 'E' THEN 'External Transporter'
+      END AS TranspType,
+      c.ContactCode + ' - ' + c.ContactDesc AS ContactID
+      FROM GMS_TranspStp t
+      LEFT JOIN GMS_ContactStp c ON t.ContactKey = c.ContactKey
+      WHERE t.TranspID = @Code
+      `;
+      break;
+
+    case "UOM Setup":
+      sqlCommand = `
+      SELECT UOMCode,
+      UOMDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      Symbol
+      FROM GMS_UOMStp
+      WHERE UOMCode = @Code
+      `;
+      break;
+
+    case "Weighing Item Setup":
+      sqlCommand = `
+      SELECT A.WgItemCode,
+      A.WgItemDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.WgItemTypeDesc,
+      Case A.WgType
+        WHEN 'D' THEN 'Despatch'
+        WHEN 'R' THEN 'Receipt'
+      END AS WgType
+      FROM GMS_WgItemStp A
+      LEFT JOIN GMS_WgItemTypeStp B ON A.ItemType = B.WgItemTypeCode
+      WHERE A.WgItemCode = @Code
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);

@@ -250,6 +250,22 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Planting Source Setup":
+      sqlCommand = `
+        SELECT PlantSourceCode,
+        PlantSourceDesc,
+        CASE Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS Active,
+        CASE RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+        END AS RcdType
+        FROM GMS_PlantSourceStp
+        WHERE PlantSourceCode = @Code`;
+      break;
+
     case "Race Setup":
       sqlCommand = `
         SELECT RaceCode,

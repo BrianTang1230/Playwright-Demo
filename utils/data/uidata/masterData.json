@@ -22,6 +22,8 @@
     "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown",
     "PlantingSourceSetupPath": "#PlantSourceCode,#PlantSourceDesc,#plantSourceActive,#plantSourceRcdType",
     "PlantingSourceSetupColumn": "PlantSourceCode text,PlantSourceDesc text,Active checkbox,RcdType text",
+    "PlantingMaterialSetupPath": "#PlantMateCode,#PlantMateDesc,#PlantMateActive,#plantMateRcdType",
+    "PlantingMaterialSetupColumn": "PlantMateCode text,PlantMateDesc text,Active checkbox,RcdType text",
     "RaceSetupPath": "#raceCode,#raceDesc,#raceActive,#raceRcdType",
     "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
     "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",

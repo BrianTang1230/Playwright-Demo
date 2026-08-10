@@ -286,7 +286,7 @@ function masterSQLCommand(formName) {
     case "Position Type Setup":
       sqlCommand = `
       SELECT PostTypeCode,
-      PostTypeDesc AS PPostTypeDesc,
+      PostTypeDesc,
       CASE Active
         WHEN 1 THEN 'True'
         WHEN 0 THEN 'False'

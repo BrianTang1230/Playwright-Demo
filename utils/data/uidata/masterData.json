@@ -25,7 +25,7 @@
     "PlantingMaterialSetupPath": "#PlantMateCode,#PlantMateDesc,#PlantMateActive,#plantMateRcdType",
     "PlantingMaterialSetupColumn": "PlantMateCode text,PlantMateDesc text,Active checkbox,RcdType text",
     "PositionTypeSetupPath": "#postTypeCode,#postTypeDesc,#posTyActive,#postRcdType",
-    "PositionTypeSetupColumn": "PostTypeCode text,PPostTypeDesc text,Active checkbox,RcdType text",
+    "PositionTypeSetupColumn": "PostTypeCode text,PostTypeDesc text,Active checkbox,RcdType text",
     "RaceSetupPath": "#raceCode,#raceDesc,#raceActive,#raceRcdType",
     "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
     "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",

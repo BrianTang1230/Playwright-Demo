@@ -30,6 +30,8 @@
     "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
     "SoilTypeSetupPath": "#soilTypeCode,#soilTypeDesc,#soilTypeActive,#soilTypeRcdType",
     "SoilTypeSetupColumn": "SoilTypeCode text,SoilTypeDesc text,Active checkbox,RcdType text",
+    "StateSetupPath": "#StateCode,#StateDesc,#StateActive,#StateRcdType",
+    "StateSetupColumn": "StateCode text,StateDesc text,Active checkbox,RcdType text",
     "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",
     "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown"
   },

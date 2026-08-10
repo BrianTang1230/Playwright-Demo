@@ -333,6 +333,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+      case "State Setup":
+        sqlCommand = `
+        SELECT StateCode,
+        StateDesc,
+        CASE Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS Active,
+        CASE RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+        END AS RcdType
+        FROM GMS_StateStp
+        WHERE StateCode = @Code
+        `;
+        break;
+
       case "Transporter Setup":
         sqlCommand = `
           SELECT t.TranspID,

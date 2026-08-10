@@ -35,7 +35,9 @@
     "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",
     "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown",
     "UOMSetupPath": "#uomCode,#uomDesc,#uomActive,#uomRcdType,#Symbol",
-    "UOMSetupColumn": "UOMCode text,UOMDesc text,Active checkbox,RcdType text,Symbol dropdown"
+    "UOMSetupColumn": "UOMCode text,UOMDesc text,Active checkbox,RcdType text,Symbol dropdown",
+    "WeighingItemSetupPath": "#WgItemCode,#WgItemDesc,#wgItemTypeActive,#RcdType,ItemType_input,WgType_input",
+    "WeighingItemSetupColumn": "WgItemCode text,WgItemDesc text,Active checkbox,RcdType text,WgItemTypeDesc dropdown,WgType dropdown"
   },
 
   "GridPath": {

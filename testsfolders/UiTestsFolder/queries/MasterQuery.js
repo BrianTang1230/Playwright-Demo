@@ -389,6 +389,29 @@ function masterSQLCommand(formName) {
         WHERE UOMCode = @Code`;
       break;
 
+      case "Weighing Item Setup":
+        sqlCommand = `
+        SELECT A.WgItemCode,
+        A.WgItemDesc,
+        CASE A.Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+        END AS Active,
+        CASE A.RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+        END AS RcdType,
+        B.WgItemTypeDesc,
+        Case A.WgType
+          WHEN 'D' THEN 'Despatch'
+          WHEN 'R' THEN 'Receipt'
+        END AS WgType
+        FROM GMS_WgItemStp A
+        LEFT JOIN GMS_WgItemTypeStp B ON A.ItemType = B.WgItemTypeCode
+        WHERE A.WgItemCode = @Code
+        `;
+        break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

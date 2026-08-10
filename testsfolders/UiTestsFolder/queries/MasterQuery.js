@@ -316,6 +316,23 @@ function masterSQLCommand(formName) {
         WHERE RaceCode = @Code`;
       break;
 
+    case "Soil Type Setup":
+      sqlCommand = `
+      SELECT SoilTypeCode,
+      SoilTypeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_SoilTypeStp
+      WHERE SoilTypeCode = @Code
+      `;
+      break;
+
       case "Transporter Setup":
         sqlCommand = `
           SELECT t.TranspID,

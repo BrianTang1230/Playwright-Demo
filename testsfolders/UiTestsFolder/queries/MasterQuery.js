@@ -283,6 +283,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Position Type Setup":
+      sqlCommand = `
+      SELECT PostTypeCode,
+      PostTypeDesc AS PPostTypeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PostTypeStp
+      WHERE PostTypeCode = @Code
+      `;
+      break;
+    
     case "Race Setup":
       sqlCommand = `
         SELECT RaceCode,

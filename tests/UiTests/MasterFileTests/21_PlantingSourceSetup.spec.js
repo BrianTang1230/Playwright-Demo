@@ -132,7 +132,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Delete ${formName}`, async ({ page, db }) => {
     await PlantingSourceSetupDelete(page, sideMenu, editValues);
 
-    // Check if the PlantingSource code is deleted
+    // Check if the Planting Source code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });

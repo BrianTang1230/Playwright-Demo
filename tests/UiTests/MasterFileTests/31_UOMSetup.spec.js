@@ -42,6 +42,10 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -68,7 +72,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Tests ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { OU: ou[0] });
+    await db.deleteData(deleteSQL, {});
 
     const { uiVals } = await UOMSetupCreate(
       page,

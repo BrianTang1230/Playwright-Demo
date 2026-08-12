@@ -415,6 +415,41 @@ function masterSQLCommand(formName) {
       WHERE A.WgItemCode = @Code
       `;
       break;
+    
+    case "Activity Code Setup":
+      sqlCommand = `
+      SELECT
+      A.Acode,
+      A.ACodeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.UOMCode + ' - ' + B.UOMDesc AS UOM,
+      C.ACatCode + ' - ' + C.ACatDesc AS ActivityCategory,
+      CASE A.IsAdopt
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAdopt,
+      CASE A.AdoptDPF
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS AdoptDPF,
+      CASE A.EnableManPRInc
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS EnableManPRInc,
+      A.ManPRIncRate
+      FROM GMS_ActivityCodeStp A
+      LEFT JOIN GMS_UOMStp B ON A.UOMKey = B.UOMKey
+      LEFT JOIN GMS_ActivityCatStp C ON A.Category = C.ACatKey
+      WHERE A.ACode = @Code
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);
@@ -438,6 +473,22 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey  
       LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey  
       WHERE A.AddRemCode = @Code `;
+      break;
+
+    case "Activity Code Setup":
+      sqlCommand = `
+      SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
+      D.AccNum + ' - ' + D.AccDesc AS ExpenseAccount,
+      B.Rate AS Ratenumeric,
+      CASE B.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate
+      FROM GMS_ActivityCodeStp A
+      LEFT JOIN GMS_ActivityCodeStpOU B ON A.ACodeKey = B.ACodeKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      LEFT JOIN GMS_AccMas D ON B.AccKey = D.AccKey
+      WHERE A.ACode = @Code `;
       break;
 
     default:

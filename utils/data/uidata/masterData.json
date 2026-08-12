@@ -37,10 +37,13 @@
     "UOMSetupPath": "#uomCode,#uomDesc,#uomActive,#uomRcdType,#Symbol",
     "UOMSetupColumn": "UOMCode text,UOMDesc text,Active checkbox,RcdType text,Symbol dropdown",
     "WeighingItemSetupPath": "#WgItemCode,#WgItemDesc,#wgItemTypeActive,#RcdType,ItemType_input,WgType_input",
-    "WeighingItemSetupColumn": "WgItemCode text,WgItemDesc text,Active checkbox,RcdType text,WgItemTypeDesc dropdown,WgType dropdown"
+    "WeighingItemSetupColumn": "WgItemCode text,WgItemDesc text,Active checkbox,RcdType text,WgItemTypeDesc dropdown,WgType dropdown",
+    "ActivityCodeSetupPath": "#ACode,#ACodeDesc,#activityCodeActive,#RcdType,uom_input,comboBoxCategory_input,#IsAdopt,#AdoptDPF,#EnableManPRInc,spinbutton*0",
+    "ActivityCodeSetupColumn": "Acode text,ACodeDesc text,Active checkbox,RcdType text,UOM dropdown,ActivityCategory dropdown,IsAdopt checkbox,AdoptDPF checkbox,EnableManPRInc checkbox,ManPRIncRate numeric"
   },
 
   "GridPath": {
-    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody"
+    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody",
+    "ActivityCodeSetupGrid": "#activityOUGrid > .k-grid-content > .k-selectable > tbody"
   }
 }

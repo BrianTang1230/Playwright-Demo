@@ -451,6 +451,29 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Crop Penalty Setup":
+      sqlCommand = `
+      SELECT A.CropPenaltyCode,
+      A.CropPenaltyDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.DefRate,
+      B.UOMCode + ' - ' + B.UOMDesc AS UOM,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM GMS_CropPenaltyStp A 
+      LEFT JOIN GMS_UOMStp B ON A.UOMKey = B.UOMKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.CropPenaltyCode = @Code
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

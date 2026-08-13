@@ -41,7 +41,9 @@
     "ActivityCodeSetupPath": "#ACode,#ACodeDesc,#activityCodeActive,#RcdType,uom_input,comboBoxCategory_input,#IsAdopt,#AdoptDPF,#EnableManPRInc,spinbutton*0",
     "ActivityCodeSetupColumn": "Acode text,ACodeDesc text,Active checkbox,RcdType text,UOM dropdown,ActivityCategory dropdown,IsAdopt checkbox,AdoptDPF checkbox,EnableManPRInc checkbox,ManPRIncRate numeric",
     "CropPenaltySetupPath": "#CropPenaltyCode,#CropPenaltyDesc,#tjobActive,#tjobRcdType,spinbutton*0,uom_input",
-    "CropPenaltySetupColumn": "CropPenaltyCode text,CropPenaltyDesc text,Active checkbox,RcdType text,DefRate numeric,UOM dropdown"
+    "CropPenaltySetupColumn": "CropPenaltyCode text,CropPenaltyDesc text,Active checkbox,RcdType text,DefRate numeric,UOM dropdown",
+    "AgencySetupPath": "#agencyCode,#agencyDesc,#agencyActive,#rcdType",
+    "AgencySetupColumn": "AgencyCode text,AgencyDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

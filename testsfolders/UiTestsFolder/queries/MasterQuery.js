@@ -474,6 +474,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+      case "Agency Setup":
+      sqlCommand = `
+      SELECT AgencyCode,
+      AgencyDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_AgencyStp
+      WHERE AgencyCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

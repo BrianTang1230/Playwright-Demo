@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  ContactCategorySetupCreate,
-  ContactCategorySetupEdit1,
-  ContactCategorySetupEdit2,
-  ContactCategorySetupDelete,
-} from "@UiFolder/pages/MasterFile/05_ContactCategorySetupPage";
+  PositionTypeSetupCreate,
+  PositionTypeSetupEdit1,
+  PositionTypeSetupEdit2,
+  PositionTypeSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/25_PositionTypeSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Contact Category Setup";
+const formName = "Position Type Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await ContactCategorySetupCreate(
+    const { uiVals } = await PositionTypeSetupCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await ContactCategorySetupEdit1(
+    const { uiVals } = await PositionTypeSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await ContactCategorySetupEdit2(
+    const { uiVals } = await PositionTypeSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,9 +130,9 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await ContactCategorySetupDelete(page, sideMenu, editValues);
+    await PositionTypeSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Contact Category is deleted
+    // Check if the Position Type code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });

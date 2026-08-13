@@ -22,7 +22,7 @@ import {
   LocationSetupEdit1,
   LocationSetupEdit2,
   LocationSetupDelete,
-} from "@UiFolder/pages/MasterFile/17_LocationSetupPage";
+} from "@UiFolder/pages/MasterFile/01_General/17_LocationSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;

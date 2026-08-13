@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  WeighingItemSetupCreate,
-  WeighingItemSetupEdit1,
-  WeighingItemSetupEdit2,
-  WeighingItemSetupDelete,
-} from "@UiFolder/pages/MasterFile/33_WeighingItemSetupPage";
+  UOMSetupCreate,
+  UOMSetupEdit1,
+  UOMSetupEdit2,
+  UOMSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/31_UOMSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Weighing Item Setup";
+const formName = "UOM Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await WeighingItemSetupCreate(
+    const { uiVals } = await UOMSetupCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await WeighingItemSetupEdit1(
+    const { uiVals } = await UOMSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await WeighingItemSetupEdit2(
+    const { uiVals } = await UOMSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,12 +130,13 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await WeighingItemSetupDelete(page, sideMenu, editValues);
+    await UOMSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Weighing Item code is deleted
+    // Check if the UOM code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
+
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

@@ -18,13 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  PayGroupCodeSetupCreate,
-  PayGroupCodeSetupEdit1,
-  PayGroupCodeSetupEdit2,
-  PayGroupCodeSetupDelete,
-} from "@UiFolder/pages/MasterFile/02_AllowanceDeductionReimbursementGroupSetupPage";
-
-import Login from "@utils/data/uidata/loginData.json";
+  NationalitySetupCreate,
+  NationalitySetupEdit1,
+  NationalitySetupEdit2,
+  NationalitySetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/19_NationalitySetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -36,20 +34,14 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Allowance/Deduction/Reimbursement Group Setup";
+const formName = "Nationality Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  Login.Region === "IND" && test.skip();
-
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    // Change Current Form and Phase
-    await setCurrForm(formName);
-    await setCurrPhase(allPhases[phaseCount]);
-
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -76,9 +68,9 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Tests ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {});
+    await db.deleteData(deleteSQL, { OU: ou[0] });
 
-    const { uiVals } = await PayGroupCodeSetupCreate(
+    const { uiVals } = await NationalitySetupCreate(
       page,
       sideMenu,
       paths,
@@ -90,12 +82,13 @@ test.describe.serial(`${formName} Tests`, () => {
       Code: createValues[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await PayGroupCodeSetupEdit1(
+    const { uiVals } = await NationalitySetupEdit1(
       page,
       sideMenu,
       paths,
@@ -114,7 +107,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await PayGroupCodeSetupEdit2(
+    const { uiVals } = await NationalitySetupEdit2(
       page,
       sideMenu,
       paths,
@@ -133,12 +126,13 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await PayGroupCodeSetupDelete(page, sideMenu, editValues);
+    await NationalitySetupDelete(page, sideMenu, editValues);
 
-    // Check if the ADR Group Setup is deleted
+    // Check if the Nationality code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
+
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

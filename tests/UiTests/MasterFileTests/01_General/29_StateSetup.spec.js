@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  RaceSetupCreate,
-  RaceSetupEdit1,
-  RaceSetupEdit2,
-  RaceSetupDelete,
-} from "@UiFolder/pages/MasterFile/26_RaceSetupPage";
+  StateSetupCreate,
+  StateSetupEdit1,
+  StateSetupEdit2,
+  StateSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/29_StateSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Race Setup";
+const formName = "State Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await RaceSetupCreate(
+    const { uiVals } = await StateSetupCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await RaceSetupEdit1(
+    const { uiVals } = await StateSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await RaceSetupEdit2(
+    const { uiVals } = await StateSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,9 +130,9 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await RaceSetupDelete(page, sideMenu, editValues);
+    await StateSetupDelete(page, sideMenu, editValues);
 
-    // Check if the race code is deleted
+    // Check if the State code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });

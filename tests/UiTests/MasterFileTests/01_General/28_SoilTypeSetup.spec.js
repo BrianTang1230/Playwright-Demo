@@ -22,7 +22,7 @@ import {
   SoilTypeSetupEdit1,
   SoilTypeSetupEdit2,
   SoilTypeSetupDelete,
-} from "@UiFolder/pages/MasterFile/28_SoilTypeSetupPage";
+} from "@UiFolder/pages/MasterFile/01_General/28_SoilTypeSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;

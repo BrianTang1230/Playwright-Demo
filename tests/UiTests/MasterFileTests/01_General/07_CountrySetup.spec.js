@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  TransporterSetupCreate,
-  TransporterSetupEdit1,
-  TransporterSetupEdit2,
-  TransporterSetupDelete,
-} from "@UiFolder/pages/MasterFile/30_TransporterSetupPage";
+  CountrySetupCreate,
+  CountrySetupEdit1,
+  CountrySetupEdit2,
+  CountrySetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/07_CountrySetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Transporter Setup";
+const formName = "Country Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await TransporterSetupCreate(
+    const { uiVals } = await CountrySetupCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await TransporterSetupEdit1(
+    const { uiVals } = await CountrySetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await TransporterSetupEdit2(
+    const { uiVals } = await CountrySetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,13 +130,12 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await TransporterSetupDelete(page, sideMenu, editValues);
+    await CountrySetupDelete(page, sideMenu, editValues);
 
-    // Check if the Transporter code is deleted
+    // Check if the country code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
-
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

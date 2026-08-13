@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  CertificationSetupCreate,
-  CertificationSetupEdit1,
-  CertificationSetupEdit2,
-  CertificationSetupDelete,
-} from "@UiFolder/pages/MasterFile/04_CertificationSetupPage";
+  PlantingSourceSetupCreate,
+  PlantingSourceSetupEdit1,
+  PlantingSourceSetupEdit2,
+  PlantingSourceSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/21_PlantingSourceSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Certification Setup";
+const formName = "Planting Source Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,39 +74,35 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await CertificationSetupCreate(
+    const { uiVals } = await PlantingSourceSetupCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await CertificationSetupEdit1(
+    const { uiVals } = await PlantingSourceSetupEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
@@ -115,19 +111,17 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await CertificationSetupEdit2(
+    const { uiVals } = await PlantingSourceSetupEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
@@ -136,12 +130,11 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await CertificationSetupDelete(page, sideMenu, editValues, ou);
+    await PlantingSourceSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Certification Setup is deleted
+    // Check if the Planting Source code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
     });
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });

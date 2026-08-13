@@ -18,11 +18,13 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  StateSetupCreate,
-  StateSetupEdit1,
-  StateSetupEdit2,
-  StateSetupDelete,
-} from "@UiFolder/pages/MasterFile/29_StateSetupPage";
+  PayGroupCodeSetupCreate,
+  PayGroupCodeSetupEdit1,
+  PayGroupCodeSetupEdit2,
+  PayGroupCodeSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/02_AllowanceDeductionReimbursementGroupSetupPage";
+
+import Login from "@utils/data/uidata/loginData.json";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,12 +36,14 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "State Setup";
+const formName = "Allowance/Deduction/Reimbursement Group Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
+  Login.Region === "IND" && test.skip();
+
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Change Current Form and Phase
@@ -74,7 +78,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await StateSetupCreate(
+    const { uiVals } = await PayGroupCodeSetupCreate(
       page,
       sideMenu,
       paths,
@@ -86,13 +90,12 @@ test.describe.serial(`${formName} Tests`, () => {
       Code: createValues[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await StateSetupEdit1(
+    const { uiVals } = await PayGroupCodeSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +114,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await StateSetupEdit2(
+    const { uiVals } = await PayGroupCodeSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,9 +133,9 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await StateSetupDelete(page, sideMenu, editValues);
+    await PayGroupCodeSetupDelete(page, sideMenu, editValues);
 
-    // Check if the State code is deleted
+    // Check if the ADR Group Setup is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });

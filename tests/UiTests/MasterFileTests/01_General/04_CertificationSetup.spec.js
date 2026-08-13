@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  CurrencySetupCreate,
-  CurrencySetupEdit1,
-  CurrencySetupEdit2,
-  CurrencySetupDelete,
-} from "@UiFolder/pages/MasterFile/08_CurrencySetupPage";
+  CertificationSetupCreate,
+  CertificationSetupEdit1,
+  CertificationSetupEdit2,
+  CertificationSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/04_CertificationSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Currency Setup";
+const formName = "Certification Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,35 +74,39 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await CurrencySetupCreate(
+    const { uiVals } = await CertificationSetupCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
+      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
+      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-
+    
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await CurrencySetupEdit1(
+    const { uiVals } = await CertificationSetupEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
+      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
@@ -111,17 +115,19 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await CurrencySetupEdit2(
+    const { uiVals } = await CertificationSetupEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
@@ -130,11 +136,12 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await CurrencySetupDelete(page, sideMenu, editValues);
+    await CertificationSetupDelete(page, sideMenu, editValues, ou);
 
-    // Check if the Currency code is deleted
+    // Check if the Certification Setup is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
+      OU: ou[0],
     });
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });

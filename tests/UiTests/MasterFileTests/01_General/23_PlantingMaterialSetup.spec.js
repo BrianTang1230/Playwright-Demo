@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  NationalitySetupCreate,
-  NationalitySetupEdit1,
-  NationalitySetupEdit2,
-  NationalitySetupDelete,
-} from "@UiFolder/pages/MasterFile/19_NationalitySetupPage";
+  PlantingMaterialSetupCreate,
+  PlantingMaterialSetupEdit1,
+  PlantingMaterialSetupEdit2,
+  PlantingMaterialSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/23_PlantingMaterialSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Nationality Setup";
+const formName = "Planting Material Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -42,6 +42,10 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -68,9 +72,9 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Tests ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { OU: ou[0] });
+    await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await NationalitySetupCreate(
+    const { uiVals } = await PlantingMaterialSetupCreate(
       page,
       sideMenu,
       paths,
@@ -88,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await NationalitySetupEdit1(
+    const { uiVals } = await PlantingMaterialSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -107,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await NationalitySetupEdit2(
+    const { uiVals } = await PlantingMaterialSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -126,13 +130,12 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await NationalitySetupDelete(page, sideMenu, editValues);
+    await PlantingMaterialSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Nationality code is deleted
+    // Check if the Planting Material code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });
-
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

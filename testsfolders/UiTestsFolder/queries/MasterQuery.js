@@ -466,6 +466,25 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "EPF Percentage Setup":
+      sqlCommand = `
+      SELECT EPFPerCode,
+      EPFPerDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      EmpyEPFPer,
+      CompEPFPer
+      FROM GMS_EPFPerStp
+      WHERE EPFPerCode = @Code
+      `;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT

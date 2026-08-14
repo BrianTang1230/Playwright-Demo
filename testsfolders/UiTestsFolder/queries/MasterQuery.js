@@ -415,6 +415,38 @@ function masterSQLCommand(formName) {
       WHERE A.WgItemCode = @Code
       `;
       break;
+
+    case "Building Setup":
+      sqlCommand = `
+      SELECT
+      A.BuildCode,
+      A.BuildDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.BuildTypeCode + ' - ' + B.BuildTypeDesc AS BuildingType,
+      CASE A.Material
+        WHEN 'C' THEN 'Concrete'
+        WHEN 'W' THEN 'Wooden'
+      END AS Material,
+      A.YrBuild,
+      A.MaxMember,
+      A.NoOfRooms,
+      A.Address,
+      A.Remarks,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM GMS_BuildStp A
+      LEFT JOIN GMS_BuildTypeStp B ON A.BuildTypeKey = B.BuildTypeKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.BuildCode = @Code
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
     
     case "Activity Code Setup":
       sqlCommand = `

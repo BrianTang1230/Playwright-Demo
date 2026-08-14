@@ -1,8 +1,14 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
@@ -23,7 +29,8 @@ import {
 
 import {
   CreateRainfallEntryCreate,
-  CreateRainfallEntryEdit,
+  CreateRainfallEntryEdit1,
+  CreateRainfallEntryEdit2,
   CreateRainfallEntryDelete,
 } from "@UiFolder/pages/Checkroll/26_CreateRainfallEntry";
 
@@ -35,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Miscellaneous";
@@ -45,9 +53,13 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1], [2, 3, 4, 5, 6]];
 
-test.describe.serial("Create Rainfall Entry Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -60,7 +72,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -69,12 +81,14 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Create Rainfall Entry", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
-
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await CreateRainfallEntryCreate(
       page,
       sideMenu,
@@ -90,15 +104,16 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -108,9 +123,47 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
+  // // ---------------- Edit Test ----------------
+  // test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+  //   const { uiVals, gridVals } = await CreateRainfallEntryEdit1(
+  //     page,
+  //     sideMenu,
+  //     paths,
+  //     columns,
+  //     createValues,
+  //     editValues,
+  //     gridPaths,
+  //     gridEditValues,
+  //     cellsIndex,
+  //     ou,
+  //   );
+
+  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+  //     Date: createValues[0],
+  //   });
+  //   !dbValues &&
+  //     throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
+
+  //   const gridDbValues = await db.retrieveGridData(
+  //     checkrollGridSQLCommand(formName),
+  //     {
+  //       Date: createValues[0],
+  //     },
+  //   );
+  //   !gridDbValues &&
+  //     throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+  //   const gridDbColumns = Object.keys(gridDbValues[0]);
+
+  //   await validateFormValues(createValues, columns, uiVals);
+  //   await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
+  //   await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+  //   await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  // });
+
   // ---------------- Edit Test ----------------
-  test("Edit Create Rainfall Entry", async ({ page, db }) => {
-    const { uiVals, gridVals } = await CreateRainfallEntryEdit(
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await CreateRainfallEntryEdit2(
       page,
       sideMenu,
       paths,
@@ -126,15 +179,17 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: createValues[0],
     });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -145,7 +200,7 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Create Rainfall Entry", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await CreateRainfallEntryDelete(
       page,
       sideMenu,
@@ -158,16 +213,13 @@ test.describe.serial("Create Rainfall Entry Tests", async () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       Date: editValues[0],
     });
-
-    if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-
-    console.log("\n" + `${formName} transaction deleted successfully!` + "\n");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

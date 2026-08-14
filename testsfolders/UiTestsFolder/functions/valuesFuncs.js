@@ -18,7 +18,7 @@ function updateCurrFormAndPhase() {
 
 export async function validateFormValues(inputValues, columns, uiValues) {
   updateCurrFormAndPhase();
-  console.log(`\nUI Values of ${currForm}:\n` + "-".repeat(100));
+  console.log(`\nUI Values of ${currForm}:\n` + "-".repeat(85));
 
   for (let i = 0; i < inputValues.length; i++) {
     if (
@@ -51,7 +51,7 @@ export async function validateFormValues(inputValues, columns, uiValues) {
 
 export async function validateDBValues(inputValues, inputCols, dbValues) {
   updateCurrFormAndPhase();
-  console.log(`\nDB Values of ${currForm}:\n` + "-".repeat(100));
+  console.log(`\nDB Values of ${currForm}:\n` + "-".repeat(85));
 
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element be colName
@@ -92,7 +92,7 @@ export async function validateGridValues(inputValues, gridValues) {
     );
   }
 
-  console.log(`\nGrid Values of ${currForm}:\n` + "-".repeat(100));
+  console.log(`\nGrid Values of ${currForm}:\n` + "-".repeat(85));
 
   for (let i = 0; i < gridValues.length; i++) {
     let expected = String(inputValues[i]).trim();
@@ -232,11 +232,7 @@ export async function inputGridValues(
   const row = path.includes("tr[") ? table : table.locator("tr").nth(targetRow);
 
   for (let i = 0; i < cellsIndex.length; i++) {
-    if (vals[i] === "AF")
-      console.log(`Grid value of cell ${cellsIndex[i]} is Auto-Filled`);
     if (vals[i] === "NA" || vals[i] === "AF") continue;
-    if (vals[i] === "AF")
-      console.log(`Grid value of cell ${cellsIndex[i]} is Auto-Filled 2`);
 
     const cell = row.locator("td").nth(cellsIndex[i]);
 

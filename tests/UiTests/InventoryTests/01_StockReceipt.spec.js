@@ -60,7 +60,7 @@ test.describe.serial("Stock Receipt Tests", async () => {
     docNo = DocNo[keyName];
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -189,6 +189,6 @@ test.describe.serial("Stock Receipt Tests", async () => {
   test.afterAll(async ({ db }) => {
     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

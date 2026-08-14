@@ -1,10 +1,15 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function CreateRainfallEntryCreate(
   page,
@@ -57,7 +62,60 @@ export async function CreateRainfallEntryCreate(
   return { uiVals, gridVals };
 }
 
-export async function CreateRainfallEntryEdit(
+// export async function CreateRainfallEntryEdit1(
+//   page,
+//   sideMenu,
+//   paths,
+//   columns,
+//   values,
+//   newValues,
+//   gridPaths,
+//   gridValues,
+//   cellsIndex,
+//   ou,
+// ) {
+//   await runStep("Select OU", async () => {
+//     await SelectOU(
+//       page,
+//       "#divComboOU .k-dropdown-wrap .k-select",
+//       "#comboBoxOU_listbox span",
+//       ou[0],
+//     );
+//   });
+
+//   await runStep("Edit transaction", async () => {
+//     for (let i = 0; i < paths.length; i++) {
+//       await inputFormValues(page, paths[i], columns[i], values[i]);
+//     }
+//   });
+
+//   await runStep("Edit grid item", async () => {
+//     for (let i = 0; i < gridPaths.length; i++) {
+//       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+//     }
+//   });
+
+//   await runStep("Close edited transaction without save", async () => {
+//     await sideMenu.clickBtnClose();
+//     await sideMenu.rejectBtn.click();
+//   });
+
+//   await runStep("Reopen transaction", async () => {
+//     await page.locator("#openRecent").first().click();
+//   });
+
+//   const uiVals = await runStep("Get edited UI values", async () => {
+//     return await getFormValues(page, paths);
+//   });
+
+//   const gridVals = await runStep("Get edited grid UI values", async () => {
+//     return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+//   });
+
+//   return { uiVals, gridVals };
+// }
+
+export async function CreateRainfallEntryEdit2(
   page,
   sideMenu,
   paths,

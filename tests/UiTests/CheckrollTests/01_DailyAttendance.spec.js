@@ -53,14 +53,12 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 4, 6, 7],
+  [1, 2, 4, 6, 7],
   [1, 2, 3, 4, 5, 6],
-  [1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15],
 ];
 const cellsIndexIND = [
-  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  [1, 2, 4, 5, 6, 7, 8, 9, 10, 11],
   [1, 2, 3, 4, 5, 6],
-  [1, 2, 3, 4, 5, 6, 7, 8, 9],
 ];
 
 const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
@@ -86,7 +84,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(dwPaths, dwCols, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------
@@ -128,7 +126,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !gridDbValues &&
       throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
@@ -165,7 +163,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !gridDbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
@@ -202,7 +200,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !gridDbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
@@ -236,6 +234,6 @@ test.describe.serial(`${formName} Tests`, () => {
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

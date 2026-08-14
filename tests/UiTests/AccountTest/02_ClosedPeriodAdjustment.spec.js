@@ -69,11 +69,15 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
       ou,
       gridCreateValues,
       gridEditValues,
-      filterData
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
+      filterData,
+    ] = await excel.loadExcelValues(sheetName, formName, {
+      hasGrid: true,
+      hasFilter: true,
+    });
 
     docNo = DocNo[keyName];
-    console.log(`Start Running: ${formName}`);
+
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------
@@ -86,9 +90,9 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
 
   // ---------------- Create Test ----------------
   test("Create Closed Period Adjustment", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { 
-      DocNo: docNo, 
-      OU: ou[0] 
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
     });
 
     const { uiVals, gridVals } = await ClosedPeriodAdjustmentCreate(
@@ -100,13 +104,13 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
       gridPaths,
       gridCreateValues,
       dwCellIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").inputValue() 
+      await page.locator("#txtDocNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -115,14 +119,14 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-    
+
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
@@ -130,11 +134,11 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
     for (let i = 0; i < rowData.length; i++) {
       console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    };
+    }
   });
 
   // ---------------- Edit Test ----------------
-  test('Edit Closed Period Adjustment', async ({ page, db }) => {
+  test("Edit Closed Period Adjustment", async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
@@ -150,13 +154,13 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
       ou,
       docNo,
       fiscalYear,
-      period
+      period,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").inputValue() 
+      await page.locator("#txtDocNum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -165,14 +169,14 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-    
+
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
@@ -180,16 +184,16 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
     for (let i = 0; i < rowData.length; i++) {
       console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    };
+    }
   });
 
   // ---------------- Delete Test ----------------
-  test('Delete Closed Period Adjustment', async ({ db }) => {
+  test("Delete Closed Period Adjustment", async ({ db }) => {
     console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
 
-    await db.deleteData(deleteSQL, { 
-      DocNo: docNo, 
-      OU: ou[0] 
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
     });
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -197,9 +201,13 @@ test.describe.serial("Closed Period Adjustment Tests", () => {
     });
 
     if (dbValues && dbValues.length > 0) {
-      throw new Error(`Deletion failed! Record ${docNo} is still present in the database.`);
+      throw new Error(
+        `Deletion failed! Record ${docNo} is still present in the database.`,
+      );
     } else {
-      console.log(`\n Success! Record ${docNo} is completely gone from the database.`);
+      console.log(
+        `\n Success! Record ${docNo} is completely gone from the database.`,
+      );
     }
   });
 });

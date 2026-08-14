@@ -52,7 +52,7 @@ const keyName = "InterOUCropHarvesting&Collection";
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
-const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6]];
+const cellsIndex = [[1], [0, 2, 3, 4, 5, 6, 7]];
 
 test.describe.serial(`${formName} Tests`, async () => {
   if (region === "MY") test.skip(true);
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -118,7 +118,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -161,7 +160,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -204,7 +202,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -241,6 +238,6 @@ test.describe.serial(`${formName} Tests`, async () => {
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

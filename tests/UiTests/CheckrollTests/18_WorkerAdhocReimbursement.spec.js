@@ -71,7 +71,7 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -120,7 +120,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -160,7 +159,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -200,7 +198,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       checkrollGridSQLCommand(formName),
       {
         DocNo: docNo,
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -215,7 +212,7 @@ test.describe.serial(`${formName} Tests`, async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Worker Ad hoc Reimbursement", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await WorkerAdhocReimbursementDelete(
       page,
       sideMenu,
@@ -234,6 +231,6 @@ test.describe.serial(`${formName} Tests`, async () => {
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

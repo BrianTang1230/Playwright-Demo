@@ -35,16 +35,14 @@ export async function CropHarvestingAndCollectionCreate(
   });
 
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.slice(0, 8).length; i++) {
+    for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
 
   await runStep("Add grid and block code", async () => {
-    await sideMenu.btnAddNewItem.click();
-    await page.locator('[name="comboBoxBlock_input"]').type(values[8]);
-    await page.keyboard.press("Tab");
     await page.locator("#btnAddBlock").click();
+    await sideMenu.btnAddNewItem.click();
   });
 
   await runStep("Create grid item", async () => {
@@ -103,8 +101,13 @@ export async function CropHarvestingAndCollectionEdit1(
     }
   });
 
-  await runStep("Save edited transaction", async () => {
-    await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
   });
 
   const uiVals = await runStep("Get edited UI values", async () => {

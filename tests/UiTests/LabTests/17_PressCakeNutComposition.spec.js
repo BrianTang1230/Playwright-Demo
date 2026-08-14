@@ -61,7 +61,7 @@ test.describe.serial("Press Cake Nut Composition Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -184,6 +184,6 @@ test.describe.serial("Press Cake Nut Composition Tests", async () => {
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

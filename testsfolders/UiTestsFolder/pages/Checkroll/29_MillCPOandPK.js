@@ -1,11 +1,15 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { runStep, SelectOU } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy1AndMoreCriterias,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function MillCPOandPKCreate(
   page,
@@ -18,34 +22,53 @@ export async function MillCPOandPKCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU-list span",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "#divComboOU .k-dropdown-wrap .k-select",
+      "#comboBoxOU-list span",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  await sideMenu.btnAddNewItem.click();
+  await runStep("Add grid item", async () => {
+    await sideMenu.btnAddNewItem.click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
   await sideMenu.clickBtnSave();
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get created grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
 
   return { uiVals, gridVals };
 }
 
-export async function MillCPOandPKEdit(
+export async function MillCPOandPKEdit1(
   page,
   sideMenu,
   paths,
@@ -58,26 +81,107 @@ export async function MillCPOandPKEdit(
   ou,
   keyword,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], keyword, 5, "Dropdown");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      [values[0], values[1], gridCreatevalues[2]],
+      ["FY", "Period", "Div"],
+      ["Typing", "Typing", "Dropdown"],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, keyword);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function MillCPOandPKEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  keyword,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      ["FY", "Period", "Div"],
+      ["Typing", "Typing", "Dropdown"],
+    );
+  });
+
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Save edited transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
 
   return { uiVals, gridVals };
 }
 
 export async function MillCPOandPKDelete(page, sideMenu, values, ou, docNo) {
   await FilterRecordByOUAndDate(page, values, ou[0], docNo, 3);
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy1AndMoreCriterias(
+      page,
+      ou[0],
+      ["FY", "Period", "Div"],
+      ["Typing", "Typing", "Dropdown"],
+    );
+  });
 
   await sideMenu.clickBtnDelete();
 }

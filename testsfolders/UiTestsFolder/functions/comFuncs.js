@@ -139,7 +139,7 @@ export function throwTestFailMsg(caseCode, formName, remarks = "") {
   }
 
   throw new Error(
-    `${phase} in ${formName} failed due to ${reason} on ${side}${remarks}.\n${"-".repeat(100)}`,
+    `${phase} in ${formName} failed due to ${reason} on ${side}${remarks}.\n${"-".repeat(85)}`,
   );
 }
 

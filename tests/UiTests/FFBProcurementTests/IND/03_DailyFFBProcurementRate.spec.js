@@ -51,7 +51,7 @@ test.describe.serial("Daily FFB Procurement Rate Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -150,6 +150,6 @@ test.describe.serial("Daily FFB Procurement Rate Tests", () => {
   // ---------------- After All ----------------
   test.afterAll(async ({}) => {
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

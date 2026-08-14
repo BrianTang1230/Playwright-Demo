@@ -448,6 +448,24 @@ function masterSQLCommand(formName) {
       `;
       break;
     
+    case "Building Type Setup":
+      sqlCommand = `
+      SELECT BuildTypeCode,
+      BuildTypeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      SeqNo,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_BuildTypeStp
+      WHERE BuildTypeCode = @Code
+      `;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT

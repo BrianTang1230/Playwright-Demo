@@ -40,6 +40,8 @@
     "WeighingItemSetupColumn": "WgItemCode text,WgItemDesc text,Active checkbox,RcdType text,WgItemTypeDesc dropdown,WgType dropdown",
     "BuildingSetupPath": "#buildCode,#buildDesc,#Active,#buildRcdType,buildType_input,listbox*1,#YrBuild,spinbutton*0,spinbutton*1,#Address,#Remarks",
     "BuildingSetupColumn": "BuildCode text,BuildDesc text,Active checkbox,RcdType text,BuildingType dropdown,Material combobox,YrBuild date,MaxMember numeric,NoOfRooms numeric,Address text,Remarks text",
+    "BuildingTypeSetupPath": "#BuildTypeCode,#BuildTypeDesc,#buildTypeActive,spinbutton*0,#rcdType",
+    "BuildingTypeSetupColumn": "BuildTypeCode text,BuildTypeDesc text,Active checkbox,SeqNo numeric,RcdType text",
     "ActivityCodeSetupPath": "#ACode,#ACodeDesc,#activityCodeActive,#RcdType,uom_input,comboBoxCategory_input,#IsAdopt,#AdoptDPF,#EnableManPRInc,spinbutton*0",
     "ActivityCodeSetupColumn": "Acode text,ACodeDesc text,Active checkbox,RcdType text,UOM dropdown,ActivityCategory dropdown,IsAdopt checkbox,AdoptDPF checkbox,EnableManPRInc checkbox,ManPRIncRate numeric",
     "CropPenaltySetupPath": "#CropPenaltyCode,#CropPenaltyDesc,#tjobActive,#tjobRcdType,spinbutton*0,uom_input",

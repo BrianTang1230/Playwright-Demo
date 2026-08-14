@@ -250,6 +250,207 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Planting Source Setup":
+      sqlCommand = `
+      SELECT PlantSourceCode,
+      PlantSourceDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PlantSourceStp
+      WHERE PlantSourceCode = @Code
+      `;
+      break;
+
+    case "Planting Material Setup":
+      sqlCommand = `
+      SELECT PlantMateCode,
+      PlantMateDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PlantMateStp
+      WHERE PlantMateCode = @Code
+      `;
+      break;
+
+    case "Position Type Setup":
+      sqlCommand = `
+      SELECT PostTypeCode,
+      PostTypeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PostTypeStp
+      WHERE PostTypeCode = @Code
+      `;
+      break;
+    
+    case "Race Setup":
+      sqlCommand = `
+      SELECT RaceCode,
+      RaceDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_RaceStp
+      WHERE RaceCode = @Code
+      `;
+      break;
+
+    case "Soil Type Setup":
+      sqlCommand = `
+      SELECT SoilTypeCode,
+      SoilTypeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_SoilTypeStp
+      WHERE SoilTypeCode = @Code
+      `;
+      break;
+
+    case "State Setup":
+      sqlCommand = `
+      SELECT StateCode,
+      StateDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_StateStp
+      WHERE StateCode = @Code
+      `;
+      break;
+
+    case "Transporter Setup":
+      sqlCommand = `
+      SELECT t.TranspID,
+      t.TranspDesc,
+      CASE t.Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+      END AS Active,
+      CASE t.RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE t.TranspType
+          WHEN 'I' THEN 'Internal Transporter'
+          WHEN 'E' THEN 'External Transporter'
+      END AS TranspType,
+      c.ContactCode + ' - ' + c.ContactDesc AS ContactID
+      FROM GMS_TranspStp t
+      LEFT JOIN GMS_ContactStp c ON t.ContactKey = c.ContactKey
+      WHERE t.TranspID = @Code
+      `;
+      break;
+
+    case "UOM Setup":
+      sqlCommand = `
+      SELECT UOMCode,
+      UOMDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      Symbol
+      FROM GMS_UOMStp
+      WHERE UOMCode = @Code
+      `;
+      break;
+
+    case "Weighing Item Setup":
+      sqlCommand = `
+      SELECT A.WgItemCode,
+      A.WgItemDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.WgItemTypeDesc,
+      Case A.WgType
+        WHEN 'D' THEN 'Despatch'
+        WHEN 'R' THEN 'Receipt'
+      END AS WgType
+      FROM GMS_WgItemStp A
+      LEFT JOIN GMS_WgItemTypeStp B ON A.ItemType = B.WgItemTypeCode
+      WHERE A.WgItemCode = @Code
+      `;
+      break;
+    
+    case "Activity Code Setup":
+      sqlCommand = `
+      SELECT
+      A.Acode,
+      A.ACodeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.UOMCode + ' - ' + B.UOMDesc AS UOM,
+      C.ACatCode + ' - ' + C.ACatDesc AS ActivityCategory,
+      CASE A.IsAdopt
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAdopt,
+      CASE A.AdoptDPF
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS AdoptDPF,
+      CASE A.EnableManPRInc
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS EnableManPRInc,
+      A.ManPRIncRate
+      FROM GMS_ActivityCodeStp A
+      LEFT JOIN GMS_UOMStp B ON A.UOMKey = B.UOMKey
+      LEFT JOIN GMS_ActivityCatStp C ON A.Category = C.ACatKey
+      WHERE A.ACode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -272,6 +473,22 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey  
       LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey  
       WHERE A.AddRemCode = @Code `;
+      break;
+
+    case "Activity Code Setup":
+      sqlCommand = `
+      SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
+      D.AccNum + ' - ' + D.AccDesc AS ExpenseAccount,
+      B.Rate AS Ratenumeric,
+      CASE B.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate
+      FROM GMS_ActivityCodeStp A
+      LEFT JOIN GMS_ActivityCodeStpOU B ON A.ACodeKey = B.ACodeKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      LEFT JOIN GMS_AccMas D ON B.AccKey = D.AccKey
+      WHERE A.ACode = @Code `;
       break;
 
     default:

@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  CurrencySetupCreate,
-  CurrencySetupEdit1,
-  CurrencySetupEdit2,
-  CurrencySetupDelete,
-} from "@UiFolder/pages/MasterFile/08_CurrencySetupPage";
+  PlantingSourceSetupCreate,
+  PlantingSourceSetupEdit1,
+  PlantingSourceSetupEdit2,
+  PlantingSourceSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/21_PlantingSourceSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Currency Setup";
+const formName = "Planting Source Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -74,7 +74,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await CurrencySetupCreate(
+    const { uiVals } = await PlantingSourceSetupCreate(
       page,
       sideMenu,
       paths,
@@ -92,7 +92,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await CurrencySetupEdit1(
+    const { uiVals } = await PlantingSourceSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -111,7 +111,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await CurrencySetupEdit2(
+    const { uiVals } = await PlantingSourceSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -130,9 +130,9 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await CurrencySetupDelete(page, sideMenu, editValues);
+    await PlantingSourceSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Currency code is deleted
+    // Check if the Planting Source code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
     });

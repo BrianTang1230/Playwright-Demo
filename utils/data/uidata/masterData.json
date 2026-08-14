@@ -19,10 +19,31 @@
     "LocationSetupPath": "#locationCode,#locationDesc,#locationActive,#locationIsDefault,comboBoxOU_input,#address,#contactPerson,comboBoxPost_input,#phone,#mobile,#fax,#email",
     "LocationSetupColumn": "LocationCode text,LocationDesc text,Active checkbox,IsDefault checkbox,OU dropdown,Address text,Contact text,PostDesc dropdown,Phone text,Mobile text,Fax text,Email text",
     "NationalitySetupPath": "#nationalCode,#nationalDesc,#nationalActive,#nationalRcdType,ctry_input",
-    "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown"
+    "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown",
+    "PlantingSourceSetupPath": "#PlantSourceCode,#PlantSourceDesc,#plantSourceActive,#plantSourceRcdType",
+    "PlantingSourceSetupColumn": "PlantSourceCode text,PlantSourceDesc text,Active checkbox,RcdType text",
+    "PlantingMaterialSetupPath": "#PlantMateCode,#PlantMateDesc,#PlantMateActive,#plantMateRcdType",
+    "PlantingMaterialSetupColumn": "PlantMateCode text,PlantMateDesc text,Active checkbox,RcdType text",
+    "PositionTypeSetupPath": "#postTypeCode,#postTypeDesc,#posTyActive,#postRcdType",
+    "PositionTypeSetupColumn": "PostTypeCode text,PostTypeDesc text,Active checkbox,RcdType text",
+    "RaceSetupPath": "#raceCode,#raceDesc,#raceActive,#raceRcdType",
+    "RaceSetupColumn": "RaceCode text,RaceDesc text,Active checkbox,RcdType text",
+    "SoilTypeSetupPath": "#soilTypeCode,#soilTypeDesc,#soilTypeActive,#soilTypeRcdType",
+    "SoilTypeSetupColumn": "SoilTypeCode text,SoilTypeDesc text,Active checkbox,RcdType text",
+    "StateSetupPath": "#StateCode,#StateDesc,#StateActive,#StateRcdType",
+    "StateSetupColumn": "StateCode text,StateDesc text,Active checkbox,RcdType text",
+    "TransporterSetupPath": "#TranspID,#TranspDesc,#transpActive,#RcdType,TranspType_input,Contact_input",
+    "TransporterSetupColumn": "TranspID text,TranspDesc text,Active checkbox,RcdType text,TranspType dropdown,ContactID dropdown",
+    "UOMSetupPath": "#uomCode,#uomDesc,#uomActive,#uomRcdType,#Symbol",
+    "UOMSetupColumn": "UOMCode text,UOMDesc text,Active checkbox,RcdType text,Symbol dropdown",
+    "WeighingItemSetupPath": "#WgItemCode,#WgItemDesc,#wgItemTypeActive,#RcdType,ItemType_input,WgType_input",
+    "WeighingItemSetupColumn": "WgItemCode text,WgItemDesc text,Active checkbox,RcdType text,WgItemTypeDesc dropdown,WgType dropdown",
+    "ActivityCodeSetupPath": "#ACode,#ACodeDesc,#activityCodeActive,#RcdType,uom_input,comboBoxCategory_input,#IsAdopt,#AdoptDPF,#EnableManPRInc,spinbutton*0",
+    "ActivityCodeSetupColumn": "Acode text,ACodeDesc text,Active checkbox,RcdType text,UOM dropdown,ActivityCategory dropdown,IsAdopt checkbox,AdoptDPF checkbox,EnableManPRInc checkbox,ManPRIncRate numeric"
   },
 
   "GridPath": {
-    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody"
+    "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody",
+    "ActivityCodeSetupGrid": "#activityOUGrid > .k-grid-content > .k-selectable > tbody"
   }
 }

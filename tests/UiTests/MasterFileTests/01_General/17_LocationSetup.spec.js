@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  DivisionSetupCreate,
-  DivisionSetupEdit1,
-  DivisionSetupEdit2,
-  DivisionSetupDelete,
-} from "@UiFolder/pages/MasterFile/10_DivisionSetupPage";
+  LocationSetupCreate,
+  LocationSetupEdit1,
+  LocationSetupEdit2,
+  LocationSetupDelete,
+} from "@UiFolder/pages/MasterFile/01_General/17_LocationSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "General";
-const formName = "Division Setup";
+const formName = "Location Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -42,10 +42,6 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
-    // Change Current Form and Phase
-    await setCurrForm(formName);
-    await setCurrPhase(allPhases[phaseCount]);
-
     // Load Excel values
     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
       sheetName,
@@ -72,15 +68,14 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Tests ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { Code: createValues[0], OU: ou[0] });
+    await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await DivisionSetupCreate(
+    const { uiVals } = await LocationSetupCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -90,18 +85,17 @@ test.describe.serial(`${formName} Tests`, () => {
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await DivisionSetupEdit1(
+    const { uiVals } = await LocationSetupEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -111,38 +105,38 @@ test.describe.serial(`${formName} Tests`, () => {
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await DivisionSetupEdit2(
+    const { uiVals } = await LocationSetupEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
+      OU: ou[1],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
     await validateFormValues(editValues, columns, uiVals);
-    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await DivisionSetupDelete(page, sideMenu, editValues, ou);
+    await LocationSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Division Code is deleted
+    // Check if the Location code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
+      OU: ou[1],
     });
+
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

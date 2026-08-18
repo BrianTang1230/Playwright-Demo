@@ -72,7 +72,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -218,6 +218,6 @@ test.describe.serial(`${formName} Tests`, () => {
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

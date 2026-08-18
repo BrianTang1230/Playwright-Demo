@@ -1,14 +1,18 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateGridValues,
   validateDBValues,
-  getGridValues,
-  getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 import {
@@ -25,7 +29,8 @@ import {
 
 import {
   MillCPOandPKCreate,
-  MillCPOandPKEdit,
+  MillCPOandPKEdit1,
+  MillCPOandPKEdit2,
   MillCPOandPKDelete,
 } from "@UiFolder/pages/Checkroll/29_MillCPOandPK";
 
@@ -37,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "CR_DATA";
 const module = "Checkroll";
 const submodule = "Miscellaneous";
@@ -47,9 +53,15 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3]];
 
-test.describe.skip("Mill CPO and PK Tests", async () => {
+test.describe.skip(`${formName} Tests`, async () => {
+  // if (region === "IND")
+  test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -62,7 +74,7 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each  ----------------
@@ -71,17 +83,14 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Mill CPO and PK", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      FYear: createValues[0],
-      Period: createValues[1],
-      Div: createValues[2],
-      OU: ou[0],
-    });
-
+  test(`Create ${formName}`, async ({ page, db }) => {
     const { uiVals, gridVals } = await MillCPOandPKCreate(
       page,
       sideMenu,
@@ -98,8 +107,8 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       FYear: createValues[0],
       Period: createValues[1],
       Div: createValues[2],
-      OU: ou[0],
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
@@ -107,29 +116,22 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
         FYear: createValues[0],
         Period: createValues[1],
         Div: createValues[2],
-        OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues(
-      [...createValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0],
-    );
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await validateDBValues(
-      gridCreateValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0],
-    );
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Mill CPO and PK", async ({ page, db }) => {
-    await MillCPOandPKEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await MillCPOandPKEdit(
       page,
       sideMenu,
       paths,
@@ -143,14 +145,10 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
       gridCreateValues[0],
     );
 
-    const uiVals = await getFormValues(page, paths);
-    const gridVals = await getGridValues(page, gridPaths, cellsIndex);
-
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       FYear: createValues[0],
       Period: createValues[1],
       Div: createValues[2],
-      OU: ou[0],
     });
 
     const gridDbValues = await db.retrieveGridData(
@@ -159,39 +157,77 @@ test.describe.skip("Mill CPO and PK Tests", async () => {
         FYear: createValues[0],
         Period: createValues[1],
         Div: createValues[2],
-        OU: ou[0],
+      },
+    );
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await MillCPOandPKEdit(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      gridCreateValues[0],
+    );
+
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
+    });
+
+    const gridDbValues = await db.retrieveGridData(
+      checkrollGridSQLCommand(formName),
+      {
+        FYear: createValues[0],
+        Period: createValues[1],
+        Div: createValues[2],
       },
     );
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
-    await validateDBValues(
-      [...editValues, ou[0]],
-      [...columns, "OU"],
-      dbValues[0],
-    );
+    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await validateDBValues(
-      gridEditValues.join(";").split(";"),
-      gridDbColumns,
-      gridDbValues[0],
-    );
+    await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
   });
 
-  // // ---------------- Delete Test ----------------
-  // test("Delete Mill CPO and PK", async ({ page, db }) => {
-  //   await MillCPOandPKDelete(page, sideMenu, createValues, ou, docNo);
+  // ---------------- Delete Test ----------------
+  test(`Delete ${formName}`, async ({ page, db }) => {
+    await MillCPOandPKDelete(page, sideMenu, createValues, ou, docNo);
 
-  //   const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
-  //     DocNo: docNo,
-  //     OU: ou[0],
-  //   });
+    const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
+    });
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
+  });
 
-  //   if (dbValues.length > 0) throw new Error(`Deleting ${formName} failed`);
-  // });
-
-  // // ---------------- After All ----------------
-  // test.afterAll(async ({ db }) => {
-  //   await editJson(JsonPath, formName, "");
-  console.log(`End Tests Running: ${formName}`); // });
+  // ---------------- After All ----------------
+  test.afterAll(async ({ db }) => {
+    await db.deleteData(deleteSQL, {
+      FYear: createValues[0],
+      Period: createValues[1],
+      Div: createValues[2],
+      OU: ou[0],
+    });
+    await editJson(JsonPath, formName, "");
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
+  });
 });

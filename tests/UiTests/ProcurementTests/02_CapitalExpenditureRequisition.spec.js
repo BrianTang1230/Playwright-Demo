@@ -48,7 +48,8 @@
 
 //     docNo = DocNo[keyName];
 
-//     console.log(`Start Running: ${formName}`);
+//
+console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
 //   });
 
 //   // ---------------- Before Each ----------------
@@ -164,5 +165,6 @@
 //   // ---------------- After All ----------------
 //   test.afterAll(async ({ db }) => {
 //     await editJson(JsonPath, formName, "");
-// console.log(`End Tests Running: ${formName}`); //   });
+// console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
+//   });
 // });

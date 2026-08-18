@@ -1,11 +1,15 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerAdditionalRemunerationCreate(
   page,
@@ -61,7 +65,7 @@ export async function WorkerAdditionalRemunerationCreate(
   return { uiVals, gridVals };
 }
 
-export async function WorkerAdditionalRemunerationEdit(
+export async function WorkerAdditionalRemunerationEdit1(
   page,
   sideMenu,
   paths,
@@ -75,7 +79,72 @@ export async function WorkerAdditionalRemunerationEdit(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ADR No.",
+    );
+  });
+
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) {
+        await sideMenu.confirmBtn.click();
+        await page.locator("#btnAddNewItemRem").click();
+      }
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function WorkerAdditionalRemunerationEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ADR No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -117,7 +186,13 @@ export async function WorkerAdditionalRemunerationDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 2);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ADR No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

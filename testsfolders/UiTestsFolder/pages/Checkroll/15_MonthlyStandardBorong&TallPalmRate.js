@@ -8,7 +8,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy1AndMoreCriterias,
+  FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function MonthlyStandardBorongAndTallPalmRateCreate(
@@ -80,7 +80,14 @@ export async function MonthlyStandardBorongAndTallPalmRateEdit1(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy1AndMoreCriterias(page, ou);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      keyword,
+      "Block",
+      "Dropdown",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -101,7 +108,7 @@ export async function MonthlyStandardBorongAndTallPalmRateEdit1(
   });
 
   await runStep("Reopen transaction", async () => {
-    await FilterForUnsaveChecking(page, docNo);
+    await FilterForUnsaveChecking(page, keyword);
   });
 
   const uiVals = await runStep("Get edited UI values", async () => {
@@ -129,7 +136,14 @@ export async function MonthlyStandardBorongAndTallPalmRateEdit2(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy1AndMoreCriterias(page, ou);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      keyword,
+      "Block",
+      "Dropdown",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -167,7 +181,14 @@ export async function MonthlyStandardBorongAndTallPalmRateDelete(
   keyword,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy1AndMoreCriterias(page, ou);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      keyword,
+      "Block",
+      "Dropdown",
+    );
   });
 
   await runStep("Delete transaction", async () => {

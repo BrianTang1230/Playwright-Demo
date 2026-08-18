@@ -84,7 +84,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(dwPaths, dwCols, createValues, editValues);
 
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------
@@ -126,7 +126,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !gridDbValues &&
       throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
@@ -163,7 +163,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
@@ -200,7 +200,7 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       checkrollGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo },
     );
     !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
@@ -237,6 +237,6 @@ test.describe.serial(`${formName} Tests`, () => {
       OU: ou[0],
     });
     await editJson(JsonPath, formName, "");
-    console.log(`End Tests Running: ${formName}`);
+    console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

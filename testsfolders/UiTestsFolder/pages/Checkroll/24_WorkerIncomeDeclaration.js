@@ -1,11 +1,15 @@
 import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function WorkerIncomeDeclarationCreate(
   page,
@@ -61,7 +65,7 @@ export async function WorkerIncomeDeclarationCreate(
   return { uiVals, gridVals };
 }
 
-export async function WorkerIncomeDeclarationEdit(
+export async function WorkerIncomeDeclarationEdit1(
   page,
   sideMenu,
   paths,
@@ -72,10 +76,81 @@ export async function WorkerIncomeDeclarationEdit(
   gridValues,
   cellsIndex,
   ou,
-  keyword,
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "Dropdown");
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ARS No.",
+    );
+  });
+
+  await runStep("Edit transaction", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Delete and add new grid item", async () => {
+    await page.locator("#IsTaxDeductArrEmpySelectGrid").check();
+    await page.locator("#btnDeleteItem").click();
+    await sideMenu.confirmBtn.click();
+    await sideMenu.btnAddNewItem.click();
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      if (i === 1) {
+        await page.locator("#btnAddNewItemInc").click();
+      }
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get edited UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get edited grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function WorkerIncomeDeclarationEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ARS No.",
+    );
   });
 
   await runStep("Edit transaction", async () => {
@@ -120,10 +195,16 @@ export async function WorkerIncomeDeclarationDelete(
   sideMenu,
   values,
   ou,
-  keyword,
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], keyword, 3, "Dropdown");
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "ARS No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

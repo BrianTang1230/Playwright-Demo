@@ -46,7 +46,8 @@
 //     await checkLength(paths, columns, createValues, editValues);
 
 //     docNo = DocNo[keyName];
-//     if (docNo) console.log(`Start Running: ${formName}`);
+//     if (docNo)
+console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
 //   });
 
 //   // ---------------- Before Each ----------------
@@ -95,5 +96,6 @@
 //     if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
 
 //     await editJson(JsonPath, formName, "");
-// console.log(`End Tests Running: ${formName}`); //   });
+// console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
+//   });
 // });

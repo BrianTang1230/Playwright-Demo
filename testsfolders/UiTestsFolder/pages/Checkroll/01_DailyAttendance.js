@@ -48,11 +48,6 @@ export async function DailyAttendanceCreate(
   await runStep("Create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
       if (i === 1) await page.locator("#btnNewDWItem").click();
-      if (i === 2) {
-        await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
-      }
-
       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
@@ -65,11 +60,7 @@ export async function DailyAttendanceCreate(
     return await getFormValues(page, paths);
   });
 
-  await runStep("Click on tab 1", async () => {
-    await page.locator("#tabstripworkDet li").first().click();
-  });
-
-  const gridVals1 = await runStep("Get created grid UI values", async () => {
+  const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
@@ -77,21 +68,6 @@ export async function DailyAttendanceCreate(
       { isOneRow: true },
     );
   });
-
-  await runStep("Click on tab 2", async () => {
-    await page.locator("#tabstripworkDet li").nth(1).click();
-  });
-
-  const gridVals2 = await runStep("Get created grid UI values", async () => {
-    return await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3),
-      { isOneRow: true },
-    );
-  });
-
-  const gridVals = [...gridVals1, ...gridVals2];
 
   return { uiVals, gridVals };
 }
@@ -138,10 +114,6 @@ export async function DailyAttendanceEdit1(
         await page.locator("#tabstripworkDet li").first().click();
         await page.locator("#btnNewDWItem").click();
       }
-      if (i === 2) {
-        await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
-      }
       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
@@ -159,11 +131,7 @@ export async function DailyAttendanceEdit1(
     return await getFormValues(page, paths);
   });
 
-  await runStep("Click on tab 1", async () => {
-    await page.locator("#tabstripworkDet li").first().click();
-  });
-
-  const gridVals1 = await runStep("Get edited grid UI values", async () => {
+  const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
@@ -171,21 +139,6 @@ export async function DailyAttendanceEdit1(
       { isOneRow: true },
     );
   });
-
-  await runStep("Click on tab 2", async () => {
-    await page.locator("#tabstripworkDet li").nth(1).click();
-  });
-
-  const gridVals2 = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3),
-      { isOneRow: true },
-    );
-  });
-
-  const gridVals = [...gridVals1, ...gridVals2];
 
   return { uiVals, gridVals };
 }
@@ -232,10 +185,6 @@ export async function DailyAttendanceEdit2(
         await page.locator("#tabstripworkDet li").first().click();
         await page.locator("#btnNewDWItem").click();
       }
-      if (i === 2) {
-        await page.locator("#tabstripworkDet li").nth(1).click();
-        await page.locator("#btnNewPRWItem").click();
-      }
       await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
     }
   });
@@ -248,11 +197,7 @@ export async function DailyAttendanceEdit2(
     return await getFormValues(page, paths);
   });
 
-  await runStep("Click on tab 1", async () => {
-    await page.locator("#tabstripworkDet li").first().click();
-  });
-
-  const gridVals1 = await runStep("Get edited grid UI values", async () => {
+  const gridVals = await runStep("Get created grid UI values", async () => {
     return await getGridValues(
       page,
       gridPaths.slice(0, 2),
@@ -260,21 +205,6 @@ export async function DailyAttendanceEdit2(
       { isOneRow: true },
     );
   });
-
-  await runStep("Click on tab 2", async () => {
-    await page.locator("#tabstripworkDet li").nth(1).click();
-  });
-
-  const gridVals2 = await runStep("Get edited grid UI values", async () => {
-    return await getGridValues(
-      page,
-      gridPaths.slice(2, 3),
-      cellsIndex.slice(2, 3),
-      { isOneRow: true },
-    );
-  });
-
-  const gridVals = [...gridVals1, ...gridVals2];
 
   return { uiVals, gridVals };
 }

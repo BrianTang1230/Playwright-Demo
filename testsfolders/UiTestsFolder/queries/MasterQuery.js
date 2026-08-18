@@ -485,6 +485,26 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Medical Leave Profile Setup":
+      sqlCommand = `
+      SELECT A.ProfileCode,
+      A.ProfileDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_LeaveProfileStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.ProfileCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT
@@ -598,6 +618,21 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
       LEFT JOIN GMS_AccMas D ON B.AccKey = D.AccKey
       WHERE A.ACode = @Code `;
+      break;
+
+    case "Medical Leave Profile Setup":
+      sqlCommand = `
+      SELECT C.AttdCode,
+      C.AttdDesc,
+      CASE B.LimitBy
+        WHEN 1 THEN 'Year'
+        WHEN 2 THEN 'Month'
+      END AS LimitBy,
+      B.LeaveAllowed
+      FROM GMS_LeaveProfileStp A
+      LEFT JOIN GMS_LeaveProfileDet B ON A.ProfileKey = B.ProfileKey
+      LEFT JOIN GMS_AttdCodeStp C ON B.LeaveKey = C.AttdKey
+      WHERE A.ProfileCode = @Code `;
       break;
 
     default:

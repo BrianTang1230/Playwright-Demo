@@ -8,7 +8,7 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 // Create Function
-export async function ActivityCodeSetupSetupCreate(
+export async function ActivityCodeSetupCreate(
   page,
   sideMenu,
   paths,
@@ -58,7 +58,7 @@ export async function ActivityCodeSetupSetupCreate(
 }
 
 // Edit Function
-export async function ActivityCodeSetupSetupEdit1(
+export async function ActivityCodeSetupEdit1(
   page,
   sideMenu,
   paths,
@@ -111,7 +111,7 @@ export async function ActivityCodeSetupSetupEdit1(
 }
 
 // Edit Function - 2
-export async function ActivityCodeSetupSetupEdit2(
+export async function ActivityCodeSetupEdit2(
   page,
   sideMenu,
   paths,
@@ -163,7 +163,7 @@ export async function ActivityCodeSetupSetupEdit2(
 }
 
 // Delete Function
-export async function ActivityCodeSetupSetupDelete(page, sideMenu, newValues) {
+export async function ActivityCodeSetupDelete(page, sideMenu, newValues) {
   await runStep("Open transaction", async () => {
     await SelectRecord(page, sideMenu, newValues, "delete");
   });

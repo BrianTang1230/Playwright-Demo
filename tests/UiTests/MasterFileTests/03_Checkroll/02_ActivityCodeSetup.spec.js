@@ -26,10 +26,10 @@ import {
 } from "@utils/data/uidata/masterData.json";
 
 import {
-  ActivityCodeSetupSetupCreate,
-  ActivityCodeSetupSetupEdit1,
-  ActivityCodeSetupSetupEdit2,
-  ActivityCodeSetupSetupDelete,
+  ActivityCodeSetupCreate,
+  ActivityCodeSetupEdit1,
+  ActivityCodeSetupEdit2,
+  ActivityCodeSetupDelete,
 } from "@UiFolder/pages/MasterFile/03_Checkroll/02_ActivityCodeSetupPage";
 
 // ---------------- Global Variables ----------------
@@ -89,7 +89,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals, gridVals } = await ActivityCodeSetupSetupCreate(
+    const { uiVals, gridVals } = await ActivityCodeSetupCreate(
       page,
       sideMenu,
       paths,
@@ -121,7 +121,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals, gridVals } = await ActivityCodeSetupSetupEdit1(
+    const { uiVals, gridVals } = await ActivityCodeSetupEdit1(
       page,
       sideMenu,
       paths,
@@ -155,7 +155,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals, gridVals } = await ActivityCodeSetupSetupEdit2(
+    const { uiVals, gridVals } = await ActivityCodeSetupEdit2(
       page,
       sideMenu,
       paths,
@@ -189,7 +189,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await ActivityCodeSetupSetupDelete(page, sideMenu, editValues);
+    await ActivityCodeSetupDelete(page, sideMenu, editValues);
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],

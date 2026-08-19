@@ -9,7 +9,7 @@ import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecor
 import Login from "@utils/data/uidata/loginData.json";
 
 // Create
-export async function BankPaymentCreate(
+export async function CashPaymentCreate(
     page,
     sideMenu,
     paths,
@@ -46,7 +46,6 @@ export async function BankPaymentCreate(
     });
 
     await runStep("Input transaction data", async () => {
-      console.log(`Total fields to input: ${paths.length}`);
 
       for (let i = 0; i < paths.length; i++) {
         await inputFormValues(page, paths[i], columns[i], values[i]);
@@ -82,7 +81,7 @@ export async function BankPaymentCreate(
 }
 
 // Edit
-export async function BankPaymentEdit(
+export async function CashPaymentEdit(
     page,
     sideMenu,
     paths,

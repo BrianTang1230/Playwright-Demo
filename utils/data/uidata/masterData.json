@@ -55,7 +55,11 @@
     "CropPenaltySetupPath": "#CropPenaltyCode,#CropPenaltyDesc,#tjobActive,#tjobRcdType,spinbutton*0,uom_input",
     "CropPenaltySetupColumn": "CropPenaltyCode text,CropPenaltyDesc text,Active checkbox,RcdType text,DefRate numeric,UOM dropdown",
     "AgencySetupPath": "#agencyCode,#agencyDesc,#agencyActive,#rcdType",
-    "AgencySetupColumn": "AgencyCode text,AgencyDesc text,Active checkbox,RcdType text"
+    "AgencySetupColumn": "AgencyCode text,AgencyDesc text,Active checkbox,RcdType text",
+    "CheckrollDeductionCodeSetupPath":"#deductionCode,#deductionDesc,#deductionActive,#deductionRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate,rtype_input,#isTaxPPh",
+    "CheckrollDeductionCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox,RecoveryType dropdown,IsTaxPPh checkbox",
+    "CheckrollReimbursementCodeSetupPath":"#reimbursementCode,#reimbursementDesc,#reimbursementActive,#reimbursementRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate",
+    "CheckrollReimbursementCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox"
   },
 
   "GridPath": {
@@ -63,6 +67,8 @@
     "MedicalLeaveProfileSetupGrid": "#leaveProfileDetGrid > .k-grid-content > .k-selectable > tbody",
     "PayrollDeductionCodeSetupGrid": "#ddcOUGrid > .k-grid-content > .k-selectable > tbody",
     "PayrollReimbursementCodeSetupGrid": "#rmbOUGrid > .k-grid-content > .k-selectable > tbody",
-    "ActivityCodeSetupGrid": "#activityOUGrid > .k-grid-content > .k-selectable > tbody"
+    "ActivityCodeSetupGrid": "#activityOUGrid > .k-grid-content > .k-selectable > tbody",
+    "CheckrollDeductionCodeSetupGrid": "#ddcOUGrid > .k-grid-content > .k-selectable > tbody",
+    "CheckrollReimbursementCodeSetupGrid": "#rmbOUGrid > .k-grid-content > .k-selectable > tbody"
   }
 }

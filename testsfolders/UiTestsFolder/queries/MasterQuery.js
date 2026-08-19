@@ -532,8 +532,6 @@ function masterSQLCommand(formName) {
       LEFT JOIN GMS_PayGrpCodeStp B ON A.PayGrpKey = B.PayGrpKey
       LEFT JOIN GMS_RecTypeStp C ON A.RecTypeKey = C.RecTypeKey
       WHERE A.Paycode = @Code
-      AND A.PayCodeType = 'D' --Deduction
-      AND A.Module = 'Payroll'
       `;
       break;
 
@@ -558,8 +556,6 @@ function masterSQLCommand(formName) {
       FROM GMS_PayCodeStp A
       LEFT JOIN GMS_PayGrpCodeStp B ON A.PayGrpKey = B.PayGrpKey
       WHERE A.Paycode = @Code
-      AND A.PayCodeType = 'R' --Reimbursement
-      AND A.Module = 'Payroll'
       `;
       break;
 
@@ -620,7 +616,7 @@ function masterSQLCommand(formName) {
       `;
       break;
 
-      case "Agency Setup":
+    case "Agency Setup":
       sqlCommand = `
       SELECT AgencyCode,
       AgencyDesc,
@@ -634,6 +630,60 @@ function masterSQLCommand(formName) {
       END AS RcdType
       FROM GMS_AgencyStp
       WHERE AgencyCode = @Code
+      `;
+      break;
+
+    case 'Checkroll Deduction Code Setup':
+      sqlCommand = `
+      SELECT A.PayCode,
+      A.PayDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.GrpCode + ' - ' + B.GrpDesc AS Groupby,
+      A.DftAmt,
+      CASE A.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate,
+      C.RecTypeCode + ' - ' + C.RecTypeDesc AS RecoveryType,
+      CASE A.IsTaxPPh
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsTaxPPh
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayGrpCodeStp B ON A.PayGrpKey = B.PayGrpKey
+      LEFT JOIN GMS_RecTypeStp C ON A.RecTypeKey = C.RecTypeKey
+      WHERE A.Paycode = @Code
+      `;
+      break;
+
+    case 'Checkroll Reimbursement Code Setup':
+      sqlCommand = `
+      SELECT A.PayCode,
+      A.PayDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.GrpCode + ' - ' + B.GrpDesc AS Groupby,
+      A.DftAmt,
+      CASE A.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayGrpCodeStp B ON A.PayGrpKey = B.PayGrpKey
+      WHERE A.Paycode = @Code
       `;
       break;
 
@@ -686,9 +736,7 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
       LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
       LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
-      WHERE A.Paycode = @Code
-      AND A.PayCodeType = 'D' --Deduction
-      AND A.Module = 'Payroll'`;
+      WHERE A.Paycode = @Code`;
       break;
 
     case 'Payroll Reimbursement Code Setup':
@@ -701,9 +749,7 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
       LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
       LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
-      WHERE A.Paycode = @Code
-      AND A.PayCodeType = 'R' --Reimbursement
-      AND A.Module = 'Payroll'`;
+      WHERE A.Paycode = @Code`;
       break;
 
     case "Activity Code Setup":
@@ -720,6 +766,32 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
       LEFT JOIN GMS_AccMas D ON B.AccKey = D.AccKey
       WHERE A.ACode = @Code `;
+      break;
+
+    case 'Checkroll Deduction Code Setup':
+      sqlCommand = `
+      SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
+      D.AccNum + ' - ' + D.AccDesc AS Account,
+      CASE WHEN E.CCIDKey = -1 THEN 'NA' ELSE E.CCIDCode + ' - ' + E.CCIDDesc END AS CCID
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayCodeOUStp B ON A.PayKey = B.PayKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
+      LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
+      WHERE A.Paycode = @Code`;
+      break;
+
+    case 'Checkroll Reimbursement Code Setup':
+      sqlCommand = `
+      SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
+      D.AccNum + ' - ' + D.AccDesc AS Account,
+      CASE WHEN E.CCIDKey = -1 THEN 'NA' ELSE E.CCIDCode + ' - ' + E.CCIDDesc END AS CCID
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayCodeOUStp B ON A.PayKey = B.PayKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
+      LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
+      WHERE A.Paycode = @Code`;
       break;
 
     default:

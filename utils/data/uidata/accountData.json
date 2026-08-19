@@ -5,17 +5,25 @@
     "GeneralJournalColumn": "JournalDate date,Description text,Status text",
     "ClosedPeriodAdjustmentPath": "#FY,#ddlPeriod,#txtDesc,#txtStatus",
     "ClosedPeriodAdjustmentColumn": "FY text,Period k-hidden-drop,Description text,Status text",
-    "BankPaymentPath": "GLDate,GLDesc,BankCode_input,#ddlPaymentCategory,#ddlPaymentType,PayTo,BankDueDate,TransferNo,comboBoxBen_input,#txtRefNo,Remarks,#txtStatus",
-    "BankPaymentColumn": "JournalDate date,Description text,BankCode dropdown,PaymentCategory k-hidden-drop,PaymentType k-hidden-drop,PayTo text,ClearanceDate date,TransferNo text,BeneficiaryInfo dropdown,RefNo text,Remarks text,Status text"
+    "BankPaymentPath": "GLDate,GLDesc,BankCode_input,PayTo,BankDueDate,TransferNo,comboBoxBen_input,#txtRefNo,Remarks,#txtStatus",
+    "BankPaymentColumn": "JournalDate date,Description text,BankCode dropdown,PayTo text,ClearanceDate date,TransferNo text,BeneficiaryInfo dropdown,RefNo text,Remarks text,Status text",
+    "BankReceiptPath": "GLDate,GLDesc,BankCode_input,PayTo,comboBoxBen_input,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
+    "BankReceiptColumn": "JournalDate date,Description text,BankCode dropdown,PayTo text,BeneficiaryInfo dropdown,RefNo text,Remarks text,Status text",
+    "CashPaymentPath": "GLDate,GLDesc,CashCode_input,PayTo,#txtRefNo,Remarks,#txtStatus",
+    "CashPaymentColumn": "JournalDate date,Description text,CashCode dropdown,PayTo text,RefNo text,Remarks text,Status text"
   },
   "GridPath": {
     "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
     "ClosedPeriodAdjustmentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
-    "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
+    "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "BankReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "CashPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "GeneralJournal": "BGJ2604026",
-    "ClosedPeriodAdjustment": "BGJ2505035",
-    "BankPayment": "BV26050053"
+    "GeneralJournal": "",
+    "ClosedPeriodAdjustment": "",
+    "BankPayment": "",
+    "BankReceipt": "",
+    "CashPayment": ""
   }
 }

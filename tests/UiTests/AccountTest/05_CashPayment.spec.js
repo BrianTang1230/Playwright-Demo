@@ -23,10 +23,10 @@ import {
 } from "@utils/data/uidata/accountData.json";
 
 import {
-  BankPaymentCreate,
-  BankPaymentDelete,
-  BankPaymentEdit,
-} from "@UiFolder/pages/Account/03_BankPayment";
+  CashPaymentCreate,
+  CashPaymentDelete,
+  CashPaymentEdit,
+} from "@UiFolder/pages/Account/05_CashPayment";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -41,7 +41,7 @@ let filterData;
 const sheetName = "ACC_Data";
 const module = "Account";
 const submodule = "Bank and Cash";
-const formName = "Bank Payment";
+const formName = "Cash Payment";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -50,16 +50,13 @@ const cellsIndex = [
   [1, 2, 3, 5, 6, 7],
   [1, 2, 3, 5, 6, 7],
 ];
-const cellsIndexIND = [
-  [1, 2, 3, 5, 6, 7],
-  [1, 2, 3, 5, 6, 7],
-];
 
-const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
+
+const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Bank Payment Tests", () => {
+test.describe.serial("Cash Payment Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -69,18 +66,14 @@ test.describe.serial("Bank Payment Tests", () => {
       ou,
       gridCreateValues,
       gridEditValues,
-      filterData,
-    ] = await excel.loadExcelValues(sheetName, formName, {
-      hasGrid: true,
-      hasFilter: true,
-    });
+      filterData
+    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
 
     docNo = DocNo[keyName];
-
-    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
+    console.log(`Start Running: ${formName}`);
   });
 
-  // ---------------- Before Each ----------------
+// ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
@@ -88,14 +81,14 @@ test.describe.serial("Bank Payment Tests", () => {
     await sideMenu.sideMenuBar.waitFor();
   });
 
-  // ---------------- Create Test ----------------
-  test("Create Bank Payment", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
+// ---------------- Create Test ----------------
+  test("Create Cash Payment", async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { 
+      DocNo: docNo, 
+      OU: ou[0] 
     });
 
-    const { uiVals, gridVals } = await BankPaymentCreate(
+    const { uiVals, gridVals } = await CashPaymentCreate(
       page,
       sideMenu,
       dwPaths,
@@ -104,13 +97,13 @@ test.describe.serial("Bank Payment Tests", () => {
       gridPaths,
       gridCreateValues,
       dwCellIndex,
-      ou,
+      ou
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").inputValue(),
+      await page.locator("#txtDocNum").first().inputValue() 
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -119,14 +112,14 @@ test.describe.serial("Bank Payment Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-
+    
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
@@ -134,15 +127,15 @@ test.describe.serial("Bank Payment Tests", () => {
     for (let i = 0; i < rowData.length; i++) {
       console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    }
+    };
   });
 
-  // ---------------- Edit Test ----------------
-  test("Edit Bank Payment", async ({ page, db }) => {
+// ---------------- Edit Test ----------------
+  test('Edit Cash Payment', async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
-    const { uiVals, gridVals } = await BankPaymentEdit(
+    const { uiVals, gridVals } = await CashPaymentEdit(
       page,
       sideMenu,
       dwPaths,
@@ -154,13 +147,13 @@ test.describe.serial("Bank Payment Tests", () => {
       ou,
       docNo,
       fiscalYear,
-      period,
+      period
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").inputValue(),
+      await page.locator("#txtDocNum").first().inputValue() 
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -169,14 +162,14 @@ test.describe.serial("Bank Payment Tests", () => {
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] },
+      { DocNo: docNo, OU: ou[0] }
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-
+    
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
@@ -184,16 +177,16 @@ test.describe.serial("Bank Payment Tests", () => {
     for (let i = 0; i < rowData.length; i++) {
       console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    }
+    };
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Bank Payment", async ({ db }) => {
+  test('Delete Cash Payment', async ({ db }) => {
     console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
 
-    await db.deleteData(deleteSQL, {
-      DocNo: docNo,
-      OU: ou[0],
+    await db.deleteData(deleteSQL, { 
+      DocNo: docNo, 
+      OU: ou[0] 
     });
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -201,13 +194,9 @@ test.describe.serial("Bank Payment Tests", () => {
     });
 
     if (dbValues && dbValues.length > 0) {
-      throw new Error(
-        `Deletion failed! Record ${docNo} is still present in the database.`,
-      );
+      throw new Error(`Deletion failed! Record ${docNo} is still present in the database.`);
     } else {
-      console.log(
-        `\n Success! Record ${docNo} is completely gone from the database.`,
-      );
+      console.log(`\n Success! Record ${docNo} is completely gone from the database.`);
     }
   });
 });

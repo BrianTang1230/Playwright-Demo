@@ -505,6 +505,39 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Payroll Deduction Code Setup':
+      sqlCommand = `
+      SELECT
+      A.PayCode,
+      A.PayDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.GrpCode + ' - ' + B.GrpDesc AS Groupby,
+      A.DftAmt,
+      CASE A.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate,
+      C.RecTypeCode + ' - ' + C.RecTypeDesc AS RecoveryType,
+      CASE A.IsTaxPPh
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsTaxPPh
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayGrpCodeStp B ON A.PayGrpKey = B.PayGrpKey
+      LEFT JOIN GMS_RecTypeStp C ON A.RecTypeKey = C.RecTypeKey
+      WHERE A.Paycode = @Code
+      AND A.PayCodeType = 'D' --Deduction
+      AND A.Module = 'Payroll'
+      `;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT
@@ -604,6 +637,36 @@ function masterGridSQLCommand(formName) {
       WHERE A.AddRemCode = @Code `;
       break;
 
+    case "Medical Leave Profile Setup":
+      sqlCommand = `
+      SELECT C.AttdCode,
+      C.AttdDesc,
+      CASE B.LimitBy
+        WHEN 1 THEN 'Year'
+        WHEN 2 THEN 'Month'
+      END AS LimitBy,
+      B.LeaveAllowed
+      FROM GMS_LeaveProfileStp A
+      LEFT JOIN GMS_LeaveProfileDet B ON A.ProfileKey = B.ProfileKey
+      LEFT JOIN GMS_AttdCodeStp C ON B.LeaveKey = C.AttdKey
+      WHERE A.ProfileCode = @Code `;
+      break;
+
+    case 'Payroll Deduction Code Setup':
+      sqlCommand = `
+      SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
+      D.AccNum + ' - ' + D.AccDesc AS Account,
+      CASE WHEN E.CCIDKey = -1 THEN 'NA' ELSE E.CCIDCode + ' - ' + E.CCIDDesc END AS CCID
+      FROM GMS_PayCodeStp A
+      LEFT JOIN GMS_PayCodeOUStp B ON A.PayKey = B.PayKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
+      LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
+      WHERE A.Paycode = @Code
+      AND A.PayCodeType = 'D' --Deduction
+      AND A.Module = 'Payroll'`;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT C.OUCode + ' - ' + C.OUDesc AS OU,
@@ -618,21 +681,6 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
       LEFT JOIN GMS_AccMas D ON B.AccKey = D.AccKey
       WHERE A.ACode = @Code `;
-      break;
-
-    case "Medical Leave Profile Setup":
-      sqlCommand = `
-      SELECT C.AttdCode,
-      C.AttdDesc,
-      CASE B.LimitBy
-        WHEN 1 THEN 'Year'
-        WHEN 2 THEN 'Month'
-      END AS LimitBy,
-      B.LeaveAllowed
-      FROM GMS_LeaveProfileStp A
-      LEFT JOIN GMS_LeaveProfileDet B ON A.ProfileKey = B.ProfileKey
-      LEFT JOIN GMS_AttdCodeStp C ON B.LeaveKey = C.AttdKey
-      WHERE A.ProfileCode = @Code `;
       break;
 
     default:

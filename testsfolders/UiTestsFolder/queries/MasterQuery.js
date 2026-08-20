@@ -707,6 +707,41 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Gang Setup':
+      sqlCommand = `
+      SELECT
+      A.GangCode,
+      A.GangDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      C.EmpyID + ' - ' + C.EmpyName AS Mandor1,
+      D.EmpyID + ' - ' + D.EmpyName AS Mandor2,
+      E.EmpyID + ' - ' + E.EmpyName AS Checker,
+      CASE A.EnableOWPayAcc
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS EnableOWPayAcc,
+      F.AccNum + ' - ' + F.AccDesc AS PayableAccount,
+      G.CCIDCode + ' - ' + G.CCIDDesc AS CCID,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_GangStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_EmpyPerMas C ON A.DefHarMdr = C.EmpyKey
+      LEFT JOIN GMS_EmpyPerMas D ON A.DefHarMdr2 = D.EmpyKey
+      LEFT JOIN GMS_EmpyPerMas E ON A.Checker = E.EmpyKey
+      LEFT JOIN GMS_AccMas F ON A.PayableAccKey = F.AccKey
+      LEFT JOIN V_SYC_CCIDMapping G ON A.PayableAccCCIDKey = G.CCIDKey
+      WHERE A.GangCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

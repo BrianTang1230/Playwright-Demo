@@ -61,7 +61,9 @@
     "CheckrollReimbursementCodeSetupPath":"#reimbursementCode,#reimbursementDesc,#reimbursementActive,#reimbursementRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate",
     "CheckrollReimbursementCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox",
     "ForeignWorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
-    "ForeignWorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text"
+    "ForeignWorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text",
+    "GangSetupPath": "#gangCode,#gangDesc,#gangActive,#gangRcdType,empy_input,defHarMdr2_input,checker_input,#EnableOWPayAcc,comboBoxPayAcc_input,comboBoxPayAccCCID_input",
+    "GangSetupColumn": "GangCode text,GangDesc text,Active checkbox,RcdType text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,EnableOWPayAcc checkbox,PayableAccount dropdown,CCID dropdown"
   },
 
   "GridPath": {

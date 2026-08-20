@@ -59,7 +59,9 @@
     "CheckrollDeductionCodeSetupPath":"#deductionCode,#deductionDesc,#deductionActive,#deductionRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate,rtype_input,#isTaxPPh",
     "CheckrollDeductionCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox,RecoveryType dropdown,IsTaxPPh checkbox",
     "CheckrollReimbursementCodeSetupPath":"#reimbursementCode,#reimbursementDesc,#reimbursementActive,#reimbursementRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate",
-    "CheckrollReimbursementCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox"
+    "CheckrollReimbursementCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox",
+    "ForeignWorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
+    "ForeignWorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

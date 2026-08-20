@@ -63,7 +63,9 @@
     "ForeignWorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
     "ForeignWorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text",
     "GangSetupPath": "#gangCode,#gangDesc,#gangActive,#gangRcdType,empy_input,defHarMdr2_input,checker_input,#EnableOWPayAcc,comboBoxPayAcc_input,comboBoxPayAccCCID_input",
-    "GangSetupColumn": "GangCode text,GangDesc text,Active checkbox,RcdType text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,EnableOWPayAcc checkbox,PayableAccount dropdown,CCID dropdown"
+    "GangSetupColumn": "GangCode text,GangDesc text,Active checkbox,RcdType text,Mandor1 dropdown,Mandor2 dropdown,Checker dropdown,EnableOWPayAcc checkbox,PayableAccount dropdown,CCID dropdown",
+    "MachineryHarvestingSetupPath": "#macCode,#macDesc,#macActive,#macRcdType,spinbutton*0",
+    "MachineryHarvestingSetupColumn": "MacCode text,MacDesc text,Active checkbox,RcdType text,Rate numeric"
   },
 
   "GridPath": {

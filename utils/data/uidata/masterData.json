@@ -69,7 +69,9 @@
     "RecoveryTypeSetupPath": "#RecTypeCode,#recTypeDesc,#recTypeActive,#recTypeRcdType",
     "RecoveryTypeSetupColumn": "RecTypeCode text,RecTypeDesc text,Active checkbox,RcdType text",
     "TallPalmImpedimentSetupPath": "#tallPalmCode,#tallPalmDesc,#tallPalmActive,#tallPalmRcdType,spinbutton*0,comboBoxRandOU_input",
-    "TallPalmImpedimentSetupColumn": "TallPalmCode text,TallPalmDesc text,Active checkbox,RcdType text,Rate numeric,OU dropdown"
+    "TallPalmImpedimentSetupColumn": "TallPalmCode text,TallPalmDesc text,Active checkbox,RcdType text,Rate numeric,OU dropdown",
+    "TerrainSetupPath": "#terrainCode,#terrainDesc,#terrainActive,#terrainRcdType",
+    "TerrainSetupColumn": "TerrainCode text,TerrainDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

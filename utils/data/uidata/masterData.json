@@ -73,7 +73,9 @@
     "TerrainSetupPath": "#terrainCode,#terrainDesc,#terrainActive,#terrainRcdType",
     "TerrainSetupColumn": "TerrainCode text,TerrainDesc text,Active checkbox,RcdType text",
     "WorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
-    "WorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text"
+    "WorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text",
+    "StoreSetupPath": "#storeCode,#storeDesc,#divisionActive,#addRemRcdType,spinbutton*0,#CompCode,#remark",
+    "StoreSetupColumn": "StoreCode text,StoreDesc text,Active checkbox,RcdType text,TransHierachy numeric,Company text,Remark text"
   },
 
   "GridPath": {

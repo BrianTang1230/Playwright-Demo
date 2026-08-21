@@ -838,6 +838,30 @@ function masterSQLCommand(formName) {
       `;
       break;
     
+    case 'Store Setup':
+      sqlCommand = `
+      SELECT A.StoreCode,
+      A.StoreDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.TransHierachy,
+      B.CompCode + ' - ' + B.CompDesc AS Company,
+      A.Remark,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM GMS_StoreStp A
+      LEFT JOIN GMS_CompStp B ON A.CompKey = B.CompKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      WHERE A.StoreCode = @Code
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break;
+    
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

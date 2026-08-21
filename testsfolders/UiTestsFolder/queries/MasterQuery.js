@@ -781,6 +781,26 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Tall Palm Impediment Setup":
+      sqlCommand = `
+      SELECT A.TallPalmCode,
+      A.TallPalmDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.Rate,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_TallPalmStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.TallPalmCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

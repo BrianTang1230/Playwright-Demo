@@ -67,7 +67,9 @@
     "MachineryHarvestingSetupPath": "#macCode,#macDesc,#macActive,#macRcdType,spinbutton*0",
     "MachineryHarvestingSetupColumn": "MacCode text,MacDesc text,Active checkbox,RcdType text,Rate numeric",
     "RecoveryTypeSetupPath": "#RecTypeCode,#recTypeDesc,#recTypeActive,#recTypeRcdType",
-    "RecoveryTypeSetupColumn": "RecTypeCode text,RecTypeDesc text,Active checkbox,RcdType text"
+    "RecoveryTypeSetupColumn": "RecTypeCode text,RecTypeDesc text,Active checkbox,RcdType text",
+    "TallPalmImpedimentSetupPath": "#tallPalmCode,#tallPalmDesc,#tallPalmActive,#tallPalmRcdType,spinbutton*0,comboBoxRandOU_input",
+    "TallPalmImpedimentSetupColumn": "TallPalmCode text,TallPalmDesc text,Active checkbox,RcdType text,Rate numeric,OU dropdown"
   },
 
   "GridPath": {

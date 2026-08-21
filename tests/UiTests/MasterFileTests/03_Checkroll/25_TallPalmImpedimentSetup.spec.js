@@ -18,11 +18,11 @@ import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
 import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
 
 import {
-  BuildingSetupCreate,
-  BuildingSetupEdit1,
-  BuildingSetupEdit2,
-  BuildingSetupDelete,
-} from "@UiFolder/pages/MasterFile/03_Checkroll/06_BuildingSetupPage";
+  TallPalmImpedimentSetupCreate,
+  TallPalmImpedimentSetupEdit1,
+  TallPalmImpedimentSetupEdit2,
+  TallPalmImpedimentSetupDelete,
+} from "@UiFolder/pages/MasterFile/03_Checkroll/25_TallPalmImpedimentSetupPage";
 
 // ---------------- Global Variables ----------------
 let ou;
@@ -34,7 +34,7 @@ let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
 const submodule = "Checkroll";
-const formName = "Building Setup";
+const formName = "Tall Palm Impediment Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
@@ -75,39 +75,35 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await BuildingSetupCreate(
+    const { uiVals } = await TallPalmImpedimentSetupCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     await validateFormValues(createValues, columns, uiVals);
-    await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
+    await validateDBValues(uiVals, columns, dbValues[0]);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await BuildingSetupEdit1(
+    const { uiVals } = await TallPalmImpedimentSetupEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
@@ -116,19 +112,17 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await BuildingSetupEdit2(
+    const { uiVals } = await TallPalmImpedimentSetupEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
-      ou,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
@@ -137,12 +131,11 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await BuildingSetupDelete(page, sideMenu, editValues, ou);
+    await TallPalmImpedimentSetupDelete(page, sideMenu, editValues);
 
-    // Check if the Building Setup is deleted
+    // Check if the Recovery Type code is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
-      OU: ou[0],
     });
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });

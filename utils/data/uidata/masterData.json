@@ -71,7 +71,9 @@
     "TallPalmImpedimentSetupPath": "#tallPalmCode,#tallPalmDesc,#tallPalmActive,#tallPalmRcdType,spinbutton*0,comboBoxRandOU_input",
     "TallPalmImpedimentSetupColumn": "TallPalmCode text,TallPalmDesc text,Active checkbox,RcdType text,Rate numeric,OU dropdown",
     "TerrainSetupPath": "#terrainCode,#terrainDesc,#terrainActive,#terrainRcdType",
-    "TerrainSetupColumn": "TerrainCode text,TerrainDesc text,Active checkbox,RcdType text"
+    "TerrainSetupColumn": "TerrainCode text,TerrainDesc text,Active checkbox,RcdType text",
+    "WorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
+    "WorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

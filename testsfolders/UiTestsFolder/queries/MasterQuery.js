@@ -837,7 +837,7 @@ function masterSQLCommand(formName) {
       AND B.OUCode + ' - ' + B.OUDesc = @OU
       `;
       break;
-    
+
     case 'Store Setup':
       sqlCommand = `
       SELECT A.StoreCode,
@@ -861,7 +861,71 @@ function masterSQLCommand(formName) {
       AND C.OUCode + ' - ' + C.OUDesc = @OU
       `;
       break;
-    
+
+    case 'Vehicle Setup':
+      sqlCommand = `
+      SELECT A.VehID,
+      A.VehDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      C.VehTypeCode + ' - ' + C.VehTypeDesc AS VehicleType,
+      D.OUCode + ' - ' + D.OUDesc AS Location,
+      E.UOMCode + ' - ' + E.UOMDesc AS PrimaryUnit,
+      F.UOMCode + ' - ' + F.UOMDesc AS FuelLubricantUnit,
+      A.PriUnitRate,
+      A.RegNo,
+      A.Make,
+      FORMAT(A.MthPurchased, 'dd/MM/yyyy') AS PurchasedMonth,
+      A.YrMade,
+      A.Model,
+      A.EngineVIN,
+      A.TyreFront,
+      A.EngineCC,
+      A.ChasisVIN,
+      A.TyreRear,
+      A.SerialNo,
+      FORMAT(A.RdExpiredDate, 'dd/MM/yyyy') AS RoadTaxExpiry,
+      CASE A.HasCL
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS HasCL,
+      FORMAT(A.CLDate, 'dd/MM/yyyy') AS CarrierLicenseDate,
+      CASE A.HasJPJ
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS HasJPJ,
+      FORMAT(A.JPJDate, 'dd/MM/yyyy') AS InspectionDate,
+      CASE A.HasNS
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS HasNS,
+      FORMAT(A.NSDate, 'dd/MM/yyyy') AS NextServiceDate,
+      FORMAT(A.TrnDate, 'dd/MM/yyyy') AS DateTransfer,
+      A.ServInterval,
+      A.TrnFrom,
+      A.LastMeter,
+      A.TrnTo,
+      G.CompCode + ' - ' + G.CompDesc AS RegistrationCompany,
+      A.Remarks,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_VehStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_VehTypeStp C ON A.VehTypeKey = C.VehTypeKey
+      LEFT JOIN GMS_OUStp D ON A.LocKey = D.OUKey
+      LEFT JOIN GMS_UOMStp E ON A.PriUOMKey = E.UOMKey
+      LEFT JOIN GMS_UOMStp F ON A.FuelUOMKey = F.UOMKey
+      LEFT JOIN GMS_CompStp G ON A.CompKey = G.CompKey
+      WHERE A.VEHID = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

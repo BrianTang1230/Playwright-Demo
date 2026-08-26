@@ -17,39 +17,45 @@ function updateCurrFormAndPhase() {
 }
 
 export async function validateFormValues(inputValues, columns, uiValues) {
+  const localInputValues = [...inputValues];
+  const localUiValues = [...uiValues];
+
   updateCurrFormAndPhase();
   console.log(`\nUI Values of ${currForm}:\n` + "-".repeat(85));
 
-  for (let i = 0; i < inputValues.length; i++) {
+  for (let i = 0; i < localInputValues.length; i++) {
     if (
-      String(inputValues[i]).trim() === "NA" ||
-      String(inputValues[i]).trim() === "AF" ||
-      String(uiValues[i]).trim() === "NA"
+      String(localInputValues[i]).trim() === "NA" ||
+      String(localInputValues[i]).trim() === "AF" ||
+      String(localUiValues[i]).trim() === "NA"
     )
       continue;
 
     if (columns[i].includes("numeric")) {
-      const inpVal = normalizeNumber(String(inputValues[i]).trim());
-      const uiVal = normalizeNumber(String(uiValues[i]).trim());
-      inputValues[i] = String(inpVal);
-      uiValues[i] = String(uiVal);
+      const inpVal = normalizeNumber(String(localInputValues[i]).trim());
+      const uiVal = normalizeNumber(String(localUiValues[i]).trim());
+      localInputValues[i] = String(inpVal);
+      localUiValues[i] = String(uiVal);
     }
 
-    if (String(inputValues[i]).trim() !== String(uiValues[i]).trim()) {
+    if (String(localInputValues[i]).trim() !== String(localUiValues[i]).trim()) {
       throwTestFailMsg(
         `${currPhase}-UI-MM`,
         currForm,
-        `${columns[i]}: ${inputValues[i]} !== ${uiValues[i]}`,
+        `${columns[i]}: ${localInputValues[i]} !== ${localUiValues[i]}`,
       );
     } else {
       console.log(
-        `Matched UI values of ${columns[i]}: ${inputValues[i]} === ${uiValues[i]}`,
+        `Matched UI values of ${columns[i]}: ${localInputValues[i]} === ${localUiValues[i]}`,
       );
     }
   }
 }
 
 export async function validateDBValues(inputValues, inputCols, dbValues) {
+  const localInputValues = [...inputValues];
+  const localDbValues = dbValues;
+
   updateCurrFormAndPhase();
   console.log(`\nDB Values of ${currForm}:\n` + "-".repeat(85));
 
@@ -58,45 +64,48 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
     const colName = inputCols[i].split(" ")[0];
 
     if (
-      String(inputValues[i]).trim() === "NA" ||
-      String(inputValues[i]).trim() === "AF" ||
+      String(localInputValues[i]).trim() === "NA" ||
+      String(localInputValues[i]).trim() === "AF" ||
       dbValues[colName] === null
     )
       continue;
 
     if (inputCols[i].includes("numeric")) {
-      inputValues[i] = normalizeNumber(String(inputValues[i]).trim());
+      localInputValues[i] = normalizeNumber(String(localInputValues[i]).trim());
     }
 
-    if (String(inputValues[i]).trim() !== String(dbValues[colName]).trim()) {
+    if (String(localInputValues[i]).trim() !== String(localDbValues[colName]).trim()) {
       throwTestFailMsg(
         `${currPhase}-DB-MM`,
         currForm,
-        `${inputValues[i]} !== ${dbValues[colName]} (${colName})`,
+        `${localInputValues[i]} !== ${localDbValues[colName]} (${colName})`,
       );
     } else {
       console.log(
-        `Matched DB values of ${colName}: ${inputValues[i]} === ${dbValues[colName]}`,
+        `Matched DB values of ${colName}: ${localInputValues[i]} === ${localDbValues[colName]}`,
       );
     }
   }
 }
 
 export async function validateGridValues(inputValues, gridValues) {
+  const localInputValues = [...inputValues];
+  const localGridValues = [...gridValues];
+
   updateCurrFormAndPhase();
-  if (inputValues.length !== gridValues.length) {
+  if (localInputValues.length !== localGridValues.length) {
     throwTestFailMsg(
       `${currPhase}-GRID-DI`,
       currForm,
-      `${inputValues.length} !== ${gridValues.length}`,
+      `${localInputValues.length} !== ${localGridValues.length}`,
     );
   }
 
   console.log(`\nGrid Values of ${currForm}:\n` + "-".repeat(85));
 
-  for (let i = 0; i < gridValues.length; i++) {
-    let expected = String(inputValues[i]).trim();
-    let actual = String(gridValues[i]).trim();
+  for (let i = 0; i < localGridValues.length; i++) {
+    let expected = String(localInputValues[i]).trim();
+    let actual = String(localGridValues[i]).trim();
 
     if (expected === "NA" || expected === "AF" || actual === "NA") continue;
 

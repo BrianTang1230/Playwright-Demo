@@ -9,7 +9,7 @@ import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecor
 import Login from "@utils/data/uidata/loginData.json";
 
 // Create
-export async function CashPaymentCreate(
+export async function CreditNoteCreate(
     page,
     sideMenu,
     paths,
@@ -20,6 +20,7 @@ export async function CashPaymentCreate(
     cellsIndex,
     ou
 ) {
+
   const region = process.env.REGION || Login.Region;
   const GridRows = buildGridRows(gridValues, cellsIndex);
 
@@ -40,8 +41,8 @@ export async function CashPaymentCreate(
       for (let i = 0; i < paths.length; i++) {
         if (typeof values[i] === "string") {
             values[i] = values[i].replace(/\[TODAY\]/g, getUniversalDate());
+            values[i] = values[i].replace(/\[TODAY\+30\]/g, getUniversalDate({ days: 30 }));
         }
-
 
         await inputFormValues(page, paths[i], columns[i], values[i]);
       }
@@ -52,7 +53,7 @@ export async function CashPaymentCreate(
         await sideMenu.btnAddNewItem.click();
         await page.waitForTimeout(500);
 
-        await inputGridValues(page, gridPaths[0], GridRows[i], cellsIndex[0], i);
+        await inputGridValues(page, gridPaths[0], GridRows[i], cellsIndex[0], i, { hasAutoFill: true });
       };
     });
 
@@ -76,7 +77,7 @@ export async function CashPaymentCreate(
 }
 
 // Edit
-export async function CashPaymentEdit(
+export async function CreditNoteEdit(
     page,
     sideMenu,
     paths,
@@ -98,7 +99,7 @@ export async function CashPaymentEdit(
   if (typeof period === "string") {
     period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
   }
-  
+
   const GridRows = buildGridRows(gridValues, cellsIndex);
 
   await runStep("Filter transaction", async () => {

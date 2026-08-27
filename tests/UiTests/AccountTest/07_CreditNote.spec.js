@@ -2,7 +2,7 @@ import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
+import { checkLength, formatGridData} from "@UiFolder/functions/comFuncs";
 import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import {
   validateFormValues,
@@ -23,9 +23,9 @@ import {
 } from "@utils/data/uidata/accountData.json";
 
 import {
-  BankReceiptCreate,
-  BankReceiptEdit,
-} from "@UiFolder/pages/Account/04_BankReceipt";
+  CreditNoteCreate,
+  CreditNoteEdit
+} from "@UiFolder/pages/Account/07_CreditNote";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -39,15 +39,15 @@ let gridEditValues;
 let filterData;
 const sheetName = "ACC_Data";
 const module = "Account";
-const submodule = "Bank and Cash";
-const formName = "Bank Receipt";
+const submodule = "Account Payable";
+const formName = "Credit Note";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
-  [1, 2, 3, 5, 6, 7],
-  [1, 2, 3, 5, 6, 7],
+  [1, 2, 6, 8, 9, 10, 11, 12],
+  [1, 2, 6, 8, 9, 10, 11, 12]
 ];
 
 
@@ -55,7 +55,7 @@ const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Bank Receipt Tests", () => {
+test.describe.serial("Credit Note Tests", () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -69,7 +69,7 @@ test.describe.serial("Bank Receipt Tests", () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
 
     docNo = DocNo[keyName];
-    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
+    console.log(`Start Running: ${formName}`);
   });
 
 // ---------------- Before Each ----------------
@@ -81,13 +81,13 @@ test.describe.serial("Bank Receipt Tests", () => {
   });
 
 // ---------------- Create Test ----------------
-  test("Create Bank Receipt", async ({ page, db }) => {
+  test("Create Credit Note", async ({ page, db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 
     });
 
-    const { uiVals, gridVals } = await BankReceiptCreate(
+    const { uiVals, gridVals } = await CreditNoteCreate(
       page,
       sideMenu,
       dwPaths,
@@ -122,19 +122,17 @@ test.describe.serial("Bank Receipt Tests", () => {
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
-    console.log("\n--- Starting Grid DB Validation ---");
     for (let i = 0; i < rowData.length; i++) {
-      console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
     };
   });
 
 // ---------------- Edit Test ----------------
-  test('Edit Bank Receipt', async ({ page, db }) => {
+  test('Edit Credit Note', async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
-    const { uiVals, gridVals } = await BankReceiptEdit(
+    const { uiVals, gridVals } = await CreditNoteEdit(
       page,
       sideMenu,
       dwPaths,
@@ -172,17 +170,13 @@ test.describe.serial("Bank Receipt Tests", () => {
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
-    console.log("\n--- Starting Grid DB Validation ---");
     for (let i = 0; i < rowData.length; i++) {
-      console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
     };
   });
 
   // ---------------- Delete Test ----------------
-  test('Delete Bank Receipt', async ({ db }) => {
-    console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
-
+  test('Delete Credit Note', async ({ db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 

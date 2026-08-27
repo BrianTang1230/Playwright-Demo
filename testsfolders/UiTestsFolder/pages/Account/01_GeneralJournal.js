@@ -1,4 +1,4 @@
-import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
+import { SelectOU, runStep, buildGridRows, getUniversalDate } from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
@@ -21,6 +21,8 @@ export async function GeneralJournalCreate(
   ou,
 ) {
   const region = process.env.REGION || Login.Region;
+  const GridRows = buildGridRows(gridValues, cellsIndex);
+
 
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -37,6 +39,10 @@ export async function GeneralJournalCreate(
 
   await runStep("Input transaction data", async () => {
     for (let i = 0; i < paths.length; i++) {
+      if (typeof values[i] === "string") {
+        values[i] = values[i].replace(/\[TODAY\]/g, getUniversalDate());
+      }
+
       await inputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
@@ -47,7 +53,6 @@ export async function GeneralJournalCreate(
 
       await page.waitForTimeout(500);
 
-      // Passes the 'i' index so it handles multiple rows if gridValues > 1
       await inputGridValues(
         page,
         gridPaths[0],
@@ -89,6 +94,17 @@ export async function GeneralJournalEdit(
   fiscalYear,
   period,
 ) {
+  
+  if (typeof fiscalYear === "string") {
+    fiscalYear = fiscalYear.replace(/\[YEAR\]/g, getUniversalDate({ format: 'YYYY' }));
+  }
+  
+  if (typeof period === "string") {
+    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
+  }
+
+  const GridRows = buildGridRows(gridValues, cellsIndex);
+
   await runStep("Filter transaction", async () => {
     await FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo);
   });
@@ -96,6 +112,10 @@ export async function GeneralJournalEdit(
   await runStep("Edit transaction", async () => {
     await page.waitForTimeout(6000);
     for (let i = 0; i < paths.length; i++) {
+      if (typeof editValues[i] === "string") {
+        editValues[i] = editValues[i].replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
+      }
+
       await inputFormValues(page, paths[i], columns[i], editValues[i]);
     }
   });

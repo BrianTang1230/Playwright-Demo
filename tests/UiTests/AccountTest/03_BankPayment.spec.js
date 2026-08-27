@@ -24,7 +24,6 @@ import {
 
 import {
   BankPaymentCreate,
-  BankPaymentDelete,
   BankPaymentEdit,
 } from "@UiFolder/pages/Account/03_BankPayment";
 

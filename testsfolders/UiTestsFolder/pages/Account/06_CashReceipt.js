@@ -9,7 +9,7 @@ import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecor
 import Login from "@utils/data/uidata/loginData.json";
 
 // Create
-export async function CashPaymentCreate(
+export async function CashReceiptCreate(
     page,
     sideMenu,
     paths,
@@ -41,7 +41,6 @@ export async function CashPaymentCreate(
         if (typeof values[i] === "string") {
             values[i] = values[i].replace(/\[TODAY\]/g, getUniversalDate());
         }
-
 
         await inputFormValues(page, paths[i], columns[i], values[i]);
       }
@@ -76,7 +75,7 @@ export async function CashPaymentCreate(
 }
 
 // Edit
-export async function CashPaymentEdit(
+export async function CashReceiptEdit(
     page,
     sideMenu,
     paths,
@@ -98,7 +97,7 @@ export async function CashPaymentEdit(
   if (typeof period === "string") {
     period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
   }
-  
+
   const GridRows = buildGridRows(gridValues, cellsIndex);
 
   await runStep("Filter transaction", async () => {

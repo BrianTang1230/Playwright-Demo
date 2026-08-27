@@ -10,20 +10,28 @@
     "BankReceiptPath": "GLDate,GLDesc,BankCode_input,PayTo,comboBoxBen_input,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
     "BankReceiptColumn": "JournalDate date,Description text,BankCode dropdown,PayTo text,BeneficiaryInfo dropdown,RefNo text,Remarks text,Status text",
     "CashPaymentPath": "GLDate,GLDesc,CashCode_input,PayTo,#txtRefNo,Remarks,#txtStatus",
-    "CashPaymentColumn": "JournalDate date,Description text,CashCode dropdown,PayTo text,RefNo text,Remarks text,Status text"
+    "CashPaymentColumn": "JournalDate date,Description text,CashCode dropdown,PayTo text,RefNo text,Remarks text,Status text",
+    "CashReceiptPath": "GLDate,GLDesc,CashCode_input,#txtReceiveFrom,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
+    "CashReceiptColumn": "JournalDate date,Description text,CashCode dropdown,ReceiveFrom text,RefNo text,Remarks text,Status text",
+    "CreditNotePath": "GLDate,GLDesc,#comboType,#txtTaxInvoiceNo,comboBoxContact_input,payTerm_input,InvoiceDate,PaymentDueDate,#comboSupplierAcc input,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
+    "CreditNoteColumn": "JournalDate date,Description text,CNType combobox,TaxInvoice text,PayTerm dropdown,Supplier dropdown,InvoiceDate date,DueDate date,SupplerAcc dropdown,RefNo text,Remarks text,Status text"
   },
   "GridPath": {
     "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
     "ClosedPeriodAdjustmentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
     "BankPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
     "BankReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
-    "CashPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
+    "CashPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "CashReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "CreditNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
   },
   "DocNo": {
     "GeneralJournal": "",
     "ClosedPeriodAdjustment": "",
     "BankPayment": "",
     "BankReceipt": "",
-    "CashPayment": ""
+    "CashPayment": "",
+    "CashReceipt": "",
+    "CreditNote": ""
   }
 }

@@ -24,7 +24,6 @@ import {
 
 import {
   CashPaymentCreate,
-  CashPaymentDelete,
   CashPaymentEdit,
 } from "@UiFolder/pages/Account/05_CashPayment";
 
@@ -70,7 +69,7 @@ test.describe.serial("Cash Payment Tests", () => {
     ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
 
     docNo = DocNo[keyName];
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
 // ---------------- Before Each ----------------
@@ -123,9 +122,7 @@ test.describe.serial("Cash Payment Tests", () => {
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
-    console.log("\n--- Starting Grid DB Validation ---");
     for (let i = 0; i < rowData.length; i++) {
-      console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
     };
   });
@@ -173,17 +170,13 @@ test.describe.serial("Cash Payment Tests", () => {
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
-    console.log("\n--- Starting Grid DB Validation ---");
     for (let i = 0; i < rowData.length; i++) {
-      console.log(`\nValidating Row ${i + 1}...`);
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
     };
   });
 
   // ---------------- Delete Test ----------------
   test('Delete Cash Payment', async ({ db }) => {
-    console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
-
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 

@@ -178,3 +178,41 @@ export function convertMonth(month) {
 
   return monthMap[month.toLowerCase()];
 }
+
+export function getUniversalDate(options = {}) {
+  const { days = 0, dayPosition = null, format = 'DD/MM/YYYY' } = options;
+  let date = new Date();
+  date.setDate(date.getDate() + days);
+
+  if (dayPosition === 'first') date.setDate(1);
+  else if (dayPosition === 'last') date = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+
+  return format.replace('DD', dd).replace('MM', mm).replace('YYYY', yyyy);
+}
+
+export function buildGridRows(gridValues, cellsIndex) {
+  if (!gridValues || !cellsIndex || cellsIndex.length === 0) return [];
+    
+  const colsPerRow = cellsIndex[0].length;
+  const flatString = Array.isArray(gridValues) ? gridValues.join(";") : gridValues;
+  const cleanString = flatString.replace(/\|/g, ";"); 
+    
+  const allVals = cleanString.split(";").map(v => {
+    let trimmedVal = v.trim();
+    if (trimmedVal === '[TODAY]') return getUniversalDate();
+    if (trimmedVal === '[TODAY+1]') return getUniversalDate({ days: 1 });
+    if (trimmedVal === '[TODAY+30]') return getUniversalDate({ days: 30 });
+    if (trimmedVal === '[END_OF_MONTH]') return getUniversalDate({ dayPosition: 'last' });
+    return trimmedVal;
+  });
+
+const gridRows = [];
+for (let i = 0; i < allVals.length; i += colsPerRow) {
+  gridRows.push(allVals.slice(i, i + colsPerRow).join(";"));
+}
+return gridRows;
+}

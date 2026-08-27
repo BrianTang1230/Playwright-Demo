@@ -24,7 +24,6 @@ import {
 
 import {
   ClosedPeriodAdjustmentCreate,
-  ClosedPeriodAdjustmentDelete,
   ClosedPeriodAdjustmentEdit,
 } from "@UiFolder/pages/Account/02_ClosedPeriodAdjustment";
 

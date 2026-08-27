@@ -24,7 +24,6 @@ import {
 
 import {
   GeneralJournalCreate,
-  GeneralJournalDelete,
   GeneralJournalEdit,
 } from "@UiFolder/pages/Account/01_GeneralJournal";
 

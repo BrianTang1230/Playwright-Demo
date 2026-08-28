@@ -83,7 +83,9 @@
     "MillEquipmentSetupPath": "#machineCode,#machineDesc,#machineActive,#machineRcdType,comboBoxStation_input,#MachSpec,#IsKernelPass,spinbutton*0,#YrMadePicker,comboBoxUOM_input",
     "MillEquipmentSetupColumn": "MachCode text,MachDesc text,Active checkbox,RcdType text,Station dropdown,MachSpec text,IsKernelPress checkbox,Capacity numeric,YearMade date,UOM dropdown",
     "StationSetupPath": "#stationCode,#StationDesc,#stationActive,#stationRcdType,comboBoxType_input",
-    "StationSetupColumn": "StationCode text,StationDesc text,Active checkbox,RcdType text,MachType dropdown"
+    "StationSetupColumn": "StationCode text,StationDesc text,Active checkbox,RcdType text,MachType dropdown",
+    "StockAdjustmentRemarkSetupPath": "#rmkCode,#rmkDesc,#rmkActive,#rmkRcdType,rmkType_input",
+    "StockAdjustmentRemarkSetupColumn": "RemarkCode text,RemarkDesc text,Active checkbox,RcdType text,Type dropdown"
   },
 
   "GridPath": {

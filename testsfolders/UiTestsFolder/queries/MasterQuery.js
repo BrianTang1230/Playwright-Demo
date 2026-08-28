@@ -1002,6 +1002,26 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Stock Adjustment Remark Setup':
+      sqlCommand = `
+      SELECT RemarkCode,
+      RemarkDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE Type
+        WHEN 'SA' THEN 'Stock Adjustment'
+      END AS Type
+      FROM GMS_StockAdjRemarkStp
+      WHERE RemarkCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

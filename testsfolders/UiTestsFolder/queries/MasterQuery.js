@@ -926,6 +926,30 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Station Setup':
+      sqlCommand = `
+      SELECT A.StationCode,
+      A.StationDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE A.MachType
+        WHEN 'OIL' THEN 'Oil Machinery'
+        WHEN 'NUT' THEN 'Nut Machinery'
+      END AS MachType,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_StationStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.StationCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

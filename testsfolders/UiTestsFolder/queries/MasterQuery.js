@@ -947,6 +947,37 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Mill Equipment Setup':
+      sqlCommand = `
+      SELECT A.MachCode,
+      A.MachDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      C.StationCode + ' - ' + C.StationDesc AS Station,
+      A.MachSpec,
+      CASE A.IsKernelPress
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsKernelPress,
+      A.Capacity,
+      FORMAT(DATEADD(hour, 8, A.YearMade), 'yyyy') AS YearMade,
+      D.UOMCode + ' - ' + D.UOMDesc AS UOM,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_MachStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_StationStp C ON A.StationKey = C.StationKey
+      LEFT JOIN GMS_UOMStp D ON A.UOMKey = D.UOMKey
+      WHERE A.MachCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

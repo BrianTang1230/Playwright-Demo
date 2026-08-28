@@ -43,7 +43,7 @@ let gridEditValues;
 let phaseCount = 0;
 const sheetName = "MAS_DATA";
 const module = "Master File";
-const submodule = "Checkroll";
+const submodule = "Payroll";
 const formName = "Medical Leave Profile Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");

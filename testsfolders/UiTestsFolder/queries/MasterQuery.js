@@ -1022,6 +1022,28 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Supplier Category Setup':
+      sqlCommand = `
+      SELECT SuppCatCode,
+      SuppCatDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      SeqNo,
+      CASE BlockWtDistMtd
+        WHEN 'AD' THEN 'After Deducted Weight'
+        WHEN 'BD' THEN 'Bedfore Deducted Weight'
+      END AS BlockWtDistMtd
+      FROM GMS_SuppCatStp
+      WHERE SuppCatCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

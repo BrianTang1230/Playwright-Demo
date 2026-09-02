@@ -74,6 +74,8 @@
     "TerrainSetupColumn": "TerrainCode text,TerrainDesc text,Active checkbox,RcdType text",
     "WorkerBatchSetupPath": "#fwBatchCode,#fwBatchDesc,#fwBatchActive,#fwBatchRcdType",
     "WorkerBatchSetupColumn": "FWBatchCode text,FWBatchDesc text,Active checkbox,RcdType text",
+    "ItemCategorySetupPath": "#itemCatCodeCode,#itemCatDesc,type_input,#itemCatActive,#itemCatRcdType,#dynamic_input,#Prefix,spinbutton*0,spinbutton*1,#NextItemID",
+    "ItemCategorySetupColumn": "ItemCatCode text,ItemCatDesc text,Type dropdown,Active checkbox,RcdType text,EnableAutoNo checkbox,Prefix text,NextNum numeric,NumLength numeric,NextItemID text",
     "StoreSetupPath": "#storeCode,#storeDesc,#divisionActive,#addRemRcdType,spinbutton*0,#CompCode,#remark",
     "StoreSetupColumn": "StoreCode text,StoreDesc text,Active checkbox,RcdType text,TransHierachy numeric,Company text,Remark text",
     "VehicleSetupPath": "#VehID,#VehTypeDesc,#vehActive,#RcdType,VehTypeKey_input,LocKey_input,comboBoxPriOUM_input,comboBoxFuelOUM_input,spinbutton*0,#regNo,#Make,#MthPurchased,#YrMade,#Model,#EngineVIN,#TyreFront,#EngineCC,#ChasisVIN,#TyreRear,#SerialNo,#RdExpiredDate,#HasCL,#CLDate,#HasJPJ,#JPJDate,#HasNS,#NSDate,#TrnDate,spinbutton*1,#TrnFrom,spinbutton*2,#TrnTo,CompKey_input,#Remarks",

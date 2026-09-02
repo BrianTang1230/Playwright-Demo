@@ -838,6 +838,36 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Item Category Setup':
+      sqlCommand = `
+      SELECT ItemCatCode,
+      ItemCatDesc,
+      CASE Type
+        WHEN 'F' THEN 'Fertilizer'
+        WHEN 'P' THEN 'Pesticide'
+        WHEN 'O' THEN 'Others'
+      END AS Type,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE EnableAutoNo
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS EnableAutoNo,
+      Prefix,
+      NextNum,
+      NumLength,
+      NextItemID
+      FROM GMS_ItemCatStp
+      WHERE ItemCatCode = @Code
+      `;
+      break;
+
     case 'Store Setup':
       sqlCommand = `
       SELECT A.StoreCode,

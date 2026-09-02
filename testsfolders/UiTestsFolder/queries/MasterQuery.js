@@ -977,6 +977,37 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Nursery Batch Setup':
+      sqlCommand = `
+      SELECT A.NurBatchCode,
+      A.NurBatchDesc,
+      C.PlantMateCode + ' - ' + C.PlantMateDesc AS PlantingMaterial,
+      D.CropCode + ' - ' + D.CropDesc AS Crop,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.IsProgramComplete
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsProgramComplete,
+      FORMAT(A.ProgramCompleteDate, 'dd/MM/yyyy') AS ProgramCompletedDate,
+      E.ContactCode + ' - ' + E.ContactDesc AS Supplier,
+      FORMAT(DATEFROMPARTS(A.PlantedYr, A.PlantedMth, 1), 'MMMM yyyy') AS PlantedPeriod,
+      FORMAT(A.SalesExpectedDate, 'MMMM yyyy') AS SalesExpectedDate,
+      F.NurBatchCatCode + ' - ' + F.NurBatchCatDesc AS NurseryBatchCategory,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_NurBatchStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_PlantMateStp C ON A.PlantMateKey = C.PlantMateKey
+      LEFT JOIN GMS_CropStp D ON A.CropKey = D.CropKey
+      LEFT JOIN GMS_ContactStp E ON A.ContactKey = E.ContactKey
+      LEFT JOIN GMS_NurBatchCatStp F ON A.NurBatchCatKey = F.NurBatchCatKey
+      WHERE NurBatchCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     case 'Mill Equipment Setup':
       sqlCommand = `
       SELECT A.MachCode,

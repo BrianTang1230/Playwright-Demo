@@ -1022,6 +1022,41 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'External Block Setup':
+      sqlCommand = `
+      SELECT A.BlockCode,
+      A.BlockDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.EstateCode + ' - ' + B.EstateDesc AS CropSupplier,
+      CASE A.Grade
+        WHEN 'A' THEN 'A - GRADE A'
+        WHEN 'B' THEN 'B - GRADE B'
+      END AS Grade,
+      C.TOERKERID + ' - ' + C.TOERKERDesc AS TheorethicalExtractionRatio,
+      A.PlantedYr,
+      CASE A.PlantedMth
+        WHEN '4' THEN 'April'
+        WHEN '9' THEN 'September'
+        WHEN '11' THEN 'November'
+      END AS PlantedMth,
+      A.ABW,
+      D.OUCode + ' - ' + D.OUDesc AS OU
+      FROM GMS_OutsideBlockStp A
+      LEFT JOIN GMS_EstateStp B ON A.EstateKey = B.EstateKey
+      LEFT JOIN GMS_TOERKERStp C ON A.TOERKERKey = C.TOERKERKey
+      LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+      WHERE BlockCode = @Code
+      AND D.OUCode + ' - ' + D.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

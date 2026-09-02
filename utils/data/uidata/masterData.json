@@ -78,8 +78,8 @@
     "StoreSetupColumn": "StoreCode text,StoreDesc text,Active checkbox,RcdType text,TransHierachy numeric,Company text,Remark text",
     "VehicleSetupPath": "#VehID,#VehTypeDesc,#vehActive,#RcdType,VehTypeKey_input,LocKey_input,comboBoxPriOUM_input,comboBoxFuelOUM_input,spinbutton*0,#regNo,#Make,#MthPurchased,#YrMade,#Model,#EngineVIN,#TyreFront,#EngineCC,#ChasisVIN,#TyreRear,#SerialNo,#RdExpiredDate,#HasCL,#CLDate,#HasJPJ,#JPJDate,#HasNS,#NSDate,#TrnDate,spinbutton*1,#TrnFrom,spinbutton*2,#TrnTo,CompKey_input,#Remarks",
     "VehicleSetupColumn": "VehID text,VehDesc text,Active checkbox,RcdType text,VehicleType dropdown,Location dropdown,PrimaryUnit dropdown,FuelLubricantUnit dropdown,PriUnitRate numeric,RegNo text,Make text,PurchasedMonth date,YrMade date,Model text,EngineVIN text,TyreFront text,EngineCC text,ChasisVIN text,TyreRear text,SerialNo text,RoadTaxExpiry date,HasCL checkbox,CarrierLicenseDate date,HasJPJ checkbox,InspectionDate date,HasNS checkbox,NextServiceDate date,DateTransfer date,ServInterval numeric,TrnFrom text,LastMeter numeric,TrnTo text,RegistrationCompany dropdown,Remarks text",
-    "StationSetupPath": "#stationCode,#StationDesc,#stationActive,#stationRcdType,comboBoxType_input",
-    "StationSetupColumn": "StationCode text,StationDesc text,Active checkbox,RcdType text,MachType dropdown"
+    "StorageTankSetupPath":"#storageTankCode,#storageTankDesc,#storageTankActive,#storageTankRcdType,comboBoxStorageType_input,comboBoxContact_input,comboBoxTankType_input,comboBoxLab_input,#MPOBStorageCode",
+    "StorageTankSetupColumn":"StorageCode text,StorageDesc text,Active checkbox,RcdType text,StorageType dropdown,ContactID dropdown,TankType dropdown,TestComponentCode dropdown,MPOBStorageCode text"
   },
 
   "GridPath": {

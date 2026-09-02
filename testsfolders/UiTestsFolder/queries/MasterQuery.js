@@ -926,10 +926,10 @@ function masterSQLCommand(formName) {
       `;
       break;
 
-    case 'Station Setup':
+    case 'Storage Tank Setup':
       sqlCommand = `
-      SELECT A.StationCode,
-      A.StationDesc,
+      SELECT A.StorageCode,
+      A.StorageDesc,
       CASE A.Active
         WHEN 1 THEN 'True'
         WHEN 0 THEN 'False'
@@ -938,14 +938,23 @@ function masterSQLCommand(formName) {
         WHEN 0 THEN 'User'
         WHEN 1 THEN 'System'
       END AS RcdType,
-      CASE A.MachType
-        WHEN 'OIL' THEN 'Oil Machinery'
-        WHEN 'NUT' THEN 'Nut Machinery'
-      END AS MachType,
+      CASE A.StorageType
+        WHEN 'OWN' THEN 'Internal Storage'
+        WHEN 'OUT' THEN 'External Storage'
+      END AS StorageType,
+      C.ContactCode + ' - ' + C.ContactDesc AS ContactID,
+      CASE A.TankType
+        WHEN 'CPO' THEN 'CPO Tank'
+        WHEN 'CPKO' THEN 'CPKO Tank'
+      END AS TankType,
+      D.TypeIDCode + ' - ' + D.TypeIDDesc AS TestComponentCode,
+      A.MPOBStorageCode,
       B.OUCode + ' - ' + B.OUDesc AS OU
-      FROM GMS_StationStp A
+      FROM GMS_StorageStp A
       LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-      WHERE A.StationCode = @Code
+      LEFT JOIN GMS_ContactStp C ON A.ContactKey = C.ContactKey
+      LEFT JOIN GMS_TypeIDStp D ON A.TypeIDKey = D.TypeIDKey
+      WHERE A.StorageCode = @Code
       AND B.OUCode + ' - ' + B.OUDesc = @OU
       `;
       break;

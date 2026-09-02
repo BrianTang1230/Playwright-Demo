@@ -88,6 +88,8 @@
     "MillEquipmentSetupColumn": "MachCode text,MachDesc text,Active checkbox,RcdType text,Station dropdown,MachSpec text,IsKernelPress checkbox,Capacity numeric,YearMade date,UOM dropdown",
     "StationSetupPath": "#stationCode,#StationDesc,#stationActive,#stationRcdType,comboBoxType_input",
     "StationSetupColumn": "StationCode text,StationDesc text,Active checkbox,RcdType text,MachType dropdown",
+    "StorageTankSetupPath":"#storageTankCode,#storageTankDesc,#storageTankActive,#storageTankRcdType,comboBoxStorageType_input,comboBoxContact_input,comboBoxTankType_input,comboBoxLab_input,#MPOBStorageCode",
+    "StorageTankSetupColumn":"StorageCode text,StorageDesc text,Active checkbox,RcdType text,StorageType dropdown,ContactID dropdown,TankType dropdown,TestComponentCode dropdown,MPOBStorageCode text",
     "StockAdjustmentRemarkSetupPath": "#rmkCode,#rmkDesc,#rmkActive,#rmkRcdType,rmkType_input",
     "StockAdjustmentRemarkSetupColumn": "RemarkCode text,RemarkDesc text,Active checkbox,RcdType text,Type dropdown",
     "ExternalBlockSetupPath": "#BlockCode,#BlockDesc,#outsideBlockActive,#RcdType,estate_input,grade_input,TER_input,#PlantedYr,#PlantedMth,spinbutton*0",

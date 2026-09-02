@@ -1063,6 +1063,39 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Storage Tank Setup':
+      sqlCommand = `
+      SELECT A.StorageCode,
+      A.StorageDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE A.StorageType
+        WHEN 'OWN' THEN 'Internal Storage'
+        WHEN 'OUT' THEN 'External Storage'
+      END AS StorageType,
+      C.ContactCode + ' - ' + C.ContactDesc AS ContactID,
+      CASE A.TankType
+        WHEN 'CPO' THEN 'CPO Tank'
+        WHEN 'CPKO' THEN 'CPKO Tank'
+      END AS TankType,
+      D.TypeIDCode + ' - ' + D.TypeIDDesc AS TestComponentCode,
+      A.MPOBStorageCode,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_StorageStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_ContactStp C ON A.ContactKey = C.ContactKey
+      LEFT JOIN GMS_TypeIDStp D ON A.TypeIDKey = D.TypeIDKey
+      WHERE A.StorageCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     case 'Stock Adjustment Remark Setup':
       sqlCommand = `
       SELECT RemarkCode,

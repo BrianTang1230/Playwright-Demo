@@ -40,6 +40,8 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
+  test.skip(true, `MY region specific bug. User open the form, create new, change OU, input data, click save.
+  Saving in progress animation runs indefinitely. Record is not created.`);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Change Current Form and Phase

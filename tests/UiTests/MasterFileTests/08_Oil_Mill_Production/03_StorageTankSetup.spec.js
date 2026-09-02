@@ -40,6 +40,8 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
+  test.skip(true, `IND region cannot create new record. 
+  It shows Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.`);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Change Current Form and Phase

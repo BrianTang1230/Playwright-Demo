@@ -92,6 +92,8 @@
     "StorageTankSetupColumn":"StorageCode text,StorageDesc text,Active checkbox,RcdType text,StorageType dropdown,ContactID dropdown,TankType dropdown,TestComponentCode dropdown,MPOBStorageCode text",
     "StockAdjustmentRemarkSetupPath": "#rmkCode,#rmkDesc,#rmkActive,#rmkRcdType,rmkType_input",
     "StockAdjustmentRemarkSetupColumn": "RemarkCode text,RemarkDesc text,Active checkbox,RcdType text,Type dropdown",
+    "SupplierCategorySetupPath": "#SuppCatCode,#SuppCatDesc,#SuppCatActive,#RcdType,spinbutton*0,comboBoxBlockWtDistMtd_input",
+    "SupplierCategorySetupColumn": "SuppCatCode text,SuppCatDesc text,Active checkbox,RcdType text,SeqNo numeric,BlockWtDistMtd dropdown",
     "ExternalBlockSetupPath": "#BlockCode,#BlockDesc,#outsideBlockActive,#RcdType,estate_input,grade_input,TER_input,#PlantedYr,#PlantedMth,spinbutton*0",
     "ExternalBlockSetupColumn": "BlockCode text,BlockDesc text,Active checkbox,RcdType text,CropSupplier dropdown,Grade dropdown,TheorethicalExtractionRatio dropdown,PlantedYr date,PlantedMth date,ABW numeric"
   },

@@ -471,6 +471,8 @@ function ffbSQLCommand(formName) {
       LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
       WHERE FORMAT(A.FromDate,
       'dd/MM/yyyy') = @Date
+      AND FORMAT(A.ToDate,
+      'dd/MM/yyyy') = @Date2
 	    AND E.RegionCode + ' - ' + E.RegionDesc = @Area
       AND C.OUCode + ' - ' + C.OUDesc = @OU
       `;
@@ -489,7 +491,7 @@ function ffbSQLCommand(formName) {
       D.CurrCode + ' - ' + D.CurrDesc AS Currency,
       CASE A.Status
         WHEN 'O' THEN 'OPEN'
-        WHEN  'C' THEN 'CLOSE'
+        WHEN 'C' THEN 'CLOSE'
       END AS Status,
       A.Remarks,
       C.OUCode + ' - ' + C.OUDesc AS OU
@@ -869,20 +871,15 @@ function ffbGridSQLCommand(formName) {
       D.ToAge AS TAnumeric,
       D.RatePerWt AS RPWnumeric
       FROM FPS_DailyRatePAgeDet D
-      WHERE RatePAgeHdrKey IN (
+      WHERE D.RatePAgeHdrKey IN (
         SELECT A.RatePAgeHdrKey
-      FROM FPS_DailyProcRateHdr A
+      FROM FPS_DailyRatePAgeHdr A
       LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
-      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
       LEFT JOIN GMS_RegionStp E ON A.RegionKey = E.RegionKey
-      WHERE TRY_CAST(A.Yr AS int) BETWEEN 1900 AND 2100
-        AND TRY_CAST(A.Mth AS int) BETWEEN 1 AND 12
-        AND FORMAT(DATEFROMPARTS(
-        TRY_CAST(A.Yr AS int),
-        TRY_CAST(A.Mth AS int),
-        1
-      ),'MMMM yyyy',
-      'id-ID') = @Date
+      WHERE FORMAT(A.FromDate,
+      'dd/MM/yyyy') = @Date
+      AND FORMAT(A.ToDate,
+      'dd/MM/yyyy') = @Date2
       AND E.RegionCode + ' - ' + E.RegionDesc = @Area
       AND C.OUCode + ' - ' + C.OUDesc = @OU
       )`;

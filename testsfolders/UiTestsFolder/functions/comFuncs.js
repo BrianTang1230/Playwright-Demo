@@ -1,4 +1,5 @@
 import { allure, expect } from "allure-playwright";
+import { region } from "@utils/commonFunctions/GlobalSetup";
 
 let currForm = "";
 let currPhase = "";
@@ -48,8 +49,8 @@ export async function SelectOU(page, inputPath, dropdownPath, ou) {
   await page.waitForTimeout(10000);
   await ouArrow.click();
 
-  const option = page.locator(dropdownPath, { hasText: ou }).first();
-  await page.waitForTimeout(5000);
+  const option = page.getByRole("option", { name: ou, exact: true });
+  await page.waitForTimeout(2000);
   await option.click();
 
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
@@ -151,7 +152,7 @@ export function formatGridData(array, size) {
   return chunked;
 }
 
-export function convertMonth(month) {
+export function convertNumericMonth(month) {
   const monthMap = {
     january: "1",
     januari: "1",
@@ -179,6 +180,7 @@ export function convertMonth(month) {
   return monthMap[month.toLowerCase()];
 }
 
+<<<<<<< Updated upstream
 export function getUniversalDate(options = {}) {
   const { days = 0, dayPosition = null, format = 'DD/MM/YYYY' } = options;
   let date = new Date();
@@ -216,3 +218,25 @@ for (let i = 0; i < allVals.length; i += colsPerRow) {
 }
 return gridRows;
 }
+=======
+export function convertTextMonth(date) {
+  const month = Number(date.split("/")[1]); // 9
+
+  const monthMap = {
+    1: region === "MY" ? "January" : "Januari",
+    2: region === "MY" ? "February" : "Februari",
+    3: region === "MY" ? "March" : "Maret",
+    4: region === "MY" ? "April" : "April",
+    5: region === "MY" ? "May" : "Mei",
+    6: region === "MY" ? "June" : "Juni",
+    7: region === "MY" ? "July" : "Juli",
+    8: region === "MY" ? "August" : "Agustus",
+    9: region === "MY" ? "September" : "September",
+    10: region === "MY" ? "October" : "Oktober",
+    11: region === "MY" ? "November" : "November",
+    12: region === "MY" ? "December" : "Desember",
+  };
+
+  return monthMap[String(month)];
+}
+>>>>>>> Stashed changes

@@ -60,7 +60,7 @@ export async function FFBAdvancePaymentCreate(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -121,7 +121,7 @@ export async function FFBAdvancePaymentEdit1(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -177,7 +177,7 @@ export async function FFBAdvancePaymentEdit2(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

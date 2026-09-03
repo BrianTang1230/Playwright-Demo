@@ -1,11 +1,18 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import {
+  convertTextMonth,
+  runStep,
+  SelectOU,
+} from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByOUAndDate } from "@UiFolder/functions/OpenRecord";
+import {
+  FilterForUnsaveChecking,
+  FilterTransactionBy2And1Criterias,
+} from "@UiFolder/functions/OpenRecord";
 
 export async function DailyProcurementRateCreate(
   page,
@@ -18,34 +25,51 @@ export async function DailyProcurementRateCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-    "#comboBoxOU_listbox li",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
+      "#comboBoxOU_listbox li",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  await page.getByRole("button", { name: " Populate Day" }).click();
+  await runStep("Add new grid item", async () => {
+    await page.getByRole("button", { name: " Populate Day" }).click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Create grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
 
   return { uiVals, gridVals };
 }
 
-export async function DailyProcurementRateEdit(
+export async function DailyProcurementRateEdit1(
   page,
   sideMenu,
   paths,
@@ -57,26 +81,116 @@ export async function DailyProcurementRateEdit(
   cellsIndex,
   ou,
 ) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Region",
+      "Dropdown",
+    );
+  });
 
-  for (let i = 0; i < paths.length; i++) {
-    await inputFormValues(page, paths[i], columns[i], newValues[i]);
-  }
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, values[2]);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, {
+      isOneRow: true,
+    });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function DailyProcurementRateEdit2(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  values,
+  newValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+) {
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Region",
+      "Dropdown",
+    );
+  });
+
+  await runStep("Edit transaction data", async () => {
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, {
+      isOneRow: true,
+    });
+  });
 
   return { uiVals, gridVals };
 }
 
 export async function DailyProcurementRateDelete(page, sideMenu, values, ou) {
-  await FilterRecordByOUAndDate(page, values, ou[0], values[1], 3, "Dropdown");
+  await runStep("Filter transaction", async () => {
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      values[1],
+      "Region",
+      "Dropdown",
+    );
+  });
 
-  await sideMenu.clickBtnDelete();
+  await runStep("Delete transaction", async () => {
+    await sideMenu.clickBtnDelete();
+  });
 }

@@ -69,13 +69,7 @@ test.describe.skip(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
-<<<<<<< Updated upstream
-//
-//console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
-//   });
-=======
     docNo = DocNo[keyName];
->>>>>>> Stashed changes
 
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });

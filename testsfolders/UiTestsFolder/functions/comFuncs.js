@@ -180,7 +180,6 @@ export function convertNumericMonth(month) {
   return monthMap[month.toLowerCase()];
 }
 
-<<<<<<< Updated upstream
 export function getUniversalDate(options = {}) {
   const { days = 0, dayPosition = null, format = 'DD/MM/YYYY' } = options;
   let date = new Date();
@@ -218,7 +217,7 @@ for (let i = 0; i < allVals.length; i += colsPerRow) {
 }
 return gridRows;
 }
-=======
+
 export function convertTextMonth(date) {
   const month = Number(date.split("/")[1]); // 9
 
@@ -239,4 +238,3 @@ export function convertTextMonth(date) {
 
   return monthMap[String(month)];
 }
->>>>>>> Stashed changes

@@ -110,7 +110,7 @@ export async function DailyProcurementRateEdit1(
   });
 
   await runStep("Reopen transaction", async () => {
-    await FilterForUnsaveChecking(page, values[2]);
+    await FilterForUnsaveChecking(page, values[1]);
   });
 
   const uiVals = await runStep("Get UI values", async () => {

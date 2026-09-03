@@ -169,6 +169,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Department Setup":
+      sqlCommand = `
+      SELECT DeptCode,
+      DeptDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_DeptStp
+      WHERE DeptCode = @Code
+      `;
+      break;
+
     case "Division Setup":
       sqlCommand = `
       SELECT A.DivCode,
@@ -1296,7 +1313,30 @@ function masterGridSQLCommand(formName) {
   return sqlCommand;
 }
 
+function masterTreeViewSQLCommand(formName) {
+  let sqlCommand = "";
+
+  switch (formName) {
+  
+    case 'Department Setup':
+    sqlCommand = `
+    SELECT C.OUDesc
+    FROM GMS_DeptStp A
+    LEFT JOIN GMS_DeptStpOU B ON A.DeptKey = B.DeptKey
+    LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+    WHERE A.DeptCode = @Code
+    `;
+    break;
+
+    default:
+      throw new Error(`Unknown formName: ${formName}`);
+  }
+
+  return sqlCommand;
+}
+
 module.exports = {
   masterSQLCommand,
   masterGridSQLCommand,
+  masterTreeViewSQLCommand,
 };

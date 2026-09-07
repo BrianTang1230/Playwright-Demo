@@ -3,6 +3,8 @@ import { SelectRecord } from "@UiFolder/functions/OpenRecord";
 import {
   inputFormValues,
   getFormValues,
+  inputTreeViewValues,
+  getTreeViewUiValues,
 } from "@UiFolder/functions/valuesFuncs";
 
 // Create Function
@@ -12,6 +14,8 @@ export async function DepartmentSetupCreate(
   paths,
   columns,
   values,
+  treeViewPath,
+  treeViewCreateValues,
 ) {
   await runStep("Open create new form", async () => {
     await sideMenu.btnNew.click();
@@ -23,34 +27,8 @@ export async function DepartmentSetupCreate(
     }
   });
 
-  //tree path is the path thingy in masterdata.json
-
-  //#deptouTreeView
-
-  const treeID = '#deptouTreeView';
-  let treeExcelInput = 'OIL PALM ESTATE/RAMIN ESTATE;HEAD OFFICE DEPARTMENT/ADMIN DEPARTMENT;HEAD OFFICE';
-  let treeInput = treeExcelInput.split(';');
-
-  await runStep("Create Tree item", async () => {
-
-    for (const currentItem of treeInput) {
-      let target;
-
-      if (currentItem.includes('/')) {
-        // Handles items with a path (Parent / Child)
-        let [parentNode, childNode] = currentItem.split('/').map(node => node.trim());
-        target = page.locator(`${treeID} li`, { hasText: parentNode })
-                  .locator('li', { hasText: new RegExp(`^${childNode}$`) });
-      } else {
-        // Handles single-level items
-        target = page.locator(`${treeID} .k-in`, { hasText: currentItem })
-                  .locator('xpath=ancestor::li[1]');
-      }
-
-      await target.locator('input[type="checkbox"], .k-checkbox').first().click();
-    }
-
-
+  await runStep("Input tree View values", async () => {
+    await inputTreeViewValues(page, treeViewPath, treeViewCreateValues);
   });
 
 
@@ -62,11 +40,15 @@ export async function DepartmentSetupCreate(
     await SelectRecord(page, sideMenu, values);
   });
 
+  const treeViewUiVals = await runStep("Get TreeView UI values", async () => {
+    return await getTreeViewUiValues(page, treeViewPath);
+  });
+
   const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
 
-  return { uiVals };
+  return { uiVals, treeViewUiVals };
 }
 
 // Edit Function

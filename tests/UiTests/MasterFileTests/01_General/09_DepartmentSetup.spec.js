@@ -12,10 +12,12 @@ import {
 import {
   validateFormValues,
   validateDBValues,
+  validateTreeViewUiValues,
+  validateTreeViewDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
-import { masterSQLCommand } from "@UiFolder/queries/MasterQuery";
-import { JsonPath, InputPath } from "@utils/data/uidata/masterData.json";
+import { masterSQLCommand, masterTreeViewSQLCommand } from "@UiFolder/queries/MasterQuery";
+import { JsonPath, InputPath, TreePath } from "@utils/data/uidata/masterData.json";
 
 import {
   DepartmentSetupCreate,
@@ -29,6 +31,7 @@ let ou;
 let sideMenu;
 let createValues;
 let editValues;
+let treeViewCreateValues;
 let deleteSQL;
 let phaseCount = 0;
 const sheetName = "MAS_DATA";
@@ -38,6 +41,7 @@ const formName = "Department Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
+const treeViewPath = TreePath[keyName + "Path"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
@@ -47,10 +51,10 @@ test.describe.serial(`${formName} Tests`, () => {
     await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
+    [createValues, editValues, deleteSQL, ou, treeViewCreateValues] = await excel.loadExcelValues(
       sheetName,
       formName,
-      {},
+      { hasTree: true },
     );
 
     await checkLength(paths, columns, createValues, editValues);
@@ -74,12 +78,14 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals } = await DepartmentSetupCreate(
+    const { uiVals , treeViewUiVals } = await DepartmentSetupCreate(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
+      treeViewPath,
+      treeViewCreateValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -87,8 +93,19 @@ test.describe.serial(`${formName} Tests`, () => {
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
 
+    const treeViewDbValues = await db.retrieveData(
+      masterTreeViewSQLCommand(formName),
+      {
+        Code: createValues[0],
+      },
+    );
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+
     await validateFormValues(createValues, columns, uiVals);
+    await validateTreeViewUiValues(treeViewCreateValues, treeViewUiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {

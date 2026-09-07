@@ -126,6 +126,102 @@ export async function validateGridValues(inputValues, gridValues) {
   }
 }
 
+export async function validateTreeViewUiValues(treeViewCreateValues, treeViewUiVals) {
+
+  const expectedTreeViewValues = [];
+  const entries = treeViewCreateValues;
+
+  for (const entry of entries) {
+
+    const hasParent = entry.match(/^\(([^)]+)\)(.+)$/); //e.g. (OIL MILL)OIL MILL/RAMIN ESTATE
+    const hasChild = entry.match(/^(.+?)\((.+)\)$/); //e.g. OIL MILL(SERAYA PALM OIL MILL,BENTA PALM OIL MILL)
+    
+    if (hasParent){
+      const parent = hasParent[1].trim();
+      const children = hasParent[2].trim();
+      
+      expectedTreeViewValues.push(parent);
+      expectedTreeViewValues.push(children);
+    }
+    else if (hasChild) {
+      const parent = hasChild[1].trim();
+      const children = hasChild[2].split(',').map(c => c.trim());
+      
+      // Add parent and all children paths
+      expectedTreeViewValues.push(parent);
+      children.forEach(child => expectedTreeViewValues.push(`${parent}/${child}`));
+    } else {
+      // It's a standalone node, e.g., "OIL PALM ESTATE/RAMIN ESTATE"
+      expectedTreeViewValues.push(entry.trim());
+    }
+  }
+
+  const expectedTreeViewArray = [...expectedTreeViewValues].sort();
+  const actualTreeViewArray = [...treeViewUiVals].sort();
+  const isLengthMatch = expectedTreeViewArray.length === actualTreeViewArray.length
+
+  console.log(`\nTree View Values of ${currForm}:\n` + "-".repeat(85));
+  updateCurrFormAndPhase();
+
+  if(!isLengthMatch){
+    throwTestFailMsg(
+      `${currPhase}-TREE-DI`,
+      currForm,
+      `Missing or extra Tree View UI input`,
+    );
+  }
+
+  const expectedLength = expectedTreeViewArray.length;
+
+  for (let i = 0; i < expectedLength; i++) {
+    if (expectedTreeViewArray[i] === actualTreeViewArray[i]) {
+        console.log(`Matched Tree UI values: ${expectedTreeViewArray[i]} === ${actualTreeViewArray[i]}`);
+    } else {
+        throwTestFailMsg(
+            `${currPhase}-UI-MM`,
+            currForm,
+            `${expectedTreeViewArray[i]} !== ${actualTreeViewArray[i]}`,
+        );
+    }
+  }
+
+}
+
+export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues){
+
+  updateCurrFormAndPhase();
+  const filteredUiVals = treeViewUiVals.filter(item => item.includes('/'));
+  const cleanedDbVals = treeViewDbValues.map(row => row.OUSelect);
+
+  let sortedUi = [...filteredUiVals].sort();
+  const sortedDb = [...cleanedDbVals].sort();
+
+  console.log(`\nTree View DB Values of ${currForm}:\n` + "-".repeat(85));
+
+  const isLengthMatch = sortedUi.length === sortedDb.length
+  
+  if(!isLengthMatch){
+    throwTestFailMsg(
+      `${currPhase}-TREE-DI`,
+      currForm,
+      `Missing or extra Tree View DB input`,
+    );
+  }
+
+  for (let i = 0; i < sortedUi.length; i++) {
+    if (sortedUi[i] === sortedDb[i]) {
+      console.log(`Matched Tree DB values: ${sortedUi[i]} === ${sortedDb[i]}`);
+    } else {
+      throwTestFailMsg(
+        `${currPhase}-DB-MM`,
+        currForm,
+        `${sortedUi[i]} !== ${sortedDb[i]}`,
+      )
+    }
+  }
+
+}
+
 function normalizeNumber(raw) {
   let cleaned = raw;
 
@@ -273,6 +369,63 @@ export async function inputGridValues(
     await input.press("Enter");
   }
 }
+
+export async function inputTreeViewValues(page, treeViewPath, treeViewCreateValues){
+  const treeViewID = treeViewPath;
+  let treeViewExcelInput = treeViewCreateValues;
+  // Removes anything inside parentheses, including the parentheses themselves
+  let treeViewInput = treeViewExcelInput.map(item => String(item).replace(/\s*\(.*?\)/g, ''));
+
+  for (const currentItem of treeViewInput) {
+    let target;
+
+    if (currentItem.includes('/')) {
+      // Handles items with a path (Parent / Child)
+      let [parentNode, childNode] = currentItem.split('/').map(node => node.trim());
+      target = page.locator(`${treeViewID} li`, { hasText: parentNode })
+                .locator('li', { hasText: new RegExp(`^${childNode}$`) });
+    } else {
+      // Handles single-level items
+      target = page.locator(`${treeViewID} .k-in`, { hasText: currentItem })
+                .locator('xpath=ancestor::li[1]');
+    }
+
+    await target.locator('input[type="checkbox"], .k-checkbox').first().click();
+  }
+
+}
+
+export async function getTreeViewUiValues(page, treeViewPath){
+  const treeViewID = treeViewPath;
+
+  const checkedPaths = await page.locator(`${treeViewID} input[type="checkbox"]:checked`).evaluateAll((checkboxes, treeViewId) => {
+    const treeRoot = document.querySelector(treeViewId);
+
+    return checkboxes.map(cb => {
+      const li = cb.closest('li');
+      if (!li) return '';
+
+      const pathParts = [];
+      let currentLi = li;
+
+      // Traverse up the DOM to find all ancestor li elements within the tree
+      while (currentLi && treeRoot.contains(currentLi)) {
+        // Find the direct text element (.k-in) for the current node
+        const textElement = currentLi.querySelector(':scope > div > .k-in, :scope > .k-in');
+        if (textElement) {
+          pathParts.unshift(textElement.textContent.trim());
+        }
+        // Move up to the next parent li element
+        currentLi = currentLi.parentElement.closest('li');
+      }
+
+      return pathParts.join('/');
+    }).filter(Boolean);
+  }, treeViewID);
+
+  return checkedPaths;
+}
+
 
 // Get values from UI based on the paths provided
 export async function getFormValues(page, paths) {

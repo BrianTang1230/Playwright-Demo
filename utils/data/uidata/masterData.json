@@ -112,6 +112,7 @@
   },
 
   "TreePath":{
-    "DepartmentSetupTreeView": ""
+    "DepartmentSetupPath": "#deptouTreeView",
+    "DummyTemp": ""
   }
 }

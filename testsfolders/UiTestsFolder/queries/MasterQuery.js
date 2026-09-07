@@ -1320,10 +1320,11 @@ function masterTreeViewSQLCommand(formName) {
   
     case 'Department Setup':
     sqlCommand = `
-    SELECT C.OUDesc
+    SELECT D.OperationTypeDesc + '/' + C.OUDesc AS OUSelect
     FROM GMS_DeptStp A
     LEFT JOIN GMS_DeptStpOU B ON A.DeptKey = B.DeptKey
     LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+    LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
     WHERE A.DeptCode = @Code
     `;
     break;

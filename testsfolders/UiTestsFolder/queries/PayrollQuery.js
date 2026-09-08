@@ -186,6 +186,8 @@ function payrollGridSQLCommand(formName) {
         SELECT B.EmpyID + ' - ' + B.EmpyName AS Employee,
         C.AddRemAmt AS Tnumeric,
         D.AddRemCode + ' - ' + D.AddRemDesc AS AddRem,
+        E.AccNum + ' - ' + E.AccDesc AS Account,
+        F.CCIDCode + ' - ' + F.CCIDDesc AS CCID,
         C.AddRemAmt AS numeric
         FROM PR_AddRemDet A
         LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey AND B.OUKey IN (
@@ -193,6 +195,8 @@ function payrollGridSQLCommand(formName) {
         )
         LEFT JOIN PR_AddRemDedDet C ON A.AddRemDetKey = C.AddRemDetKey
         LEFT JOIN GMS_AddRemStp D ON C.AddRemKey = D.AddRemKey
+        LEFT JOIN GMS_AccMas E ON C.AccKey = E.AccKey
+        LEFT JOIN V_SYC_CCIDMapping F ON C.CCIDKey = F.CCIDKey
         WHERE AddRemHdrKey IN (
           SELECT AddRemHdrKey FROM PR_AddRemHdr
           WHERE ADRNum = @DocNo AND OUKey IN (

@@ -32,6 +32,10 @@ let sideMenu;
 let createValues;
 let editValues;
 let treeViewCreateValues;
+let treeViewEditValues;
+let treeViewCheckValues;
+let treeViewCheckValuesAfterCreate;
+let treeViewCheckValuesAfterEdit;
 let deleteSQL;
 let phaseCount = 0;
 const sheetName = "MAS_DATA";
@@ -51,13 +55,16 @@ test.describe.serial(`${formName} Tests`, () => {
     await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou, treeViewCreateValues] = await excel.loadExcelValues(
+    [createValues, editValues, deleteSQL, ou, treeViewCreateValues, treeViewEditValues, treeViewCheckValues] = await excel.loadExcelValues(
       sheetName,
       formName,
       { hasTree: true },
     );
 
     await checkLength(paths, columns, createValues, editValues);
+    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] = treeViewCheckValues.map(val => 
+      typeof val === 'string' ? val.split(',').map(item => item.trim()) : val
+    );
 
     console.log(`Start Running: ${formName}`);
   });
@@ -99,23 +106,24 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues &&
-      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateTreeViewUiValues(treeViewCreateValues, treeViewUiVals);
+    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
-    const { uiVals } = await DepartmentSetupEdit1(
+    const { uiVals, treeViewUiVals } = await DepartmentSetupEdit1(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      treeViewPath,
+      treeViewEditValues
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -123,18 +131,30 @@ test.describe.serial(`${formName} Tests`, () => {
     });
     !dbValues && throwTestFailMsg("E1-DB-NF", formName);
 
+    const treeViewDbValues = await db.retrieveData(
+      masterTreeViewSQLCommand(formName),
+      {
+        Code: createValues[0],
+      },
+    );
+    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+
     await validateFormValues(createValues, columns, uiVals);
+    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
-    const { uiVals } = await DepartmentSetupEdit2(
+    const { uiVals, treeViewUiVals } = await DepartmentSetupEdit2(
       page,
       sideMenu,
       paths,
       columns,
       createValues,
       editValues,
+      treeViewPath,
+      treeViewEditValues
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -142,8 +162,18 @@ test.describe.serial(`${formName} Tests`, () => {
     });
     !dbValues && throwTestFailMsg("E2-DB-NF", formName);
 
+    const treeViewDbValues = await db.retrieveData(
+      masterTreeViewSQLCommand(formName),
+      {
+        Code: editValues[0],
+      },
+    );
+    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+
     await validateFormValues(editValues, columns, uiVals);
+    await validateTreeViewUiValues(treeViewCheckValuesAfterEdit, treeViewUiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
+    await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {

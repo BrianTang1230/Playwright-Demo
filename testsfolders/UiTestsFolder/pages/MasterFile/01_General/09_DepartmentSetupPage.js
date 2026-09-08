@@ -40,12 +40,12 @@ export async function DepartmentSetupCreate(
     await SelectRecord(page, sideMenu, values);
   });
 
-  const treeViewUiVals = await runStep("Get TreeView UI values", async () => {
-    return await getTreeViewUiValues(page, treeViewPath);
-  });
-
   const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
+  });
+
+  const treeViewUiVals = await runStep("Get TreeView UI values", async () => {
+    return await getTreeViewUiValues(page, treeViewPath);
   });
 
   return { uiVals, treeViewUiVals };
@@ -59,6 +59,8 @@ export async function DepartmentSetupEdit1(
   columns,
   values,
   newValues,
+  treeViewPath,
+  treeViewEditValues,
 ) {
   await runStep("Open transaction", async () => {
     await SelectRecord(page, sideMenu, values);
@@ -68,6 +70,10 @@ export async function DepartmentSetupEdit1(
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
+  });
+
+  await runStep("Edit tree View values", async () => {
+    await inputTreeViewValues(page, treeViewPath, treeViewEditValues);
   });
 
   await runStep("Close edited transaction without save", async () => {
@@ -83,7 +89,11 @@ export async function DepartmentSetupEdit1(
     return await getFormValues(page, paths);
   });
 
-  return { uiVals };
+  const treeViewUiVals = await runStep("Get TreeView UI values", async () => {
+    return await getTreeViewUiValues(page, treeViewPath);
+  });
+
+  return { uiVals, treeViewUiVals };
 }
 
 export async function DepartmentSetupEdit2(
@@ -93,6 +103,8 @@ export async function DepartmentSetupEdit2(
   columns,
   values,
   newValues,
+  treeViewPath,
+  treeViewEditValues,
 ) {
   await runStep("Open transaction", async () => {
     await SelectRecord(page, sideMenu, values);
@@ -102,6 +114,10 @@ export async function DepartmentSetupEdit2(
     for (let i = 0; i < paths.length; i++) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
+  });
+
+  await runStep("Edit tree View values", async () => {
+    await inputTreeViewValues(page, treeViewPath, treeViewEditValues);
   });
 
   await runStep("Save transaction", async () => {
@@ -116,7 +132,11 @@ export async function DepartmentSetupEdit2(
     return await getFormValues(page, paths);
   });
 
-  return { uiVals };
+  const treeViewUiVals = await runStep("Get TreeView UI values", async () => {
+    return await getTreeViewUiValues(page, treeViewPath);
+  });
+
+  return { uiVals, treeViewUiVals };
 }
 
 // Delete Function

@@ -126,41 +126,16 @@ export async function validateGridValues(inputValues, gridValues) {
   }
 }
 
-export async function validateTreeViewUiValues(treeViewCreateValues, treeViewUiVals) {
+export async function validateTreeViewUiValues(treeViewValues, treeViewUiVals) {
 
-  const expectedTreeViewValues = [];
-  const entries = treeViewCreateValues;
-
-  for (const entry of entries) {
-
-    const hasParent = entry.match(/^\(([^)]+)\)(.+)$/); //e.g. (OIL MILL)OIL MILL/RAMIN ESTATE
-    const hasChild = entry.match(/^(.+?)\((.+)\)$/); //e.g. OIL MILL(SERAYA PALM OIL MILL,BENTA PALM OIL MILL)
-    
-    if (hasParent){
-      const parent = hasParent[1].trim();
-      const children = hasParent[2].trim();
-      
-      expectedTreeViewValues.push(parent);
-      expectedTreeViewValues.push(children);
-    }
-    else if (hasChild) {
-      const parent = hasChild[1].trim();
-      const children = hasChild[2].split(',').map(c => c.trim());
-      
-      // Add parent and all children paths
-      expectedTreeViewValues.push(parent);
-      children.forEach(child => expectedTreeViewValues.push(`${parent}/${child}`));
-    } else {
-      // It's a standalone node, e.g., "OIL PALM ESTATE/RAMIN ESTATE"
-      expectedTreeViewValues.push(entry.trim());
-    }
-  }
+  let expectedTreeViewValues = treeViewValues;
 
   const expectedTreeViewArray = [...expectedTreeViewValues].sort();
   const actualTreeViewArray = [...treeViewUiVals].sort();
-  const isLengthMatch = expectedTreeViewArray.length === actualTreeViewArray.length
 
   console.log(`\nTree View Values of ${currForm}:\n` + "-".repeat(85));
+
+  const isLengthMatch = expectedTreeViewArray.length === actualTreeViewArray.length
   updateCurrFormAndPhase();
 
   if(!isLengthMatch){
@@ -189,7 +164,6 @@ export async function validateTreeViewUiValues(treeViewCreateValues, treeViewUiV
 
 export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues){
 
-  updateCurrFormAndPhase();
   const filteredUiVals = treeViewUiVals.filter(item => item.includes('/'));
   const cleanedDbVals = treeViewDbValues.map(row => row.OUSelect);
 
@@ -199,7 +173,8 @@ export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues)
   console.log(`\nTree View DB Values of ${currForm}:\n` + "-".repeat(85));
 
   const isLengthMatch = sortedUi.length === sortedDb.length
-  
+  updateCurrFormAndPhase();
+
   if(!isLengthMatch){
     throwTestFailMsg(
       `${currPhase}-TREE-DI`,
@@ -208,7 +183,9 @@ export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues)
     );
   }
 
-  for (let i = 0; i < sortedUi.length; i++) {
+  const expectedLength = sortedUi.length;
+
+  for (let i = 0; i < expectedLength; i++) {
     if (sortedUi[i] === sortedDb[i]) {
       console.log(`Matched Tree DB values: ${sortedUi[i]} === ${sortedDb[i]}`);
     } else {
@@ -370,13 +347,11 @@ export async function inputGridValues(
   }
 }
 
-export async function inputTreeViewValues(page, treeViewPath, treeViewCreateValues){
+export async function inputTreeViewValues(page, treeViewPath, treeViewValues){
   const treeViewID = treeViewPath;
-  let treeViewExcelInput = treeViewCreateValues;
-  // Removes anything inside parentheses, including the parentheses themselves
-  let treeViewInput = treeViewExcelInput.map(item => String(item).replace(/\s*\(.*?\)/g, ''));
+  let treeViewExcelInput = treeViewValues;
 
-  for (const currentItem of treeViewInput) {
+  for (const currentItem of treeViewExcelInput) {
     let target;
 
     if (currentItem.includes('/')) {

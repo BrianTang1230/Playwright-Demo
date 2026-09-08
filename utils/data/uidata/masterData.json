@@ -4,6 +4,8 @@
     "AdditionalRemunerationSetupColumn": "AddRemCode text,AddRemDesc text,Active checkbox,RcdType text,RemType dropdown,IsPrevYr checkbox,PCB checkbox,EPF checkbox,SOCSO checkbox,EIS checkbox,HRDF checkbox",
     "Allowance/Deduction/ReimbursementGroupSetupPath": "#grpCode,#payGrpDesc,#payGrpActive,#rcdType,//*[@id=\"topRegion\"]/div[6]/div/div[2]/div[5]/span",
     "Allowance/Deduction/ReimbursementGroupSetupColumn": "GrpCode text,GrpDesc text,Active checkbox,RcdType text,Type combobox",
+    "BeneficiaryInformationSetupPath": "#txtBeneficiaryName,#chkActive,#RcdType,#txtBankACNo,BNM_input,#txtNewIC,#txtOldIC,#txtBusinessRegNo,#txtPassportNo,#chkIsReqCheck,#txtEmail,#txtExtRef,#Street,#postcode,#city,#state,country_input",
+    "BeneficiaryInformationSetupColumn": "BeneficiaryName text,Active checkbox,RcdType text,BankAccNum text,BankName dropdown,ICNO text,OldICNO text,BRNO text,PoliceArmyPassNO text,IsReqCheck checkbox,Email text,ExtRef text,Address1 text,PostCode text,City text,State text,Country dropdown",
     "CertificationSetupPath": "#txtCertCode,#txtDescription,#chkActive,#RcdType,#txtCertNo,#chkSetAsDefault,#chkConventional,#CertExpiryDate",
     "CertificationSetupColumn": "CertCode text,CertDesc text,Active checkbox,RcdType text,CertNo text,IsDefault checkbox,Conventional checkbox,ExpiryDate date",
     "ContactCategorySetupPath": "#txtContactCatCode,#txtDescription,#chkActive,#contactCatRcdType,#chkCropSupp",
@@ -113,6 +115,6 @@
 
   "TreePath":{
     "DepartmentSetupPath": "#deptouTreeView",
-    "DummyTemp": ""
+    "BeneficiaryInformationSetupPath": "#ouTreeView"
   }
 }

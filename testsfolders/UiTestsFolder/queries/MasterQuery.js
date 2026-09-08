@@ -84,6 +84,41 @@ function masterSQLCommand(formName) {
       WHERE GrpCode = @Code
       `;
       break;
+    
+    case "Beneficiary Information Setup":
+      sqlCommand = `
+      SELECT A.BeneficiaryName,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.BankAccNum,
+      B.BankName,
+      A.ICNO,
+      A.OldICNO,
+      A.BRNO,
+      A.PoliceArmyPassNO,
+      CASE A.IsReqCheck
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsReqCheck,
+      A.Email,
+      A.ExtRef,
+      A.Address1,
+      A.PostCode,
+      A.City,
+      A.State,
+      C.CtryCode + ' - ' + C.CtryDesc AS Country
+      FROM GMS_BeneficiaryStp A
+      LEFT JOIN SYT_BNMCode B ON A.BNMCode = B.BNMCode
+      LEFT JOIN GMS_CountryStp C ON A.CtryKey = C.CtryKey
+      WHERE BeneficiaryName = @Code
+      `;
+      break;
 
     case "Certification Setup":
       sqlCommand = `
@@ -1326,6 +1361,17 @@ function masterTreeViewSQLCommand(formName) {
     LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
     LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
     WHERE A.DeptCode = @Code
+    `;
+    break;
+
+    case 'Beneficiary Information Setup':
+    sqlCommand = `
+    SELECT D.OperationTypeDesc + '/' + C.OUDesc AS OUSelect
+    FROM GMS_BeneficiaryStp A
+    LEFT JOIN GMS_BeneficiaryStpOU B ON A.BenKey = B.BenKey
+    LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+    LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
+    WHERE A.BeneficiaryName = @Code
     `;
     break;
 

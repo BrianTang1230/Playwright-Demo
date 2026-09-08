@@ -196,7 +196,8 @@ export async function FFBUnitCostAdjustmentBlockDelete(
       values[0],
       ou[0],
       gridValues[0].split(";")[0],
-      "Adjustment",
+      "Block",
+      "Dropdown",
     );
   });
 

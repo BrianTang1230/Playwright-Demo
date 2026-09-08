@@ -14,7 +14,13 @@
     "CashReceiptPath": "GLDate,GLDesc,CashCode_input,#txtReceiveFrom,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
     "CashReceiptColumn": "JournalDate date,Description text,CashCode dropdown,ReceiveFrom text,RefNo text,Remarks text,Status text",
     "CreditNotePath": "GLDate,GLDesc,#comboType,#txtTaxInvoiceNo,comboBoxContact_input,payTerm_input,InvoiceDate,PaymentDueDate,#comboSupplierAcc input,#txtRefNo,Remarks,//input[@ng-model='GLStatusDesc']",
-    "CreditNoteColumn": "JournalDate date,Description text,CNType combobox,TaxInvoice text,PayTerm dropdown,Supplier dropdown,InvoiceDate date,DueDate date,SupplerAcc dropdown,RefNo text,Remarks text,Status text"
+    "CreditNoteColumn": "JournalDate date,Description text,CNType combobox,TaxInvoice text,PayTerm dropdown,Supplier dropdown,InvoiceDate date,DueDate date,SupplierAcc dropdown,RefNo text,Remarks text,Status text",
+    "PurchaseInvoicePath": "GLDate,GLDesc,IssueToDesc_Input_input,//input[@title='comboBoxContactAcc'],#txtInvNum,payTerm_input,InvoiceDate,PaymentDueDate,Remarks,#txtStatus",
+    "PurchaseInvoiceColumn": "GLDate date,Description text,Supplier dropdown,SupplierAcc dropdown,InvNum text,PayTerm dropdown,InvoiceDate date,DueDate date,Remarks text,Status text",
+    "SelfBilledInvoicePath": "GLDate,GLDesc,comboBoxContact_input,//input[@title='comboBoxContactAcc'],payTerm_input,PaymentDueDate,txtRefNo,Remarks,#txtStatus",
+    "SelfBilledInvoiceColumn": "JournalDate date,Description text,Supplier dropdown,SupplierAcc dropdown,PayTerm dropdown,PaymentDueDate date,RefNo text,Remarks text,Status",
+    "DebitNotePath": "GLDate,GLDesc,#comboType,#txtTaxInvoiceNo,comboBoxContact_input,//input[@title='comboBoxContactAcc'],payTerm_input,InvoiceDate,PaymentDueDate,#txtRefNo,Remarks,#txtStatus",
+    "DebitNoteColumn": "JournalDate date,Description text,DNType combobox,TaxInvoice text,Customer dropdown,CustomerAcc dropdown,PayTerm dropdown,InvoiceDate date,DueDate date,RefNo text,Remarks text,Status text"
   },
   "GridPath": {
     "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
@@ -23,15 +29,21 @@
     "BankReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
     "CashPaymentGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
     "CashReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
-    "CreditNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
+    "CreditNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "PurchaseInvoiceGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "SelfBilledInvoiceGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "DebitNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "GeneralJournal": "",
-    "ClosedPeriodAdjustment": "",
-    "BankPayment": "",
-    "BankReceipt": "",
-    "CashPayment": "",
-    "CashReceipt": "",
-    "CreditNote": ""
+    "GeneralJournal": "JV26090004",
+    "ClosedPeriodAdjustment": "JV25050028",
+    "BankPayment": "BV26090003",
+    "BankReceipt": "BVR2609003",
+    "CashPayment": "CV26090003",
+    "CashReceipt": "CVR2609003",
+    "CreditNote": "CN26090003",
+    "PurchaseInvoice": "PI26090003",
+    "SelfBilledInvoice": "SB26090002",
+    "DebitNote": "DN26090001"
   }
 }

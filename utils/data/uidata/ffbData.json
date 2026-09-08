@@ -29,7 +29,7 @@
     "DailyProcurementRateColumn": "Month date,Region dropdown,Currency text,Status text,Remarks text",
     "DailyFFBProcurementRatePath": "#dpRateDate,#Remarks,#txtStatus",
     "DailyFFBProcurementRateColumn": "RateDate date,Remarks text,Status text",
-    "FFBProcurementPaymentPath": "#FromDatePicker,#ToDatePicker,#txtStatus,#Remarks",
+    "FFBProcurementPaymentPath": "#FromDatePicker,#ToDatePicker,#txtStatus,#Remarks,",
     "FFBProcurementPaymentColumn": ""
   },
   "GridPath": {
@@ -45,11 +45,12 @@
     "FFBUnitCostAdjustment(Block)Grid": "#DetailGrid > .k-grid-content > .k-selectable > tbody",
     "DailyRatebyPalmAgeGrid": "#RatePAgeDetGrid > .k-grid-content > .k-selectable > tbody",
     "DailyProcurementRateGrid": "#RateDetGrid > .k-grid-content > .k-selectable > tbody",
-    "DailyFFBProcurementRateGrid": "#DailyFFBProcurementRateGrid > .k-grid-content > .k-selectable > tbody"
+    "DailyFFBProcurementRateGrid": "#DailyFFBProcurementRateGrid > .k-grid-content > .k-selectable > tbody",
+    "FFBProcurementPaymentGrid": ""
   },
   "DocNo": {
-    "FFBAdvancePayment": "",
-    "OtherSubsidy": "",
+    "FFBAdvancePayment": "ADV2605041",
+    "OtherSubsidy": "SUB2605032",
     "FFBDeduction": ""
   }
 }

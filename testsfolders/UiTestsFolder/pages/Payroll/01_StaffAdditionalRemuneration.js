@@ -7,7 +7,6 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 import {
   FilterForUnsaveChecking,
-  FilterRecordByOUAndDate,
   FilterTransactionBy2And1Criterias,
 } from "@UiFolder/functions/OpenRecord";
 
@@ -120,7 +119,7 @@ export async function StaffAdditionalRemunerationEdit1(
     return await getFormValues(page, paths);
   });
   const gridVals = await runStep("Get edited Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -175,7 +174,7 @@ export async function StaffAdditionalRemunerationEdit2(
     return await getFormValues(page, paths);
   });
   const gridVals = await runStep("Get edited Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

@@ -29,7 +29,7 @@ export async function MonthlyMPOBPriceCreate(
     await SelectOU(
       page,
       "div.viewModeOU.pinOU .k-dropdown-wrap .k-select",
-      "#comboBoxOU_listbox",
+      "#comboBoxOU_listbox span",
       ou[0],
     );
   });

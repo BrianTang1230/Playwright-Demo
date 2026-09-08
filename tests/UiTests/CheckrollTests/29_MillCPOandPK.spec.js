@@ -54,8 +54,7 @@ const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3]];
 
 test.describe.skip(`${formName} Tests`, async () => {
-  // if (region === "IND")
-  test.skip(true);
+  if (region === "IND") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Change Current Form and Phase

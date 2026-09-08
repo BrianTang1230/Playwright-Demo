@@ -44,7 +44,7 @@
     "PreNurseryCulling": "",
     "PreNurseryAdjustment": "",
     "PreNurseryTransfer/Sold/Loss": "",
-    "Inter-OUPreNurseryTransferTo": "",
+    "Inter-OUPreNurseryTransferTo": "IPT0000020",
     "MainNurseryReceived": "",
     "MainNurseryDoubletonSplitting": "",
     "MainNurseryCulling": "",

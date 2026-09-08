@@ -1,4 +1,8 @@
-import { SelectOU, convertMonth, runStep } from "@UiFolder/functions/comFuncs";
+import {
+  SelectOU,
+  convertNumericMonth,
+  runStep,
+} from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
@@ -80,7 +84,7 @@ export async function DailyMPOBPriceEdit1(
 ) {
   await runStep("Filter transaction", async () => {
     const year = values[0].split(" ")[1];
-    const month = convertMonth(values[0].split(" ")[0]);
+    const month = convertNumericMonth(values[0].split(" ")[0]);
 
     await FilterTransactionBy1AndMoreCriterias(
       page,
@@ -137,7 +141,7 @@ export async function DailyMPOBPriceEdit2(
 ) {
   await runStep("Filter transaction", async () => {
     const year = values[0].split(" ")[1];
-    const month = convertMonth(values[0].split(" ")[0]);
+    const month = convertNumericMonth(values[0].split(" ")[0]);
 
     await FilterTransactionBy1AndMoreCriterias(
       page,
@@ -178,7 +182,7 @@ export async function DailyMPOBPriceEdit2(
 export async function DailyMPOBPriceDelete(page, sideMenu, values, ou, docNo) {
   await runStep("Filter transaction", async () => {
     const year = values[0].split(" ")[1];
-    const month = convertMonth(values[0].split(" ")[0]);
+    const month = convertNumericMonth(values[0].split(" ")[0]);
 
     await FilterTransactionBy1AndMoreCriterias(
       page,

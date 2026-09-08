@@ -53,7 +53,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 2],
-  [1, 2],
+  [1, 2, 3, 4],
 ];
 
 test.describe.serial(`${formName} Tests`, () => {
@@ -92,8 +92,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-
     const { uiVals, gridVals } = await StaffAdditionalRemunerationCreate(
       page,
       sideMenu,
@@ -153,7 +151,6 @@ test.describe.serial(`${formName} Tests`, () => {
     });
     !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
-
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {
@@ -191,7 +188,6 @@ test.describe.serial(`${formName} Tests`, () => {
     });
     !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
-
     const gridDbValues = await db.retrieveGridData(
       payrollGridSQLCommand(formName),
       {

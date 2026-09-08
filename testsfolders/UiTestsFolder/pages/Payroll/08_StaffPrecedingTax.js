@@ -60,7 +60,7 @@ export async function StaffPrecedingTaxCreate(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -115,7 +115,7 @@ export async function StaffPrecedingTaxEdit1(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };
@@ -165,7 +165,7 @@ export async function StaffPrecedingTaxEdit2(
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 
   return { uiVals, gridVals };

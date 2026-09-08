@@ -1349,37 +1349,34 @@ function masterGridSQLCommand(formName) {
 }
 
 function masterTreeViewSQLCommand(formName) {
-  let sqlCommand = "";
+  const formConfigs = {
+    'Department Setup': {
+      table: 'GMS_DeptStp',
+      key: 'DeptKey',
+      ouTable: 'GMS_DeptStpOU',
+      whereCol: 'DeptCode'
+    },
+    'Beneficiary Information Setup': {
+      table: 'GMS_BeneficiaryStp',
+      key: 'BenKey',
+      ouTable: 'GMS_BeneficiaryStpOU',
+      whereCol: 'BeneficiaryName'
+    }
+  };
 
-  switch (formName) {
-  
-    case 'Department Setup':
-    sqlCommand = `
-    SELECT D.OperationTypeDesc + '/' + C.OUDesc AS OUSelect
-    FROM GMS_DeptStp A
-    LEFT JOIN GMS_DeptStpOU B ON A.DeptKey = B.DeptKey
-    LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
-    LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
-    WHERE A.DeptCode = @Code
-    `;
-    break;
-
-    case 'Beneficiary Information Setup':
-    sqlCommand = `
-    SELECT D.OperationTypeDesc + '/' + C.OUDesc AS OUSelect
-    FROM GMS_BeneficiaryStp A
-    LEFT JOIN GMS_BeneficiaryStpOU B ON A.BenKey = B.BenKey
-    LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
-    LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
-    WHERE A.BeneficiaryName = @Code
-    `;
-    break;
-
-    default:
-      throw new Error(`Unknown formName: ${formName}`);
+  const config = formConfigs[formName];
+  if (!config) {
+    throw new Error(`Unknown formName: ${formName}`);
   }
 
-  return sqlCommand;
+  return `
+    SELECT D.OperationTypeDesc + '/' + C.OUDesc AS OUSelect
+    FROM ${config.table} A
+    LEFT JOIN ${config.ouTable} B ON A.${config.key} = B.${config.key}
+    LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+    LEFT JOIN GMS_OperationTypeStp D ON C.OperationTypeKey = D.OperationTypeKey
+    WHERE A.${config.whereCol} = @Code
+  `;
 }
 
 module.exports = {

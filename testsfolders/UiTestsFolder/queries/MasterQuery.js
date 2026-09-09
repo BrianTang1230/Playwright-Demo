@@ -658,6 +658,27 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Activity Category Setup':
+      sqlCommand = `
+      SELECT ACatCode,
+      ACatDesc,
+      CASE ActivityType
+        WHEN 'D' THEN 'Driver'
+        WHEN 'O' THEN 'Others'
+      END AS ActivityType,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_ActivityCatStp
+      WHERE ACatCode = @Code
+      `;
+      break;
+
     case "Activity Code Setup":
       sqlCommand = `
       SELECT A.Acode,
@@ -1420,6 +1441,12 @@ function masterTreeViewSQLCommand(formName) {
       key: 'MillKey',
       ouTable: 'GMS_MillStpOU',
       whereCol: 'MillCode'
+    },
+    'Activity Category Setup': {
+      table: 'GMS_ActivityCatStp',
+      key: 'ACatKey',
+      ouTable: 'GMS_ActivityCatStpOU',
+      whereCol: 'ACatCode'
     }
   };
 

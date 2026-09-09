@@ -58,6 +58,8 @@
     "PayrollDeductionCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox,RecoveryType dropdown,IsTaxPPh checkbox",
     "PayrollReimbursementCodeSetupPath":"#reimbursementCode,#reimbursementDesc,#reimbursementActive,#reimbursementRcdType,payGrp_input,spinbutton*0,#IsAlwChangeRate",
     "PayrollReimbursementCodeSetupColumn":"PayCode text,PayDesc text,Active checkbox,RcdType text,Groupby dropdown,DftAmt numeric,IsAlwChangeRate checkbox",
+    "ActivityCategorySetupPath":"#ACatCode,#ACatDesc,listbox*0,#activityCatActive,#RcdType",
+    "ActivityCategorySetupColumn":"ACatCode text,ACatDesc text,ActivityType combobox,Active checkbox,RcdType text",
     "ActivityCodeSetupPath": "#ACode,#ACodeDesc,#activityCodeActive,#RcdType,uom_input,comboBoxCategory_input,#IsAdopt,#AdoptDPF,#EnableManPRInc,spinbutton*0",
     "ActivityCodeSetupColumn": "Acode text,ACodeDesc text,Active checkbox,RcdType text,UOM dropdown,ActivityCategory dropdown,IsAdopt checkbox,AdoptDPF checkbox,EnableManPRInc checkbox,ManPRIncRate numeric",
     "CropPenaltySetupPath": "#CropPenaltyCode,#CropPenaltyDesc,#tjobActive,#tjobRcdType,spinbutton*0,uom_input",
@@ -121,6 +123,7 @@
     "BeneficiaryInformationSetupPath": "#ouTreeView",
     "DepartmentSetupPath": "#deptouTreeView",
     "EmployeeGradeSetupPath": "#ouTreeView",
-    "OilMillSetupPath": "#millouTreeView"
+    "OilMillSetupPath": "#millouTreeView",
+    "ActivityCategorySetupPath": "#bankouTreeView"
   }
 }

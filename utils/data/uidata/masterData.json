@@ -26,6 +26,8 @@
     "LocationSetupColumn": "LocationCode text,LocationDesc text,Active checkbox,IsDefault checkbox,OU dropdown,Address text,Contact text,PostDesc dropdown,Phone text,Mobile text,Fax text,Email text",
     "NationalitySetupPath": "#nationalCode,#nationalDesc,#nationalActive,#nationalRcdType,ctry_input",
     "NationalitySetupColumn": "NationalityCode text,NationalityDesc text,Active checkbox,RcdType text,Country dropdown",
+    "OilMillSetupPath": "#MillCode,#MillDesc,#millActive,#RcdType,Region_input,MillType_input,OU_input,Contact_input,#MillManager,#MPOBLicenseNo,#Remarks",
+    "OilMillSetupColumn": "MillCode text,MillDesc text,Active checkbox,RcdType text,RegionDesc dropdown,MillType dropdown,LocationOU dropdown,ContactID dropdown,MillManager text,MPOBLicenseNo text,Remarks text",
     "PlantingSourceSetupPath": "#PlantSourceCode,#PlantSourceDesc,#plantSourceActive,#plantSourceRcdType",
     "PlantingSourceSetupColumn": "PlantSourceCode text,PlantSourceDesc text,Active checkbox,RcdType text",
     "PlantingMaterialSetupPath": "#PlantMateCode,#PlantMateDesc,#PlantMateActive,#plantMateRcdType",
@@ -116,8 +118,9 @@
   },
 
   "TreePath":{
-    "DepartmentSetupPath": "#deptouTreeView",
     "BeneficiaryInformationSetupPath": "#ouTreeView",
-    "EmployeeGradeSetupPath": "#ouTreeView"
+    "DepartmentSetupPath": "#deptouTreeView",
+    "EmployeeGradeSetupPath": "#ouTreeView",
+    "OilMillSetupPath": "#millouTreeView"
   }
 }

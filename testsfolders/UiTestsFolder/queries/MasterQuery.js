@@ -319,6 +319,36 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Oil Mill Setup":
+      sqlCommand = `
+      SELECT A.MillCode,
+      A.MillDesc,
+      CASE A.Active
+          WHEN 1 THEN 'True'
+          WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+          WHEN 0 THEN 'User'
+          WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.RegionDesc,
+      CASE A.MillType
+          WHEN 'O' THEN 'Internal Mill'
+          WHEN 'E' THEN 'External Mill'
+      END AS MillType,
+      C.OUCode + ' - ' + C.OUDesc AS LocationOU,
+      D.ContactCode + ' - ' + D.ContactDesc AS ContactID,
+      A.MillManager,
+      A.MPOBLicenseNo,
+      A.Remarks
+      FROM GMS_MillStp A
+      LEFT JOIN GMS_RegionStp B ON A.RegionKey = B.RegionKey
+      LEFT JOIN GMS_OUStp C ON A.OUKey = C.OUKey
+      LEFT JOIN GMS_ContactStp D ON A.ContactKey = D.ContactKey
+      WHERE MillCode = @Code
+      `;
+      break;
+
     case "Planting Source Setup":
       sqlCommand = `
       SELECT PlantSourceCode,
@@ -1367,23 +1397,29 @@ function masterGridSQLCommand(formName) {
 
 function masterTreeViewSQLCommand(formName) {
   const formConfigs = {
-    'Department Setup': {
-      table: 'GMS_DeptStp',
-      key: 'DeptKey',
-      ouTable: 'GMS_DeptStpOU',
-      whereCol: 'DeptCode'
-    },
     'Beneficiary Information Setup': {
       table: 'GMS_BeneficiaryStp',
       key: 'BenKey',
       ouTable: 'GMS_BeneficiaryStpOU',
       whereCol: 'BeneficiaryName'
     },
+    'Department Setup': {
+      table: 'GMS_DeptStp',
+      key: 'DeptKey',
+      ouTable: 'GMS_DeptStpOU',
+      whereCol: 'DeptCode'
+    },
     'Employee Grade Setup': {
       table: 'GMS_EmpyGradeStp',
       key: 'EmpyGradeKey',
       ouTable: 'GMS_EmpyGradeStpOU',
       whereCol: 'EmpyCradeCode'
+    },
+    'Oil Mill Setup': {
+      table: 'GMS_MillStp',
+      key: 'MillKey',
+      ouTable: 'GMS_MillStpOU',
+      whereCol: 'MillCode'
     }
   };
 

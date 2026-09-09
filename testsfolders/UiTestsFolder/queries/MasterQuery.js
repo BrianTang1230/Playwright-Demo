@@ -237,6 +237,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Employee Grade Setup":
+      sqlCommand = `
+      SELECT EmpyCradeCode,
+      EmplyGradeDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_EmpyGradeStp
+      WHERE EmpyCradeCode = @Code
+      `;
+      break;
+
     case "Field Setup":
       sqlCommand = `
       select A.FieldCode,
@@ -1361,6 +1378,12 @@ function masterTreeViewSQLCommand(formName) {
       key: 'BenKey',
       ouTable: 'GMS_BeneficiaryStpOU',
       whereCol: 'BeneficiaryName'
+    },
+    'Employee Grade Setup': {
+      table: 'GMS_EmpyGradeStp',
+      key: 'EmpyGradeKey',
+      ouTable: 'GMS_EmpyGradeStpOU',
+      whereCol: 'EmpyCradeCode'
     }
   };
 

@@ -18,6 +18,8 @@
     "DepartmentSetupColumn": "DeptCode text,DeptDesc text,Active checkbox,RcdType text",
     "DivisionSetupPath": "#txtDivisionCode,#txtDescription,#chkActive",
     "DivisionSetupColumn": "DivCode text,DivDesc text,Active checkbox",
+    "EmployeeGradeSetupPath": "#EmpyCradeCode,#EmplyGradeDesc,#empyGradeActive,#rcdType",
+    "EmployeeGradeSetupColumn": "EmpyCradeCode text,EmplyGradeDesc text,Active checkbox,RcdType text",
     "FieldSetupPath": "#txtFieldCode,#txtDescription,#chkActive,comboBoxDivision_input",
     "FieldSetupColumn": "FieldCode text,FieldDesc text,Active checkbox,Division dropdown",
     "LocationSetupPath": "#locationCode,#locationDesc,#locationActive,#locationIsDefault,comboBoxOU_input,#address,#contactPerson,comboBoxPost_input,#phone,#mobile,#fax,#email",
@@ -115,6 +117,7 @@
 
   "TreePath":{
     "DepartmentSetupPath": "#deptouTreeView",
-    "BeneficiaryInformationSetupPath": "#ouTreeView"
+    "BeneficiaryInformationSetupPath": "#ouTreeView",
+    "EmployeeGradeSetupPath": "#ouTreeView"
   }
 }

@@ -22,6 +22,8 @@
     "EmployeeGradeSetupColumn": "EmpyCradeCode text,EmplyGradeDesc text,Active checkbox,RcdType text",
     "FieldSetupPath": "#txtFieldCode,#txtDescription,#chkActive,comboBoxDivision_input",
     "FieldSetupColumn": "FieldCode text,FieldDesc text,Active checkbox,Division dropdown",
+    "HolidayProfileSetupPath": "#holidayProfileCode,#holidayProfileDesc,#holidayProfileActive,#rcdType,#Year",
+    "HolidayProfileSetupColumn": "ProfileCode text,ProfileDesc text,Active checkbox,RcdType text,Yr date",
     "LocationSetupPath": "#locationCode,#locationDesc,#locationActive,#locationIsDefault,comboBoxOU_input,#address,#contactPerson,comboBoxPost_input,#phone,#mobile,#fax,#email",
     "LocationSetupColumn": "LocationCode text,LocationDesc text,Active checkbox,IsDefault checkbox,OU dropdown,Address text,Contact text,PostDesc dropdown,Phone text,Mobile text,Fax text,Email text",
     "NationalitySetupPath": "#nationalCode,#nationalDesc,#nationalActive,#nationalRcdType,ctry_input",
@@ -110,6 +112,7 @@
 
   "GridPath": {
     "AdditionalRemunerationSetupGrid": "#addRemOUGrid > .k-grid-content > .k-selectable > tbody",
+    "HolidayProfileSetupGrid": "#holidayProfileDetGrid > .k-grid-content > .k-selectable > tbody",
     "MedicalLeaveProfileSetupGrid": "#leaveProfileDetGrid > .k-grid-content > .k-selectable > tbody",
     "PayrollDeductionCodeSetupGrid": "#ddcOUGrid > .k-grid-content > .k-selectable > tbody",
     "PayrollReimbursementCodeSetupGrid": "#rmbOUGrid > .k-grid-content > .k-selectable > tbody",
@@ -123,6 +126,7 @@
     "BeneficiaryInformationSetupPath": "#ouTreeView",
     "DepartmentSetupPath": "#deptouTreeView",
     "EmployeeGradeSetupPath": "#ouTreeView",
+    "HolidayProfileSetupPath": "#ouTreeView",
     "OilMillSetupPath": "#millouTreeView",
     "ActivityCategorySetupPath": "#bankouTreeView"
   }

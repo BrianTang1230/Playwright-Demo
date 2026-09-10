@@ -272,6 +272,24 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Holiday Profile Setup":
+      sqlCommand = `
+      SELECT ProfileCode,
+      ProfileDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      Yr
+      FROM GMS_HolidayProfileStp
+      WHERE ProfileCode = @Code
+      `;
+      break;
+
     case "Location Setup":
       sqlCommand = `
       select A.LocationCode,
@@ -1317,6 +1335,15 @@ function masterGridSQLCommand(formName) {
       WHERE A.AddRemCode = @Code `;
       break;
 
+    case 'Holiday Profile Setup':
+      sqlCommand = `
+      SELECT FORMAT(B.HolidayDate, 'dd/MM/yyyy') AS Date,
+      B.HolidayDesc
+      FROM GMS_HolidayProfileStp A
+      LEFT JOIN GMS_HolidayProfileDet B ON A.ProfileKey = B.ProfileKey
+      WHERE ProfileCode = @Code `;
+      break;
+
     case "Medical Leave Profile Setup":
       sqlCommand = `
       SELECT C.AttdCode,
@@ -1420,32 +1447,38 @@ function masterTreeViewSQLCommand(formName) {
   const formConfigs = {
     'Beneficiary Information Setup': {
       table: 'GMS_BeneficiaryStp',
-      key: 'BenKey',
       ouTable: 'GMS_BeneficiaryStpOU',
+      key: 'BenKey',
       whereCol: 'BeneficiaryName'
     },
     'Department Setup': {
       table: 'GMS_DeptStp',
-      key: 'DeptKey',
       ouTable: 'GMS_DeptStpOU',
+      key: 'DeptKey',
       whereCol: 'DeptCode'
     },
     'Employee Grade Setup': {
       table: 'GMS_EmpyGradeStp',
-      key: 'EmpyGradeKey',
       ouTable: 'GMS_EmpyGradeStpOU',
+      key: 'EmpyGradeKey',
       whereCol: 'EmpyCradeCode'
+    },
+    'Holiday Profile Setup': {
+      table: 'GMS_HolidayProfileStp',
+      ouTable: 'GMS_HolidayProfileStpOU',
+      key: 'ProfileKey',
+      whereCol: 'ProfileCode'
     },
     'Oil Mill Setup': {
       table: 'GMS_MillStp',
-      key: 'MillKey',
       ouTable: 'GMS_MillStpOU',
+      key: 'MillKey',
       whereCol: 'MillCode'
     },
     'Activity Category Setup': {
       table: 'GMS_ActivityCatStp',
-      key: 'ACatKey',
       ouTable: 'GMS_ActivityCatStpOU',
+      key: 'ACatKey',
       whereCol: 'ACatCode'
     }
   };

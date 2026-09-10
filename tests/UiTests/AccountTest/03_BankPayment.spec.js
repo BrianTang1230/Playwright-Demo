@@ -2,8 +2,8 @@ import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
-import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
+import { formatGridData } from "@UiFolder/functions/comFuncs";
+
 import {
   validateFormValues,
   validateDBValues,
@@ -24,7 +24,8 @@ import {
 
 import {
   BankPaymentCreate,
-  BankPaymentEdit,
+  BankPaymentEdit1,
+  BankPaymentEdit2
 } from "@UiFolder/pages/Account/03_BankPayment";
 
 // ---------------- Set Global Variables ----------------
@@ -58,7 +59,7 @@ const dwCellIndex = region === "IND" ? cellsIndexIND : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Bank Payment Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -136,12 +137,62 @@ test.describe.serial("Bank Payment Tests", () => {
     }
   });
 
+  // ---------------- Edit without Saving Test----------------
+  test(`Edit ${formName} without Saving`, async ({ page, db }) => {
+    const fiscalYear = filterData[0];
+    const period = filterData[1];
+
+    const { uiVals, gridVals } = await BankPaymentEdit1(
+      page,
+      sideMenu,
+      dwPaths,
+      dwCols,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      dwCellIndex,
+      ou,
+      docNo,
+      fiscalYear,
+      period,
+    );
+
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtDocNum").inputValue(),
+    );
+
+    const dbValues = await db.retrieveData(accountSQLCommand(formName), {
+      DocNo: docNo,
+    });
+
+    const gridDbValues = await db.retrieveGridData(
+      accountGridSQLCommand(formName),
+      { DocNo: docNo, OU: ou[0] },
+    );
+
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+
+    await validateFormValues(createValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+
+    const rowData = formatGridData(gridVals, gridDbColumns.length);
+    for (let i = 0; i < rowData.length; i++) {
+      console.log(`\nValidating Row ${i + 1}...`);
+      await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
+    }
+  });
+
   // ---------------- Edit Test ----------------
   test("Edit Bank Payment", async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
-    const { uiVals, gridVals } = await BankPaymentEdit(
+    const { uiVals, gridVals } = await BankPaymentEdit2(
       page,
       sideMenu,
       dwPaths,

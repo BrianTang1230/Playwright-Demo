@@ -35,15 +35,16 @@
     "DebitNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "GeneralJournal": "JV26090004",
-    "ClosedPeriodAdjustment": "JV25050028",
-    "BankPayment": "BV26090003",
-    "BankReceipt": "BVR2609003",
-    "CashPayment": "CV26090003",
-    "CashReceipt": "CVR2609003",
-    "CreditNote": "CN26090003",
-    "PurchaseInvoice": "PI26090003",
-    "SelfBilledInvoice": "SB26090002",
-    "DebitNote": "DN26090001"
+    "GeneralJournal": "",
+    "ClosedPeriodAdjustment": "",
+    "BankPayment": "",
+    "BankReceipt": "",
+    "CashPayment": "",
+    "CashReceipt": "",
+    "CreditNote": "",
+    "PurchaseInvoice": "",
+    "SelfBilledInvoice": "",
+    "DebitNote": "",
+    "Self-BilledInvoice": ""
   }
 }

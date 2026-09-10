@@ -5,8 +5,11 @@ import {
   getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
+import { 
+  FilterRecordByFiscalYearAndPeriod, 
+  FilterForUnsaveChecking 
+} from "@UiFolder/functions/OpenRecord";
 
 // Create
 export async function GeneralJournalCreate(
@@ -79,8 +82,84 @@ export async function GeneralJournalCreate(
   return { uiVals, gridVals };
 }
 
-// Edit
-export async function GeneralJournalEdit(
+// Edit Without Saving
+export async function GeneralJournalEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  createValues,
+  editValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+  fiscalYear,
+  period,
+) {
+  if (typeof fiscalYear === "string") {
+    fiscalYear = fiscalYear.replace(/\[YEAR\]/g, getUniversalDate({ format: 'YYYY' }));
+  }
+  
+  if (typeof period === "string") {
+    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
+  }
+
+  const GridRows = buildGridRows(gridValues, cellsIndex);
+
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo);
+  });
+
+  for (let i = 0; i < createValues.length; i++) {
+    if (typeof createValues[i] === "string") {
+      createValues[i] = createValues[i].replace(/\[TODAY\]/g, getUniversalDate());
+      createValues[i] = createValues[i].replace(/\[TODAY\+30\]/g, getUniversalDate({ days: 30 }));
+    }
+  }
+  
+  const processedEditValues = editValues.map((val) => {
+    if (typeof val === "string") {
+      return val.replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
+    }
+    return val;
+  });
+
+  await runStep("Edit transaction data", async () => {
+    await page.waitForTimeout(6000);
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], processedEditValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get grid UI values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
+export async function GeneralJournalEdit2(
   page,
   sideMenu,
   paths,

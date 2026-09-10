@@ -24,7 +24,8 @@ import {
 
 import {
   DebitNoteCreate,
-  DebitNoteEdit
+  DebitNoteEdit1,
+  DebitNoteEdit2
 } from "@UiFolder/pages/Account/10_DebitNote";
 
 // ---------------- Set Global Variables ----------------
@@ -125,12 +126,62 @@ test.describe.serial("Debit Note Tests", () => {
     };
   });
 
+  // ---------------- Edit without Saving Test----------------
+  test(`Edit ${formName} without Saving`, async ({ page, db }) => {
+    const fiscalYear = filterData[0];
+    const period = filterData[1];
+  
+    const { uiVals, gridVals } = await DebitNoteEdit1(
+      page,
+      sideMenu,
+      dwPaths,
+      dwCols,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      dwCellIndex,
+      ou,
+      docNo,
+      fiscalYear,
+      period,
+    );
+  
+    docNo = await editJson(
+      JsonPath,
+      formName,
+      await page.locator("#txtDocumentNum").last().inputValue(),
+    );
+  
+    const dbValues = await db.retrieveData(accountSQLCommand(formName), {
+      DocNo: docNo,
+    });
+  
+    const gridDbValues = await db.retrieveGridData(
+      accountGridSQLCommand(formName),
+      { DocNo: docNo, OU: ou[0] },
+    );
+  
+    const gridDbColumns = Object.keys(gridDbValues[0]);
+  
+    await validateFormValues(createValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
+  
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+  
+    const rowData = formatGridData(gridVals, gridDbColumns.length);
+    for (let i = 0; i < rowData.length; i++) {
+      console.log(`\nValidating Row ${i + 1}...`);
+      await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
+    }
+  });
+
 // ---------------- Edit Test ----------------
   test('Edit Debit Note', async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
-    const { uiVals, gridVals } = await DebitNoteEdit(
+    const { uiVals, gridVals } = await DebitNoteEdit2(
       page,
       sideMenu,
       dwPaths,

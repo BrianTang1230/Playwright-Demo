@@ -1,11 +1,19 @@
-import { SelectOU, runStep, buildGridRows, getUniversalDate } from "@UiFolder/functions/comFuncs";
+import { 
+  SelectOU, 
+  runStep, 
+  buildGridRows, 
+  getUniversalDate 
+} from "@UiFolder/functions/comFuncs";
 import {
     inputGridValues,
     inputFormValues,
     getGridValues,
     getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
-import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
+import { 
+  FilterRecordByFiscalYearAndPeriod,
+  FilterForUnsaveChecking
+} from "@UiFolder/functions/OpenRecord";
 import Login from "@utils/data/uidata/loginData.json";
 
 // Create
@@ -75,8 +83,90 @@ export async function BankPaymentCreate(
     return { uiVals, gridVals };
 }
 
+// Edit Without Saving
+export async function BankPaymentEdit1(
+  page,
+  sideMenu,
+  paths,
+  columns,
+  createValues,
+  editValues,
+  gridPaths,
+  gridValues,
+  cellsIndex,
+  ou,
+  docNo,
+  fiscalYear,
+  period,
+) {
+  if (typeof fiscalYear === "string") {
+    fiscalYear = fiscalYear.replace(/\[YEAR\]/g, getUniversalDate({ format: 'YYYY' }));
+  }
+  
+  if (typeof period === "string") {
+    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
+  }
+
+  const GridRows = buildGridRows(gridValues, cellsIndex);
+
+  await runStep("Filter transaction", async () => {
+    await FilterRecordByFiscalYearAndPeriod(page, fiscalYear, period, docNo);
+  });
+
+  for (let i = 0; i < createValues.length; i++) {
+    if (typeof createValues[i] === "string") {
+      createValues[i] = createValues[i].replace(/\[TODAY\]/g, getUniversalDate());
+      createValues[i] = createValues[i].replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
+      createValues[i] = createValues[i].replace(/\[END_OF_MONTH\]/g, getUniversalDate({ dayPosition: 'last' }));
+    }
+  }
+  
+  const processedEditValues = editValues.map((val) => {
+    if (typeof val === "string") {
+      return val.replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
+      return val.replace(/\[END_OF_MONTH\]/g, getUniversalDate({ dayPosition: 'last' }));
+    }
+    return val;
+  });
+
+  await runStep("Edit transaction data", async () => {
+    await page.waitForTimeout(6000);
+    for (let i = 0; i < paths.length; i++) {
+      await inputFormValues(page, paths[i], columns[i], processedEditValues[i]);
+    }
+  });
+
+  await runStep("Edit grid item", async () => {
+    for (let i = 0; i < GridRows.length; i++) {
+      const currentPath = gridPaths[i] || gridPaths[0];
+      const currentIndex = cellsIndex[i] || cellsIndex[0];
+      await inputGridValues(page, currentPath, GridRows[i], currentIndex, i, { hasAutoFill: true});
+    }
+  });
+
+  await runStep("Close edited transaction without save", async () => {
+    await sideMenu.clickBtnClose();
+    await sideMenu.rejectBtn.click();
+  });
+
+  await runStep("Reopen transaction", async () => {
+    await FilterForUnsaveChecking(page, docNo);
+  });
+
+  const uiVals = await runStep("Get UI values", async () => {
+    return await getFormValues(page, paths);
+  });
+
+  const gridVals = await runStep("Get grid UI values", async () => {
+    const pathsToScrape = Array(GridRows.length).fill(gridPaths[0]);
+    return await getGridValues(page, pathsToScrape, cellsIndex, { hasAutoFill: true });
+  });
+
+  return { uiVals, gridVals };
+}
+
 // Edit
-export async function BankPaymentEdit(
+export async function BankPaymentEdit2(
     page,
     sideMenu,
     paths,

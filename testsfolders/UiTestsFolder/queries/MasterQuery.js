@@ -401,6 +401,25 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "Position Setup":
+      sqlCommand = `
+      SELECT A.PostCode,
+      A.PostDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.PostTypeCode + ' - ' + B.PostTypeDesc AS PositionType
+      FROM GMS_PostStp A
+      LEFT JOIN GMS_PostTypeStp B ON A.PostTypeKey = B.PostTypeKey
+      WHERE A.PostCode = @Code
+      `;
+      break;
+
     case "Position Type Setup":
       sqlCommand = `
       SELECT PostTypeCode,
@@ -1343,6 +1362,17 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_HolidayProfileDet B ON A.ProfileKey = B.ProfileKey
       WHERE ProfileCode = @Code `;
       break;
+    
+    case 'Position Setup':
+      sqlCommand = `
+      SELECT B.Description,
+      B.FromYr,
+      B.ToYr,
+      B.Amt
+      FROM GMS_PostStp A
+      LEFT JOIN GMS_TMKDet B ON A.PostKey = B.PostKey
+      WHERE A.PostCode = @Code `;
+      break;
 
     case "Medical Leave Profile Setup":
       sqlCommand = `
@@ -1474,6 +1504,12 @@ function masterTreeViewSQLCommand(formName) {
       ouTable: 'GMS_MillStpOU',
       key: 'MillKey',
       whereCol: 'MillCode'
+    },
+    'Position Setup': {
+      table: 'GMS_PostStp',
+      ouTable: 'GMS_PostStpOU',
+      key: 'PostKey',
+      whereCol: 'PostCode'
     },
     'Activity Category Setup': {
       table: 'GMS_ActivityCatStp',

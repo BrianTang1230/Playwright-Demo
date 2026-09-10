@@ -45,7 +45,7 @@ const formName = "Beneficiary Information Setup";
 const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
-const treeViewPath = TreePath[keyName + "Path"].split(",");
+const treeViewPath = TreePath[keyName + "Tree"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------

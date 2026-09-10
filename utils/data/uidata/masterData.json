@@ -126,12 +126,12 @@
   },
 
   "TreePath":{
-    "BeneficiaryInformationSetupPath": "#ouTreeView",
-    "DepartmentSetupPath": "#deptouTreeView",
-    "EmployeeGradeSetupPath": "#ouTreeView",
-    "HolidayProfileSetupPath": "#ouTreeView",
-    "OilMillSetupPath": "#millouTreeView",
-    "PositionSetupPath": "#ouTreeView",
-    "ActivityCategorySetupPath": "#bankouTreeView"
+    "BeneficiaryInformationSetupTree": "#ouTreeView",
+    "DepartmentSetupTree": "#deptouTreeView",
+    "EmployeeGradeSetupTree": "#ouTreeView",
+    "HolidayProfileSetupTree": "#ouTreeView",
+    "OilMillSetupTree": "#millouTreeView",
+    "PositionSetupTree": "#ouTreeView",
+    "ActivityCategorySetupTree": "#bankouTreeView"
   }
 }

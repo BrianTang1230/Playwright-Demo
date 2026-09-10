@@ -50,7 +50,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[1, 2, 3, 4]];
 const columns = InputPath[keyName + "Column"].split(",");
-const treeViewPath = TreePath[keyName + "Path"].split(",");
+const treeViewPath = TreePath[keyName + "Tree"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------

@@ -88,7 +88,7 @@ export async function FilterTransactionBy1AndMoreCriterias(
   // Apply filter and open seleted transaction
   await page.getByRole("button", { name: "  Apply Filter" }).click();
   await page
-    .getByRole("gridcell", { name: new RegExp(keywords.at(-1).slice(0, 4)) })
+    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
     .first()
     .click();
   await page.getByRole("button", { name: "   Open Transaction" }).click();

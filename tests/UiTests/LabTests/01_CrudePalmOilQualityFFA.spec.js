@@ -20,7 +20,8 @@ import { JsonPath, InputPath, GridPath } from "@utils/data/uidata/labData.json";
 
 import {
   LabCommonPageCreate,
-  LabCommonPageEdit,
+  LabCommonPageEdit1,
+  LabCommonPageEdit2,
   LabCommonPageDelete,
 } from "@UiFolder/pages/Lab/LabCommonPage";
 
@@ -77,7 +78,7 @@ test.describe.serial(`${formName} Tests`, async () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     const { uiVals, gridVals } = await LabCommonPageCreate(
@@ -96,6 +97,7 @@ test.describe.serial(`${formName} Tests`, async () => {
       Date: createValues[0],
       OU: ou[0],
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       labGridSQLCommand(formName),
@@ -104,7 +106,8 @@ test.describe.serial(`${formName} Tests`, async () => {
         OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -122,8 +125,8 @@ test.describe.serial(`${formName} Tests`, async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await LabCommonPageEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await LabCommonPageEdit1(
       page,
       sideMenu,
       paths,
@@ -141,6 +144,8 @@ test.describe.serial(`${formName} Tests`, async () => {
       Date: createValues[0],
       OU: ou[0],
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       labGridSQLCommand(formName),
@@ -149,7 +154,56 @@ test.describe.serial(`${formName} Tests`, async () => {
         OU: ou[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...createValues, ou[0]],
+      [...columns, "OU"],
+      dbValues[0],
+    );
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(
+      gridCreateValues.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await LabCommonPageEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      gridCreateValues[0].split(";")[0],
+    );
+
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
+      OU: ou[0],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      labGridSQLCommand(formName),
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -167,7 +221,7 @@ test.describe.serial(`${formName} Tests`, async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Crude Palm Oil Quality (FFA)", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await LabCommonPageDelete(
       page,
       sideMenu,
@@ -180,9 +234,7 @@ test.describe.serial(`${formName} Tests`, async () => {
       Date: createValues[0],
       OU: ou[0],
     });
-
-    if (dbValues.length > 0)
-      throw new Error("Deleting Crude Palm Oil Quality (FFA) failed");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------

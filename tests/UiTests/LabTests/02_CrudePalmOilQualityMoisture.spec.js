@@ -1,8 +1,13 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
-import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -10,19 +15,14 @@ import {
 } from "@UiFolder/functions/valuesFuncs";
 
 import { labSQLCommand, labGridSQLCommand } from "@UiFolder/queries/LabQuery";
-import {
-  JsonPath,
-  InputPath,
-  GridPath,
-  DocNo,
-} from "@utils/data/uidata/labData.json";
+import { InputPath, GridPath } from "@utils/data/uidata/labData.json";
 
 import {
   LabCommonPageCreate,
+  LabCommonPageEdit1,
+  LabCommonPageEdit2,
   LabCommonPageDelete,
-  LabCommonPageEdit,
 } from "@UiFolder/pages/Lab/LabCommonPage";
-import { skip } from "node:test";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -32,6 +32,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "LAB_DATA";
 const module = "Lab";
 const submodule = null;
@@ -45,9 +46,13 @@ const cellsIndex = [
   [0, 1, 2, 3],
 ];
 
-test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
+test.describe.serial(`${formName} Tests`, async () => {
   // ---------------- Before All ----------------
-  test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+  test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
     // Load Excel values
     [
       createValues,
@@ -69,10 +74,13 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create New Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
 
     const { uiVals, gridVals } = await LabCommonPageCreate(
@@ -91,6 +99,7 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
       Date: createValues[0],
       OU: ou[0],
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       labGridSQLCommand(formName),
@@ -99,7 +108,8 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
         OU: ou[0],
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -117,8 +127,8 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
-    const { uiVals, gridVals } = await LabCommonPageEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await LabCommonPageEdit1(
       page,
       sideMenu,
       paths,
@@ -136,6 +146,8 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
       Date: createValues[0],
       OU: ou[0],
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       labGridSQLCommand(formName),
@@ -144,7 +156,56 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
         OU: ou[0],
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...createValues, ou[0]],
+      [...columns, "OU"],
+      dbValues[0],
+    );
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(
+      gridCreateValues.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
+  });
+
+  // ---------------- Edit Test (With Saving) ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await LabCommonPageEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      gridCreateValues[0].split(";")[0],
+    );
+
+    const dbValues = await db.retrieveData(labSQLCommand(formName), {
+      Date: createValues[0],
+      OU: ou[0],
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      labGridSQLCommand(formName),
+      {
+        Date: createValues[0],
+        OU: ou[0],
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -162,7 +223,7 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Crude Palm Oil Quality (Moisture)", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await LabCommonPageDelete(
       page,
       sideMenu,
@@ -176,13 +237,11 @@ test.describe.serial("Crude Palm Oil Quality (Moisture) Tests", async () => {
       OU: ou[0],
     });
 
-    if (dbValues.length > 0)
-      throw new Error("Deleting Crude Palm Oil Quality (Moisture) failed");
+    dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    await editJson(JsonPath, formName, "");
+  test.afterAll(async () => {
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

@@ -1395,6 +1395,27 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Loading Type Setup':
+      sqlCommand = `
+      SELECT A.LoadTypeCode,
+      A.LoadTypeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.RatePerMT,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_LoadTypeStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.LoadTypeCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

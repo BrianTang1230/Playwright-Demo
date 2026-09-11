@@ -1355,6 +1355,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case "WB Authorization Case Setup":
+      sqlCommand = `
+      SELECT WBAuthCaseCode,
+      WBAuthCaseDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_WBAuthCaseStp
+      WHERE WBAuthCaseCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

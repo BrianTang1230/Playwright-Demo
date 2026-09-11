@@ -111,7 +111,9 @@
     "SupplierCategorySetupPath": "#SuppCatCode,#SuppCatDesc,#SuppCatActive,#RcdType,spinbutton*0,comboBoxBlockWtDistMtd_input",
     "SupplierCategorySetupColumn": "SuppCatCode text,SuppCatDesc text,Active checkbox,RcdType text,SeqNo numeric,BlockWtDistMtd dropdown",
     "ExternalBlockSetupPath": "#BlockCode,#BlockDesc,#outsideBlockActive,#RcdType,estate_input,grade_input,TER_input,#PlantedYr,#PlantedMth,spinbutton*0",
-    "ExternalBlockSetupColumn": "BlockCode text,BlockDesc text,Active checkbox,RcdType text,CropSupplier dropdown,Grade dropdown,TheorethicalExtractionRatio dropdown,PlantedYr date,PlantedMth date,ABW numeric"
+    "ExternalBlockSetupColumn": "BlockCode text,BlockDesc text,Active checkbox,RcdType text,CropSupplier dropdown,Grade dropdown,TheorethicalExtractionRatio dropdown,PlantedYr date,PlantedMth date,ABW numeric",
+    "WBAuthorizationCaseSetupPath": "#WBAuthCaseCode,#WBAuthCaseDesc,#wbAuthCaseActive,#RcdType",
+    "WBAuthorizationCaseSetupColumn": "WBAuthCaseCode text,WBAuthCaseDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

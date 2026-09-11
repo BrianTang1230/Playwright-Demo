@@ -1371,6 +1371,29 @@ function masterSQLCommand(formName) {
       WHERE WBAuthCaseCode = @Code
       `;
       break;
+    
+    case "Destination Setup":
+      sqlCommand = `
+      SELECT A.DeliverytoCode,
+      A.DeliveryToDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.ContactCode + ' - ' + B.ContactDesc AS ContactID,
+      A.Addr1,
+      A.Addr2,
+      A.Addr3,
+      A.Addr4
+      FROM GMS_DeliveryToStp A
+      LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
+      WHERE A.DeliveryToCode = @Code
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);

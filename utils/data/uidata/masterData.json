@@ -113,7 +113,9 @@
     "ExternalBlockSetupPath": "#BlockCode,#BlockDesc,#outsideBlockActive,#RcdType,estate_input,grade_input,TER_input,#PlantedYr,#PlantedMth,spinbutton*0",
     "ExternalBlockSetupColumn": "BlockCode text,BlockDesc text,Active checkbox,RcdType text,CropSupplier dropdown,Grade dropdown,TheorethicalExtractionRatio dropdown,PlantedYr date,PlantedMth date,ABW numeric",
     "WBAuthorizationCaseSetupPath": "#WBAuthCaseCode,#WBAuthCaseDesc,#wbAuthCaseActive,#RcdType",
-    "WBAuthorizationCaseSetupColumn": "WBAuthCaseCode text,WBAuthCaseDesc text,Active checkbox,RcdType text"
+    "WBAuthorizationCaseSetupColumn": "WBAuthCaseCode text,WBAuthCaseDesc text,Active checkbox,RcdType text",
+    "DestinationSetupPath": "#DeliveryToCode,#DeliveryToDesc,#deliveryToActive,#RcdType,Contact_input,#DeliveryToAddress1,#DeliveryToAddress2,#DeliveryToAddress3,#DeliveryToAddress4",
+    "DestinationSetupColumn": "DeliverytoCode text,DeliveryToDesc text,Active checkbox,RcdType text,ContactID dropdown,Addr1 text,Addr2 text,Addr3 text,Addr4 text"
   },
 
   "GridPath": {

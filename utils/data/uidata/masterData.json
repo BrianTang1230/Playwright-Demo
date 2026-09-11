@@ -94,6 +94,8 @@
     "StoreSetupColumn": "StoreCode text,StoreDesc text,Active checkbox,RcdType text,TransHierachy numeric,Company text,Remark text",
     "VehicleSetupPath": "#VehID,#VehTypeDesc,#vehActive,#RcdType,VehTypeKey_input,LocKey_input,comboBoxPriOUM_input,comboBoxFuelOUM_input,spinbutton*0,#regNo,#Make,#MthPurchased,#YrMade,#Model,#EngineVIN,#TyreFront,#EngineCC,#ChasisVIN,#TyreRear,#SerialNo,#RdExpiredDate,#HasCL,#CLDate,#HasJPJ,#JPJDate,#HasNS,#NSDate,#TrnDate,spinbutton*1,#TrnFrom,spinbutton*2,#TrnTo,CompKey_input,#Remarks",
     "VehicleSetupColumn": "VehID text,VehDesc text,Active checkbox,RcdType text,VehicleType dropdown,Location dropdown,PrimaryUnit dropdown,FuelLubricantUnit dropdown,PriUnitRate numeric,RegNo text,Make text,PurchasedMonth date,YrMade date,Model text,EngineVIN text,TyreFront text,EngineCC text,ChasisVIN text,TyreRear text,SerialNo text,RoadTaxExpiry date,HasCL checkbox,CarrierLicenseDate date,HasJPJ checkbox,InspectionDate date,HasNS checkbox,NextServiceDate date,DateTransfer date,ServInterval numeric,TrnFrom text,LastMeter numeric,TrnTo text,RegistrationCompany dropdown,Remarks text",
+    "VehicleTypeSetupPath": "#VehTypeCode,#VehTypeDesc,#vehTypeActive,#vehTypeRcdType,spinbutton*0,comboBoxPriOUM_input,comboBoxSecOUM_input,comboBoxFuelOUM_input,spinbutton*1",
+    "VehicleTypeSetupColumn": "VehTypeCode text,VehTypeDesc text,Active checkbox,RcdType text,AllocSeq numeric,PrimaryUnit dropdown,SecondaryUnit dropdown,FuelLubricantUnit dropdown,PriUnitRate numeric",
     "NurseryBatchCategorySetupPath": "#txtNurseryBatchCatCode,#txtDescription,#chkActive,#nurseryBatchCatRcdType,#chkIsVirtualNurseryBatch",
     "NurseryBatchCategorySetupColumn": "NurBatchCatCode text,NurBatchCatDesc text,Active checkbox,RcdType text,IsVirtualNurseryBatch checkbox",
     "NurseryBatchSetupPath": "#nurseryBatchCode,#nurseryBatchDesc,comboBoxPlantingMate_input,Crop_input,#Active,#IsProgramCompleted,#ProgramCompleteDate,cbosupplierNurBatch_input,#nurPlantedPeriod,#nurSalesExpectedDate,cboNurBatchCat_input",
@@ -122,6 +124,7 @@
     "ActivityCodeSetupGrid": "#activityOUGrid > .k-grid-content > .k-selectable > tbody",
     "CheckrollDeductionCodeSetupGrid": "#ddcOUGrid > .k-grid-content > .k-selectable > tbody",
     "CheckrollReimbursementCodeSetupGrid": "#rmbOUGrid > .k-grid-content > .k-selectable > tbody",
+    "VehicleTypeSetupGrid": "#inputAddAccGrid > .k-grid-content > .k-selectable > tbody",
     "StationSetupGrid": "#inputAddAccGrid > .k-grid-content > .k-selectable > tbody"
   },
 

@@ -1113,6 +1113,31 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Vehicle Type Setup':
+      sqlCommand = `
+      SELECT A.VehTypeCode,
+      A.VehTypeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.AllocSeq,
+      B.UOMCode + ' - ' + B.UOMDesc AS PrimaryUnit,
+      C.UOMCode + ' - ' + C.UOMDesc AS SecondaryUnit,
+      D.UOMCode + ' - ' + D.UOMDesc AS FuelLubricantUnit,
+      A.PriUnitRate
+      FROM GMS_VehTypeStp A
+      LEFT JOIN GMS_UOMStp B ON A.PriUOMKey = B.UOMKey
+      LEFT JOIN GMS_UOMStp C ON A.SecUOMKey = C.UOMKey
+      LEFT JOIN GMS_UOMStp D ON A.FuelUOMKey = D.UOMKey
+      WHERE A.VehTypeCode = @Code
+      `;
+      break;
+
     case 'Nursery Batch Category Setup':
       sqlCommand = `
       SELECT NurBatchCatCode,
@@ -1455,6 +1480,15 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_AccMas D ON  B.AccKey = D.AccKey
       LEFT JOIN V_SYC_CCIDMapping E ON E.CCIDKey = B.CCIDKey
       WHERE A.Paycode = @Code`;
+      break;
+
+    case 'Vehicle Type Setup':
+      sqlCommand = `
+      SELECT C.AccNum + ' - ' + C.AccDesc AS Account
+      FROM GMS_VehTypeStp A
+      LEFT JOIN GMS_VehAccStp B ON A.VehTypeKey = B.VehTypeKey
+      LEFT JOIN GMS_AccMas C ON B.AccKey = C.AccKey
+      WHERE A.VehTypeCode = @Code`;
       break;
 
     case 'Station Setup':

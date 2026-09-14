@@ -117,7 +117,9 @@
     "DestinationSetupPath": "#DeliveryToCode,#DeliveryToDesc,#deliveryToActive,#RcdType,Contact_input,#DeliveryToAddress1,#DeliveryToAddress2,#DeliveryToAddress3,#DeliveryToAddress4",
     "DestinationSetupColumn": "DeliverytoCode text,DeliveryToDesc text,Active checkbox,RcdType text,ContactID dropdown,Addr1 text,Addr2 text,Addr3 text,Addr4 text",
     "LoadingTypeSetupPath": "#LoadTypeCode,#LoadTypeDesc,#loadTypeActive,#RcdType,spinbutton*0",
-    "LoadingTypeSetupColumn": "LoadTypeCode text,LoadTypeDesc text,Active checkbox,RcdType text,RatePerMT numeric"
+    "LoadingTypeSetupColumn": "LoadTypeCode text,LoadTypeDesc text,Active checkbox,RcdType text,RatePerMT numeric",
+    "TestComponentTypeSetupPath": "#TypeCode,#TypeDesc,#typeActive,#RcdType,spinbutton*0",
+    "TestComponentTypeSetupColumn": "TypeCode text,TypeDesc text,Active checkbox,RcdType text,Seq numeric"
   },
 
   "GridPath": {

@@ -1415,6 +1415,27 @@ function masterSQLCommand(formName) {
       AND B.OUCode + ' - ' + B.OUDesc = @OU
       `;
       break;
+    
+    case 'Test Component Type Setup':
+      sqlCommand = `
+      SELECT A.TypeCode,
+      A.TypeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      A.Seq,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_TypeStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.TypeCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);

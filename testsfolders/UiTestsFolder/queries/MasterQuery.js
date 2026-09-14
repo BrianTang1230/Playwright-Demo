@@ -1457,6 +1457,39 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Loss Recovery Type Setup':
+      sqlCommand = `
+      SELECT A.LossRecTypeID,
+      A.LossRecTypeDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      CASE A.LossType
+        WHEN 'OL' THEN 'Oil Losses'
+        WHEN 'KOL' THEN 'Kernel Oil Losses'
+      END AS LossType,
+      CASE A.SourceType
+        WHEN 'CPKOLOSS' THEN 'Kernel Oil Losses'
+        WHEN 'EFBLOSS' THEN 'Losses In Empty Bunch'
+      END AS SourceType,
+      CASE A.ResultType
+        WHEN 'NOS' THEN 'NOS'
+        WHEN 'LEFB' THEN 'Losses In EFB'
+      END AS ResultType,
+      A.MassBal,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_LossRecTypeStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.LossRecTypeID = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -1600,6 +1633,18 @@ function masterGridSQLCommand(formName) {
       LEFT JOIN GMS_StationAccStp B ON A.StationKey = B.StationKey
       LEFT JOIN GMS_AccMas C ON B.AccKey = C.AccKey
       WHERE A.StationCode = @Code`;
+      break;
+
+    case 'Loss Recovery Type Setup':
+      sqlCommand = `
+      SELECT C.TypeIDCode,
+      C.TypeIDDesc,
+      D.TypeCode
+      FROM GMS_LossRecTypeStp A
+      LEFT JOIN GMS_LossRecTypeDet B ON A.LossRecTypeKey = B.LossRecTypeKey
+      LEFT JOIN GMS_TypeIDStp C ON B.TypeIDKey = C.TypeIDKey
+      LEFT JOIN GMS_TypeStp D ON C.TypeKey = D.TypeKey
+      WHERE A.LossRecTypeID = @Code`;
       break;
 
     default:

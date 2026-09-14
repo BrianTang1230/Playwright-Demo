@@ -123,7 +123,9 @@
     "ChemicalSetupPath": "#ChemCode,#ChemDesc,#chemActive,#RcdType",
     "ChemicalSetupColumn": "ChemCode text,ChemDesc text,Active checkbox,RcdType text",
     "LossRecoveryTypeSetupPath": "#lossRecTypeID,#lossRecTypeDesc,#lossRecTypeActive,#rcdType,comboBoxLossType_input,comboBoxSourceType_input,comboBoxResultType_input,spinbutton*0",
-    "LossRecoveryTypeSetupColumn": "LossRecTypeID text,LossRecTypeDesc text,Active checkbox,RcdType text,LossType dropdown,SourceType dropdown,ResultType dropdown,MassBal numeric"
+    "LossRecoveryTypeSetupColumn": "LossRecTypeID text,LossRecTypeDesc text,Active checkbox,RcdType text,LossType dropdown,SourceType dropdown,ResultType dropdown,MassBal numeric",
+    "ContractorConductorSetupPath": "empyNameId_input,#chkGenWork,#chkFFBTrans",
+    "ContractorConductorSetupColumn": "StaffID dropdown,IsGenWork checkbox,IsFFBTrans checkbox"
   },
 
   "GridPath": {

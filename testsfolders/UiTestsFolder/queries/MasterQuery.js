@@ -1490,6 +1490,26 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Contractor Conductor Setup':
+      sqlCommand = `
+      SELECT B.EmpyID + ' - ' + B.EmpyName AS StaffID,
+      CASE A.IsGenWork
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsGenWork,
+      CASE A.IsFFBTrans
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsFFBTrans,
+      C.OUCode + ' - ' + C.OUDesc AS OU
+      FROM GMS_EmpyContractStp A
+      LEFT JOIN GMS_EmpyPerMas B ON A.EmpyKey = B.EmpyKey
+      LEFT JOIN GMS_OUStp C ON B.OUKey = C.OUKey
+      WHERE B.EmpyID + ' - ' + B.EmpyName = @Code
+      AND C.OUCode + ' - ' + C.OUDesc = @OU
+      `;
+      break; 
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

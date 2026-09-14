@@ -70,6 +70,7 @@ export async function StaffMonthlyTaxDeductionCreate(
       page,
       gridPaths.slice(0, 2),
       cellsIndex.slice(0, 2),
+      { isOneRow: true },
     );
 
     await page.locator("#prTabstripworkDet li").nth(1).click();
@@ -77,6 +78,7 @@ export async function StaffMonthlyTaxDeductionCreate(
       page,
       gridPaths.slice(2, 3),
       cellsIndex.slice(2, 3),
+      { isOneRow: true },
     );
 
     return [...gridVals1, ...gridVals2];
@@ -153,6 +155,7 @@ export async function StaffMonthlyTaxDeductionEdit1(
       page,
       gridPaths.slice(0, 2),
       cellsIndex.slice(0, 2),
+      { isOneRow: true },
     );
 
     await page.locator("#prTabstripworkDet li").nth(1).click();
@@ -160,6 +163,7 @@ export async function StaffMonthlyTaxDeductionEdit1(
       page,
       gridPaths.slice(2, 3),
       cellsIndex.slice(2, 3),
+      { isOneRow: true },
     );
 
     return [...gridVals1, ...gridVals2];
@@ -231,6 +235,7 @@ export async function StaffMonthlyTaxDeductionEdit2(
       page,
       gridPaths.slice(0, 2),
       cellsIndex.slice(0, 2),
+      { isOneRow: true },
     );
 
     await page.locator("#prTabstripworkDet li").nth(1).click();
@@ -238,6 +243,7 @@ export async function StaffMonthlyTaxDeductionEdit2(
       page,
       gridPaths.slice(2, 3),
       cellsIndex.slice(2, 3),
+      { isOneRow: true },
     );
 
     return [...gridVals1, ...gridVals2];

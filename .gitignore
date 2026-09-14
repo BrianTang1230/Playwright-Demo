@@ -7,7 +7,17 @@ node_modules/
 /playwright/.cache/
 /allure-results/
 /allure-report/
+/allure-report/awesome/
 /.allure/
+/playwright.edge-noscreen.config.js
+/playwright.ind.temp.config.js
 
 # Environment variables
 .env
+
+# Temporary local used files
+/tests/_tmp_alias_loader.mjs
+/tests/_tmp_check_excel.js
+/tests/_tmp_inspect_adr.js
+/tests/_tmp_run_adr.js
+/tests/_tmp_run_tax.js

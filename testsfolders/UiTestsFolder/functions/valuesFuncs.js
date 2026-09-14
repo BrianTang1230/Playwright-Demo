@@ -38,7 +38,9 @@ export async function validateFormValues(inputValues, columns, uiValues) {
       localUiValues[i] = String(uiVal);
     }
 
-    if (String(localInputValues[i]).trim() !== String(localUiValues[i]).trim()) {
+    if (
+      String(localInputValues[i]).trim() !== String(localUiValues[i]).trim()
+    ) {
       throwTestFailMsg(
         `${currPhase}-UI-MM`,
         currForm,
@@ -74,7 +76,10 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
       localInputValues[i] = normalizeNumber(String(localInputValues[i]).trim());
     }
 
-    if (String(localInputValues[i]).trim() !== String(localDbValues[colName]).trim()) {
+    if (
+      String(localInputValues[i]).trim() !==
+      String(localDbValues[colName]).trim()
+    ) {
       throwTestFailMsg(
         `${currPhase}-DB-MM`,
         currForm,

@@ -337,7 +337,9 @@ function labGridSQLCommand(formName) {
         A.Blanknm269 AS B2numeric,
         A.Blanknm446 AS B4numeric,
         A.nm269 AS O2numeric,
-        A.nm446 AS O4numeric
+        A.nm446 AS O4numeric,
+        A.CaroteneCont AS CCnumeric,
+        A.DOBI AS DOBInumeric
         FROM LAB_CPOQltyDOBIDet A  
         LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey 
         WHERE A.Num IN (6666,9999)

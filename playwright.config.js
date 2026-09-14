@@ -32,11 +32,14 @@ module.exports = defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ["html", { outputFolder: "playwright-report", open: "never" }],
-    ["allure-playwright", {
-      detail: true,
-      outputFolder: 'allure-results',
-      suiteTitle: false,
-    }],
+    [
+      "allure-playwright",
+      {
+        detail: true,
+        outputFolder: "allure-results",
+        suiteTitle: false,
+      },
+    ],
   ] /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */,
 
   timeout: 240000,
@@ -88,10 +91,7 @@ module.exports = defineConfig({
       testIgnore: [
         // "tests/UiTests/FFBProcurementTests/**", // Temporarily ignore FFBProcurementTests
         ...(region === "IND"
-          ? [
-              "tests/UiTests/LabTests/**",
-              "tests/UiTests/FFBProcurementTests/MY/**",
-            ]
+          ? ["tests/UiTests/FFBProcurementTests/MY/**"]
           : []),
         ...(region === "MY"
           ? ["tests/UiTests/FFBProcurementTests/IND/**"]

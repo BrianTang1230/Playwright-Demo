@@ -125,7 +125,9 @@
     "LossRecoveryTypeSetupPath": "#lossRecTypeID,#lossRecTypeDesc,#lossRecTypeActive,#rcdType,comboBoxLossType_input,comboBoxSourceType_input,comboBoxResultType_input,spinbutton*0",
     "LossRecoveryTypeSetupColumn": "LossRecTypeID text,LossRecTypeDesc text,Active checkbox,RcdType text,LossType dropdown,SourceType dropdown,ResultType dropdown,MassBal numeric",
     "ContractorConductorSetupPath": "empyNameId_input,#chkGenWork,#chkFFBTrans",
-    "ContractorConductorSetupColumn": "StaffID dropdown,IsGenWork checkbox,IsFFBTrans checkbox"
+    "ContractorConductorSetupColumn": "StaffID dropdown,IsGenWork checkbox,IsFFBTrans checkbox",
+    "JobCategorySetupPath": "#JobCatCode,#JobCatDesc,#JobCatActive,#RcdType",
+    "JobCategorySetupColumn": "JobCatCode text,JobCatDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

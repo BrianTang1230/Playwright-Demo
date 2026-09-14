@@ -1508,7 +1508,24 @@ function masterSQLCommand(formName) {
       WHERE B.EmpyID + ' - ' + B.EmpyName = @Code
       AND C.OUCode + ' - ' + C.OUDesc = @OU
       `;
-      break; 
+      break;
+
+    case "Job Category Setup":
+      sqlCommand = `
+      SELECT JobCatCode,
+      JobCatDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_JobCatStp
+      WHERE JobCatCode = @Code
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);

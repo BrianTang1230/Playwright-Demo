@@ -1437,6 +1437,26 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Chemical Setup':
+      sqlCommand = `
+      SELECT A.ChemCode,
+      A.ChemDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_ChemStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE A.ChemCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

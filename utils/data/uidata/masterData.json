@@ -119,7 +119,9 @@
     "LoadingTypeSetupPath": "#LoadTypeCode,#LoadTypeDesc,#loadTypeActive,#RcdType,spinbutton*0",
     "LoadingTypeSetupColumn": "LoadTypeCode text,LoadTypeDesc text,Active checkbox,RcdType text,RatePerMT numeric",
     "TestComponentTypeSetupPath": "#TypeCode,#TypeDesc,#typeActive,#RcdType,spinbutton*0",
-    "TestComponentTypeSetupColumn": "TypeCode text,TypeDesc text,Active checkbox,RcdType text,Seq numeric"
+    "TestComponentTypeSetupColumn": "TypeCode text,TypeDesc text,Active checkbox,RcdType text,Seq numeric",
+    "ChemicalSetupPath": "#ChemCode,#ChemDesc,#chemActive,#RcdType",
+    "ChemicalSetupColumn": "ChemCode text,ChemDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

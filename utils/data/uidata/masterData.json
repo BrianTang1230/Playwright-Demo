@@ -127,7 +127,9 @@
     "ContractorConductorSetupPath": "empyNameId_input,#chkGenWork,#chkFFBTrans",
     "ContractorConductorSetupColumn": "StaffID dropdown,IsGenWork checkbox,IsFFBTrans checkbox",
     "JobCategorySetupPath": "#JobCatCode,#JobCatDesc,#JobCatActive,#RcdType",
-    "JobCategorySetupColumn": "JobCatCode text,JobCatDesc text,Active checkbox,RcdType text"
+    "JobCategorySetupColumn": "JobCatCode text,JobCatDesc text,Active checkbox,RcdType text",
+    "JobSetupPath": "#JobCode,#JobDesc,#JobActive,#RcdType,JobCat_input,JobType_input,UOM_input,comboBoxExpAcc_input,spinbutton*0,#IsAlwChangeRate,#IsAlwJRChangeRate,#IsAlwOpenQty",
+    "JobSetupColumn": "JobCode text,JobDesc text,Active checkbox,RcdType text,JobCategory dropdown,JobType dropdown,UOM dropdown,Account dropdown,Rate numeric,IsAlwChangeRate checkbox,IsAlwJRChangeRate checkbox,IsAlwOpenQty checkbox"
   },
 
   "GridPath": {
@@ -152,6 +154,7 @@
     "HolidayProfileSetupTree": "#ouTreeView",
     "OilMillSetupTree": "#millouTreeView",
     "PositionSetupTree": "#ouTreeView",
-    "ActivityCategorySetupTree": "#bankouTreeView"
+    "ActivityCategorySetupTree": "#bankouTreeView",
+    "JobSetupTree": "#jobouTreeView"
   }
 }

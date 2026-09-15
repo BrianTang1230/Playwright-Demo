@@ -1510,7 +1510,7 @@ function masterSQLCommand(formName) {
       `;
       break;
 
-    case "Job Category Setup":
+    case 'Job Category Setup':
       sqlCommand = `
       SELECT JobCatCode,
       JobCatDesc,
@@ -1524,6 +1524,46 @@ function masterSQLCommand(formName) {
       END AS RcdType
       FROM GMS_JobCatStp
       WHERE JobCatCode = @Code
+      `;
+      break;
+
+    case 'Job Setup':
+      sqlCommand = `
+      SELECT A.JobCode,
+      A.JobDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.JobCatCode + ' - ' + B.JobCatDesc AS JobCategory,
+      CASE A.JobType
+        WHEN 'G' THEN 'General Work'
+        WHEN 'T' THEN 'FFB Transportation'
+      END AS JobType,
+      C.UOMCode + ' - ' + C.UOMDesc AS UOM,
+      D.AccNum + ' - ' + D.AccDesc AS Account,
+      A.Rate,
+      CASE A.IsAlwChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwChangeRate,
+      CASE A.IsAlwJRChangeRate
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwJRChangeRate,
+      CASE A.IsAlwOpenQty
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS IsAlwOpenQty
+      FROM GMS_JobStp A
+      LEFT JOIN GMS_JobCatStp B ON A.JobCatKey = B.JobCatKey
+      LEFT JOIN GMS_UOMStp C ON A.UOMKey = C.UOMKey
+      LEFT JOIN GMS_AccMas D ON A.ExpAccKey = D.AccKey
+      WHERE JobCode = @Code
       `;
       break;
 
@@ -1734,6 +1774,12 @@ function masterTreeViewSQLCommand(formName) {
       ouTable: 'GMS_ActivityCatStpOU',
       key: 'ACatKey',
       whereCol: 'ACatCode'
+    },
+    'Job Setup': {
+      table: 'GMS_JobStp',
+      ouTable: 'GMS_JobStpOU',
+      key: 'JobKey',
+      whereCol: 'JobCode'
     }
   };
 

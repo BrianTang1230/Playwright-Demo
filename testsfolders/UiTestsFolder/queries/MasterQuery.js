@@ -1596,11 +1596,30 @@ function masterSQLCommand(formName) {
         WHEN 0 THEN 'User'
         WHEN 1 THEN 'System'
       END AS RcdType,
-      DefRate,
+      A.DefRate,
       B.OUCode + ' - ' + B.OUDesc AS OU
       FROM GMS_DeductionStp A
       LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
       WHERE DeductionCode = @Code
+      `;
+      break;
+    
+    case 'FFB Subsidy Setup':
+      sqlCommand = `
+      SELECT A.SubsidyCode,
+      A.SubsidyDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_SubsidyStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE SubsidyCode = @Code
       `;
       break;
 

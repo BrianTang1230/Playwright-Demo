@@ -133,7 +133,9 @@
     "PickupPointSetupPath": "#PickCode,#PickDesc,#pickupPointActive,#RcdType",
     "PickupPointSetupColumn": "PickCode text,PickDesc text,Active checkbox,RcdType text",
     "FFBDeductionSetupPath": "#DeductionCode,#DeductionDesc,#deductionActive,#RcdType,spinbutton*0",
-    "FFBDeductionSetupColumn": "DeductionCode text,DeductionDesc text,Active checkbox,RcdType text,DefRate numeric"
+    "FFBDeductionSetupColumn": "DeductionCode text,DeductionDesc text,Active checkbox,RcdType text,DefRate numeric",
+    "FFBSubsidySetupPath": "#SubsidyCode,#SubsidyDesc,#subsidyActive,#RcdType",
+    "FFBSubsidySetupColumn": "SubsidyCode text,SubsidyDesc text,Active checkbox,RcdType text"
   },
 
   "GridPath": {

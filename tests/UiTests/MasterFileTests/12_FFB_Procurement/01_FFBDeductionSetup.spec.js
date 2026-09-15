@@ -139,7 +139,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Delete ${formName}`, async ({ page, db }) => {
     await FFBDeductionSetupDelete(page, sideMenu, editValues, ou);
 
-    // Check if the FFBDeduction Setup is deleted
+    // Check if the FFB Deduction Setup is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: editValues[0],
       OU: ou[0],

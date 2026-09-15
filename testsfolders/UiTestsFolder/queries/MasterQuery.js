@@ -1583,6 +1583,26 @@ function masterSQLCommand(formName) {
       WHERE PickCode = @Code
       `;
       break;
+    
+    case 'FFB Deduction Setup':
+      sqlCommand = `
+      SELECT A.DeductionCode,
+      A.DeductionDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType,
+      DefRate,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_DeductionStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      WHERE DeductionCode = @Code
+      `;
+      break;
 
     default:
       throw new Error(`Unknown formName: ${formName}`);

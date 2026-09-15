@@ -131,7 +131,9 @@
     "JobSetupPath": "#JobCode,#JobDesc,#JobActive,#RcdType,JobCat_input,JobType_input,UOM_input,comboBoxExpAcc_input,spinbutton*0,#IsAlwChangeRate,#IsAlwJRChangeRate,#IsAlwOpenQty",
     "JobSetupColumn": "JobCode text,JobDesc text,Active checkbox,RcdType text,JobCategory dropdown,JobType dropdown,UOM dropdown,Account dropdown,Rate numeric,IsAlwChangeRate checkbox,IsAlwJRChangeRate checkbox,IsAlwOpenQty checkbox",
     "PickupPointSetupPath": "#PickCode,#PickDesc,#pickupPointActive,#RcdType",
-    "PickupPointSetupColumn": "PickCode text,PickDesc text,Active checkbox,RcdType text"
+    "PickupPointSetupColumn": "PickCode text,PickDesc text,Active checkbox,RcdType text",
+    "FFBDeductionSetupPath": "#DeductionCode,#DeductionDesc,#deductionActive,#RcdType,spinbutton*0",
+    "FFBDeductionSetupColumn": "DeductionCode text,DeductionDesc text,Active checkbox,RcdType text,DefRate numeric"
   },
 
   "GridPath": {

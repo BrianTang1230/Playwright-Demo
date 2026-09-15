@@ -1567,6 +1567,23 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Pickup Point Setup':
+      sqlCommand = `
+      SELECT PickCode,
+      PickDesc,
+      CASE Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      CASE RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_PickupPointStp
+      WHERE PickCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -1780,6 +1797,12 @@ function masterTreeViewSQLCommand(formName) {
       ouTable: 'GMS_JobStpOU',
       key: 'JobKey',
       whereCol: 'JobCode'
+    },
+    'Pickup Point Setup': {
+      table: 'GMS_PickupPointStp',
+      ouTable: 'GMS_PickupPointStpOU',
+      key: 'PickKey',
+      whereCol: 'PickCode'
     }
   };
 

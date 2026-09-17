@@ -1563,7 +1563,7 @@ function masterSQLCommand(formName) {
       LEFT JOIN GMS_JobCatStp B ON A.JobCatKey = B.JobCatKey
       LEFT JOIN GMS_UOMStp C ON A.UOMKey = C.UOMKey
       LEFT JOIN GMS_AccMas D ON A.ExpAccKey = D.AccKey
-      WHERE JobCode = @Code
+      WHERE A.JobCode = @Code
       `;
       break;
 
@@ -1600,7 +1600,7 @@ function masterSQLCommand(formName) {
       B.OUCode + ' - ' + B.OUDesc AS OU
       FROM GMS_DeductionStp A
       LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-      WHERE DeductionCode = @Code
+      WHERE A.DeductionCode = @Code
       `;
       break;
     
@@ -1619,7 +1619,26 @@ function masterSQLCommand(formName) {
       B.OUCode + ' - ' + B.OUDesc AS OU
       FROM GMS_SubsidyStp A
       LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
-      WHERE SubsidyCode = @Code
+      WHERE A.SubsidyCode = @Code
+      `;
+      break;
+
+    case 'Account Sub Category Setup':
+      sqlCommand = `
+      SELECT A.AccSubCatCode,
+      A.AccSubCatDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      B.AccCatDesc,
+      CASE A.RcdType
+        WHEN 0 THEN 'User'
+        WHEN 1 THEN 'System'
+      END AS RcdType
+      FROM GMS_AccSubCatStp A
+      LEFT JOIN GMS_AccCatStp B ON A.AccCatKey = B.AccCatKey
+      WHERE A.AccSubCatCode = @Code
       `;
       break;
 

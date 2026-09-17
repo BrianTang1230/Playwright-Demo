@@ -135,7 +135,9 @@
     "FFBDeductionSetupPath": "#DeductionCode,#DeductionDesc,#deductionActive,#RcdType,spinbutton*0",
     "FFBDeductionSetupColumn": "DeductionCode text,DeductionDesc text,Active checkbox,RcdType text,DefRate numeric",
     "FFBSubsidySetupPath": "#SubsidyCode,#SubsidyDesc,#subsidyActive,#RcdType",
-    "FFBSubsidySetupColumn": "SubsidyCode text,SubsidyDesc text,Active checkbox,RcdType text"
+    "FFBSubsidySetupColumn": "SubsidyCode text,SubsidyDesc text,Active checkbox,RcdType text",
+    "AccountSubCategorySetupPath": "#txtAccSubCatCode,#txtDesc,AccCat_input,#chkActive",
+    "AccountSubCategorySetupColumn": "AccSubCatCode text,AccSubCatDesc text,AccCatDesc dropdown,Active checkbox"
   },
 
   "GridPath": {

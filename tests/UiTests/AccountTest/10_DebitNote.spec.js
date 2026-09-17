@@ -3,25 +3,21 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength, formatGridData} from "@UiFolder/functions/comFuncs";
-import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import {
   validateFormValues,
   validateDBValues,
   validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-
 import {
   accountSQLCommand,
   accountGridSQLCommand,
 } from "@UiFolder/queries/AccountQuery";
-
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/accountData.json";
-
 import {
   DebitNoteCreate,
   DebitNoteEdit1,
@@ -55,7 +51,7 @@ const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Debit Note Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [

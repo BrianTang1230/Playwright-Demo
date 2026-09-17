@@ -20,7 +20,13 @@
     "SelfBilledInvoicePath": "GLDate,GLDesc,comboBoxContact_input,//input[@title='comboBoxContactAcc'],payTerm_input,PaymentDueDate,txtRefNo,Remarks,#txtStatus",
     "SelfBilledInvoiceColumn": "JournalDate date,Description text,Supplier dropdown,SupplierAcc dropdown,PayTerm dropdown,PaymentDueDate date,RefNo text,Remarks text,Status",
     "DebitNotePath": "GLDate,GLDesc,#comboType,#txtTaxInvoiceNo,comboBoxContact_input,//input[@title='comboBoxContactAcc'],payTerm_input,InvoiceDate,PaymentDueDate,#txtRefNo,Remarks,#txtStatus",
-    "DebitNoteColumn": "JournalDate date,Description text,DNType combobox,TaxInvoice text,Customer dropdown,CustomerAcc dropdown,PayTerm dropdown,InvoiceDate date,DueDate date,RefNo text,Remarks text,Status text"
+    "DebitNoteColumn": "JournalDate date,Description text,DNType combobox,TaxInvoice text,Customer dropdown,CustomerAcc dropdown,PayTerm dropdown,InvoiceDate date,DueDate date,RefNo text,Remarks text,Status text",
+    "SalesInvoicePath": "GLDate,GLDesc,//span[@aria-owns='ddlDNType_listbox'],#txtTaxInvoiceNo,IssueToDesc_Input_input,//input[@title='comboBoxContactAcc'],#txtInvNum2,payTerm_input,PaymentDueDate,#txtRefNo,Remarks,#txtStatus",
+    "SalesInvoiceColumn": "JournalDate date,Description text,InvoiceType combobox,TaxInvoice text,Customer dropdown,CustomerAcc dropdown,InvNum text,PayTerm dropdown,DueDate date,RefNo text,Remarks text,Status text",
+    "SelfBilledInvoiceReceiptPath": "GLDate,GLDesc,IssueToDesc_Input_input,//input[@title='comboBoxContactAcc'],#txtInvoiceNo,payTerm_input,InvoiceDate,PaymentDueDate,#txtRefNo,Remarks,#txtStatus",
+    "SelfBilledInvoiceReceiptColumn": "JournalDate date,Description text,Customer dropdown,CustomerAcc dropdown,InvNum text,PayTerm dropdown,InvoiceDate date,DueDate date,RefNo text,Remarks text,Status text",
+    "UncultivatedAreaPath": "//span[select[@kendo-drop-down-list='ddlYear']],//span[select[@name='ddlPeriod']],Div_input,Remarks",
+    "UncultivatedAreaColumn": "Year combobox,Period combobox,Div dropdown,Remarks text"
   },
   "GridPath": {
     "GeneralJournalGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table,//*[@id=\"gldetailGrid\"]/div[3]/table/tbody/tr[2]",
@@ -32,7 +38,10 @@
     "CreditNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
     "PurchaseInvoiceGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
     "SelfBilledInvoiceGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
-    "DebitNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table"
+    "DebitNoteGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "SalesInvoiceGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "SelfBilledInvoiceReceiptGrid": "//*[@id=\"gldetailGrid\"]/div[3]/table",
+    "UncultivatedAreaGrid": "//*[@id=\"unculAreaGrid\"]/div[3]/table"
   },
   "DocNo": {
     "GeneralJournal": "",
@@ -43,8 +52,10 @@
     "CashReceipt": "",
     "CreditNote": "",
     "PurchaseInvoice": "",
-    "SelfBilledInvoice": "",
+    "Self-BilledInvoice": "",
     "DebitNote": "",
-    "Self-BilledInvoice": ""
+    "SalesInvoice": "",
+    "Self-BilledInvoiceReceipt": "",
+    "UncultivatedArea": ""
   }
 }

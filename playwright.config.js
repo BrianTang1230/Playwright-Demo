@@ -58,14 +58,15 @@ module.exports = defineConfig({
       mode: process.env.CI ? "retain-on-failure" : "on", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
     },
-    screenshot: "on",
+    screenshot: process.env.CI ? "only-on-failure" : "on",
+    trace: "retain-on-failure",
     actionTimeout: 90000,
     launchOptions: {
       args: process.env.CI ? [] : ["--start-maximized"], // skip maximize on CI
     },
     viewport: process.env.CI ? { width: 1920, height: 1080 } : null, // fixed size in CI
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "off",
+    //trace: "off",
   },
 
   /* Configure projects for major browsers */
@@ -76,8 +77,12 @@ module.exports = defineConfig({
       use: {
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
-        video: { mode: "on", size: { width: 1920, height: 1080 } },
-        screenshot: "on",
+        video: {
+          mode: process.env.CI ? "retain-on-failure" : "on",
+          size: { width: 1920, height: 1080 },
+        },
+        screenshot: process.env.CI ? "only-on-failure" : "on",
+        trace: "retain-on-failure",
         headless: false,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
@@ -100,8 +105,12 @@ module.exports = defineConfig({
       use: {
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
-        video: { mode: "on", size: { width: 1920, height: 1080 } },
-        screenshot: "on",
+        video: {
+          mode: process.env.CI ? "retain-on-failure" : "on",
+          size: { width: 1920, height: 1080 },
+        },
+        screenshot: process.env.CI ? "only-on-failure" : "on",
+        trace: "retain-on-failure",
         headless: !!process.env.CI,
         browserName: "chromium",
         channel: process.env.BROWSER || "chrome",

@@ -317,6 +317,92 @@ function accountSQLCommand(formName) {
         WHERE A.DocNum = @DocNo`;
       break;
 
+      case "Sales Invoice":
+      sqlCommand += `
+        SELECT 
+            FORMAT(A.GLDate, 'dd/MM/yyyy') AS JournalDate, 
+            A.GLDesc AS Description, 
+            A.RefNo,
+            A.InvNum,
+            C.Remarks AS Remarks,
+            
+            CASE A.Status
+                WHEN 'AP' THEN 'APPROVED'
+                WHEN 'OP' THEN 'OPEN'
+                WHEN 'SM' THEN 'SUBMITTED'
+                WHEN 'VD' THEN 'VOID'
+            END AS Status,
+
+            B.OUCode + ' - ' + B.OUDesc AS OU,
+            
+            FORMAT(A.InvoiceDate, 'dd/MM/yyyy') AS InvoiceDate,
+            FORMAT(A.DueDate, 'dd/MM/yyyy') AS DueDate,
+            A.TaxInvNum AS TaxInvoice,
+            C.CCID + ' - ' + S.ContactDesc AS Customer,
+            C.AccNum + ' - ' + G.AccDesc AS CustomerAcc,
+            P.PayTermCode + ' - ' + P.PayTermDesc AS PayTerm,
+
+            NULL AS InvoiceType
+            
+        FROM FIN_TransHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN FIN_TransDet C ON A.TransHdrKey = C.TransHdrKey AND C.SeqNo = 0
+        LEFT JOIN GMS_ContactStp S ON C.CCID = S.ContactCode
+        LEFT JOIN GMS_AccMas G ON C.AccNum = G.AccNum
+        LEFT JOIN GMS_PayTermStp P ON A.PayTermKey = P.PayTermKey
+        
+        WHERE A.DocNum = @DocNo`;
+      break;
+
+      case "Self-Billed Invoice Receipt":
+      sqlCommand += `
+        SELECT 
+            FORMAT(A.GLDate, 'dd/MM/yyyy') AS JournalDate, 
+            A.GLDesc AS Description, 
+            A.RefNo,
+            A.InvNum,
+            C.Remarks,
+            
+            CASE A.Status
+                WHEN 'AP' THEN 'APPROVED'
+                WHEN 'OP' THEN 'OPEN'
+                WHEN 'SM' THEN 'SUBMITTED'
+                WHEN 'VD' THEN 'VOID'
+            END AS Status,
+
+            B.OUCode + ' - ' + B.OUDesc AS OU,
+            FORMAT(A.InvoiceDate, 'dd/MM/yyyy') AS InvoiceDate,
+            FORMAT(A.DueDate, 'dd/MM/yyyy') AS DueDate,
+            C.CCID + ' - ' + S.ContactDesc AS Customer,
+            C.AccNum + ' - ' + G.AccDesc AS CustomerAcc,
+            P.PayTermCode + ' - ' + P.PayTermDesc AS PayTerm
+
+        FROM FIN_TransHdr A
+        LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+        LEFT JOIN FIN_TransDet C ON A.TransHdrKey = C.TransHdrKey AND C.SeqNo = 0
+        LEFT JOIN GMS_ContactStp S ON C.CCID = S.ContactCode
+        LEFT JOIN GMS_AccMas G ON C.AccNum = G.AccNum
+        LEFT JOIN GMS_PayTermStp P ON A.PayTermKey = P.PayTermKey
+
+        WHERE A.DocNum = @DocNo`;
+      break;
+
+      case "Uncultivated Area":
+      sqlCommand += `
+        SELECT 
+            H.Yr AS FiscalYear,
+            H.Period AS Period,
+            D.DivCode + ' - ' + D.DivDesc AS Division, 
+            H.Remark AS Remarks,
+            B.OUCode + ' - ' + B.OUDesc AS OU
+            
+        FROM FIN_UnculAreaHdr H
+        LEFT JOIN GMS_DivStp D ON H.DivKey = D.DivKey 
+        LEFT JOIN GMS_OUStp B ON H.OUKey = B.OUKey
+
+        WHERE H.Remark = @Remark`;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -557,6 +643,64 @@ function accountGridSQLCommand(formName) {
       break;
 
       case "Debit Note":
+      sqlCommand += `
+        SELECT 
+          C.AccNum + ' - ' + C.AccDesc AS Account, 
+          E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
+          B.Remarks AS Remarks,
+          B.Qty AS Qtynumeric,
+          B.UOM AS UOM,
+          
+          IIF(@region = 'IND',
+            FORMAT(B.UnitPrice, 'N4', 'id-ID'),
+            FORMAT(B.UnitPrice, 'N4', 'en-US')
+          ) AS UnitPrice,
+
+          CASE WHEN B.OrigTransAmt > 0 THEN B.OrigTransAmt ELSE 0 END AS Debitnumeric,
+          CASE WHEN B.OrigTransAmt < 0 THEN ABS(B.OrigTransAmt) ELSE 0 END AS Creditnumeric
+          
+        FROM FIN_TransDet B
+        LEFT JOIN FIN_TransHdr A ON B.TransHdrKey = A.TransHdrKey
+        LEFT JOIN GMS_AccMas C ON B.AccKey = C.AccKey
+        LEFT JOIN V_SYC_CCIDMapping E ON B.CCID = E.CCIDCode 
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        
+        WHERE A.DocNum = @DocNo   
+        AND B.SeqNo > 0
+
+        ORDER BY B.SeqNo ASC`;
+      break;
+
+      case "Sales Invoice":
+      sqlCommand += `
+        SELECT 
+          C.AccNum + ' - ' + C.AccDesc AS Account, 
+          E.CCIDCode + ' - ' + E.CCIDDesc AS CCID,
+          B.Remarks AS Remarks,
+          B.Qty AS Qtynumeric,
+          B.UOM AS UOM,
+          
+          IIF(@region = 'IND',
+            FORMAT(B.UnitPrice, 'N4', 'id-ID'),
+            FORMAT(B.UnitPrice, 'N4', 'en-US')
+          ) AS UnitPrice,
+
+          CASE WHEN B.OrigTransAmt > 0 THEN B.OrigTransAmt ELSE 0 END AS Debitnumeric,
+          CASE WHEN B.OrigTransAmt < 0 THEN ABS(B.OrigTransAmt) ELSE 0 END AS Creditnumeric
+          
+        FROM FIN_TransDet B
+        LEFT JOIN FIN_TransHdr A ON B.TransHdrKey = A.TransHdrKey
+        LEFT JOIN GMS_AccMas C ON B.AccKey = C.AccKey
+        LEFT JOIN V_SYC_CCIDMapping E ON B.CCID = E.CCIDCode 
+        LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+        
+        WHERE A.DocNum = @DocNo   
+        AND B.SeqNo > 0
+
+        ORDER BY B.SeqNo ASC`;
+      break;
+
+      case "Self-Billed Invoice Receipt":
       sqlCommand += `
         SELECT 
           C.AccNum + ' - ' + C.AccDesc AS Account, 

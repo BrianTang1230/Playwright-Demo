@@ -2,26 +2,22 @@ import { test, region } from "@utils/commonFunctions/GlobalSetup";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { formatGridData } from "@UiFolder/functions/comFuncs";
-
+import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
   validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-
 import {
   accountSQLCommand,
   accountGridSQLCommand,
 } from "@UiFolder/queries/AccountQuery";
-
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/accountData.json";
-
 import {
   BankPaymentCreate,
   BankPaymentEdit1,
@@ -89,7 +85,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   // ---------------- Create Test ----------------
-  test("Create Bank Payment", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {
       DocNo: docNo,
       OU: ou[0],
@@ -188,7 +184,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Bank Payment", async ({ page, db }) => {
+  test(`Edit ${formName}`, async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
@@ -238,7 +234,7 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Bank Payment", async ({ db }) => {
+  test(`Delete ${formName}`, async ({ db }) => {
     console.log(`\n--- Starting Database Cleanup for: ${docNo} ---`);
 
     await db.deleteData(deleteSQL, {

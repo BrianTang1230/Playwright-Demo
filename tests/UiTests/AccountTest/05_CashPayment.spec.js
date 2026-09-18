@@ -3,25 +3,21 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
-
 import {
   validateFormValues,
   validateDBValues,
   validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-
 import {
   accountSQLCommand,
   accountGridSQLCommand,
 } from "@UiFolder/queries/AccountQuery";
-
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/accountData.json";
-
 import {
   CashPaymentCreate,
   CashPaymentEdit1,
@@ -56,7 +52,7 @@ const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Cash Payment Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -82,7 +78,7 @@ test.describe.serial("Cash Payment Tests", () => {
   });
 
 // ---------------- Create Test ----------------
-  test("Create Cash Payment", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 
@@ -179,7 +175,7 @@ test.describe.serial("Cash Payment Tests", () => {
   });
 
 // ---------------- Edit Test ----------------
-  test('Edit Cash Payment', async ({ page, db }) => {
+  test(`Edit ${formName}`, async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
@@ -227,7 +223,7 @@ test.describe.serial("Cash Payment Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test('Delete Cash Payment', async ({ db }) => {
+  test(`Delete ${formName}`, async ({ db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 

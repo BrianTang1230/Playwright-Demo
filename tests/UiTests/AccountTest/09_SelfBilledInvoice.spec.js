@@ -3,25 +3,21 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength, formatGridData} from "@UiFolder/functions/comFuncs";
-import { FilterRecordByFiscalYearAndPeriod } from "@UiFolder/functions/OpenRecord";
 import {
   validateFormValues,
   validateDBValues,
   validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-
 import {
   accountSQLCommand,
   accountGridSQLCommand,
 } from "@UiFolder/queries/AccountQuery";
-
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/accountData.json";
-
 import {
   SelfBilledInvoiceCreate,
   SelfBilledInvoiceEdit1,
@@ -55,7 +51,7 @@ const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
 const dwCols = region === "IND" ? columns : columns;
 const dwPaths = region === "IND" ? paths : paths;
 
-test.describe.serial("Self-Billed Invoice Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     [
@@ -81,7 +77,7 @@ test.describe.serial("Self-Billed Invoice Tests", () => {
   });
 
 // ---------------- Create Test ----------------
-  test("Create Self-Billed Invoice", async ({ page, db }) => {
+  test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 
@@ -101,7 +97,7 @@ test.describe.serial("Self-Billed Invoice Tests", () => {
 
     docNo = await editJson(
       JsonPath,
-      keyName,
+      formName,
       await page.locator("#txtDocumentNum").first().inputValue() 
     );
 
@@ -177,7 +173,7 @@ test.describe.serial("Self-Billed Invoice Tests", () => {
   });
 
 // ---------------- Edit Test ----------------
-  test('Edit Self-Billed Invoice', async ({ page, db }) => {
+  test(`Edit ${formName}`, async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
 
@@ -198,7 +194,7 @@ test.describe.serial("Self-Billed Invoice Tests", () => {
 
     docNo = await editJson(
       JsonPath,
-      keyName,
+      formName,
       await page.locator("#txtDocumentNum").first().inputValue() 
     );
 
@@ -224,7 +220,7 @@ test.describe.serial("Self-Billed Invoice Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test('Delete Self-Billed Invoice', async ({ db }) => {
+  test(`Delete ${formName}`, async ({ db }) => {
     await db.deleteData(deleteSQL, { 
       DocNo: docNo, 
       OU: ou[0] 

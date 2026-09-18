@@ -3,25 +3,21 @@ import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
-
 import {
   validateFormValues,
   validateDBValues,
   validateGridValues,
 } from "@UiFolder/functions/valuesFuncs";
-
 import {
   accountSQLCommand,
   accountGridSQLCommand,
 } from "@UiFolder/queries/AccountQuery";
-
 import {
   InputPath,
   JsonPath,
   DocNo,
   GridPath,
 } from "@utils/data/uidata/accountData.json";
-
 import {
   GeneralJournalCreate,
   GeneralJournalEdit1,
@@ -226,7 +222,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await validateFormValues(editValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);

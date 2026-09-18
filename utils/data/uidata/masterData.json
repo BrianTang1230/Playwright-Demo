@@ -137,7 +137,9 @@
     "FFBSubsidySetupPath": "#SubsidyCode,#SubsidyDesc,#subsidyActive,#RcdType",
     "FFBSubsidySetupColumn": "SubsidyCode text,SubsidyDesc text,Active checkbox,RcdType text",
     "AccountSubCategorySetupPath": "#txtAccSubCatCode,#txtDesc,AccCat_input,#chkActive",
-    "AccountSubCategorySetupColumn": "AccSubCatCode text,AccSubCatDesc text,AccCatDesc dropdown,Active checkbox"
+    "AccountSubCategorySetupColumn": "AccSubCatCode text,AccSubCatDesc text,AccCatDesc dropdown,Active checkbox",
+    "BankSetupPath": "#bankCode,#bankDesc,#bankActive,bnm_input,#bankName,#branchName,#phyBankAcc,bankAcc_input,currency_input,#PayStaSubmit,#APOrgCode,#contactPerson,#position,#phone,#fax,#email,#Street,#postcode,#city,#state,country_input",
+    "BankSetupColumn": "BankCode text,BankDesc text,Active checkbox,Bank dropdown,BankName text,BrachName text,PhyBankAcc text,BankGLAC dropdown,Currency dropdown,PayStaSubmit checkbox,APOrgCode text,CPerson text,Post text,Phone text,Fax text,Email text,Street text,PostCode text,City text,State text,PermanentCountry dropdown"
   },
 
   "GridPath": {
@@ -164,6 +166,7 @@
     "PositionSetupTree": "#ouTreeView",
     "ActivityCategorySetupTree": "#bankouTreeView",
     "JobSetupTree": "#jobouTreeView",
-    "PickupPointSetupTree": "#pickouTreeView"
+    "PickupPointSetupTree": "#pickouTreeView",
+    "BankSetupTree": "#bankouTreeView"
   }
 }

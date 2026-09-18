@@ -1642,6 +1642,44 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+    case 'Bank Setup':
+      sqlCommand = `
+      SELECT A.BankCode,
+      A.BankDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      B.BankName AS Bank,
+      A.BankName AS BankName,
+      A.BrachName,
+      A.PhyBankAcc,
+      C.AccNum + ' - ' + C.AccDesc AS BankGLAC,
+      D.CurrCode + ' - ' + D.CurrDesc AS Currency,
+      CASE A.PayStaSubmit
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS PayStaSubmit,
+      A.APOrgCode,
+      A.CPerson,
+      A.Post,
+      A.Phone,
+      A.Fax,
+      A.Email,
+      A.Street,
+      A.PostCode,
+      A.City,
+      A.State,
+      E.CtryCode + ' - ' + E.CtryDesc AS PermanentCountry
+      FROM GMS_BankStp A
+      LEFT JOIN SYT_BNMCode B ON A.BNMCode = B.BNMCode
+      LEFT JOIN GMS_AccMas C ON A.BankAccKey = C.AccKey
+      LEFT JOIN GMS_CurrencyStp D ON A.CurrKey = D.CurrKey
+      LEFT JOIN GMS_CountryStp E ON A.CtryKey = E.CtryKey
+      WHERE A.BankCode = @Code
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }
@@ -1861,6 +1899,12 @@ function masterTreeViewSQLCommand(formName) {
       ouTable: 'GMS_PickupPointStpOU',
       key: 'PickKey',
       whereCol: 'PickCode'
+    },
+    'Bank Setup': {
+      table: 'GMS_BankStp',
+      ouTable: 'GMS_BankStpOU',
+      key: 'BankKey',
+      whereCol: 'BankCode'
     }
   };
 

@@ -1680,6 +1680,24 @@ function masterSQLCommand(formName) {
       `;
       break;
 
+      case 'Capital Expenditure Category Setup':
+      sqlCommand = `
+      SELECT A.CapexCatCode,
+      A.CapexCatDesc,
+      CASE A.Active
+        WHEN 1 THEN 'True'
+        WHEN 0 THEN 'False'
+      END AS Active,
+      C.AccNum + ' - ' + C.AccDesc AS DefaultAccount,
+      B.OUCode + ' - ' + B.OUDesc AS OU
+      FROM GMS_CapexCatStp A
+      LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
+      LEFT JOIN GMS_AccMas C ON A.DeftAcc = C.AccKey
+      WHERE A.CapexCatCode = @Code
+      AND B.OUCode + ' - ' + B.OUDesc = @OU
+      `;
+      break;
+
     default:
       throw new Error(`Unknown formName: ${formName}`);
   }

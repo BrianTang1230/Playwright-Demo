@@ -157,6 +157,48 @@ export async function FilterTransactionBy2And1Criterias(
   await page.waitForTimeout(1500); //Wait 1.5s to prevent slow loading in some forms
 }
 
+export async function FilterTransactionByFixedUQF(
+  page,
+  keyfields = [], // put the dropdown fields'name first then the typing fields'name
+  keywords = [], // put the dropdown values first then the typing values
+  dropdownFieldQty = 0, // how many dropdown fields in the keyfields array
+) {
+  for (let i = 0; i < keyfields.length; i++) {
+    const inputField = page.locator(`input[name="${keyfields[i]}"]`);
+    if (i < dropdownFieldQty) {
+      await inputField.type(keywords[i]);
+      await page
+        .getByRole("option", { hasText: keywords[i] })
+        .first()
+        .waitFor({ state: "visible" });
+      await inputField.press("Enter");
+    }
+    if (i >= dropdownFieldQty) {
+      await inputField.press("Control+A");
+      await inputField.press("Backspace");
+      await inputField.fill(keywords[i]);
+    }
+  }
+
+  // Apply filter and open seleted transaction
+  await page.getByRole("button", { name: "  Apply Filter" }).click();
+  await page
+    .getByRole("gridcell", {
+      name: new RegExp(keywords[keywords.length - 1].slice(0, 4)),
+    })
+    .first()
+    .click();
+  await page
+    .getByRole("button", { name: "   Open Transaction" })
+    .first()
+    .click();
+
+  // Wait for loading
+  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+  await page.waitForLoadState("networkidle");
+  await page.waitForTimeout(1500); //Wait 1.5s to prevent slow loading in some forms
+}
+
 export async function FilterRecordByOUAndDate(
   page,
   values,
@@ -296,11 +338,20 @@ export async function FilterRecordByOU(
 
 export async function FilterForUnsaveChecking(page, keyword) {
   await page.getByRole("button", { name: "  Apply Filter" }).click();
+  // await page
+  //   .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
+  //   .first()
+  //   .click();
   await page
-    .getByRole("gridcell", { name: new RegExp(keyword.slice(0, 4)) })
+    .getByRole("gridcell", {
+      name: new RegExp(keyword.slice(0, 4)),
+    })
     .first()
     .click();
-  await page.getByRole("button", { name: "   Open Transaction" }).click();
+  await page
+    .getByRole("button", { name: "   Open Transaction" })
+    .first()
+    .click();
 
   // Wait for loading
   await page.locator(".k-loading-image").first().waitFor({ state: "detached" });

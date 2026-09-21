@@ -1,4 +1,4 @@
-import { test } from "@utils/commonFunctions/GlobalSetup";
+import { region, test } from "@utils/commonFunctions/GlobalSetup";
 import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
@@ -24,8 +24,6 @@ import {
   PayGroupCodeSetupDelete,
 } from "@UiFolder/pages/MasterFile/01_General/02_AllowanceDeductionReimbursementGroupSetupPage";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Global Variables ----------------
 let ou;
 let sideMenu;
@@ -42,7 +40,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  Login.Region === "IND" && test.skip();
+  region === "IND" && test.skip(true);
 
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {

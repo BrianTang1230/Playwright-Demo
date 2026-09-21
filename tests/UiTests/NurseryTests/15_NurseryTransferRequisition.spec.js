@@ -59,6 +59,8 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
@@ -76,6 +78,8 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     const { uiVals } = await NurseryTransferRequisitionCreate(
       page,
       sideMenu,
@@ -157,15 +161,13 @@ test.describe.serial(`${formName} Tests`, () => {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting Nursery Transfer Requisition failed`);
-    }
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   //---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

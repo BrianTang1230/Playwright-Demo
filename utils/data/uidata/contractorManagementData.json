@@ -1,6 +1,11 @@
 {
   "JsonPath": "utils/data/uidata/contractorManagementData.json",
-  "InputPath": {},
+  "InputPath": {
+    "JobOrderPath": "#dpJODate,comboBoxContractor_input,list*0",
+    "JobOrderColumn": "JODate date,Contractor dropdown,JobType select"
+  },
   "GridPath": {},
-  "DocNo": {}
+  "DocNo": {
+    "JobOrder": ""
+  }
 }

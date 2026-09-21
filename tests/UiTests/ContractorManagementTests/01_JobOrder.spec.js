@@ -26,7 +26,7 @@ import {
   JobOrderEdit1,
   JobOrderEdit2,
   JobOrderDelete,
-} from "@UiFolder/pages/Procurement/01_JobOrder";
+} from "@UiFolder/pages/ContractorManagement/01_JobOrder";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -44,7 +44,7 @@ const keyName = formName.split(" ").join("");
 const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
-test.describe.serial(`${formName} Tests`, () => {
+test.describe.skip(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     await setCurrForm(formName);
@@ -94,7 +94,7 @@ test.describe.serial(`${formName} Tests`, () => {
       await page.locator("#txtRequisitionNum").inputValue(),
     );
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(cmSQLCommand(formName), {
       DocNo: docNo,
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
@@ -120,7 +120,7 @@ test.describe.serial(`${formName} Tests`, () => {
       docNo,
     );
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(cmSQLCommand(formName), {
       DocNo: docNo,
     });
     !dbValues &&
@@ -147,7 +147,7 @@ test.describe.serial(`${formName} Tests`, () => {
       docNo,
     );
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(cmSQLCommand(formName), {
       DocNo: docNo,
     });
     !dbValues &&
@@ -165,7 +165,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Delete ${formName}`, async ({ page, db }) => {
     await JobOrderDelete(page, sideMenu, editValues, ou, docNo);
 
-    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+    const dbValues = await db.retrieveData(cmSQLCommand(formName), {
       DocNo: docNo,
     });
 

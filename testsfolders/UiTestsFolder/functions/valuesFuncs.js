@@ -255,8 +255,8 @@ export async function inputFormValues(page, path, col, value) {
     }
 
     // Button Input
-    else if (col.includes("button")) {
-      await element.click();
+    else if (col.includes("select")) {
+      await element.locator().click();
     }
 
     // Integer,Date,Text Input

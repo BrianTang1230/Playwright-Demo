@@ -1,9 +1,15 @@
 function procurementSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+    DECLARE @OU VARCHAR(100) = 
+      CASE WHEN @region = 'IND'
+        THEN 'TSPH - CV. TANI SEJAHTERA PERKASA'
+        ELSE 'BNG - BINUANG ESTATE'
+      END;
+    `;
 
   switch (formName) {
     case "Purchase Requisition":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PRDate, 'dd/MM/yyyy') AS RequestDate, 
         FORMAT(A.ExpectRDate, 'dd/MM/yyyy') AS ExpDelDate,
         A.Remarks,
@@ -23,7 +29,7 @@ function procurementSQLCommand(formName) {
         LEFT JOIN GMS_AccMas E ON B.NSExpAccKey = E.AccKey
         LEFT JOIN V_SYC_CCIDMapping F ON B.CCIDKey = F.CCIDKey
         LEFT JOIN GMS_OUStp G ON A.OUKey = G.OUKey
-        WHERE PRNum = @DocNo`;
+        WHERE G.OUCode + ' - ' + G.OUDesc = @OU AND PRNum = @DocNo`;
       break;
 
     case "Request for Quotation":
@@ -44,7 +50,7 @@ function procurementSQLCommand(formName) {
         LEFT JOIN GMS_ContactStp B ON A.ContactKey = B.ContactKey
         LEFT JOIN PROC_PRHdr C ON A.PRKey = C.PRKey
         LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
-        WHERE QRFNum = @DocNo`;
+        WHERE D.OUCode + ' - ' + D.OUDesc = @OU AND QRFNum = @DocNo`;
       break;
 
     case "Purchase Order":
@@ -115,7 +121,9 @@ function procurementGridSQLCommand(formName) {
         LEFT JOIN GMS_ItemMas B ON A. ItemKey = B.StoItemKey
         LEFT JOIN GMS_UOMStp C ON A.UOMKey = C.UOMKey
         WHERE QRFHdrKey IN (
-          SELECT QRFHdrKey FROM QUOT_QRFHdr WHERE QRFNum = @DocNo
+          SELECT QRFHdrKey FROM QUOT_QRFHdr A
+          LEFT JOIN GMS_OUStp D ON A.OUKey = D.OUKey
+          WHERE D.OUCode + ' - ' + D.OUDesc = @OU AND QRFNum = @DocNo
         )`;
       break;
 

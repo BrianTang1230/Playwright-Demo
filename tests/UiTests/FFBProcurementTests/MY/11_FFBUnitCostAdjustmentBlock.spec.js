@@ -25,8 +25,6 @@ import {
   FFBUnitCostAdjustmentBlockDelete,
 } from "@UiFolder/pages/FFBProcurement/MY/11_FFBUnitCostAdjustmentBlock";
 
-import Login from "@utils/data/uidata/loginData.json";
-
 // ---------------- Set Global Variables ----------------
 let ou;
 let sideMenu;

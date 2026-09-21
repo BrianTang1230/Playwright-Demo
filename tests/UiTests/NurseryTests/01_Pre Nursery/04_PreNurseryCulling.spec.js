@@ -59,6 +59,8 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
@@ -76,6 +78,8 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     const { uiVals } = await PreNurseryCullingCreate(
       page,
       sideMenu,
@@ -146,22 +150,20 @@ test.describe.serial("Pre Nursery Culling Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Pre Nursery Culling", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await PreNurseryCullingDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(nurserySQLCommand(formName), {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throw new Error("Deleting Pre Nursery Culling failed");
-    }
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

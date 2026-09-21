@@ -1,8 +1,14 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -22,11 +28,10 @@ import {
 
 import {
   RequestforQuotationCreate,
-  RequestforQuotationEdit,
+  RequestforQuotationEdit1,
+  RequestforQuotationEdit2,
   RequestforQuotationDelete,
-} from "@UiFolder/pages/Procurement/02_RequestForQuotation";
-
-import { Region } from "@utils/data/uidata/loginData.json";
+} from "@UiFolder/pages/Procurement/03_RequestForQuotation";
 
 // ---------------- Set Global Variables ----------------
 let ou;
@@ -37,6 +42,7 @@ let editValues;
 let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
+let phaseCount = 0;
 const sheetName = "PROCUR_Data";
 const module = "Procurement";
 const submodule = null;
@@ -47,10 +53,12 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [[4, 5, 11, 12, 17, 18, 19]];
 
-test.describe.serial("Request for Quotation Tests", () => {
+test.describe.serial(`${formName} Tests`, () => {
+  region === "MY" && test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
-    if (region === "MY") test.skip(true);
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
     [
@@ -64,6 +72,8 @@ test.describe.serial("Request for Quotation Tests", () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
@@ -73,11 +83,14 @@ test.describe.serial("Request for Quotation Tests", () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
-  test("Create Request for Quotation", async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo });
+  test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
     const { uiVals, gridVals } = await RequestforQuotationCreate(
       page,
@@ -100,6 +113,7 @@ test.describe.serial("Request for Quotation Tests", () => {
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       procurementGridSQLCommand(formName),
@@ -107,7 +121,8 @@ test.describe.serial("Request for Quotation Tests", () => {
         DocNo: docNo,
       },
     );
-
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(createValues, columns, uiVals);
@@ -125,8 +140,8 @@ test.describe.serial("Request for Quotation Tests", () => {
   });
 
   // ---------------- Edit Test ----------------
-  test("Edit Request for Quotation", async ({ page, db }) => {
-    const { uiVals, gridVals } = await RequestforQuotationEdit(
+  test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await RequestforQuotationEdit1(
       page,
       sideMenu,
       paths,
@@ -143,6 +158,8 @@ test.describe.serial("Request for Quotation Tests", () => {
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
+    !dbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
     const gridDbValues = await db.retrieveGridData(
       procurementGridSQLCommand(formName),
@@ -150,7 +167,54 @@ test.describe.serial("Request for Quotation Tests", () => {
         DocNo: docNo,
       },
     );
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+    const gridDbColumns = Object.keys(gridDbValues[0]);
 
+    await validateFormValues(createValues, columns, uiVals);
+    await validateDBValues(
+      [...createValues, ou],
+      [...columns, "OU"],
+      dbValues[0],
+    );
+    await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
+    await validateDBValues(
+      gridCreateValues.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
+  });
+
+  // ---------------- Edit Test ----------------
+  test(`Edit ${formName} With Saving`, async ({ page, db }) => {
+    const { uiVals, gridVals } = await RequestforQuotationEdit2(
+      page,
+      sideMenu,
+      paths,
+      columns,
+      createValues,
+      editValues,
+      gridPaths,
+      gridEditValues,
+      cellsIndex,
+      ou,
+      docNo,
+    );
+
+    const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !dbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
+
+    const gridDbValues = await db.retrieveGridData(
+      procurementGridSQLCommand(formName),
+      {
+        DocNo: docNo,
+      },
+    );
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
 
     await validateFormValues(editValues, columns, uiVals);
@@ -168,22 +232,20 @@ test.describe.serial("Request for Quotation Tests", () => {
   });
 
   // ---------------- Delete Test ----------------
-  test("Delete Request for Quotation", async ({ page, db }) => {
+  test(`Delete ${formName}`, async ({ page, db }) => {
     await RequestforQuotationDelete(page, sideMenu, createValues, ou, docNo);
 
     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
       DocNo: docNo,
     });
 
-    if (dbValues.length > 0) {
-      throw new Error(`Deleting ${formName} failed`);
-    }
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async ({ db }) => {
-    if (docNo) await db.deleteData(deleteSQL, { DocNo: docNo });
-    await editJson(JsonPath, formName, "");
+  test.afterAll(async ({}) => {
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

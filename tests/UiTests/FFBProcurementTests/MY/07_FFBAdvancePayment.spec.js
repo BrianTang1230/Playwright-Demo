@@ -69,6 +69,8 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
@@ -219,7 +221,10 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       DocNo: docNo,
     });
-    dbValues && throwTestFailMsg("D-DB-RF", formName);
+
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   // ---------------- After All ----------------

@@ -96,7 +96,6 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
@@ -104,7 +103,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       labGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -143,7 +141,6 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
     !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
@@ -152,7 +149,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       labGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -191,7 +187,6 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
     !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
@@ -200,7 +195,6 @@ test.describe.serial(`${formName} Tests`, async () => {
       labGridSQLCommand(formName),
       {
         Date: createValues[0],
-        OU: ou[0],
       },
     );
     !gridDbValues &&
@@ -233,7 +227,6 @@ test.describe.serial(`${formName} Tests`, async () => {
 
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
       Date: createValues[0],
-      OU: ou[0],
     });
 
     dbValues && throwTestFailMsg("D-DB-RF", formName);

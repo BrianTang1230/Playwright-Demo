@@ -3,8 +3,8 @@
   "InputPath": {
     "PurchaseRequisitionPath": "RequestDate,#ExpectedDeliveryDate,#txtRemarks,combobox*0,combobox*1,#ItemSpec,spinbutton*0,#UsageRemarks,spinbutton*1,combobox*2,combobox*3",
     "PurchaseRequisitionColumn": "RequestDate date,ExpDelDate date,Remarks text,Item dropdown,UOM dropdown,ItemSpec text,RequestQty numeric,Usage text,UnitPrice numeric,Account dropdown,CCID dropdown",
-    "CapitalExpenditureRequisitionPath": "",
-    "CapitalExpenditureRequisitionColumn": "",
+    "CapitalExpenditureRequisitionPath": "#RequestDate，#ExpectedDeliveryDate，#txtRemarks,listbox*0,capex_input,item_input,listbox*0,uom_input,",
+    "CapitalExpenditureRequisitionColumn": "RequestDate date，ExpectedDeliveryDate date，Remark text,Budgeted dropdown,Capex dropdown,Item dropdown,",
     "RequestforQuotationPath": "#QRFDate,comboBoxContact_input,#txtRemarks,#withPR,comboBoxPRNum_input",
     "RequestforQuotationColumn": "QRFDate date,Supplier dropdown,Remarks text,WithPR checkbox,PRNum dropdown",
     "PurchaseOrderPath": "PODate,#DeliveryDate,comboBoxSupplier_input,#txtTextTaxes,#txtQfG,#txtLoFr,#txtTextRef,#txtTransporterName,#txtRemarks,#withPR,comboBoxPRNum_input,pitem_input,spinbutton*0,comboBoxUOM_input,spinbutton*3,spinbutton*4,acc_input,ccid_input,#vendRef,#vendItemDesc",

@@ -1,9 +1,15 @@
 function labSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+    DECLARE @OU VARCHAR(100) = 
+      CASE WHEN @region = 'IND'
+        THEN 'SSP1M - SEMUNAI SAWIT PERKASA PALM OIL MILL 1'
+        ELSE 'SPOM - SERAYA PALM OIL MILL'
+      END;
+    `;
 
   switch (formName) {
     case "Crude Palm Oil Quality (FFA)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CPOFFADate, 'dd/MM/yyyy') AS CPOFFADate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_CPOQltyFFAHdr A
@@ -15,7 +21,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (Moisture)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CPOMoistDate, 'dd/MM/yyyy') AS CPOMoistDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_CPOQltyMoistHdr A
@@ -27,7 +33,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (Impurities)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CPOImpDate, 'dd/MM/yyyy') AS CPOImpDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_CPOQltyImpHdr A
@@ -39,7 +45,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (DOBI)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CPODOBIDate, 'dd/MM/yyyy') AS CPODOBIDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_CPOQltyDOBIHdr A
@@ -51,7 +57,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Kernel Quality (Kernel Dirt)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PKDirtDate, 'dd/MM/yyyy') AS PKDirtDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PKQltyDirtHdr A
@@ -63,7 +69,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Kernel Quality (FFA)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PKFFADate, 'dd/MM/yyyy') AS PKFFADate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PKQltyFFAHdr A
@@ -75,7 +81,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Kernel Quality (Moisture & Oil Content)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PKMoistDate, 'dd/MM/yyyy') AS PKMoistDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PKQltyMoistHdr A
@@ -87,7 +93,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Oil Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.FibreLossDate, 'dd/MM/yyyy') AS FibreLossDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_FibreLossHdr A
@@ -99,7 +105,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Sludge Waste Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.SludgeWasteDate, 'dd/MM/yyyy') AS SludgeWasteDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_SludgeWasteHdr A
@@ -111,7 +117,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Kernel Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.KernelLossDate, 'dd/MM/yyyy') AS KernelLossDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_KernelLossHdr A
@@ -123,7 +129,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Cracking Efficiency":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.CrackEffDate, 'dd/MM/yyyy') AS CrackEffDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_CrackEffHdr A
@@ -135,7 +141,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Water Quality":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.WaterQltyDate, 'dd/MM/yyyy') AS WaterQltyDate,
         A.Rainfall,
         A.PondWaterLvl,
@@ -149,7 +155,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Effluent Test":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.EffluentDate, 'dd/MM/yyyy') AS EffluentDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_EffluentHdr A
@@ -161,7 +167,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Effluent Flowmeter Reading":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.EfflFlowmeterDate, 'dd/MM/yyyy') AS EfflFlowmeterDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_EfflFlowmeterHdr A
@@ -173,7 +179,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Press Cake":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PressCakeDate, 'dd/MM/yyyy') AS PressCakeDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PressCakeHdr A
@@ -185,7 +191,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Press Cake MPD":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PressCakeMPDDate, 'dd/MM/yyyy') AS PressCakeMPDDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PressCakeMPDHdr A
@@ -197,7 +203,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Press Cake Nut Composition":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PressCakeNCDate, 'dd/MM/yyyy') AS PressCakeNCDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PressCakeNCHdr A
@@ -209,7 +215,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Press Cake Dried Nut Moisture":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.PressCakeDNMoistDate, 'dd/MM/yyyy') AS PressCakeDNMoistDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_PressCakeDNMoistHdr A
@@ -221,7 +227,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Losses in Empty Fruit Bunches":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.EFBLossDate, 'dd/MM/yyyy') AS EFBLossDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_EFBLossHdr A
@@ -233,7 +239,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Spin Test":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.SpinTestDate, 'dd/MM/yyyy') AS SpinTestDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_SpinTestHdr A
@@ -245,7 +251,7 @@ function labSQLCommand(formName) {
       break;
 
     case "Chemical Dosage":
-      sqlCommand = `
+      sqlCommand += `
         SELECT FORMAT(A.ChemicalDosDate, 'dd/MM/yyyy') AS ChemicalDosDate,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_ChemicalDosHdr A

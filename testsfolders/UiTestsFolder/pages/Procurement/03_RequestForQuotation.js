@@ -1,13 +1,11 @@
-import { SelectOU } from "@UiFolder/functions/comFuncs";
+import { runStep, SelectOU } from "@UiFolder/functions/comFuncs";
 import {
-  inputGridValues,
-  inputFormValues,
-  getGridValues,
   getFormValues,
+  inputFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 import {
-  FilterRecordByDateRange,
-  FilterRecordByOUAndDate,
+  FilterForUnsaveChecking,
+  FilterTransactionByFixedUQF,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function RequestforQuotationCreate(
@@ -21,29 +19,45 @@ export async function RequestforQuotationCreate(
   cellsIndex,
   ou,
 ) {
-  await sideMenu.clickBtnCreateNewForm();
+  await runStep("Open create new form", async () => {
+    await sideMenu.clickBtnCreateNewForm();
+  });
 
-  await SelectOU(
-    page,
-    "#divComboOU .k-dropdown .k-select",
-    "ul[aria-hidden='false'] li span",
-    ou[0],
-  );
+  await runStep("Select OU", async () => {
+    await SelectOU(
+      page,
+      "#divComboOU .k-dropdown .k-select",
+      "ul[aria-hidden='false'] li span",
+      ou[0],
+    );
+  });
 
-  for (let i = 0; i < paths.slice(0, 3).length; i++) {
-    await inputFormValues(page, paths[i], columns[i], values[i]);
-  }
+  await runStep("Input transaction data", async () => {
+    for (let i = 0; i < paths.slice(0, 3).length; i++) {
+      await inputFormValues(page, paths[i], columns[i], values[i]);
+    }
+  });
 
-  await sideMenu.btnAddNewItem.click();
+  await runStep("Add new grid item", async () => {
+    await sideMenu.btnAddNewItem.click();
+  });
 
-  for (let i = 0; i < gridPaths.length; i++) {
-    await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-  }
+  await runStep("Input grid values", async () => {
+    for (let i = 0; i < gridPaths.length; i++) {
+      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
+    }
+  });
 
-  await sideMenu.clickBtnSave();
+  await runStep("Save transaction", async () => {
+    await sideMenu.clickBtnSave();
+  });
 
-  const uiVals = await getFormValues(page, paths);
-  const gridVals = await getGridValues(page, gridPaths, cellsIndex);
+  const uiVals = await runStep("Get UI values", async () => {
+    return getFormValues(page, paths);
+  });
+  const gridVals = await runStep("Get created Grid values", async () => {
+    return await getGridValues(page, gridPaths, cellsIndex);
+  });
 
   return { uiVals, gridVals };
 }

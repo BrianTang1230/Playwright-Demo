@@ -163,7 +163,7 @@ export async function PressCakeNutCompositionEdit2(
   const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
-  const gridVals = await runStep("Get created Grid values", async () => {
+  const gridVals = await runStep("Get edited Grid values", async () => {
     return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });
 

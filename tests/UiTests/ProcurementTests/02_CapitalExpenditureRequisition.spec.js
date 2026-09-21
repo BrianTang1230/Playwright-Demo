@@ -1,13 +1,18 @@
-// import { test } from "@utils/commonFunctions/GlobalSetup";
+// import { test, region } from "@utils/commonFunctions/GlobalSetup";
+// import { allPhases } from "@utils/data/uidata/globalData.json";
 // import LoginPage from "@UiFolder/pages/General/LoginPage";
 // import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 // import editJson from "@utils/commonFunctions/EditJson";
-// import { checkLength } from "@UiFolder/functions/comFuncs";
+// import {
+//   checkLength,
+//   setCurrForm,
+//   setCurrPhase,
+//   throwTestFailMsg,
+// } from "@UiFolder/functions/comFuncs";
 // import {
 //   validateFormValues,
 //   validateDBValues,
-//   validateGridValues,
-// } from "@UiFolder/functions/ValidateValues";
+// } from "@UiFolder/functions/valuesFuncs";
 
 // import { procurementSQLCommand } from "@UiFolder/queries/ProcurementQuery";
 // import {
@@ -16,7 +21,12 @@
 //   DocNo,
 // } from "@utils/data/uidata/procurementData.json";
 
-// import {CapitalExpenditureRequisitionCreate,CapitalExpenditureRequisitionEdit,CapitalExpenditureRequisitionDelete} from "@UiFolder/pages/Procurement/02_CapitalExpenditureRequisition";
+// import {
+//   CapitalExpenditureRequisitionCreate,
+//   CapitalExpenditureRequisitionEdit1,
+//   CapitalExpenditureRequisitionEdit2,
+//   CapitalExpenditureRequisitionDelete,
+// } from "@UiFolder/pages/Procurement/02_CapitalExpenditureRequisition";
 
 // // ---------------- Set Global Variables ----------------
 // let ou;
@@ -33,25 +43,24 @@
 // const paths = InputPath[keyName + "Path"].split(",");
 // const columns = InputPath[keyName + "Column"].split(",");
 
-// test.describe.serial("Capital Expenditure Requisition Tests", () => {
+// test.describe.serial(`${formName} Tests`, () => {
+//   region === "IND" && test.skip(true);
 //   // ---------------- Before All ----------------
 //   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
+//     await setCurrForm(formName);
+//     await setCurrPhase(allPhases[phaseCount]);
+
 //     // Load Excel values
-//     [
-//       createValues,
-//       editValues,
-//       deleteSQL,
-//       ou,
-//     ] = await excel.loadExcelValues(sheetName, formName);
+//     [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
+//       sheetName,
+//       formName,
+//     );
 
 //     await checkLength(paths, columns, createValues, editValues);
 
 //     docNo = DocNo[keyName];
 
-//
-
-// console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
-
+//     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
 //   });
 
 //   // ---------------- Before Each ----------------
@@ -63,8 +72,8 @@
 //   });
 
 //   // ---------------- Create Test ----------------
-//   test("Create Capital Expenditure Requisition", async ({ page, db }) => {
-//     await db.deleteData(deleteSQL, { DocNo: docNo });
+//   test(`Create ${formName}`, async ({ page, db }) => {
+//     await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
 
 //     const { uiVals, gridVals } = await CapitalExpenditureRequisitionCreate(
 //       page,
@@ -72,13 +81,13 @@
 //       paths,
 //       columns,
 //       createValues,
-//       ou
+//       ou,
 //     );
 
 //     docNo = await editJson(
 //       JsonPath,
 //       formName,
-//       await page.locator("#txtQRFNum").inputValue()
+//       await page.locator("#txtQRFNum").inputValue(),
 //     );
 
 //     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
@@ -89,7 +98,7 @@
 //       procurementGridSQLCommand(formName),
 //       {
 //         DocNo: docNo,
-//       }
+//       },
 //     );
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -98,13 +107,13 @@
 //     await validateDBValues(
 //       [...createValues, ou],
 //       [...columns, "OU"],
-//       dbValues[0]
+//       dbValues[0],
 //     );
 //     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 //     await validateDBValues(
 //       gridCreateValues.join(";").split(";"),
 //       gridDbColumns,
-//       gridDbValues[0]
+//       gridDbValues[0],
 //     );
 //   });
 
@@ -121,7 +130,7 @@
 //       gridEditValues,
 //       cellsIndex,
 //       ou,
-//       docNo
+//       docNo,
 //     );
 
 //     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
@@ -132,7 +141,7 @@
 //       procurementGridSQLCommand(formName),
 //       {
 //         DocNo: docNo,
-//       }
+//       },
 //     );
 
 //     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -141,19 +150,25 @@
 //     await validateDBValues(
 //       [...editValues, ou],
 //       [...columns, "OU"],
-//       dbValues[0]
+//       dbValues[0],
 //     );
 //     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
 //     await validateDBValues(
 //       gridEditValues.join(";").split(";"),
 //       gridDbColumns,
-//       gridDbValues[0]
+//       gridDbValues[0],
 //     );
 //   });
 
 //   // ---------------- Delete Test ----------------
 //   test("Delete Capital Expenditure Requisition", async ({ page, db }) => {
-//     await CapitalExpenditureRequisitionDelete(page, sideMenu, createValues, ou, docNo);
+//     await CapitalExpenditureRequisitionDelete(
+//       page,
+//       sideMenu,
+//       createValues,
+//       ou,
+//       docNo,
+//     );
 
 //     const dbValues = await db.retrieveData(procurementSQLCommand(formName), {
 //       DocNo: docNo,
@@ -167,6 +182,6 @@
 //   // ---------------- After All ----------------
 //   test.afterAll(async ({ db }) => {
 //     await editJson(JsonPath, formName, "");
-// console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
+//     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
 //   });
 // });

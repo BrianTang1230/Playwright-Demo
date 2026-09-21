@@ -212,12 +212,14 @@ test.describe.skip(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(ffbSQLCommand(formName), {
       DocNo: docNo,
     });
-    dbValues && throwTestFailMsg("D-DB-RF", formName);
+
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({}) => {
-    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

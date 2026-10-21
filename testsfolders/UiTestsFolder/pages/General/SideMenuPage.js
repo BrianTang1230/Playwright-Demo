@@ -16,7 +16,7 @@ export default class SideMenuPage {
   }
 
   async clickBtnSave(isDblClick = false) {
-    const saveBtn = this.page.locator("#btnSave").first();
+    const saveBtn = this.page.locator("#btnSave,#btnSaveRcd").first();
 
     if (isDblClick) {
       await saveBtn.dblclick();

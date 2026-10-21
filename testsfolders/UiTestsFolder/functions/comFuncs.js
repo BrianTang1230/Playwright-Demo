@@ -22,20 +22,23 @@ export function getCurrPhase() {
 
 export async function checkLength(paths, columns, createValues, editValues) {
   if (
+    !Array.isArray(paths) ||
+    !Array.isArray(columns) ||
+    !Array.isArray(createValues) ||
+    !Array.isArray(editValues)
+  ) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-DATA-DI`,
+      currForm || "Unknown form",
+      "Paths, columns, create values, and edit values must all be arrays",
+    );
+  }
+
+  if (
     paths.length !== columns.length ||
     columns.length !== createValues.length ||
     createValues.length !== editValues.length
   ) {
-    console.error(
-      paths,
-      paths.length,
-      columns,
-      columns.length,
-      createValues,
-      createValues.length,
-      editValues,
-      editValues.length,
-    );
     throwTestFailMsg(
       `${currPhase}-DATA-DI`,
       currForm,
@@ -45,25 +48,62 @@ export async function checkLength(paths, columns, createValues, editValues) {
 }
 
 export async function SelectOU(page, inputPath, dropdownPath, ou) {
-  const ouArrow = page.locator(inputPath).first();
-  await page.waitForTimeout(10000);
-  await ouArrow.click();
+  try {
+    if (!page || typeof inputPath !== "string" || !inputPath || !ou) {
+      throw new TypeError("Page, OU selector, and OU value are required.");
+    }
 
-  const option = page.getByRole("option", { name: ou, exact: true });
-  await page.waitForTimeout(2000);
-  await option.click();
+    const ouArrow = page.locator(inputPath).first();
+    await page.waitForTimeout(10000);
+    await ouArrow.click();
 
-  await page.locator(".k-loading-image").first().waitFor({ state: "detached" });
+    const option = page.getByRole("option", { name: ou, exact: true });
+    await page.waitForTimeout(2000);
+    await option.click();
+
+    await page
+      .locator(".k-loading-image")
+      .first()
+      .waitFor({ state: "detached" });
+  } catch (error) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-UI-ERR`,
+      currForm || "Unknown form",
+      `Selecting OU at ${inputPath}; option selector ${dropdownPath}`,
+      error,
+    );
+  }
 }
 
 export async function runStep(stepName, callback) {
   return await allure.step(stepName, async () => {
-    return await callback();
+    try {
+      return await callback();
+    } catch (error) {
+      if (error?.uiStep === stepName) throw error;
+
+      const contextualError = new Error(
+        `UI step "${stepName}" failed: ${error?.message || String(error)}`,
+        { cause: error },
+      );
+      contextualError.uiStep = stepName;
+      contextualError.formName = currForm || "Unknown form";
+      contextualError.phase = currPhase || "Unknown phase";
+      throw contextualError;
+    }
   });
 }
 
 export async function getElementByPath(page, path) {
   let element;
+  if (!page || typeof path !== "string" || path.trim() === "") {
+    throwTestFailMsg(
+      `${currPhase || "B"}-DATA-DI`,
+      currForm || "Unknown form",
+      "A valid page and non-empty element path are required",
+    );
+  }
+
   // If path starts with # or //, use .locator directly
   if (path.startsWith("#") || path.startsWith("//")) {
     element = page.locator(path).first();
@@ -71,17 +111,29 @@ export async function getElementByPath(page, path) {
 
   // If path does not start with # or // and includes *, use .getByRole
   else if (path.includes("*")) {
-    let role = path.split("*");
+    const roleParts = path.split("*");
 
-    // If role[1] is not a number lets find the element by name, else find by index
-    if (role[1] || role[1].trim() !== "") {
-      if (isNaN(Number(role[1]))) {
-        element = page.getByRole(role[0], { name: role[1] }).first();
-      } else element = page.getByRole(role[0]).nth(Number(role[1])).first();
+    // A numeric suffix selects a role index; any other suffix is the accessible name.
+    const role = roleParts[0].trim();
+    const nameOrIndex = roleParts.slice(1).join("*").trim();
+    if (!role) {
+      throwTestFailMsg(
+        `${currPhase || "B"}-DATA-DI`,
+        currForm || "Unknown form",
+        `Invalid role locator: ${path}`,
+      );
+    }
+
+    if (!nameOrIndex) {
+      element = page.getByRole(role).first();
+    } else if (/^\d+$/.test(nameOrIndex)) {
+      element = page.getByRole(role).nth(Number(nameOrIndex));
+    } else {
+      element = page.getByRole(role, { name: nameOrIndex }).first();
     }
   } else {
     // If path does not start with any symbols, use .locator with name
-    element = page.locator(`[name='${path}']`).first();
+    element = page.locator(`[name=${JSON.stringify(path)}]`).first();
   }
 
   if (!element) {
@@ -95,53 +147,50 @@ export async function getElementByPath(page, path) {
   return element;
 }
 
-export function throwTestFailMsg(caseCode, formName, remarks = "") {
-  let decodedCode = caseCode.split("-");
-  let phase = "";
-  let side = "";
-  let reason = "";
-  remarks = remarks === "" ? "" : ": " + remarks;
+export function throwTestFailMsg(caseCode, formName, remarks = "", cause) {
+  const decodedCode = String(caseCode || "B-UI-ERR").split("-");
+  const phaseCode = decodedCode[0];
+  const reasonCode = decodedCode.at(-1);
+  const phaseNames = {
+    C: "Creation",
+    E1: "1st Edition",
+    E2: "2nd Edition",
+    D: "Deletion",
+    B: "Before Tests",
+  };
+  const reasonNames = {
+    MM: "Mismatch Value",
+    NF: "Not Found",
+    DI: "Data Issue/Missing Data",
+    RF: "Record Found",
+    ERR: "Action Error",
+  };
+  const side = decodedCode.includes("UI")
+    ? "UI"
+    : decodedCode.includes("DB")
+      ? "DATABASE"
+      : decodedCode.includes("GRID")
+        ? "GRID"
+        : decodedCode.includes("TREE")
+          ? "TREE VIEW"
+          : decodedCode.includes("DATA")
+            ? "JSON or EXCEL"
+            : "UNKNOWN";
+  const phase = phaseNames[phaseCode] || phaseCode || "Unknown phase";
+  const reason = reasonNames[reasonCode] || "Unknown reason";
+  const detail = remarks ? `: ${remarks}` : "";
+  const displayFormName = formName || "Unknown form";
 
-  if (decodedCode[0] === "C") {
-    phase = "Creation";
-  } else if (decodedCode[0] === "E1") {
-    phase = "1st Edition";
-  } else if (decodedCode[0] === "E2") {
-    phase = "2nd Edition";
-  } else if (decodedCode[0] === "D") {
-    phase = "Deletion";
-  } else if (decodedCode[0] === "B") {
-    phase = "Before Tests";
-  }
-
-  if (decodedCode.includes("UI")) {
-    side = "UI";
-  } else if (decodedCode.includes("DB")) {
-    side = "DATABASE";
-  } else if (decodedCode.includes("GRID")) {
-    side = "GRID";
-  } else if (decodedCode.includes("DATA")) {
-    side = "JSON or EXCEL";
-  }
-
-  if (decodedCode[2] === "MM") {
-    reason = "Mismatch Value";
-  } else if (decodedCode[2] === "NF") {
-    reason = "Not Found";
-  } else if (decodedCode[2] === "DI") {
-    reason = "Data Issue/Missing Data";
-  } else if (decodedCode[2] === "RF") {
-    // For Deletion only
-    reason = "Record Found";
-  } else if (decodeCode[2] === "ERR") {
-    reason = "Get Error";
-  } else {
-    reason = "Unknown Reason";
-  }
-
-  throw new Error(
-    `${phase} in ${formName} failed due to ${reason} on ${side}${remarks}.\n${"-".repeat(85)}`,
+  const failure = new Error(
+    `${phase} in ${displayFormName} failed due to ${reason} on ${side}${detail}.\n${"-".repeat(85)}`,
+    cause ? { cause } : undefined,
   );
+  failure.failureCode = caseCode;
+  failure.formName = displayFormName;
+  failure.phase = phase;
+  failure.side = side;
+  failure.reason = reason;
+  throw failure;
 }
 
 export function formatGridData(array, size) {
@@ -181,41 +230,45 @@ export function convertNumericMonth(month) {
 }
 
 export function getUniversalDate(options = {}) {
-  const { days = 0, dayPosition = null, format = 'DD/MM/YYYY' } = options;
+  const { days = 0, dayPosition = null, format = "DD/MM/YYYY" } = options;
   let date = new Date();
   date.setDate(date.getDate() + days);
 
-  if (dayPosition === 'first') date.setDate(1);
-  else if (dayPosition === 'last') date = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  if (dayPosition === "first") date.setDate(1);
+  else if (dayPosition === "last")
+    date = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-  const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
   const yyyy = date.getFullYear();
 
-  return format.replace('DD', dd).replace('MM', mm).replace('YYYY', yyyy);
+  return format.replace("DD", dd).replace("MM", mm).replace("YYYY", yyyy);
 }
 
 export function buildGridRows(gridValues, cellsIndex) {
   if (!gridValues || !cellsIndex || cellsIndex.length === 0) return [];
-    
+
   const colsPerRow = cellsIndex[0].length;
-  const flatString = Array.isArray(gridValues) ? gridValues.join(";") : gridValues;
-  const cleanString = flatString.replace(/\|/g, ";"); 
-    
-  const allVals = cleanString.split(";").map(v => {
+  const flatString = Array.isArray(gridValues)
+    ? gridValues.join(";")
+    : gridValues;
+  const cleanString = flatString.replace(/\|/g, ";");
+
+  const allVals = cleanString.split(";").map((v) => {
     let trimmedVal = v.trim();
-    if (trimmedVal === '[TODAY]') return getUniversalDate();
-    if (trimmedVal === '[TODAY+1]') return getUniversalDate({ days: 1 });
-    if (trimmedVal === '[TODAY+30]') return getUniversalDate({ days: 30 });
-    if (trimmedVal === '[END_OF_MONTH]') return getUniversalDate({ dayPosition: 'last' });
+    if (trimmedVal === "[TODAY]") return getUniversalDate();
+    if (trimmedVal === "[TODAY+1]") return getUniversalDate({ days: 1 });
+    if (trimmedVal === "[TODAY+30]") return getUniversalDate({ days: 30 });
+    if (trimmedVal === "[END_OF_MONTH]")
+      return getUniversalDate({ dayPosition: "last" });
     return trimmedVal;
   });
 
-const gridRows = [];
-for (let i = 0; i < allVals.length; i += colsPerRow) {
-  gridRows.push(allVals.slice(i, i + colsPerRow).join(";"));
-}
-return gridRows;
+  const gridRows = [];
+  for (let i = 0; i < allVals.length; i += colsPerRow) {
+    gridRows.push(allVals.slice(i, i + colsPerRow).join(";"));
+  }
+  return gridRows;
 }
 
 export function convertTextMonth(date) {

@@ -4,7 +4,6 @@ import {
   getCurrForm,
   getCurrPhase,
 } from "./comFuncs";
-import { parse } from "path";
 import Data from "@utils/data/uidata/loginData.json";
 
 const region = process.env.REGION || Data.Region;
@@ -16,11 +15,22 @@ function updateCurrFormAndPhase() {
   currPhase = getCurrPhase();
 }
 
+function raiseUiFailure(error, details) {
+  updateCurrFormAndPhase();
+  throwTestFailMsg(
+    `${currPhase || "B"}-UI-ERR`,
+    currForm || "Unknown form",
+    `${details}; ${error?.message || String(error)}`,
+    error,
+  );
+}
+
 export async function validateFormValues(inputValues, columns, uiValues) {
+  updateCurrFormAndPhase();
+
   const localInputValues = [...inputValues];
   const localUiValues = [...uiValues];
 
-  updateCurrFormAndPhase();
   console.log(`\nUI Values of ${currForm}:\n` + "-".repeat(85));
 
   for (let i = 0; i < localInputValues.length; i++) {
@@ -32,6 +42,7 @@ export async function validateFormValues(inputValues, columns, uiValues) {
       continue;
 
     if (columns[i].includes("numeric")) {
+      console.log(columns[i], localInputValues[i], localUiValues[i]);
       const inpVal = normalizeNumber(String(localInputValues[i]).trim());
       const uiVal = normalizeNumber(String(localUiValues[i]).trim());
       localInputValues[i] = String(inpVal);
@@ -55,15 +66,37 @@ export async function validateFormValues(inputValues, columns, uiValues) {
 }
 
 export async function validateDBValues(inputValues, inputCols, dbValues) {
+  updateCurrFormAndPhase();
+  if (
+    !Array.isArray(inputValues) ||
+    !Array.isArray(inputCols) ||
+    inputCols.some((column) => typeof column !== "string") ||
+    !dbValues ||
+    typeof dbValues !== "object" ||
+    inputValues.length !== inputCols.length
+  ) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-DB-DI`,
+      currForm || "Unknown form",
+      "Input values, database columns, and database result are missing or mismatched",
+    );
+  }
+
   const localInputValues = [...inputValues];
   const localDbValues = dbValues;
 
-  updateCurrFormAndPhase();
   console.log(`\nDB Values of ${currForm}:\n` + "-".repeat(85));
 
   for (let i = 0; i < inputCols.length; i++) {
     // Columns split by space and get the first element be colName
     const colName = inputCols[i].split(" ")[0];
+    if (!colName || !Object.prototype.hasOwnProperty.call(dbValues, colName)) {
+      throwTestFailMsg(
+        `${currPhase}-DB-DI`,
+        currForm,
+        `Database result is missing column ${colName || "<empty>"}`,
+      );
+    }
 
     if (
       String(localInputValues[i]).trim() === "NA" ||
@@ -94,10 +127,18 @@ export async function validateDBValues(inputValues, inputCols, dbValues) {
 }
 
 export async function validateGridValues(inputValues, gridValues) {
+  updateCurrFormAndPhase();
+  if (!Array.isArray(inputValues) || !Array.isArray(gridValues)) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-GRID-DI`,
+      currForm || "Unknown form",
+      "Expected and actual grid values must be arrays",
+    );
+  }
+
   const localInputValues = [...inputValues];
   const localGridValues = [...gridValues];
 
-  updateCurrFormAndPhase();
   if (localInputValues.length !== localGridValues.length) {
     throwTestFailMsg(
       `${currPhase}-GRID-DI`,
@@ -132,18 +173,26 @@ export async function validateGridValues(inputValues, gridValues) {
 }
 
 export async function validateTreeViewUiValues(treeViewValues, treeViewUiVals) {
+  updateCurrFormAndPhase();
+  if (!Array.isArray(treeViewValues) || !Array.isArray(treeViewUiVals)) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-TREE-DI`,
+      currForm || "Unknown form",
+      "Expected and actual tree values must be arrays",
+    );
+  }
 
-  let expectedTreeViewValues = treeViewValues;
+  const expectedTreeViewValues = treeViewValues;
 
   const expectedTreeViewArray = [...expectedTreeViewValues].sort();
   const actualTreeViewArray = [...treeViewUiVals].sort();
 
   console.log(`\nTree View Values of ${currForm}:\n` + "-".repeat(85));
 
-  const isLengthMatch = expectedTreeViewArray.length === actualTreeViewArray.length
-  updateCurrFormAndPhase();
+  const isLengthMatch =
+    expectedTreeViewArray.length === actualTreeViewArray.length;
 
-  if(!isLengthMatch){
+  if (!isLengthMatch) {
     throwTestFailMsg(
       `${currPhase}-TREE-DI`,
       currForm,
@@ -155,32 +204,48 @@ export async function validateTreeViewUiValues(treeViewValues, treeViewUiVals) {
 
   for (let i = 0; i < expectedLength; i++) {
     if (expectedTreeViewArray[i] === actualTreeViewArray[i]) {
-        console.log(`Matched Tree UI values: ${expectedTreeViewArray[i]} === ${actualTreeViewArray[i]}`);
+      console.log(
+        `Matched Tree UI values: ${expectedTreeViewArray[i]} === ${actualTreeViewArray[i]}`,
+      );
     } else {
-        throwTestFailMsg(
-            `${currPhase}-UI-MM`,
-            currForm,
-            `${expectedTreeViewArray[i]} !== ${actualTreeViewArray[i]}`,
-        );
+      throwTestFailMsg(
+        `${currPhase}-UI-MM`,
+        currForm,
+        `${expectedTreeViewArray[i]} !== ${actualTreeViewArray[i]}`,
+      );
     }
   }
-
 }
 
-export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues){
+export async function validateTreeViewDBValues(
+  treeViewUiVals,
+  treeViewDbValues,
+) {
+  updateCurrFormAndPhase();
+  if (
+    !Array.isArray(treeViewUiVals) ||
+    !Array.isArray(treeViewDbValues) ||
+    treeViewUiVals.some((item) => typeof item !== "string") ||
+    treeViewDbValues.some((row) => !row || typeof row !== "object")
+  ) {
+    throwTestFailMsg(
+      `${currPhase || "B"}-TREE-DI`,
+      currForm || "Unknown form",
+      "UI tree values or database tree rows are missing or invalid",
+    );
+  }
 
-  const filteredUiVals = treeViewUiVals.filter(item => item.includes('/'));
-  const cleanedDbVals = treeViewDbValues.map(row => row.OUSelect);
+  const filteredUiVals = treeViewUiVals.filter((item) => item.includes("/"));
+  const cleanedDbVals = treeViewDbValues.map((row) => row.OUSelect);
 
   let sortedUi = [...filteredUiVals].sort();
   const sortedDb = [...cleanedDbVals].sort();
 
   console.log(`\nTree View DB Values of ${currForm}:\n` + "-".repeat(85));
 
-  const isLengthMatch = sortedUi.length === sortedDb.length
-  updateCurrFormAndPhase();
+  const isLengthMatch = sortedUi.length === sortedDb.length;
 
-  if(!isLengthMatch){
+  if (!isLengthMatch) {
     throwTestFailMsg(
       `${currPhase}-TREE-DI`,
       currForm,
@@ -198,10 +263,9 @@ export async function validateTreeViewDBValues(treeViewUiVals, treeViewDbValues)
         `${currPhase}-DB-MM`,
         currForm,
         `${sortedUi[i]} !== ${sortedDb[i]}`,
-      )
+      );
     }
   }
-
 }
 
 function normalizeNumber(raw) {
@@ -218,73 +282,58 @@ function normalizeNumber(raw) {
 // Input values based on the column type
 
 export async function inputFormValues(page, path, col, value) {
-  if (value == "NA" || value == "AF") {
+  if (String(value).trim() === "NA" || String(value).trim() === "AF") {
     return;
   }
 
-  col = col.toLowerCase();
-  const element = await getElementByPath(page, path);
-  await element.focus();
-
+  col = String(col || "").toLowerCase();
   try {
-    if (col.includes("k-drop")) {
-      await element.click();
-      await page
-        .locator(`${path}_listbox li`, { hasText: value })
-        .first()
-        .click();
-    }
+    const element = await getElementByPath(page, path);
+    await element.focus();
 
-    // Invisible k-drop Input
-    else if (col.includes("k-hidden-drop")) {
+    // Check the hidden variant first because its name also contains "k-drop".
+    if (col.includes("k-hidden-drop")) {
       const dropdownWrapper = element.locator("..");
       await dropdownWrapper.click({ force: true });
       await page
-        .locator(`${path}_listbox li`, { hasText: value })
+        .locator(`${path}_listbox li`, { hasText: String(value) })
         .first()
         .click();
-    }
-
-    // Checkbox Input
-    else if (col.includes("checkbox")) {
-      if (value.toLowerCase() === "true") {
-        await element.check();
-      } else if (value.toLowerCase() === "false") {
-        await element.uncheck();
-      }
-    }
-
-    // Button Input
-    else if (col.includes("select")) {
-      await element.locator().click();
-    }
-
-    // Integer,Date,Text Input
-    else if (col.includes("text") || col.includes("date")) {
-      await element.fill(value);
-      await element.press("Enter");
-    }
-
-    // Numeric Input
-    else if (col.includes("numeric")) {
-      await element.press("Backspace");
-      await element.type(value);
-    }
-
-    // All elements which have dropdown menu
-    else if (col.includes("dropdown")) {
-      await element.fill("");
-      await element.type(value);
-      await element.press("Enter");
-    }
-
-    // For dropdown with no text input
-    else if (col.includes("combobox")) {
+    } else if (col.includes("k-drop")) {
       await element.click();
       await page
-        .locator('ul[role="listbox"] li', { hasText: value })
+        .locator(`${path}_listbox li`, { hasText: String(value) })
         .first()
         .click();
+    } else if (col.includes("checkbox")) {
+      const normalizedValue = String(value).toLowerCase();
+      if (normalizedValue === "true") {
+        await element.check();
+      } else if (normalizedValue === "false") {
+        await element.uncheck();
+      } else {
+        throw new TypeError(
+          `Expected true or false for checkbox field ${path}.`,
+        );
+      }
+    } else if (col.includes("text") || col.includes("date")) {
+      await element.fill(String(value));
+      await element.press("Enter");
+    } else if (col.includes("numeric")) {
+      await element.press("Backspace");
+      await element.type(String(value));
+    } else if (col.includes("dropdown")) {
+      await element.fill("");
+      await element.type(String(value));
+      await element.press("Enter");
+    } else if (col.includes("combobox")) {
+      await element.click();
+      await page
+        .locator('ul[role="listbox"] li', { hasText: String(value) })
+        .first()
+        .click();
+    } else {
+      throw new TypeError(`Unsupported field type "${col}" for ${path}.`);
     }
 
     await page
@@ -292,12 +341,7 @@ export async function inputFormValues(page, path, col, value) {
       .first()
       .waitFor({ state: "detached" });
   } catch (error) {
-    await updateCurrFormAndPhase();
-    throwTestFailMsg(
-      `${currPhase}-UI-NF`,
-      currForm,
-      `${col} with value ${value} at ${path}`,
-    );
+    raiseUiFailure(error, `Input field type ${col || "unknown"} at ${path}`);
   }
 }
 
@@ -309,144 +353,205 @@ export async function inputGridValues(
   nRow = 0,
   options = {},
 ) {
-  const table = page.locator(path);
-  const vals = values.split(";");
-
   let targetRow = nRow;
-  if (options.hasAutoFill === true) {
-    targetRow = nRow + 1;
-  }
-  const row = path.includes("tr[") ? table : table.locator("tr").nth(targetRow);
-
-  for (let i = 0; i < cellsIndex.length; i++) {
-    if (vals[i] === "NA" || vals[i] === "AF") continue;
-
-    const cell = row.locator("td").nth(cellsIndex[i]);
-
-    await cell.click();
-
-    const input = cell.locator("input").first();
-
-    if (vals[i].toLowerCase() === "true") {
-      await input.check();
-      continue;
-    } else if (vals[i].toLowerCase() === "false") {
-      await input.uncheck();
-      continue;
+  let currentColumn = null;
+  try {
+    if (!page || typeof path !== "string" || !Array.isArray(cellsIndex)) {
+      throw new TypeError(
+        "Page, grid selector, and cell indexes are required.",
+      );
+    }
+    if (typeof values !== "string") {
+      throw new TypeError(
+        "Grid input data must be a semicolon-delimited string.",
+      );
     }
 
-    if (
-      vals[i] === "RW" ||
-      vals[i] === "PR" ||
-      vals[i] === "NW" ||
-      vals[i] === "HA"
-    ) {
-      await input.fill("");
+    const table = page.locator(path);
+    const vals = values.split(";");
+    if (vals.length < cellsIndex.length) {
+      throw new RangeError(
+        `Grid data has ${vals.length} values for ${cellsIndex.length} target cells.`,
+      );
     }
 
-    await input.press("Control+A");
-    await input.press("Control+A");
-    await input.press("Backspace");
-    await input.type(vals[i]);
-    await input.press("Enter");
-  }
-}
+    if (options.hasAutoFill === true) targetRow = nRow + 1;
+    const row = path.includes("tr[")
+      ? table
+      : table.locator("tr").nth(targetRow);
 
-export async function inputTreeViewValues(page, treeViewPath, treeViewValues){
-  const treeViewID = treeViewPath;
-  let treeViewExcelInput = treeViewValues;
+    for (let i = 0; i < cellsIndex.length; i++) {
+      currentColumn = cellsIndex[i];
+      if (vals[i] === "NA" || vals[i] === "AF") continue;
 
-  for (const currentItem of treeViewExcelInput) {
-    let target;
+      const cell = row.locator("td").nth(currentColumn);
+      await cell.click();
 
-    if (currentItem.includes('/')) {
-      // Handles items with a path (Parent / Child)
-      let [parentNode, childNode] = currentItem.split('/').map(node => node.trim());
-      target = page.locator(`${treeViewID} li`, { hasText: parentNode })
-                .locator('li', { hasText: new RegExp(`^${childNode}$`) });
-    } else {
-      // Handles single-level items
-      target = page.locator(`${treeViewID} .k-in`, { hasText: currentItem })
-                .locator('xpath=ancestor::li[1]');
-    }
-
-    await target.locator('input[type="checkbox"], .k-checkbox').first().click();
-  }
-
-}
-
-export async function getTreeViewUiValues(page, treeViewPath){
-  const treeViewID = treeViewPath;
-
-  const checkedPaths = await page.locator(`${treeViewID} input[type="checkbox"]:checked`).evaluateAll((checkboxes, treeViewId) => {
-    const treeRoot = document.querySelector(treeViewId);
-
-    return checkboxes.map(cb => {
-      const li = cb.closest('li');
-      if (!li) return '';
-
-      const pathParts = [];
-      let currentLi = li;
-
-      // Traverse up the DOM to find all ancestor li elements within the tree
-      while (currentLi && treeRoot.contains(currentLi)) {
-        // Find the direct text element (.k-in) for the current node
-        const textElement = currentLi.querySelector(':scope > div > .k-in, :scope > .k-in');
-        if (textElement) {
-          pathParts.unshift(textElement.textContent.trim());
-        }
-        // Move up to the next parent li element
-        currentLi = currentLi.parentElement.closest('li');
+      const input = cell.locator("input").first();
+      const normalizedValue = vals[i].toLowerCase();
+      if (normalizedValue === "true") {
+        await input.check();
+        continue;
+      } else if (normalizedValue === "false") {
+        await input.uncheck();
+        continue;
       }
 
-      return pathParts.join('/');
-    }).filter(Boolean);
-  }, treeViewID);
+      if (["RW", "PR", "NW", "HA"].includes(vals[i])) {
+        await input.fill("");
+      }
 
-  return checkedPaths;
+      await input.press("Control+A");
+      await input.press("Control+A");
+      await input.press("Backspace");
+      await input.type(vals[i]);
+      await input.press("Enter");
+    }
+  } catch (error) {
+    raiseUiFailure(
+      error,
+      `Input grid ${path} at row ${targetRow + 1}, column ${currentColumn === null ? "unknown" : currentColumn + 1}`,
+    );
+  }
 }
 
+export async function inputTreeViewValues(page, treeViewPath, treeViewValues) {
+  let currentItem = "unknown";
+  try {
+    if (
+      !page ||
+      typeof treeViewPath !== "string" ||
+      !Array.isArray(treeViewValues)
+    ) {
+      throw new TypeError("Page, tree selector, and tree values are required.");
+    }
+    const treeViewID = treeViewPath;
+    let treeViewExcelInput = treeViewValues;
+
+    for (currentItem of treeViewExcelInput) {
+      let target;
+
+      if (currentItem.includes("/")) {
+        // Handles items with a path (Parent / Child)
+        let [parentNode, childNode] = currentItem
+          .split("/")
+          .map((node) => node.trim());
+        target = page
+          .locator(`${treeViewID} li`, { hasText: parentNode })
+          .locator("li", { hasText: new RegExp(`^${childNode}$`) });
+      } else {
+        // Handles single-level items
+        target = page
+          .locator(`${treeViewID} .k-in`, { hasText: currentItem })
+          .locator("xpath=ancestor::li[1]");
+      }
+
+      await target
+        .locator('input[type="checkbox"], .k-checkbox')
+        .first()
+        .click();
+    }
+  } catch (error) {
+    raiseUiFailure(
+      error,
+      `Select tree value "${currentItem}" in ${treeViewPath}`,
+    );
+  }
+}
+
+export async function getTreeViewUiValues(page, treeViewPath) {
+  try {
+    if (!page || typeof treeViewPath !== "string" || !treeViewPath) {
+      throw new TypeError("Page and tree selector are required.");
+    }
+    const treeViewID = treeViewPath;
+
+    const checkedPaths = await page
+      .locator(`${treeViewID} input[type="checkbox"]:checked`)
+      .evaluateAll((checkboxes, treeViewId) => {
+        const treeRoot = document.querySelector(treeViewId);
+
+        return checkboxes
+          .map((cb) => {
+            const li = cb.closest("li");
+            if (!li) return "";
+
+            const pathParts = [];
+            let currentLi = li;
+
+            // Traverse up the DOM to find all ancestor li elements within the tree
+            while (currentLi && treeRoot.contains(currentLi)) {
+              // Find the direct text element (.k-in) for the current node
+              const textElement = currentLi.querySelector(
+                ":scope > div > .k-in, :scope > .k-in",
+              );
+              if (textElement) {
+                pathParts.unshift(textElement.textContent.trim());
+              }
+              // Move up to the next parent li element
+              currentLi = currentLi.parentElement.closest("li");
+            }
+
+            return pathParts.join("/");
+          })
+          .filter(Boolean);
+      }, treeViewID);
+
+    return checkedPaths;
+  } catch (error) {
+    raiseUiFailure(error, `Read checked tree values from ${treeViewPath}`);
+  }
+}
 
 // Get values from UI based on the paths provided
 export async function getFormValues(page, paths) {
   const uiValues = [];
+  if (!page || !Array.isArray(paths)) {
+    raiseUiFailure(
+      new TypeError("Page and an array of field selectors are required."),
+      "Read form values",
+    );
+  }
 
   for (let i = 0; i < paths.length; i++) {
-    const element = await getElementByPath(page, paths[i]);
+    try {
+      const element = await getElementByPath(page, paths[i]);
+      const value = await element.evaluate((el) => {
+        const tag = el.tagName.toLowerCase();
+        const type = (el.getAttribute("type") || "").toLowerCase();
 
-    const value = await element.evaluate((el) => {
-      const tag = el.tagName.toLowerCase();
-      const type = (el.getAttribute("type") || "").toLowerCase();
+        // ✅ checkbox / radio
+        if (type === "checkbox" || type === "radio") {
+          return el.checked ? "True" : "False";
+        }
 
-      // ✅ checkbox / radio
-      if (type === "checkbox" || type === "radio") {
-        return el.checked ? "True" : "False";
-      }
+        // ✅ Kendo DatePicker / UI widget
+        if (el.getAttribute("data-role") === "datepicker") {
+          const widget = $(el).data("kendoDatePicker");
+          if (!widget) return "NA";
 
-      // ✅ Kendo DatePicker / UI widget
-      if (el.getAttribute("data-role") === "datepicker") {
-        const widget = $(el).data("kendoDatePicker");
-        if (!widget) return "NA";
+          const value = widget.value();
+          if (!value) return "NA";
 
-        const value = widget.value();
-        if (!value) return "NA";
+          const format = widget.options.format || "MMMM yyyy";
+          return kendo.toString(value, format);
+        }
 
-        const format = widget.options.format || "MMMM yyyy";
-        return kendo.toString(value, format);
-      }
+        // ✅ input / textarea / select
+        if (tag === "input" || tag === "textarea" || tag === "select") {
+          const v = el.value;
+          return v && v.trim() !== "" ? v.trim() : "NA";
+        }
 
-      // ✅ input / textarea / select
-      if (tag === "input" || tag === "textarea" || tag === "select") {
-        const v = el.value;
-        return v && v.trim() !== "" ? v.trim() : "NA";
-      }
+        // ✅ fallback
+        const text = el.innerText || el.textContent;
+        return text && text.trim() !== "" ? text.trim() : "NA";
+      });
 
-      // ✅ fallback
-      const text = el.innerText || el.textContent;
-      return text && text.trim() !== "" ? text.trim() : "NA";
-    });
-
-    uiValues.push(value);
+      uiValues.push(value);
+    } catch (error) {
+      raiseUiFailure(error, `Read form field at ${paths[i]}`);
+    }
   }
 
   return uiValues;
@@ -459,41 +564,68 @@ export async function getGridValues(
   options = { hasAutoFill: false, isOneRow: false },
 ) {
   const gridValues = [];
-  for (let i = 0; i < gridPaths.length; i++) {
-    const table = page.locator(gridPaths[i]);
-
-    // 1. THE CONFIG FIX: Offset the row dynamically based on your options object!
-    let row;
-    if (gridPaths[i].includes("tr[")) {
-      row = table;
-    } else if (options.isOneRow) {
-      row = table.locator("tr").first();
-    } else {
-      // If hasAutoFill is true, shift down by 1 (i + 1) to skip the auto-generated row.
-      // If false, use 'i' to grab the normal rows in sequence
-      const targetRow = options.hasAutoFill ? i + 1 : i;
-      row = table.locator("tr").nth(targetRow);
+  let currentGridPath = "unknown";
+  let currentCellIndex = null;
+  let currentRowIndex = null;
+  try {
+    if (!page || !Array.isArray(gridPaths) || !Array.isArray(cellsIndex)) {
+      throw new TypeError(
+        "Page, grid selectors, and cell indexes are required.",
+      );
+    }
+    if (cellsIndex.length < gridPaths.length) {
+      throw new RangeError(
+        "A cell-index list is missing for one or more grids.",
+      );
     }
 
-    const currentCellsIndex = cellsIndex[i];
+    for (let i = 0; i < gridPaths.length; i++) {
+      currentGridPath = gridPaths[i];
+      currentRowIndex = null;
+      const table = page.locator(gridPaths[i]);
 
-    for (let j = 0; j < currentCellsIndex.length; j++) {
-      const cell = row.locator("td").nth(currentCellsIndex[j]);
-
-      const checkbox = cell.locator('input[type="checkbox"]');
-
-      if ((await checkbox.count()) > 0) {
-        const isChecked = await checkbox.isChecked();
-        gridValues.push(isChecked ? "True" : "False");
+      // 1. THE CONFIG FIX: Offset the row dynamically based on your options object!
+      let row;
+      if (gridPaths[i].includes("tr[")) {
+        row = table;
+        currentRowIndex = "explicit";
+      } else if (options.isOneRow) {
+        row = table.locator("tr").first();
+        currentRowIndex = 1;
       } else {
-        const gridValue = await cell.innerText();
-        if (gridValue === "") {
-          gridValues.push("NA");
+        // If hasAutoFill is true, shift down by 1 (i + 1) to skip the auto-generated row.
+        // If false, use 'i' to grab the normal rows in sequence
+        const targetRow = options.hasAutoFill ? i + 1 : i;
+        row = table.locator("tr").nth(targetRow);
+        currentRowIndex = targetRow + 1;
+      }
+
+      const currentCellsIndex = cellsIndex[i];
+
+      for (let j = 0; j < currentCellsIndex.length; j++) {
+        currentCellIndex = currentCellsIndex[j];
+        const cell = row.locator("td").nth(currentCellsIndex[j]);
+
+        const checkbox = cell.locator('input[type="checkbox"]');
+
+        if ((await checkbox.count()) > 0) {
+          const isChecked = await checkbox.isChecked();
+          gridValues.push(isChecked ? "True" : "False");
         } else {
-          gridValues.push(gridValue.trim());
+          const gridValue = await cell.innerText();
+          if (gridValue === "") {
+            gridValues.push("NA");
+          } else {
+            gridValues.push(gridValue.trim());
+          }
         }
       }
     }
+    return gridValues;
+  } catch (error) {
+    raiseUiFailure(
+      error,
+      `Read grid ${currentGridPath} at row ${currentRowIndex ?? "unknown"}, column ${currentCellIndex === null ? "unknown" : currentCellIndex + 1}`,
+    );
   }
-  return gridValues;
 }

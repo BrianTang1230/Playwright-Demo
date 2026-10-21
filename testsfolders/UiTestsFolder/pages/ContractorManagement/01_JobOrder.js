@@ -1,13 +1,16 @@
-import { SelectOU, runStep } from "@UiFolder/functions/comFuncs";
 import {
-  inputGridValues,
+  SelectOU,
+  getUniversalDate,
+  runStep,
+} from "@UiFolder/functions/comFuncs";
+import {
   inputFormValues,
-  getGridValues,
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
+import { expect } from "@playwright/test";
 import {
   FilterForUnsaveChecking,
-  FilterTransactionBy2And1Criterias,
+  FilterTransactionByFixedUQF,
 } from "@UiFolder/functions/OpenRecord";
 
 export async function JobOrderCreate(
@@ -16,9 +19,7 @@ export async function JobOrderCreate(
   paths,
   columns,
   values,
-  gridPaths,
   gridValues,
-  cellsIndex,
   ou,
 ) {
   await runStep("Open create new form", async () => {
@@ -34,20 +35,41 @@ export async function JobOrderCreate(
     );
   });
 
+  const paths1 = paths.slice(0, 13);
+  const columns1 = columns.slice(0, 13);
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
-      await inputFormValues(page, paths[i], columns[i], values[i]);
+    for (let i = 0; i < paths1.length; i++) {
+      if (typeof values[i] === "string") {
+        values[i] = values[i].replace(/\[TODAY\]/g, getUniversalDate());
+        values[i] = values[i].replace(
+          /\[TODAY\+1]/g,
+          getUniversalDate({ days: 1 }),
+        );
+        values[i] = values[i].replace(
+          /\[TODAY\+5]/g,
+          getUniversalDate({ days: 5 }),
+        );
+      }
+      await inputFormValues(page, paths1[i], columns1[i], values[i]);
     }
   });
 
-  await runStep("Add new grid item", async () => {
+  const paths2 = paths.slice(13, paths.length);
+  const columns2 = columns.slice(13, paths.length);
+  await runStep("Create item", async () => {
     await sideMenu.btnAddNewItem.click();
+    for (let i = 0; i < paths2.length; i++) {
+      await inputFormValues(
+        page,
+        paths2[i],
+        columns2[i],
+        gridValues[0].split(";")[i],
+      );
+    }
   });
 
-  await runStep("Create grid item", async () => {
-    for (let i = 0; i < gridPaths.length; i++) {
-      await inputGridValues(page, gridPaths[i], gridValues[i], cellsIndex[i]);
-    }
+  await runStep("Save item", async () => {
+    await page.locator("#btnSaveRcd:visible").click();
   });
 
   await runStep("Save transaction", async () => {
@@ -55,11 +77,15 @@ export async function JobOrderCreate(
   });
 
   const uiVals = await runStep("Get UI values", async () => {
-    return await getFormValues(page, paths);
+    return await getFormValues(page, paths1);
+  });
+
+  await runStep("Open item", async () => {
+    await page.locator("button", { hasText: "Edit Item" }).click();
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    return await getFormValues(page, paths2);
   });
 
   return { uiVals, gridVals };
@@ -72,38 +98,54 @@ export async function JobOrderEdit1(
   columns,
   values,
   newValues,
-  gridPaths,
   gridValues,
   gridNewValues,
-  cellsIndex,
   ou,
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy2And1Criterias(
+    await FilterTransactionByFixedUQF(
       page,
-      values[0],
-      ou[0],
-      gridValues[0].split(";")[0],
-      "Block",
-      "Dropdown",
+      ["OUCode_input", "JOFromDate", "JOToDate", "joNum"],
+      [ou[0], values[0], values[0], docNo],
+      1,
     );
   });
 
+  const paths1 = paths.slice(0, 13);
+  const columns1 = columns.slice(0, 13);
   await runStep("Edit transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
-      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    for (let i = 0; i < paths1.length; i++) {
+      if (typeof newValues[i] === "string") {
+        newValues[i] = newValues[i].replace(
+          /\[TODAY\+2]/g,
+          getUniversalDate({ days: 2 }),
+        );
+        newValues[i] = newValues[i].replace(
+          /\[TODAY\+6]/g,
+          getUniversalDate({ days: 6 }),
+        );
+      }
+      await inputFormValues(page, paths1[i], columns1[i], newValues[i]);
     }
   });
 
+  const paths2 = paths.slice(13);
+  const columns2 = columns.slice(13);
   await runStep("Edit grid item", async () => {
-    for (let i = 0; i < gridPaths.length; i++) {
-      await inputGridValues(
+    await page.getByRole("button", { name: /Edit Item/ }).click();
+    for (let i = 0; i < paths2.length; i++) {
+      await inputFormValues(
         page,
-        gridPaths[i],
-        gridNewValues[i],
-        cellsIndex[i],
+        paths2[i],
+        columns2[i],
+        gridNewValues[0].split(";")[i],
       );
     }
+  });
+
+  await runStep("Save grid item", async () => {
+    await page.locator("#btnSaveRcd:visible").click();
   });
 
   await runStep("Close edited transaction without save", async () => {
@@ -112,15 +154,16 @@ export async function JobOrderEdit1(
   });
 
   await runStep("Reopen transaction", async () => {
-    await FilterForUnsaveChecking(page, gridValues[0].split(";")[0]);
+    await FilterForUnsaveChecking(page, docNo);
   });
 
   const uiVals = await runStep("Get UI values", async () => {
-    return await getFormValues(page, paths);
+    return await getFormValues(page, paths1);
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    await page.getByRole("button", { name: /Edit Item/ }).click();
+    return await getFormValues(page, paths2);
   });
 
   return { uiVals, gridVals };
@@ -133,38 +176,54 @@ export async function JobOrderEdit2(
   columns,
   values,
   newValues,
-  gridPaths,
   gridValues,
   gridNewValues,
-  cellsIndex,
   ou,
+  docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterTransactionBy2And1Criterias(
+    await FilterTransactionByFixedUQF(
       page,
-      values[0],
-      ou[0],
-      gridValues[0].split(";")[0],
-      "Block",
-      "Dropdown",
+      ["OUCode_input", "JOFromDate", "JOToDate", "joNum"],
+      [ou[0], values[0], values[0], docNo],
+      1,
     );
   });
 
+  const paths1 = paths.slice(0, 13);
+  const columns1 = columns.slice(0, 13);
   await runStep("Edit transaction data", async () => {
-    for (let i = 0; i < paths.length; i++) {
-      await inputFormValues(page, paths[i], columns[i], newValues[i]);
+    for (let i = 0; i < paths1.length; i++) {
+      if (typeof newValues[i] === "string") {
+        newValues[i] = newValues[i].replace(
+          /\[TODAY\+2]/g,
+          getUniversalDate({ days: 2 }),
+        );
+        newValues[i] = newValues[i].replace(
+          /\[TODAY\+6]/g,
+          getUniversalDate({ days: 6 }),
+        );
+      }
+      await inputFormValues(page, paths1[i], columns1[i], newValues[i]);
     }
   });
 
+  const paths2 = paths.slice(13);
+  const columns2 = columns.slice(13);
   await runStep("Edit grid item", async () => {
-    for (let i = 0; i < gridPaths.length; i++) {
-      await inputGridValues(
+    await page.getByRole("button", { name: /Edit Item/ }).click();
+    for (let i = 0; i < paths2.length; i++) {
+      await inputFormValues(
         page,
-        gridPaths[i],
-        gridNewValues[i],
-        cellsIndex[i],
+        paths2[i],
+        columns2[i],
+        gridNewValues[0].split(";")[i],
       );
     }
+  });
+
+  await runStep("Save grid item", async () => {
+    await page.locator("#btnSaveRcd:visible").click();
   });
 
   await runStep("Save transaction", async () => {
@@ -172,35 +231,13 @@ export async function JobOrderEdit2(
   });
 
   const uiVals = await runStep("Get UI values", async () => {
-    return await getFormValues(page, paths);
+    return await getFormValues(page, paths.slice(0, 13));
   });
 
   const gridVals = await runStep("Get Grid values", async () => {
-    return await getGridValues(page, gridPaths, cellsIndex);
+    await page.getByRole("button", { name: /Edit Item/ }).click();
+    return await getFormValues(page, paths.slice(13));
   });
 
   return { uiVals, gridVals };
-}
-
-export async function JobOrderDelete(
-  page,
-  sideMenu,
-  values,
-  gridValues,
-  ou,
-) {
-  await runStep("Filter transaction", async () => {
-    await FilterTransactionBy2And1Criterias(
-      page,
-      values[0],
-      ou[0],
-      gridValues[0].split(";")[0],
-      "Block",
-      "Dropdown",
-    );
-  });
-
-  await runStep("Delete transaction", async () => {
-    await sideMenu.clickBtnDelete();
-  });
 }

@@ -6,12 +6,12 @@ function inventorySQLCommand(formName) {
       sqlCommand = `
         select FORMAT(A.RcvDate,'dd/MM/yyyy') as RcvDate,
         case 
-            when A.POKey = '-1' then 'False'
-            else 'True'
+          when A.POKey = '-1' then 'False'
+          else 'True'
         end as WithPO,
         case 
-            when A.POKey = '-1' then 'NA'
-            else B.PONum
+          when A.POKey = '-1' then 'NA'
+          else B.PONum
         end as PONo,
         C.ContactCode + ' - ' + C.ContactDesc as Supplier,
         A.DORefNum as DORef,

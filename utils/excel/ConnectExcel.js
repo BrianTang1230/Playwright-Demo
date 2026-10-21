@@ -14,10 +14,10 @@ export default class ConnectExcel {
           const credential = new ClientSecretCredential(
             process.env.TENANT_ID,
             process.env.CLIENT_ID,
-            process.env.CLIENT_SECRET
+            process.env.CLIENT_SECRET,
           );
           const token = await credential.getToken(
-            "https://graph.microsoft.com/.default"
+            "https://graph.microsoft.com/.default",
           );
           return token.token;
         },
@@ -76,7 +76,13 @@ export default class ConnectExcel {
   async loadExcelValues(
     sheetName,
     formName,
-    { isUI = true, hasOU = true, hasGrid = false, hasTree = false, hasFilter = false } = {}
+    {
+      isUI = true,
+      hasOU = true,
+      hasGrid = false,
+      hasTree = false,
+      hasFilter = false,
+    } = {},
   ) {
     let columns = isUI
       ? ["CreateData", "EditData", "DeleteSQL"]
@@ -86,7 +92,7 @@ export default class ConnectExcel {
     // Check if sheetName exist
     const sheetRes = await this.graphClient
       .api(
-        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheetName}')/usedRange()`
+        `/drives/${this.driveId}/items/${this.itemId}/workbook/worksheets('${sheetName}')/usedRange()`,
       )
       .get();
 
@@ -120,6 +126,7 @@ export default class ConnectExcel {
       ) {
         value = await this.readExcel(formName, columns[col], isUI);
         value = String(value).split("|");
+        
       } else if (columns[col] === "DeleteSQL") {
         value = await this.readExcel(formName, columns[col], isUI);
         value = String(value);
@@ -134,5 +141,14 @@ export default class ConnectExcel {
     }
 
     return data;
+    /* 
+      Returned data array sequence:
+      [
+        createData, editData, deleteSQL, ou, (default & if hasOU)
+        gridDataCreate, gridDataEdit, (if hasGrid)
+        TreeViewDataCreate, TreeViewDataEdit, TreeViewDataChecker, (if hasTree)
+        FilterData (if hasFilter)
+      ]
+    */
   }
 }

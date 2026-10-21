@@ -5,7 +5,8 @@ export async function SelectRecord(page, sideMenu, values, action = "edit") {
       .getByRole("checkbox", {
         name: "Show Active Only",
       })
-      .or(page.locator('input[ng-model="showActive"]')).click());
+      .or(page.locator('input[ng-model="showActive"]'))
+      .click());
 
   // Search By Country Code
   await page.getByRole("textbox", { name: "Filter Item" }).fill(values[0]);
@@ -166,6 +167,7 @@ export async function FilterTransactionByFixedUQF(
   for (let i = 0; i < keyfields.length; i++) {
     const inputField = page.locator(`input[name="${keyfields[i]}"]`);
     if (i < dropdownFieldQty) {
+      await inputField.fill("");
       await inputField.type(keywords[i]);
       await page
         .getByRole("option", { hasText: keywords[i] })

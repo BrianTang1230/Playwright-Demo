@@ -8,6 +8,7 @@ import {
   setCurrPhase,
   checkLength,
   throwTestFailMsg,
+  getUniversalDate,
 } from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
@@ -47,6 +48,7 @@ test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ db, excel }) => {
     // Change Current Form and Phase
+    console.log(getUniversalDate());
     await setCurrForm(formName);
     await setCurrPhase(allPhases[phaseCount]);
 
@@ -98,7 +100,8 @@ test.describe.serial(`${formName} Tests`, () => {
       DocNo: docNo,
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
-    await validateFormValues(page, paths, uiVals);
+
+    await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou], [...columns, "OU"], dbValues[0]);
   });
 

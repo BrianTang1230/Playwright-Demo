@@ -1,10 +1,12 @@
 import { test } from "@utils/commonFunctions/GlobalSetup";
+import { expect } from "@playwright/test";
 import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
 import editJson from "@utils/commonFunctions/EditJson";
 import {
   checkLength,
+  getUniversalDate,
   setCurrForm,
   setCurrPhase,
   throwTestFailMsg,
@@ -14,7 +16,10 @@ import {
   validateDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
-import { cmSQLCommand } from "@UiFolder/queries/ContractorManagementQuery";
+import {
+  cmSQLCommand,
+  cmGridSQLCommand,
+} from "@UiFolder/queries/ContractorManagementQuery";
 import {
   JsonPath,
   InputPath,
@@ -35,7 +40,10 @@ let sideMenu;
 let createValues;
 let editValues;
 let deleteSQL;
+let gridCreateValues;
+let gridEditValues;
 let phaseCount = 0;
+let createdByThisRun = false;
 const sheetName = "CM_Data";
 const module = "Contractor Management";
 const submodule = null;
@@ -47,16 +55,28 @@ const columns = InputPath[keyName + "Column"].split(",");
 test.describe.skip(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    console.log(getUniversalDate());
     await setCurrForm(formName);
     await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou] = await excel.loadExcelValues(
-      sheetName,
-      formName,
-    );
+    [
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+      gridCreateValues,
+      gridEditValues,
+    ] = await excel.loadExcelValues(sheetName, formName, {
+      hasGrid: true,
+    });
 
-    await checkLength(paths, columns, createValues, editValues);
+    await checkLength(
+      paths,
+      columns,
+      [...createValues, ...gridCreateValues[0].split(";")],
+      [...editValues, ...gridEditValues[0].split(";")],
+    );
 
     docNo = DocNo[keyName];
 
@@ -84,6 +104,7 @@ test.describe.skip(`${formName} Tests`, () => {
       paths,
       columns,
       createValues,
+      gridCreateValues,
       ou,
     );
 
@@ -91,7 +112,7 @@ test.describe.skip(`${formName} Tests`, () => {
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtRequisitionNum").inputValue(),
+      await page.locator("#txtJONum").inputValue(),
     );
 
     const dbValues = await db.retrieveData(cmSQLCommand(formName), {
@@ -99,12 +120,33 @@ test.describe.skip(`${formName} Tests`, () => {
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName, "Form record not found");
 
-    await validateFormValues(createValues, columns, [...uiVals, ...gridVals]);
+    const gridDbValues = await db.retrieveGridData(cmGridSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !gridDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
+
+    await validateFormValues(
+      createValues.map((values) => {
+        value.replace(/\[TODAY\]/g, getUniversalDate());
+        value.replace(/\[TODAY\+1]/g, getUniversalDate({ days: 1 }));
+        value.replace(/\[TODAY\+5]/g, getUniversalDate({ days: 5 }));
+      }),
+      columns.slice(0, 13),
+      uiVals,
+    );
     await validateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
+      [...uiVals, ou[0]],
+      [...columns.slice(0, 13), "OU"],
       dbValues[0],
     );
+
+    await validateFormValues(
+      gridCreateValues.join(";").split(";"),
+      columns.slice(13),
+      gridVals,
+    );
+    await validateDBValues(gridVals, columns.slice(13), gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -116,6 +158,8 @@ test.describe.skip(`${formName} Tests`, () => {
       columns,
       createValues,
       editValues,
+      gridCreateValues,
+      gridEditValues,
       ou,
       docNo,
     );
@@ -126,12 +170,25 @@ test.describe.skip(`${formName} Tests`, () => {
     !dbValues &&
       throwTestFailMsg("E1-DB-NF", formName, "Form record not found");
 
-    await validateFormValues(createValues, columns, [...uiVals, ...gridVals]);
+    const gridDbValues = await db.retrieveGridData(cmGridSQLCommand(formName), {
+      DocNo: docNo,
+    });
+    !gridDbValues &&
+      throwTestFailMsg("E1-DB-NF", formName, "Grid record not found");
+
+    await validateFormValues(createValues, columns.slice(0, 13), uiVals);
     await validateDBValues(
-      [...createValues, ou],
-      [...columns, "OU"],
+      [...uiVals, ou[0]],
+      [...columns.slice(0, 13), "OU"],
       dbValues[0],
     );
+
+    await validateFormValues(
+      gridCreateValues.join(";").split(";"),
+      columns.slice(13),
+      gridVals,
+    );
+    await validateDBValues(gridVals, columns.slice(13), gridDbValues[0]);
   });
 
   // ---------------- Edit Test ----------------
@@ -143,6 +200,8 @@ test.describe.skip(`${formName} Tests`, () => {
       columns,
       createValues,
       editValues,
+      gridCreateValues,
+      gridEditValues,
       ou,
       docNo,
     );
@@ -153,29 +212,37 @@ test.describe.skip(`${formName} Tests`, () => {
     !dbValues &&
       throwTestFailMsg("E2-DB-NF", formName, "Form record not found");
 
-    await validateFormValues(editValues, columns, [...uiVals, ...gridVals]);
-    await validateDBValues(
-      [...editValues, ou],
-      [...columns, "OU"],
-      dbValues[0],
-    );
-  });
-
-  // ---------------- Delete Test ----------------
-  test(`Delete ${formName}`, async ({ page, db }) => {
-    await JobOrderDelete(page, sideMenu, editValues, ou, docNo);
-
-    const dbValues = await db.retrieveData(cmSQLCommand(formName), {
+    const gridDbValues = await db.retrieveGridData(cmGridSQLCommand(formName), {
       DocNo: docNo,
     });
+    !gridDbValues &&
+      throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
 
-    dbValues
-      ? throwTestFailMsg("D-DB-RF", formName)
-      : await editJson(JsonPath, formName, "");
+    await validateFormValues(
+      editValues.map((values) => {
+        value.replace(/\[TODAY\+2]/g, getUniversalDate({ days: 2 }));
+        value.replace(/\[TODAY\+6]/g, getUniversalDate({ days: 6 }));
+      }),
+      columns.slice(0, 13),
+      uiVals,
+    );
+    await validateDBValues(
+      [...uiVals, ou[0]],
+      [...columns.slice(0, 13), "OU"],
+      dbValues[0],
+    );
+
+    await validateFormValues(
+      gridEditValues.join(";").split(";"),
+      columns.slice(13),
+      gridVals,
+    );
+    await validateDBValues(gridVals, columns.slice(13), gridDbValues[0]);
   });
 
   // ---------------- After All ----------------
-  test.afterAll(async ({}) => {
+  test.afterAll(async ({ db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

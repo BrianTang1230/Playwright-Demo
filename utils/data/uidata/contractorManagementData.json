@@ -1,11 +1,11 @@
 {
   "JsonPath": "utils/data/uidata/contractorManagementData.json",
   "InputPath": {
-    "JobOrderPath": "#dpJODate,comboBoxContractor_input,list*0",
-    "JobOrderColumn": "JODate date,Contractor dropdown,JobType select"
+    "JobOrderPath": "#dpJODate,comboBoxContractor_input,#txtStatus,#txtRemarks,#txtRefContrNo,spinbutton*0,comboBoxConductor_input,spinbutton*1,spinbutton*2,comboBoxRetenAcc_input,comboBoxRetenCCID_input,#dpStartDate,#dpEndDate,comboBoxJob_input,#txtJobCatCodeDesc,#txtAccNumDesc,comboBoxCCID_input,comboBoxUOM_input,#knRate >> xpath=.. >> css=input:visible,#knQty >> xpath=.. >> css=input:visible,#knTotalAmt >> xpath=.. >> css=input:visible,#txtJoDetRemarks",
+    "JobOrderColumn": "JODate date,Contractor dropdown,Status text,Remarks text,RefContrNo text,TotalAmt numeric,Conductor dropdown,RetentionPer numeric,RetentionMth numeric,Account dropdown,CCID dropdown,StartDate date,EndDate date,Job dropdown,JobCat text,Account text,CCID dropdown,UOM dropdown,Rate numeric,Qty numeric,Amt numeric,Remarks text"
   },
   "GridPath": {},
   "DocNo": {
-    "JobOrder": ""
+    "JobOrder": "GWO0000892"
   }
 }

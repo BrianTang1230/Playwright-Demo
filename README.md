@@ -17,3 +17,7 @@
 
 If you open it directly from the zip, screenshots and videos will not display correctly.
 
+## UI failure diagnostics
+
+When a UI test still fails after its configured retries, the report includes `ui-failure-diagnostics.json`. It records the test and current page, the error chain with form/phase metadata when available, and a bounded set of browser console and network signals. Sensitive URL query strings and common credential patterns are redacted. Collecting or attaching diagnostics is best-effort and does not change the test result. No AI service is called.
+

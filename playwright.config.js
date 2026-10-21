@@ -55,10 +55,11 @@ module.exports = defineConfig({
     },
     headless: false, // true in CI, false locally
     video: {
-      mode: process.env.CI ? "retain-on-failure" : "on", // or "retain-on-failure"
+      mode: "retain-on-failure", // or "retain-on-failure"
       size: { width: 1920, height: 1080 }, // video resolution
     },
-    screenshot: process.env.CI ? "only-on-failure" : "on",
+    screenshot: "only-on-failure",
+    trace: "off",
     actionTimeout: 90000,
     launchOptions: {
       args: process.env.CI ? [] : ["--start-maximized"], // skip maximize on CI
@@ -77,14 +78,14 @@ module.exports = defineConfig({
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
         video: {
-          mode: process.env.CI ? "retain-on-failure" : "on",
+          mode: "retain-on-failure",
           size: { width: 1920, height: 1080 },
         },
-        screenshot: process.env.CI ? "only-on-failure" : "on",
+        screenshot: "only-on-failure",
         headless: false,
         launchOptions: {
           args: process.env.CI ? [] : ["--start-maximized"],
-          slowMo: 1300,
+          slowMo: 1000,
         },
       },
     },
@@ -99,15 +100,15 @@ module.exports = defineConfig({
         ...(region === "MY"
           ? ["tests/UiTests/FFBProcurementTests/IND/**"]
           : []),
-      ], // IND side ignore Lab tests temporarily
+      ],
       use: {
         ...device,
         viewport: process.env.CI ? { width: 1920, height: 1080 } : null,
         video: {
-          mode: process.env.CI ? "retain-on-failure" : "on",
+          mode: "retain-on-failure",
           size: { width: 1920, height: 1080 },
         },
-        screenshot: process.env.CI ? "only-on-failure" : "on",
+        screenshot: "only-on-failure",
         headless: !!process.env.CI,
         browserName: "chromium",
         channel: process.env.BROWSER || "chrome",

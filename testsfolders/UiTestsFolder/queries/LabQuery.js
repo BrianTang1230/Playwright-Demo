@@ -270,11 +270,17 @@ function labSQLCommand(formName) {
 }
 
 function labGridSQLCommand(formName) {
-  let sqlCommand = "";
+  let sqlCommand = `
+    DECLARE @OU VARCHAR(100) = 
+      CASE WHEN @region = 'IND'
+        THEN 'SSP1M - SEMUNAI SAWIT PERKASA PALM OIL MILL 1'
+        ELSE 'SPOM - SERAYA PALM OIL MILL'
+      END;
+    `;
 
   switch (formName) {
     case "Crude Palm Oil Quality (FFA)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -295,7 +301,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (Moisture)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -315,7 +321,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (Impurities)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -335,7 +341,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Crude Palm Oil Quality (DOBI)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -359,7 +365,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Kernel Quality (Kernel Dirt)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -383,7 +389,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Kernel Quality (FFA)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -404,7 +410,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Kernel Quality (Moisture & Oil Content)":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -426,7 +432,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Oil Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -448,7 +454,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Sludge Waste Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -470,7 +476,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Kernel Losses":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -493,7 +499,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Cracking Efficiency":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -516,7 +522,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Water Quality":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -542,7 +548,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Effluent Test":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -567,7 +573,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Effluent Flowmeter Reading":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -585,7 +591,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Press Cake":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -608,7 +614,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Press Cake MPD":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -633,7 +639,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Press Cake Nut Composition":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -661,7 +667,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Press Cake Dried Nut Moisture":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -681,7 +687,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Losses in Empty Fruit Bunches":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -703,7 +709,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Spin Test":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
@@ -726,7 +732,7 @@ function labGridSQLCommand(formName) {
       break;
 
     case "Chemical Dosage":
-      sqlCommand = `
+      sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,

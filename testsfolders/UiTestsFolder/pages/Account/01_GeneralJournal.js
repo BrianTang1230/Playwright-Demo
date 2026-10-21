@@ -1,4 +1,9 @@
-import { SelectOU, runStep, buildGridRows, getUniversalDate } from "@UiFolder/functions/comFuncs";
+import {
+  SelectOU,
+  runStep,
+  buildGridRows,
+  getUniversalDate,
+} from "@UiFolder/functions/comFuncs";
 import {
   inputGridValues,
   inputFormValues,
@@ -6,9 +11,9 @@ import {
   getFormValues,
 } from "@UiFolder/functions/valuesFuncs";
 import Login from "@utils/data/uidata/loginData.json";
-import { 
-  FilterRecordByFiscalYearAndPeriod, 
-  FilterForUnsaveChecking 
+import {
+  FilterRecordByFiscalYearAndPeriod,
+  FilterForUnsaveChecking,
 } from "@UiFolder/functions/OpenRecord";
 
 // Create
@@ -25,7 +30,6 @@ export async function GeneralJournalCreate(
 ) {
   const region = process.env.REGION || Login.Region;
   const GridRows = buildGridRows(gridValues, cellsIndex);
-
 
   await runStep("Create new transaction", async () => {
     await sideMenu.clickBtnCreateNewForm();
@@ -99,11 +103,14 @@ export async function GeneralJournalEdit1(
   period,
 ) {
   if (typeof fiscalYear === "string") {
-    fiscalYear = fiscalYear.replace(/\[YEAR\]/g, getUniversalDate({ format: 'YYYY' }));
+    fiscalYear = fiscalYear.replace(
+      /\[YEAR\]/g,
+      getUniversalDate({ format: "YYYY" }),
+    );
   }
-  
+
   if (typeof period === "string") {
-    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
+    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: "MM" }));
   }
 
   const GridRows = buildGridRows(gridValues, cellsIndex);
@@ -114,11 +121,17 @@ export async function GeneralJournalEdit1(
 
   for (let i = 0; i < createValues.length; i++) {
     if (typeof createValues[i] === "string") {
-      createValues[i] = createValues[i].replace(/\[TODAY\]/g, getUniversalDate());
-      createValues[i] = createValues[i].replace(/\[TODAY\+30\]/g, getUniversalDate({ days: 30 }));
+      createValues[i] = createValues[i].replace(
+        /\[TODAY\]/g,
+        getUniversalDate(),
+      );
+      createValues[i] = createValues[i].replace(
+        /\[TODAY\+30\]/g,
+        getUniversalDate({ days: 30 }),
+      );
     }
   }
-  
+
   const processedEditValues = editValues.map((val) => {
     if (typeof val === "string") {
       return val.replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
@@ -173,13 +186,15 @@ export async function GeneralJournalEdit2(
   fiscalYear,
   period,
 ) {
-  
   if (typeof fiscalYear === "string") {
-    fiscalYear = fiscalYear.replace(/\[YEAR\]/g, getUniversalDate({ format: 'YYYY' }));
+    fiscalYear = fiscalYear.replace(
+      /\[YEAR\]/g,
+      getUniversalDate({ format: "YYYY" }),
+    );
   }
-  
+
   if (typeof period === "string") {
-    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: 'MM' })); 
+    period = period.replace(/\[MONTH\]/g, getUniversalDate({ format: "MM" }));
   }
 
   const GridRows = buildGridRows(gridValues, cellsIndex);
@@ -192,7 +207,10 @@ export async function GeneralJournalEdit2(
     await page.waitForTimeout(6000);
     for (let i = 0; i < paths.length; i++) {
       if (typeof editValues[i] === "string") {
-        editValues[i] = editValues[i].replace(/\[TODAY\+1\]/g, getUniversalDate({ days: 1 }));
+        editValues[i] = editValues[i].replace(
+          /\[TODAY\+1\]/g,
+          getUniversalDate({ days: 1 }),
+        );
       }
 
       await inputFormValues(page, paths[i], columns[i], editValues[i]);

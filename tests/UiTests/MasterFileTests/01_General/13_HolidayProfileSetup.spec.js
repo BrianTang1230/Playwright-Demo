@@ -12,13 +12,22 @@ import {
 import {
   validateFormValues,
   validateDBValues,
-  validateGridValues,  
+  validateGridValues,
   validateTreeViewUiValues,
   validateTreeViewDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
-import { masterSQLCommand, masterGridSQLCommand, masterTreeViewSQLCommand } from "@UiFolder/queries/MasterQuery";
-import { JsonPath, InputPath, GridPath, TreePath } from "@utils/data/uidata/masterData.json";
+import {
+  masterSQLCommand,
+  masterGridSQLCommand,
+  masterTreeViewSQLCommand,
+} from "@UiFolder/queries/MasterQuery";
+import {
+  JsonPath,
+  InputPath,
+  GridPath,
+  TreePath,
+} from "@utils/data/uidata/masterData.json";
 
 import {
   HolidayProfileSetupCreate,
@@ -61,21 +70,27 @@ test.describe.serial(`${formName} Tests`, () => {
 
     // Load Excel values
     [
-    createValues,
-    editValues,
-    deleteSQL,
-    ou,
-    gridCreateValues,
-    gridEditValues,
-    treeViewCreateValues,
-    treeViewEditValues,
-    treeViewCheckValues
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasTree: true });
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+      gridCreateValues,
+      gridEditValues,
+      treeViewCreateValues,
+      treeViewEditValues,
+      treeViewCheckValues,
+    ] = await excel.loadExcelValues(sheetName, formName, {
+      hasGrid: true,
+      hasTree: true,
+    });
 
     await checkLength(paths, columns, createValues, editValues);
-    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] = treeViewCheckValues.map(val => 
-      typeof val === 'string' ? val.split(',').map(item => item.trim()) : val
-    );
+    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] =
+      treeViewCheckValues.map((val) =>
+        typeof val === "string"
+          ? val.split(",").map((item) => item.trim())
+          : val,
+      );
 
     console.log(`Start Running: ${formName}`);
   });
@@ -96,18 +111,19 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals, gridVals, treeViewUiVals } = await HolidayProfileSetupCreate(
-      page,
-      sideMenu,
-      paths,
-      columns,
-      createValues,
-      gridPaths,
-      gridCreateValues,
-      cellsIndex,
-      treeViewPath,
-      treeViewCreateValues,
-    );
+    const { uiVals, gridVals, treeViewUiVals } =
+      await HolidayProfileSetupCreate(
+        page,
+        sideMenu,
+        paths,
+        columns,
+        createValues,
+        gridPaths,
+        gridCreateValues,
+        cellsIndex,
+        treeViewPath,
+        treeViewCreateValues,
+      );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
@@ -123,18 +139,22 @@ test.describe.serial(`${formName} Tests`, () => {
     !gridDbValues &&
       throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
     const gridDbColumns = Object.keys(gridDbValues[0]);
-    
+
     const treeViewDbValues = await db.retrieveData(
       masterTreeViewSQLCommand(formName),
       {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
@@ -152,7 +172,7 @@ test.describe.serial(`${formName} Tests`, () => {
       gridEditValues,
       cellsIndex,
       treeViewPath,
-      treeViewEditValues
+      treeViewEditValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -176,11 +196,15 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
@@ -198,7 +222,7 @@ test.describe.serial(`${formName} Tests`, () => {
       gridEditValues,
       cellsIndex,
       treeViewPath,
-      treeViewEditValues
+      treeViewEditValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -222,11 +246,15 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: editValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(editValues, columns, uiVals);
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterEdit, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterEdit,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);

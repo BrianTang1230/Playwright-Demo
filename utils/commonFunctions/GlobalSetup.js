@@ -49,11 +49,19 @@ function serializeErrorChain(error) {
       message: safeDiagnosticText(current.message || current),
       stack: safeDiagnosticText(current.stack || "", 3000),
       ...(current.failureCode ? { failureCode: current.failureCode } : {}),
-      ...(current.formName ? { formName: safeDiagnosticText(current.formName, 200) } : {}),
-      ...(current.phase ? { phase: safeDiagnosticText(current.phase, 100) } : {}),
-      ...(current.uiStep ? { uiStep: safeDiagnosticText(current.uiStep, 200) } : {}),
+      ...(current.formName
+        ? { formName: safeDiagnosticText(current.formName, 200) }
+        : {}),
+      ...(current.phase
+        ? { phase: safeDiagnosticText(current.phase, 100) }
+        : {}),
+      ...(current.uiStep
+        ? { uiStep: safeDiagnosticText(current.uiStep, 200) }
+        : {}),
       ...(current.side ? { side: safeDiagnosticText(current.side, 100) } : {}),
-      ...(current.reason ? { reason: safeDiagnosticText(current.reason, 100) } : {}),
+      ...(current.reason
+        ? { reason: safeDiagnosticText(current.reason, 100) }
+        : {}),
     });
     current = current.cause;
     depth += 1;
@@ -137,15 +145,18 @@ export const test = base.extend({
   api: async ({}, use) => {
     const authContext = await request.newContext();
 
-    const response = await authContext.post("https://qaappgw.quarto.cloud/zmasterapi/token", {
-      form: {
-        grant_type: "password",
-        client_id: process.env.TEST_CLIENTID,
-        username: process.env.TEST_USERNAME,
-        medium_type: "web",
-        password: process.env.TEST_PASSWORD,
+    const response = await authContext.post(
+      "https://qaappgw.quarto.cloud/zmasterapi/token",
+      {
+        form: {
+          grant_type: "password",
+          client_id: process.env.TEST_CLIENTID,
+          username: process.env.TEST_USERNAME,
+          medium_type: "web",
+          password: process.env.TEST_PASSWORD,
+        },
       },
-    });
+    );
 
     const body = await response.json();
     if (!body.access_token) throw new Error("❌ Failed to get token");
@@ -163,6 +174,15 @@ export const test = base.extend({
   },
 });
 
+test.beforeAll(async ({}, testInfo) => {
+  const now = new Date().toLocaleString("en-GB", {
+    timeZone: "Asia/Kuala_Lumpur",
+    hour12: false,
+  });
+
+  console.log(`[${now}] Start: ${testInfo.titlePath.join(" > ")}`);
+});
+
 // Attach local diagnostics for failed UI tests without changing their outcome.
 test.afterEach(async ({}, testInfo) => {
   const context = uiFailureContexts.get(testInfo);
@@ -175,7 +195,10 @@ test.afterEach(async ({}, testInfo) => {
     try {
       if (context?.page && !context.page.isClosed()) {
         pageEvidence.url = safeUiUrl(context.page.url()) || "[unavailable]";
-        pageEvidence.title = safeDiagnosticText(await context.page.title(), 300);
+        pageEvidence.title = safeDiagnosticText(
+          await context.page.title(),
+          300,
+        );
       }
     } catch {
       pageEvidence.url ||= "[unavailable]";

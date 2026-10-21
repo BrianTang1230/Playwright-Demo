@@ -1,8 +1,13 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
-import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength, formatGridData} from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -21,7 +26,7 @@ import {
 import {
   PurchaseInvoiceCreate,
   PurchaseInvoiceEdit1,
-  PurchaseInvoiceEdit2
+  PurchaseInvoiceEdit2,
 } from "@UiFolder/pages/Account/08_PurchaseInvoice";
 
 // ---------------- Set Global Variables ----------------
@@ -34,6 +39,7 @@ let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
 let filterData;
+let phaseCount = 0;
 const sheetName = "ACC_Data";
 const module = "Account";
 const submodule = "Account Payable";
@@ -44,7 +50,7 @@ const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[keyName + "Grid"].split(",");
 const cellsIndex = [
   [1, 2, 3, 5, 6, 7, 11, 12],
-  [1, 2, 3, 5, 6, 7, 11, 12]
+  [1, 2, 3, 5, 6, 7, 11, 12],
 ];
 
 const dwCellIndex = region === "IND" ? cellsIndex : cellsIndex;
@@ -54,6 +60,11 @@ const dwPaths = region === "IND" ? paths : paths;
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
+    // Load Excel values
     [
       createValues,
       editValues,
@@ -61,26 +72,33 @@ test.describe.serial(`${formName} Tests`, () => {
       ou,
       gridCreateValues,
       gridEditValues,
-      filterData
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasFilter: true });
+      filterData,
+    ] = await excel.loadExcelValues(sheetName, formName, {
+      hasGrid: true,
+      hasFilter: true,
+    });
 
     docNo = DocNo[keyName];
     console.log(`Start Running: ${formName}`);
   });
 
-// ---------------- Before Each ----------------
+  // ---------------- Before Each ----------------
   test.beforeEach("Login and Navigation", async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
-// ---------------- Create Test ----------------
+  // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
-    await db.deleteData(deleteSQL, { 
-      DocNo: docNo, 
-      OU: ou[0] 
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
     });
 
     const { uiVals, gridVals } = await PurchaseInvoiceCreate(
@@ -92,13 +110,13 @@ test.describe.serial(`${formName} Tests`, () => {
       gridPaths,
       gridCreateValues,
       dwCellIndex,
-      ou
+      ou,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").first().inputValue() 
+      await page.locator("#txtDocNum").first().inputValue(),
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -107,26 +125,26 @@ test.describe.serial(`${formName} Tests`, () => {
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
-    await validateFormValues(createValues, dwCols, uiVals);  
-    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]); 
+    await validateFormValues(createValues, dwCols, uiVals);
+    await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
 
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
 
     const rowData = formatGridData(gridVals, gridDbColumns.length);
     for (let i = 0; i < rowData.length; i++) {
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    };
+    }
   });
 
   // ---------------- Edit without Saving Test----------------
   test(`Edit ${formName} without Saving`, async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
-  
+
     const { uiVals, gridVals } = await PurchaseInvoiceEdit1(
       page,
       sideMenu,
@@ -142,29 +160,32 @@ test.describe.serial(`${formName} Tests`, () => {
       fiscalYear,
       period,
     );
-  
+
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("//input[@ng-model='headerData.DocNum']").last().inputValue(),
+      await page
+        .locator("//input[@ng-model='headerData.DocNum']")
+        .last()
+        .inputValue(),
     );
-  
+
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
       DocNo: docNo,
     });
-  
+
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
       { DocNo: docNo, OU: ou[0] },
     );
-  
+
     const gridDbColumns = Object.keys(gridDbValues[0]);
-  
+
     await validateFormValues(createValues, dwCols, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...dwCols, "OU"], dbValues[0]);
-  
+
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-  
+
     const rowData = formatGridData(gridVals, gridDbColumns.length);
     for (let i = 0; i < rowData.length; i++) {
       console.log(`\nValidating Row ${i + 1}...`);
@@ -172,7 +193,7 @@ test.describe.serial(`${formName} Tests`, () => {
     }
   });
 
-// ---------------- Edit Test ----------------
+  // ---------------- Edit Test ----------------
   test(`Edit ${formName}`, async ({ page, db }) => {
     const fiscalYear = filterData[0];
     const period = filterData[1];
@@ -189,22 +210,22 @@ test.describe.serial(`${formName} Tests`, () => {
       ou,
       docNo,
       fiscalYear,
-      period
+      period,
     );
 
     docNo = await editJson(
       JsonPath,
       formName,
-      await page.locator("#txtDocNum").first().inputValue() 
+      await page.locator("#txtDocNum").first().inputValue(),
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
-      DocNo: docNo
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(
       accountGridSQLCommand(formName),
-      { DocNo: docNo, OU: ou[0] }
+      { DocNo: docNo, OU: ou[0] },
     );
 
     const gridDbColumns = Object.keys(gridDbValues[0]);
@@ -216,14 +237,14 @@ test.describe.serial(`${formName} Tests`, () => {
     const rowData = formatGridData(gridVals, gridDbColumns.length);
     for (let i = 0; i < rowData.length; i++) {
       await validateDBValues(rowData[i], gridDbColumns, gridDbValues[i]);
-    };
+    }
   });
 
   // ---------------- Delete Test ----------------
   test(`Delete ${formName}`, async ({ db }) => {
-    await db.deleteData(deleteSQL, { 
-      DocNo: docNo, 
-      OU: ou[0] 
+    await db.deleteData(deleteSQL, {
+      DocNo: docNo,
+      OU: ou[0],
     });
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
@@ -231,9 +252,13 @@ test.describe.serial(`${formName} Tests`, () => {
     });
 
     if (dbValues && dbValues.length > 0) {
-      throw new Error(`Deletion failed! Record ${docNo} is still present in the database.`);
+      throw new Error(
+        `Deletion failed! Record ${docNo} is still present in the database.`,
+      );
     } else {
-      console.log(`\n Success! Record ${docNo} is completely gone from the database.`);
+      console.log(
+        `\n Success! Record ${docNo} is completely gone from the database.`,
+      );
     }
   });
 });

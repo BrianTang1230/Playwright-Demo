@@ -40,7 +40,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  if (region === "MY") test.skip(true);  
+  if (region === "MY") test.skip(true);
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Change Current Form and Phase
@@ -89,7 +89,7 @@ test.describe.serial(`${formName} Tests`, () => {
       OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });

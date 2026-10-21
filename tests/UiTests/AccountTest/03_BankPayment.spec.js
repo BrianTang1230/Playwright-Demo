@@ -1,8 +1,13 @@
 import { test, region } from "@utils/commonFunctions/GlobalSetup";
+import { allPhases } from "@utils/data/uidata/globalData.json";
 import LoginPage from "@UiFolder/pages/General/LoginPage";
 import SideMenuPage from "@UiFolder/pages/General/SideMenuPage";
-import editJson from "@utils/commonFunctions/EditJson";
-import { checkLength, formatGridData } from "@UiFolder/functions/comFuncs";
+import {
+  checkLength,
+  setCurrForm,
+  setCurrPhase,
+  throwTestFailMsg,
+} from "@UiFolder/functions/comFuncs";
 import {
   validateFormValues,
   validateDBValues,
@@ -21,7 +26,7 @@ import {
 import {
   BankPaymentCreate,
   BankPaymentEdit1,
-  BankPaymentEdit2
+  BankPaymentEdit2,
 } from "@UiFolder/pages/Account/03_BankPayment";
 
 // ---------------- Set Global Variables ----------------
@@ -34,6 +39,7 @@ let deleteSQL;
 let gridCreateValues;
 let gridEditValues;
 let filterData;
+let phaseCount = 0;
 const sheetName = "ACC_Data";
 const module = "Account";
 const submodule = "Bank and Cash";
@@ -58,6 +64,11 @@ const dwPaths = region === "IND" ? paths : paths;
 test.describe.serial(`${formName} Tests`, () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
+    await setCurrForm(formName);
+    await setCurrPhase(allPhases[phaseCount]);
+
+    // Load Excel values
     [
       createValues,
       editValues,
@@ -82,6 +93,10 @@ test.describe.serial(`${formName} Tests`, () => {
     await loginPage.login(module, submodule, formName);
     sideMenu = new SideMenuPage(page);
     await sideMenu.sideMenuBar.waitFor();
+
+    // Update Phase
+    phaseCount++;
+    await setCurrPhase(allPhases[phaseCount]);
   });
 
   // ---------------- Create Test ----------------
@@ -210,7 +225,7 @@ test.describe.serial(`${formName} Tests`, () => {
     );
 
     const dbValues = await db.retrieveData(accountSQLCommand(formName), {
-      DocNo: docNo
+      DocNo: docNo,
     });
 
     const gridDbValues = await db.retrieveGridData(

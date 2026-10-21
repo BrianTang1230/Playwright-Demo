@@ -57,7 +57,7 @@ test.describe.serial(`${formName} Tests`, () => {
     await checkLength(paths, columns, createValues, editValues);
 
     //To search by only Employee ID
-    searchValue = createValues[0].split('-').map(item => item.trim());
+    searchValue = createValues[0].split("-").map((item) => item.trim());
 
     console.log(`Start Running: ${formName}`);
   });
@@ -93,7 +93,7 @@ test.describe.serial(`${formName} Tests`, () => {
       OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });
@@ -143,7 +143,13 @@ test.describe.serial(`${formName} Tests`, () => {
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {
-    await ContractorConductorSetupDelete(page, sideMenu, editValues, searchValue, ou);
+    await ContractorConductorSetupDelete(
+      page,
+      sideMenu,
+      editValues,
+      searchValue,
+      ou,
+    );
 
     // Check if the Contractor Conductor Setup is deleted
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {

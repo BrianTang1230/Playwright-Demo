@@ -120,7 +120,11 @@ test.describe.serial(`${formName} Tests`, () => {
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await validateDBValues(gridVals.join(";").split(";"), gridDbColumns, gridDbValues[0]);
+    await validateDBValues(
+      gridVals.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
   });
 
   test(`Edit ${formName} Without Saving`, async ({ page, db }) => {
@@ -156,7 +160,11 @@ test.describe.serial(`${formName} Tests`, () => {
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
-    await validateDBValues(gridVals.join(";").split(";"), gridDbColumns, gridDbValues[0]);
+    await validateDBValues(
+      gridVals.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
   });
 
   test(`Edit ${formName} With Saving`, async ({ page, db }) => {
@@ -192,7 +200,11 @@ test.describe.serial(`${formName} Tests`, () => {
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
     await validateGridValues(gridEditValues.join(";").split(";"), gridVals);
-    await validateDBValues(gridVals.join(";").split(";"), gridDbColumns, gridDbValues[0]);
+    await validateDBValues(
+      gridVals.join(";").split(";"),
+      gridDbColumns,
+      gridDbValues[0],
+    );
   });
 
   test(`Delete ${formName}`, async ({ page, db }) => {

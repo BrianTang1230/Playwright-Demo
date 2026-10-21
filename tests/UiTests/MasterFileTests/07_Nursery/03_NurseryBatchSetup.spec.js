@@ -40,8 +40,11 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 
 test.describe.serial(`${formName} Tests`, () => {
-  test.skip(true, `Sales Expected Date has a bug where user manually type or autofill it,
-  it shows conversion of a datetime2 data type resulted in an out-of-range value.`);
+  test.skip(
+    true,
+    `Sales Expected Date has a bug where user manually type or autofill it,
+  it shows conversion of a datetime2 data type resulted in an out-of-range value.`,
+  );
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
     // Change Current Form and Phase
@@ -90,7 +93,7 @@ test.describe.serial(`${formName} Tests`, () => {
       OU: ou[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues([...uiVals, ou[0]], [...columns, "OU"], dbValues[0]);
   });

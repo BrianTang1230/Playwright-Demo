@@ -46,6 +46,7 @@ const cellsIndex = [[1], [0, 1, 2, 3, 4, 5, 6, 7]];
 test.describe.serial(`${formName} Tests`, async () => {
   // ---------------- Before All ----------------
   test.beforeAll("Setup Excel, DB, and initial data", async ({ excel }) => {
+    // Change Current Form and Phase
     await setCurrForm(formName);
     await setCurrPhase(allPhases[phaseCount]);
 

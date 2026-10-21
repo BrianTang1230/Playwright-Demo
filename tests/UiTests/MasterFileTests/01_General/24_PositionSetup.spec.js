@@ -17,8 +17,17 @@ import {
   validateTreeViewDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
-import { masterSQLCommand, masterGridSQLCommand, masterTreeViewSQLCommand } from "@UiFolder/queries/MasterQuery";
-import { JsonPath, InputPath, GridPath, TreePath } from "@utils/data/uidata/masterData.json";
+import {
+  masterSQLCommand,
+  masterGridSQLCommand,
+  masterTreeViewSQLCommand,
+} from "@UiFolder/queries/MasterQuery";
+import {
+  JsonPath,
+  InputPath,
+  GridPath,
+  TreePath,
+} from "@utils/data/uidata/masterData.json";
 
 import {
   PositionSetupCreate,
@@ -61,21 +70,27 @@ test.describe.serial(`${formName} Tests`, () => {
 
     // Load Excel values
     [
-    createValues,
-    editValues,
-    deleteSQL,
-    ou,
-    gridCreateValues,
-    gridEditValues,
-    treeViewCreateValues,
-    treeViewEditValues,
-    treeViewCheckValues
-    ] = await excel.loadExcelValues(sheetName, formName, { hasGrid: true, hasTree: true });
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+      gridCreateValues,
+      gridEditValues,
+      treeViewCreateValues,
+      treeViewEditValues,
+      treeViewCheckValues,
+    ] = await excel.loadExcelValues(sheetName, formName, {
+      hasGrid: true,
+      hasTree: true,
+    });
 
     await checkLength(paths, columns, createValues, editValues);
-    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] = treeViewCheckValues.map(val => 
-      typeof val === 'string' ? val.split(',').map(item => item.trim()) : val
-    );
+    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] =
+      treeViewCheckValues.map((val) =>
+        typeof val === "string"
+          ? val.split(",").map((item) => item.trim())
+          : val,
+      );
 
     console.log(`Start Running: ${formName}`);
   });
@@ -107,33 +122,34 @@ test.describe.serial(`${formName} Tests`, () => {
       cellsIndex,
       treeViewPath,
       treeViewCreateValues,
-      region
+      region,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
       Code: createValues[0],
     });
     !dbValues && throwTestFailMsg("C-DB-NF", formName);
-    
+
     const treeViewDbValues = await db.retrieveData(
       masterTreeViewSQLCommand(formName),
       {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
 
-    if (region === "IND"){
+    if (region === "IND") {
       const gridDbValues = await db.retrieveGridData(
         masterGridSQLCommand(formName),
         {
           Code: createValues[0],
         },
-        );
-        !gridDbValues &&
+      );
+      !gridDbValues &&
         throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
       const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -141,7 +157,10 @@ test.describe.serial(`${formName} Tests`, () => {
       await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     }
 
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
@@ -158,7 +177,7 @@ test.describe.serial(`${formName} Tests`, () => {
       cellsIndex,
       treeViewPath,
       treeViewEditValues,
-      region
+      region,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -172,27 +191,31 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
 
-    if (region === "IND"){
+    if (region === "IND") {
       const gridDbValues = await db.retrieveGridData(
         masterGridSQLCommand(formName),
-          {
-            Code: createValues[0],
-          },
-        );
-        !gridDbValues &&
+        {
+          Code: createValues[0],
+        },
+      );
+      !gridDbValues &&
         throwTestFailMsg("C-DB-NF", formName, "Grid record not found");
-        const gridDbColumns = Object.keys(gridDbValues[0]);
+      const gridDbColumns = Object.keys(gridDbValues[0]);
 
       await validateGridValues(gridCreateValues.join(";").split(";"), gridVals);
       await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     }
 
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 
@@ -209,7 +232,7 @@ test.describe.serial(`${formName} Tests`, () => {
       cellsIndex,
       treeViewPath,
       treeViewEditValues,
-      region
+      region,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -223,19 +246,20 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: editValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(editValues, columns, uiVals);
     await validateDBValues(uiVals, columns, dbValues[0]);
 
-    if (region === "IND"){
+    if (region === "IND") {
       const gridDbValues = await db.retrieveGridData(
         masterGridSQLCommand(formName),
-          {
-            Code: editValues[0],
-          },
-        );
-        !gridDbValues &&
+        {
+          Code: editValues[0],
+        },
+      );
+      !gridDbValues &&
         throwTestFailMsg("E2-DB-NF", formName, "Grid record not found");
       const gridDbColumns = Object.keys(gridDbValues[0]);
 
@@ -243,7 +267,10 @@ test.describe.serial(`${formName} Tests`, () => {
       await validateDBValues(gridVals, gridDbColumns, gridDbValues[0]);
     }
 
-    await validateTreeViewUiValues(treeViewCheckValuesAfterEdit, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterEdit,
+      treeViewUiVals,
+    );
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
 

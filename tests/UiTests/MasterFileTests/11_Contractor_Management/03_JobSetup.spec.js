@@ -16,8 +16,15 @@ import {
   validateTreeViewDBValues,
 } from "@UiFolder/functions/valuesFuncs";
 
-import { masterSQLCommand, masterTreeViewSQLCommand } from "@UiFolder/queries/MasterQuery";
-import { JsonPath, InputPath, TreePath } from "@utils/data/uidata/masterData.json";
+import {
+  masterSQLCommand,
+  masterTreeViewSQLCommand,
+} from "@UiFolder/queries/MasterQuery";
+import {
+  JsonPath,
+  InputPath,
+  TreePath,
+} from "@utils/data/uidata/masterData.json";
 
 import {
   JobSetupCreate,
@@ -55,16 +62,23 @@ test.describe.serial(`${formName} Tests`, () => {
     await setCurrPhase(allPhases[phaseCount]);
 
     // Load Excel values
-    [createValues, editValues, deleteSQL, ou, treeViewCreateValues, treeViewEditValues, treeViewCheckValues] = await excel.loadExcelValues(
-      sheetName,
-      formName,
-      { hasTree: true },
-    );
+    [
+      createValues,
+      editValues,
+      deleteSQL,
+      ou,
+      treeViewCreateValues,
+      treeViewEditValues,
+      treeViewCheckValues,
+    ] = await excel.loadExcelValues(sheetName, formName, { hasTree: true });
 
     await checkLength(paths, columns, createValues, editValues);
-    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] = treeViewCheckValues.map(val => 
-      typeof val === 'string' ? val.split(',').map(item => item.trim()) : val
-    );
+    [treeViewCheckValuesAfterCreate, treeViewCheckValuesAfterEdit] =
+      treeViewCheckValues.map((val) =>
+        typeof val === "string"
+          ? val.split(",").map((item) => item.trim())
+          : val,
+      );
 
     console.log(`Start Running: ${formName}`);
   });
@@ -85,7 +99,7 @@ test.describe.serial(`${formName} Tests`, () => {
   test(`Create ${formName}`, async ({ page, db }) => {
     await db.deleteData(deleteSQL, {});
 
-    const { uiVals , treeViewUiVals } = await JobSetupCreate(
+    const { uiVals, treeViewUiVals } = await JobSetupCreate(
       page,
       sideMenu,
       paths,
@@ -106,10 +120,14 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
@@ -123,7 +141,7 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       treeViewPath,
-      treeViewEditValues
+      treeViewEditValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -137,10 +155,14 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: createValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(createValues, columns, uiVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterCreate, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterCreate,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });
@@ -154,7 +176,7 @@ test.describe.serial(`${formName} Tests`, () => {
       createValues,
       editValues,
       treeViewPath,
-      treeViewEditValues
+      treeViewEditValues,
     );
 
     const dbValues = await db.retrieveData(masterSQLCommand(formName), {
@@ -168,10 +190,14 @@ test.describe.serial(`${formName} Tests`, () => {
         Code: editValues[0],
       },
     );
-    !treeViewDbValues && throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
+    !treeViewDbValues &&
+      throwTestFailMsg("C-DB-NF", formName, "Tree View record not found");
 
     await validateFormValues(editValues, columns, uiVals);
-    await validateTreeViewUiValues(treeViewCheckValuesAfterEdit, treeViewUiVals);
+    await validateTreeViewUiValues(
+      treeViewCheckValuesAfterEdit,
+      treeViewUiVals,
+    );
     await validateDBValues(uiVals, columns, dbValues[0]);
     await validateTreeViewDBValues(treeViewUiVals, treeViewDbValues);
   });

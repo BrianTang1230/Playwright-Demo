@@ -79,7 +79,7 @@ test.describe.serial(`${formName} Tests`, () => {
     });
 
     docNo = DocNo[keyName];
-    console.log(`Start Running: ${formName}`);
+    console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
   // ---------------- Before Each ----------------

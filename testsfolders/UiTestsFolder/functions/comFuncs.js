@@ -80,16 +80,16 @@ export async function runStep(stepName, callback) {
     try {
       return await callback();
     } catch (error) {
-      if (error?.uiStep === stepName) throw error;
+      // if (error?.uiStep === stepName) throw error;
 
-      const contextualError = new Error(
-        `UI step "${stepName}" failed: ${error?.message || String(error)}`,
-        { cause: error },
-      );
-      contextualError.uiStep = stepName;
-      contextualError.formName = currForm || "Unknown form";
-      contextualError.phase = currPhase || "Unknown phase";
-      throw contextualError;
+      // const contextualError = new Error(
+      //   `UI step "${stepName}" failed: ${error?.message || String(error)}`,
+      //   { cause: error },
+      // );
+      // contextualError.uiStep = stepName;
+      // contextualError.formName = currForm || "Unknown form";
+      // contextualError.phase = currPhase || "Unknown phase";
+      // throw contextualError;
     }
   });
 }

@@ -285,8 +285,7 @@ function checkrollSQLCommand(formName) {
 
     case "Worker Additional Remuneration":
       sqlCommand += `
-        SELECT    
-        IIF(@region = 'IND',
+        SELECT IIF(@region = 'IND',
           FORMAT(A.AddRemDate, 'MMMM yyyy','id-ID'),
           FORMAT(A.AddRemDate, 'MMMM yyyy', 'en-US')
         ) AS AddRemMonth,
@@ -298,6 +297,11 @@ function checkrollSQLCommand(formName) {
           WHEN 'S' THEN 'SUBMITTED'
           WHEN 'A' THEN 'APPROVED'
         END AS Status,
+        CASE A.Type
+          WHEN 'OTH' THEN 'Other'
+          WHEN 'THR' THEN 'Holiday Allowance (THR)'
+          ELSE NULL
+        END AS Type,
         C.OUCode + ' - ' + C.OUDesc AS OU
         FROM CR_AddRemHdr A
         LEFT JOIN GMS_GangStp B ON A.GangKey = B.GangKey

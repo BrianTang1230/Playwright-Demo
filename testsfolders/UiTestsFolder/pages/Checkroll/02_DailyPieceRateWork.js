@@ -218,7 +218,13 @@ export async function DailyPieceRateWorkDelete(
   docNo,
 ) {
   await runStep("Filter transaction", async () => {
-    await FilterRecordByOUAndDate(page, values, ou[0], docNo, 4);
+    await FilterTransactionBy2And1Criterias(
+      page,
+      values[0],
+      ou[0],
+      docNo,
+      "Doc. No.",
+    );
   });
 
   await runStep("Delete transaction", async () => {

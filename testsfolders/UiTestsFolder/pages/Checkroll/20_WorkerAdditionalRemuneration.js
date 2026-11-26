@@ -36,10 +36,16 @@ export async function WorkerAdditionalRemunerationCreate(
   });
 
   await runStep("Input transaction data", async () => {
-    for (let i = 0; i < paths.slice(0, 3).length; i++) {
+    for (
+      let i = 0;
+      i < region === "MY" ? paths.slice(0, 3).length : paths.slice(0, 4).length;
+      i++
+    ) {
       await inputFormValues(page, paths[i], columns[i], values[i]);
     }
   });
+
+  region === "IND" && (await sideMenu.rejectBtn.click());
 
   await runStep("Add and create grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
@@ -89,10 +95,15 @@ export async function WorkerAdditionalRemunerationEdit1(
   });
 
   await runStep("Edit transaction", async () => {
-    for (let i = 0; i < paths.slice(0, 3).length; i++) {
+    for (
+      let i = 0;
+      i < region === "MY" ? paths.slice(0, 3).length : paths.slice(0, 4).length;
+      i++
+    ) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });
+
 
   await runStep("Edit grid item", async () => {
     for (let i = 0; i < gridPaths.length; i++) {
@@ -148,7 +159,11 @@ export async function WorkerAdditionalRemunerationEdit2(
   });
 
   await runStep("Edit transaction", async () => {
-    for (let i = 0; i < paths.slice(0, 3).length; i++) {
+    for (
+      let i = 0;
+      i < region === "MY" ? paths.slice(0, 3).length : paths.slice(0, 4).length;
+      i++
+    ) {
       await inputFormValues(page, paths[i], columns[i], newValues[i]);
     }
   });

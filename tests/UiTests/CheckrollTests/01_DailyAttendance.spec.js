@@ -101,6 +101,8 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- Create Test ----------------
   test(`Create ${formName}`, async ({ page, db }) => {
+    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
+
     const { uiVals, gridVals } = await DailyAttendanceCreate(
       page,
       sideMenu,
@@ -227,13 +229,14 @@ test.describe.serial(`${formName} Tests`, () => {
     const dbValues = await db.retrieveData(checkrollSQLCommand(formName), {
       DocNo: docNo,
     });
-    dbValues && throwTestFailMsg("D-DB-RF", formName);
+
+    dbValues
+      ? throwTestFailMsg("D-DB-RF", formName)
+      : await editJson(JsonPath, formName, "");
   });
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { DocNo: docNo, OU: ou[0] });
-    await editJson(JsonPath, formName, "");
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

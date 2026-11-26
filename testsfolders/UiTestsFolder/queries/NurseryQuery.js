@@ -41,8 +41,7 @@ function nurserySQLCommand(formName) {
 
     case "Pre Nursery Germinated":
       sqlCommand += `
-        SELECT 
-        FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
+        SELECT FORMAT(A.DbtDate, 'dd/MM/yyyy') AS DbtDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
           WHEN 'O' THEN 'OPEN'
@@ -61,9 +60,19 @@ function nurserySQLCommand(formName) {
           SELECT ISNULL(SUM(A2.SgtQty), 0) + ISNULL(SUM(A2.DbtQty), 0)  
           FROM NUR_PDoubleton A2
           WHERE A2.NurBatchKey = A.NurBatchKey AND FORMAT(A2.DbtDate,'yyyyMM') <= FORMAT(A.DbtDate,'yyyyMM')
+        ) - (
+          SELECT ISNULL(SUM(A2.PCullQty), 0)
+          FROM NUR_PCull A2
+          WHERE A2.NurBatchKey = A.NurBatchKey
+          AND FORMAT(A2.CullDate, 'yyyyMM') <= FORMAT(A.DbtDate, 'yyyyMM')
+        ) + (
+          SELECT ISNULL(SUM(V.NGQty), 0)
+          FROM NUR_PAdjustment V
+          WHERE V.NurBatchKey = A.NurBatchKey
+          AND FORMAT(V.AdjDate, 'yyyyMM') <= FORMAT(A.DbtDate, 'yyyyMM')
         ) + (
           A.SgtQty + A.DbtQty
-        )AS RcvQty,
+        ) AS RcvQty,
         A.SgtQty,
         A.DbtQty,
         F.OUCode + ' - ' + F.OUDesc AS OU
@@ -129,10 +138,10 @@ function nurserySQLCommand(formName) {
         SELECT FORMAT(A.CullDate, 'dd/MM/yyyy') AS CullDate,
         B.NurBatchCode + ' - ' + B.NurBatchDesc AS NurBatch,
         CASE A.Status
-            WHEN 'O' THEN 'OPEN'
-            WHEN 'C' THEN 'CLOSE'
-            WHEN 'S' THEN 'SUBMITTED'
-            WHEN 'A' THEN 'APPROVED'
+          WHEN 'O' THEN 'OPEN'
+          WHEN 'C' THEN 'CLOSE'
+          WHEN 'S' THEN 'SUBMITTED'
+          WHEN 'A' THEN 'APPROVED'
         END AS Status,
         A.Remarks,
         (

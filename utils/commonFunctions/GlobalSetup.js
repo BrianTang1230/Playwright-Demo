@@ -217,23 +217,6 @@ test.afterEach(async ({}, testInfo) => {
       errors: (testInfo.errors || []).slice(0, 5).map(serializeErrorChain),
       browserSignals: context?.signals || [],
     };
-
-    try {
-      await testInfo.attach("ui-failure-diagnostics.json", {
-        body: Buffer.from(JSON.stringify(diagnostics, null, 2)),
-        contentType: "application/json",
-      });
-    } catch (attachError) {
-      console.warn(
-        "UI failure diagnostics could not be attached:",
-        attachError?.message || String(attachError),
-      );
-    }
-  } catch (diagnosticsError) {
-    console.warn(
-      "UI failure diagnostics could not be collected:",
-      diagnosticsError?.message || String(diagnosticsError),
-    );
   } finally {
     uiFailureContexts.delete(testInfo);
   }

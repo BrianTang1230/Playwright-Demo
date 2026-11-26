@@ -42,7 +42,6 @@ export async function validateFormValues(inputValues, columns, uiValues) {
       continue;
 
     if (columns[i].includes("numeric")) {
-      console.log(columns[i], localInputValues[i], localUiValues[i]);
       const inpVal = normalizeNumber(String(localInputValues[i]).trim());
       const uiVal = normalizeNumber(String(localUiValues[i]).trim());
       localInputValues[i] = String(inpVal);

@@ -38,13 +38,13 @@
     "NurserySalesRequisitionGrid": "//*[@id=\"soldDetailsGrid\"]/div[3]/table"
   },
   "DocNo": {
-    "PreNurserySeedReceived": "PSR0000158",
+    "PreNurserySeedReceived": "",
     "PreNurseryGerminated": "",
     "PreNurseryDoubletonSplitting": "",
     "PreNurseryCulling": "",
     "PreNurseryAdjustment": "",
     "PreNurseryTransfer/Sold/Loss": "",
-    "Inter-OUPreNurseryTransferTo": "IPT0000020",
+    "Inter-OUPreNurseryTransferTo": "",
     "MainNurseryReceived": "",
     "MainNurseryDoubletonSplitting": "",
     "MainNurseryCulling": "",

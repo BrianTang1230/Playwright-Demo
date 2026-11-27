@@ -419,7 +419,7 @@ export async function inputTreeViewValues(page, treeViewPath, treeViewValues) {
   try {
     if (
       !page ||
-      typeof treeViewPath !== "string" ||
+       typeof treeViewPath !== "object" ||
       !Array.isArray(treeViewValues)
     ) {
       throw new TypeError("Page, tree selector, and tree values are required.");
@@ -460,7 +460,7 @@ export async function inputTreeViewValues(page, treeViewPath, treeViewValues) {
 
 export async function getTreeViewUiValues(page, treeViewPath) {
   try {
-    if (!page || typeof treeViewPath !== "string" || !treeViewPath) {
+    if (!page || typeof treeViewPath !== "object" || !treeViewPath) {
       throw new TypeError("Page and tree selector are required.");
     }
     const treeViewID = treeViewPath;

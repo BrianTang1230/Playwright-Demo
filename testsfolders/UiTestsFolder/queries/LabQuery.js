@@ -253,6 +253,10 @@ function labSQLCommand(formName) {
     case "Chemical Dosage":
       sqlCommand += `
         SELECT FORMAT(A.ChemicalDosDate, 'dd/MM/yyyy') AS ChemicalDosDate,
+        CASE A.Status
+          WHEN 'OP' THEN 'OPEN'
+          WHEN 'CL' THEN 'CLOSED'
+        END AS Status,
         B.OUCode + ' - ' + B.OUDesc AS OU
         FROM LAB_ChemicalDosHdr A
         LEFT JOIN GMS_OUStp B ON A.OUKey = B.OUKey
@@ -734,13 +738,15 @@ function labGridSQLCommand(formName) {
     case "Chemical Dosage":
       sqlCommand += `
         SELECT B.TypeIDCode + ' - ' + B.TypeIDDesc AS TypeID,
+		    D.TypeCode,
         A.Num AS Numnumeric,
         CONVERT(varchar(5), A.Time, 108) AS Time,
-        C.ChemCode + ' - ' + C.ChemDesc,
+        C.ChemCode + ' - ' + C.ChemDesc AS ChemCode,
         A.Amount AS Anumeric
         FROM LAB_ChemicalDosDet A  
         LEFT JOIN GMS_TypeIDStp B ON A.TypeIDKey = B.TypeIDKey
         LEFT JOIN GMS_ChemStp  C ON A.ChemKey = C.ChemKey
+		    LEFT JOIN GMS_TypeStp D ON B.TypeKey = D.TypeKey
         WHERE A.Num IN (6666,9999)  
         AND A.ChemicalDosHdrKey IN (
           SELECT H.ChemicalDosHdrKey

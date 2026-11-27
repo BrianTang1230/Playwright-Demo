@@ -57,6 +57,7 @@ export async function LabCommonPageCreate(
   const uiVals = await runStep("Get UI values", async () => {
     return await getFormValues(page, paths);
   });
+
   const gridVals = await runStep("Get created Grid values", async () => {
     return await getGridValues(page, gridPaths, cellsIndex, { isOneRow: true });
   });

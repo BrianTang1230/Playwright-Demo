@@ -217,7 +217,6 @@ test.describe.serial(`${formName} Tests`, () => {
 
   // ---------------- After All ----------------
   test.afterAll(async ({ db }) => {
-    await db.deleteData(deleteSQL, { Date: createValues[0], OU: ou[0] });
     console.log(`End Tests Running: ${formName}\n${"=".repeat(90)}`);
   });
 });

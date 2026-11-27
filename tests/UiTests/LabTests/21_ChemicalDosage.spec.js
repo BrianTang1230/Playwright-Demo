@@ -42,7 +42,7 @@ const paths = InputPath[keyName + "Path"].split(",");
 const columns = InputPath[keyName + "Column"].split(",");
 const gridPaths = GridPath[module + "Grid"].split(",");
 const cellsIndex = [
-  [1, 3],
+  [1, 2, 3],
   [0, 1, 2],
 ];
 
@@ -230,6 +230,7 @@ test.describe.serial(`${formName} Tests`, async () => {
     const dbValues = await db.retrieveData(labSQLCommand(formName), {
       Date: createValues[0],
     });
+
     dbValues && throwTestFailMsg("D-DB-RF", formName);
   });
 

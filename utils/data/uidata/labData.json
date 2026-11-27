@@ -41,8 +41,8 @@
     "LossesinEmptyFruitBunchesColumn": "EFBLossDate date",
     "SpinTestPath": "#SpinTestDatePicker",
     "SpinTestColumn": "SpinTestDate date",
-    "ChemicalDosagePath": "#ChemicalDosDatePicker",
-    "ChemicalDosageColumn": "ChemicalDosDate date"
+    "ChemicalDosagePath": "#ChemicalDosDatePicker,#txtStatus",
+    "ChemicalDosageColumn": "ChemicalDosDate date,Status text"
   },
 
   "GridPath": {

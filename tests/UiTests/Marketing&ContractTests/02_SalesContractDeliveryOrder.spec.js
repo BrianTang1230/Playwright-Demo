@@ -63,6 +63,8 @@ test.describe.serial(`${formName} Tests`, () => {
 
     await checkLength(paths, columns, createValues, editValues);
 
+    docNo = DocNo[keyName];
+
     console.log(`${"=".repeat(90)}\nStart Running: ${formName}`);
   });
 
